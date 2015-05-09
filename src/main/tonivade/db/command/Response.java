@@ -10,6 +10,8 @@ public class Response implements IResponse {
     private static final String SIMPLE_STRING = "+";
     private static final String BULK_STRING = "$";
 
+    private static final String DELIMITER = "\r\n";
+
     private StringBuilder sb = new StringBuilder();
 
     /* (non-Javadoc)
@@ -36,7 +38,7 @@ public class Response implements IResponse {
     @Override
     public IResponse addBulkStr(String str) {
         if (str != null) {
-            sb.append(BULK_STRING).append(str.length()).append(ICommand.DELIMITER).append(str);
+            sb.append(BULK_STRING).append(str.length()).append(DELIMITER).append(str);
         } else {
             sb.append(BULK_STRING).append(-1);
         }
@@ -107,7 +109,7 @@ public class Response implements IResponse {
 
     @Override
     public String toString() {
-        return sb.toString() + ICommand.DELIMITER;
+        return sb.toString() + DELIMITER;
     }
 
 }
