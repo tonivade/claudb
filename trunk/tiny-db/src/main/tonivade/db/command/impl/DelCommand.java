@@ -9,12 +9,8 @@ public class DelCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        if (request.getLength() < 2) {
-            response.addError(ERROR);
-        } else {
-            db.remove(request.getParam(1));
-            response.addSimpleStr(OK);
-        }
+        db.remove(request.getParam(1));
+        response.addSimpleStr(OK);
     }
 
 }

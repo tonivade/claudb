@@ -14,11 +14,7 @@ public class GetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        if (request.getLength() < 2) {
-            response.addError(ERROR);
-        } else {
-            response.addValue(db.get(request.getParam(1)));
-        }
+        response.addValue(db.get(request.getParam(1)));
     }
 
 }

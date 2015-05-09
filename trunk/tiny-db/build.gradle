@@ -15,11 +15,16 @@ sourceSets {
     }
 }
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    compile group: 'io.netty', name: 'netty-all', version: '4.0.23.Final'
-    testCompile group: 'junit', name: 'junit', version: '4.10'
+    compile 'io.netty:netty-all:4.0.23.Final'
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'org.mapdb:mapdb:1.0.7'
+    testCompile 'junit:junit:4.10'
 }
