@@ -9,11 +9,7 @@ public class ExistsCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        if (request.getLength() < 2) {
-            response.addError(ERROR);
-        } else {
-            response.addInt(db.containsKey(request.getParam(1)));
-        }
+        response.addInt(db.containsKey(request.getParam(1)));
     }
 
 }

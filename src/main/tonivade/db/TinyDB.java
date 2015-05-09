@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tonivade.db.command.CommandWrapper;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -84,10 +85,10 @@ public class TinyDB implements ITinyDB {
 
     public void init() {
         commands.put("ping", new PingCommand());
-        commands.put("set", new SetCommand());
-        commands.put("get", new GetCommand());
-        commands.put("echo", new EchoCommand());
-        commands.put("exists", new ExistsCommand());
+        commands.put("set", new CommandWrapper(new SetCommand(), 3));
+        commands.put("get", new CommandWrapper(new GetCommand(), 2));
+        commands.put("echo", new CommandWrapper(new EchoCommand(), 2));
+        commands.put("exists", new CommandWrapper(new ExistsCommand(), 2));
     }
 
     public void start() {
