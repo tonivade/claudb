@@ -42,7 +42,7 @@ public class DatabaseValue {
      */
     public int incrementAndGet() throws NumberFormatException {
         int i = Integer.parseInt(value);
-        this.value = String.valueOf(i++);
+        this.value = String.valueOf(++i);
         return i;
     }
 
