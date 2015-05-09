@@ -4,8 +4,8 @@ import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.data.DataType;
-import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
+import tonivade.db.data.IDatabase;
 
 /**
  *
@@ -15,7 +15,7 @@ import tonivade.db.data.DatabaseValue;
 public class SetCommand implements ICommand {
 
     @Override
-    public void execute(Database db, IRequest request, IResponse response) {
+    public void execute(IDatabase db, IRequest request, IResponse response) {
         if (request.getLength() < 3) {
             response.addError(ERROR);
         } else {
