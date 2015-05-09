@@ -19,8 +19,7 @@ public class SetCommand implements ICommand {
         DatabaseValue value = new DatabaseValue();
         value.setType(DataType.STRING);
         value.setValue(request.getParam(1));
-        db.putIfAbsent(request.getParam(0), value);
-        db.get(request.getParam(0)).setValue(request.getParam(1));
+        db.put(request.getParam(0), value);
         response.addSimpleStr(OK);
     }
 
