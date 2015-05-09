@@ -9,7 +9,7 @@ public class DelCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        db.remove(request.getParam(1));
+        db.remove(request.getParam(0));
         response.addSimpleStr(OK);
     }
 

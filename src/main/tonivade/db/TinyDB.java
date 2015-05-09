@@ -85,10 +85,10 @@ public class TinyDB implements ITinyDB {
 
     public void init() {
         commands.put("ping", new PingCommand());
-        commands.put("set", new CommandWrapper(new SetCommand(), 3));
-        commands.put("get", new CommandWrapper(new GetCommand(), 2));
-        commands.put("echo", new CommandWrapper(new EchoCommand(), 2));
-        commands.put("exists", new CommandWrapper(new ExistsCommand(), 2));
+        commands.put("set", new CommandWrapper(new SetCommand(), 2));
+        commands.put("get", new CommandWrapper(new GetCommand(), 1));
+        commands.put("echo", new CommandWrapper(new EchoCommand(), 1));
+        commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
     }
 
     public void start() {
@@ -194,8 +194,10 @@ public class TinyDB implements ITinyDB {
 
     private IRequest parse(String message) {
         Request request = new Request();
-        String[] params = message.split(" ");
-        request.setCommand(params[0]);
+        String[] split = message.split(" ");
+        request.setCommand(split[0]);
+        String[] params = new String[split.length - 1];
+        System.arraycopy(split, 1, params, 0, params.length);
         request.setParams(Arrays.asList(params));
         return request;
     }

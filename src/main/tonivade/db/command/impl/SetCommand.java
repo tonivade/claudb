@@ -18,8 +18,8 @@ public class SetCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = new DatabaseValue();
         value.setType(DataType.STRING);
-        value.setValue(request.getParam(2));
-        db.put(request.getParam(1), value);
+        value.setValue(request.getParam(1));
+        db.put(request.getParam(0), value);
         response.addSimpleStr(OK);
     }
 

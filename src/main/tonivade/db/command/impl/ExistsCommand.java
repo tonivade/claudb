@@ -9,7 +9,7 @@ public class ExistsCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        response.addInt(db.containsKey(request.getParam(1)));
+        response.addInt(db.containsKey(request.getParam(0)));
     }
 
 }
