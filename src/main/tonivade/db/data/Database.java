@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Database implements Map<String, DatabaseValue> {
+public class Database implements IDatabase {
 
     private Map<String, DatabaseValue> cache = new HashMap<>();
 
