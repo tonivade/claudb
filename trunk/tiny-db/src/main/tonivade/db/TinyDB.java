@@ -32,6 +32,7 @@ import tonivade.db.command.Response;
 import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
 import tonivade.db.command.impl.GetCommand;
+import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
 import tonivade.db.data.Database;
@@ -89,6 +90,7 @@ public class TinyDB implements ITinyDB {
         commands.put("get", new CommandWrapper(new GetCommand(), 1));
         commands.put("echo", new CommandWrapper(new EchoCommand(), 1));
         commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
+        commands.put("mget", new CommandWrapper(new MultiGetCommand(), 1));
     }
 
     public void start() {
