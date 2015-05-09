@@ -1,5 +1,7 @@
 package tonivade.db.command;
 
+import java.util.Collection;
+
 import tonivade.db.data.DatabaseValue;
 
 public interface IResponse {
@@ -18,6 +20,6 @@ public interface IResponse {
 
     public abstract IResponse addError(String str);
 
-    public abstract IResponse addArray(String[] array);
+    public abstract IResponse addArray(Collection<DatabaseValue> array);
 
 }
