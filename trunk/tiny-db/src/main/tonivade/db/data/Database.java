@@ -1,13 +1,14 @@
 package tonivade.db.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class Database implements IDatabase {
 
-    private Map<String, DatabaseValue> cache = new HashMap<>();
+    private Map<String, DatabaseValue> cache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * @return
@@ -121,6 +122,11 @@ public class Database implements IDatabase {
     @Override
     public Set<java.util.Map.Entry<String, DatabaseValue>> entrySet() {
         return cache.entrySet();
+    }
+
+    @Override
+    public DatabaseValue putIfAbsent(String key, DatabaseValue value) {
+        return cache.putIfAbsent(key, value);
     }
 
 }
