@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tonivade.db.command.CommandWrapper;
@@ -123,7 +122,7 @@ public class TinyDB implements ITinyDB {
             throw new TinyDBException(e);
         }
 
-        LOGGER.log(Level.INFO, "adapter started");
+        LOGGER.info(() -> "adapter started: {0}" + host + ":" + port);
     }
 
     public void stop() {
@@ -136,7 +135,7 @@ public class TinyDB implements ITinyDB {
             bossGroup.shutdownGracefully();
         }
 
-        LOGGER.log(Level.INFO, "adapter stopped");
+        LOGGER.info("adapter stopped");
     }
 
     /**
@@ -148,7 +147,7 @@ public class TinyDB implements ITinyDB {
      */
     @Override
     public void channel(SocketChannel channel) {
-        LOGGER.log(Level.INFO, "new channel: {0}", sourceKey(channel));
+        LOGGER.info(() -> "new channel: " + sourceKey(channel));
 
         channel.pipeline().addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));
         channel.pipeline().addLast("linDelimiter", new RequestDecoder(MAX_FRAME_SIZE));
@@ -166,7 +165,7 @@ public class TinyDB implements ITinyDB {
     public void connected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
 
-        LOGGER.log(Level.INFO, "client connected: {0}", sourceKey);
+        LOGGER.info(() -> "client connected: " + sourceKey);
 
         channels.put(sourceKey, ctx);
     }
@@ -180,7 +179,7 @@ public class TinyDB implements ITinyDB {
     public void disconnected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
 
-        LOGGER.log(Level.INFO, "client disconnected: {0}", sourceKey);
+        LOGGER.info(() -> "client disconnected: " + sourceKey);
 
         channels.remove(sourceKey);
     }
@@ -195,7 +194,7 @@ public class TinyDB implements ITinyDB {
     public void receive(ChannelHandlerContext ctx, RedisToken<?> message) {
         String sourceKey = sourceKey(ctx.channel());
 
-        LOGGER.log(Level.FINEST, "message received: {0}", sourceKey);
+        LOGGER.finest(() -> "message received: " + sourceKey);
 
         ctx.writeAndFlush(processCommand(parse(message)));
     }
@@ -215,15 +214,14 @@ public class TinyDB implements ITinyDB {
     }
 
     private String processCommand(IRequest request) {
-        String cmd = request.getCommand();
-        LOGGER.log(Level.INFO, "command: {0}", request);
+        LOGGER.info(() -> "received command: " + request);
 
         IResponse response = new Response();
-        ICommand command = commands.get(cmd);
+        ICommand command = commands.get(request.getCommand());
         if (command != null) {
             command.execute(db, request, response);
         } else {
-            response.addError("ERR unknown command '" + cmd + "'");
+            response.addError("ERR unknown command '" + request.getCommand() + "'");
         }
         return response.toString();
     }
@@ -233,10 +231,12 @@ public class TinyDB implements ITinyDB {
         return remoteAddress.getHostName() + ":" + remoteAddress.getPort();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         TinyDB db = new TinyDB();
         db.init();
         db.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
     }
 
 }
