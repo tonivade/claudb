@@ -35,37 +35,43 @@ public class RequestDecoder extends LineBasedFrameDecoder {
     private String readLine(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
         ByteBuf readLine = (ByteBuf) super.decode(ctx, buffer);
 
-        return readLine.toString(Charset.forName("UTF-8"));
+        if (readLine != null) {
+            return readLine.toString(Charset.forName("UTF-8"));
+        } else {
+            return null;
+        }
     }
 
     private RedisToken<?> parseResponse(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
         String line = readLine(ctx, buffer);
 
+        RedisToken<?> token = null;
+
         if (line != null) {
             if (line.startsWith(ARRAY_PREFIX)) {
                 // array
                 int size = Integer.parseInt(line.substring(1));
-                return parseArray(ctx, buffer, size);
+                token = parseArray(ctx, buffer, size);
             } else if (line.startsWith(STATUS_PREFIX)) {
                 // simple string
-                return new StatusRedisToken(line.substring(1));
+                token = new StatusRedisToken(line.substring(1));
             } else if (line.startsWith(ERROR_PREFIX)) {
                 // error
-                return new ErrorRedisToken(line.substring(1));
+                token = new ErrorRedisToken(line.substring(1));
             } else if (line.startsWith(INTEGER_PREFIX)) {
                 // integer
                 Integer value = Integer.valueOf(line.substring(1));
-                return new IntegerRedisToken(value);
+                token = new IntegerRedisToken(value);
             } else if (line.startsWith(STRING_PREFIX)) {
                 // bulk string
                 String value = readLine(ctx, buffer);
-                return new StringRedisToken(value);
+                token = new StringRedisToken(value);
             } else {
-                return new UnknownRedisToken(line);
+                token = new UnknownRedisToken(line);
             }
-        } else {
-            throw new Exception("no response");
         }
+
+        return token;
     }
 
     private ArrayRedisToken parseArray(ChannelHandlerContext ctx, ByteBuf buffer, int size) throws Exception {
