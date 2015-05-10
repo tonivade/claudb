@@ -54,4 +54,9 @@ public class Request implements IRequest {
         return params.size();
     }
 
+    @Override
+    public String toString() {
+        return command + "[" + params.size() + "]: " + params;
+    }
+
 }

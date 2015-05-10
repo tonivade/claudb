@@ -10,15 +10,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.Delimiters;
-import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +37,10 @@ import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
 import tonivade.db.data.Database;
+import tonivade.db.redis.RedisToken;
+import tonivade.db.redis.RedisToken.ArrayRedisToken;
+import tonivade.db.redis.RedisTokenType;
+import tonivade.db.redis.RequestDecoder;
 
 /**
  * Java Redis Implementation
@@ -59,8 +61,8 @@ public class TinyDB implements ITinyDB {
     // Default host name
     private static final String DEFAULT_HOST = "localhost";
 
-    private int port;
-    private String host;
+    private final int port;
+    private final String host;
 
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -70,11 +72,11 @@ public class TinyDB implements ITinyDB {
     private TinyDBInitializerHandler acceptHandler;
     private TinyDBConnectionHandler connectionHandler;
 
-    private Map<String, ChannelHandlerContext> channels = new HashMap<>();
+    private final Map<String, ChannelHandlerContext> channels = new HashMap<>();
 
-    private Map<String, ICommand> commands = new HashMap<>();
+    private final Map<String, ICommand> commands = new HashMap<>();
 
-    private Database db = new Database();
+    private final Database db = new Database();
 
     private ChannelFuture future;
 
@@ -107,13 +109,13 @@ public class TinyDB implements ITinyDB {
         try {
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
-             .channel(NioServerSocketChannel.class)
-             .childHandler(acceptHandler)
-             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
-             .option(ChannelOption.SO_RCVBUF, BUFFER_SIZE)
-             .option(ChannelOption.SO_SNDBUF, BUFFER_SIZE)
-             .childOption(ChannelOption.SO_KEEPALIVE, true)
-             .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+            .channel(NioServerSocketChannel.class)
+            .childHandler(acceptHandler)
+            .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+            .option(ChannelOption.SO_RCVBUF, BUFFER_SIZE)
+            .option(ChannelOption.SO_SNDBUF, BUFFER_SIZE)
+            .childOption(ChannelOption.SO_KEEPALIVE, true)
+            .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
             // Bind and start to accept incoming connections.
             future = bootstrap.bind(host, port);
@@ -149,9 +151,7 @@ public class TinyDB implements ITinyDB {
         LOGGER.log(Level.INFO, "new channel: {0}", sourceKey(channel));
 
         channel.pipeline().addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));
-        channel.pipeline().addLast("linDelimiter",
-                new DelimiterBasedFrameDecoder(MAX_FRAME_SIZE, true, Delimiters.lineDelimiter()));
-        channel.pipeline().addLast("stringDecoder", new StringDecoder(CharsetUtil.UTF_8));
+        channel.pipeline().addLast("linDelimiter", new RequestDecoder(MAX_FRAME_SIZE));
         channel.pipeline().addLast(connectionHandler);
     }
 
@@ -192,7 +192,7 @@ public class TinyDB implements ITinyDB {
      * @param buffer
      */
     @Override
-    public void receive(ChannelHandlerContext ctx, String message) {
+    public void receive(ChannelHandlerContext ctx, RedisToken<?> message) {
         String sourceKey = sourceKey(ctx.channel());
 
         LOGGER.log(Level.FINEST, "message received: {0}", sourceKey);
@@ -200,19 +200,23 @@ public class TinyDB implements ITinyDB {
         ctx.writeAndFlush(processCommand(parse(message)));
     }
 
-    private IRequest parse(String message) {
+    private IRequest parse(RedisToken<?> message) {
         Request request = new Request();
-        String[] split = message.split(" ");
-        request.setCommand(split[0]);
-        String[] params = new String[split.length - 1];
-        System.arraycopy(split, 1, params, 0, params.length);
-        request.setParams(Arrays.asList(params));
+        if (message.getType() == RedisTokenType.ARRAY) {
+            ArrayRedisToken arrayToken = (ArrayRedisToken) message;
+            List<String> params = new LinkedList<String>();
+            for (RedisToken<?> token : arrayToken.getValue()) {
+                params.add(token.getValue().toString());
+            }
+            request.setCommand(params.get(0));
+            request.setParams(params.subList(1, params.size()));
+        }
         return request;
     }
 
     private String processCommand(IRequest request) {
         String cmd = request.getCommand();
-        LOGGER.log(Level.INFO, "command: {0}", cmd);
+        LOGGER.log(Level.INFO, "command: {0}", request);
 
         IResponse response = new Response();
         ICommand command = commands.get(cmd);
