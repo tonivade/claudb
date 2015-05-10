@@ -8,6 +8,8 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tonivade.db.redis.RedisToken;
+
 /**
  * Se encarga de gestionar la conexión con el servidor
  *
@@ -19,7 +21,7 @@ public class TinyDBConnectionHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger LOGGER = Logger.getLogger(TinyDBConnectionHandler.class.getName());
 
-    private ITinyDB impl;
+    private final ITinyDB impl;
 
     public TinyDBConnectionHandler(ITinyDB impl) {
         this.impl = impl;
@@ -36,7 +38,7 @@ public class TinyDBConnectionHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
-            impl.receive(ctx, (String) msg);
+            impl.receive(ctx, (RedisToken<?>) msg);
         } finally {
             ReferenceCountUtil.release(msg);
         }

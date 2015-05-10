@@ -2,6 +2,7 @@ package tonivade.db;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.SocketChannel;
+import tonivade.db.redis.RedisToken;
 
 /**
  *
@@ -37,6 +38,6 @@ public interface ITinyDB {
      * @param ctx
      * @param message
      */
-    public void receive(ChannelHandlerContext ctx, String message);
+    public void receive(ChannelHandlerContext ctx, RedisToken<?> message);
 
 }
