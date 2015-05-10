@@ -46,4 +46,15 @@ public class DatabaseValue {
         return i;
     }
 
+    /**
+    *
+    * @return
+    * @throws NumberFormatException
+    */
+   public int decrementAndGet() throws NumberFormatException {
+       int i = Integer.parseInt(value);
+       this.value = String.valueOf(--i);
+       return i;
+   }
+
 }
