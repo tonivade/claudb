@@ -14,10 +14,16 @@ public class IncrementCommand implements ICommand {
         try {
             DatabaseValue value = new DatabaseValue();
             value.setType(DataType.INTEGER);
-            value.setValue("0");
-            db.putIfAbsent(request.getParam(0), value);
-            int i = db.get(request.getParam(0)).incrementAndGet();
-            response.addInt(i);
+            value.setValue("1");
+            value = db.merge(request.getParam(0), value,
+                    (oldValue, newValue) -> {
+                        if (oldValue != null) {
+                            oldValue.incrementAndGet();
+                            return oldValue;
+                        }
+                        return newValue;
+                    });
+            response.addInt(value.getValue());
         } catch (NumberFormatException e) {
             response.addError("ERR value is not an integer or out of range");
         }
