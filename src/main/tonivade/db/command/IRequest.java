@@ -7,15 +7,15 @@ public interface IRequest {
     /**
      * @return the command
      */
-    public abstract String getCommand();
+    public String getCommand();
 
     /**
      * @return the params
      */
-    public abstract List<String> getParams();
+    public List<String> getParams();
 
-    public abstract String getParam(int i);
+    public String getParam(int i);
 
-    public abstract int getLength();
+    public int getLength();
 
 }

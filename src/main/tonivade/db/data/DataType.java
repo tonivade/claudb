@@ -3,7 +3,9 @@ package tonivade.db.data;
 public enum DataType {
 
     STRING,
-    INTEGER,
-    ARRAY
+    LIST,
+    SET,
+    ZSET,
+    HASH
 
 }

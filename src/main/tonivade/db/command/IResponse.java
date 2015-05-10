@@ -6,20 +6,17 @@ import tonivade.db.data.DatabaseValue;
 
 public interface IResponse {
 
-    public abstract IResponse addValue(DatabaseValue value);
+    public IResponse addValue(DatabaseValue value);
 
-    public abstract IResponse addBulkStr(String str);
+    public IResponse addArray(Collection<DatabaseValue> array);
 
-    public abstract IResponse addSimpleStr(String str);
+    public IResponse addBulkStr(Object str);
 
-    public abstract IResponse addInt(String str);
+    public IResponse addSimpleStr(Object str);
 
-    public abstract IResponse addInt(int i);
+    public IResponse addInt(Object str);
 
-    public abstract IResponse addInt(boolean b);
+    public IResponse addError(Object str);
 
-    public abstract IResponse addError(String str);
-
-    public abstract IResponse addArray(Collection<DatabaseValue> array);
 
 }

@@ -26,11 +26,13 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.Request;
 import tonivade.db.command.Response;
+import tonivade.db.command.impl.DecrementByCommand;
 import tonivade.db.command.impl.DecrementCommand;
 import tonivade.db.command.impl.DelCommand;
 import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
 import tonivade.db.command.impl.GetCommand;
+import tonivade.db.command.impl.IncrementByCommand;
 import tonivade.db.command.impl.IncrementCommand;
 import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.PingCommand;
@@ -89,15 +91,22 @@ public class TinyDB implements ITinyDB {
     }
 
     public void init() {
+        // connection
         commands.put("ping", new PingCommand());
-        commands.put("set", new CommandWrapper(new SetCommand(), 2));
-        commands.put("del", new CommandWrapper(new DelCommand(), 1));
-        commands.put("get", new CommandWrapper(new GetCommand(), 1));
-        commands.put("incr", new CommandWrapper(new IncrementCommand(), 1));
-        commands.put("decr", new CommandWrapper(new DecrementCommand(), 1));
         commands.put("echo", new CommandWrapper(new EchoCommand(), 1));
-        commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
+
+        // strings
+        commands.put("get", new CommandWrapper(new GetCommand(), 1));
         commands.put("mget", new CommandWrapper(new MultiGetCommand(), 1));
+        commands.put("set", new CommandWrapper(new SetCommand(), 2));
+        commands.put("incr", new CommandWrapper(new IncrementCommand(), 1));
+        commands.put("incrby", new CommandWrapper(new IncrementByCommand(), 2));
+        commands.put("decr", new CommandWrapper(new DecrementCommand(), 1));
+        commands.put("decrby", new CommandWrapper(new DecrementByCommand(), 2));
+
+        // keys
+        commands.put("del", new CommandWrapper(new DelCommand(), 1));
+        commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
     }
 
     public void start() {
