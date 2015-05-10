@@ -39,9 +39,9 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addBulkStr(java.lang.String)
      */
     @Override
-    public IResponse addBulkStr(Object str) {
+    public IResponse addBulkStr(String str) {
         if (str != null) {
-            sb.append(BULK_STRING).append(str.toString().length()).append(DELIMITER).append(str);
+            sb.append(BULK_STRING).append(str.length()).append(DELIMITER).append(str);
         } else {
             sb.append(BULK_STRING).append(-1);
         }
@@ -53,7 +53,7 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addSimpleStr(java.lang.String)
      */
     @Override
-    public IResponse addSimpleStr(Object str) {
+    public IResponse addSimpleStr(String str) {
         sb.append(SIMPLE_STRING).append(str);
         sb.append(DELIMITER);
         return this;
@@ -63,8 +63,22 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addInt(java.lang.String)
      */
     @Override
-    public IResponse addInt(Object str) {
+    public IResponse addInt(String str) {
         sb.append(INTEGER).append(str);
+        sb.append(DELIMITER);
+        return this;
+    }
+
+    @Override
+    public IResponse addInt(int value) {
+        sb.append(INTEGER).append(value);
+        sb.append(DELIMITER);
+        return this;
+    }
+
+    @Override
+    public IResponse addInt(boolean value) {
+        sb.append(INTEGER).append(value ? "1" : "0");
         sb.append(DELIMITER);
         return this;
     }
@@ -73,7 +87,7 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addError(java.lang.String)
      */
     @Override
-    public IResponse addError(Object str) {
+    public IResponse addError(String str) {
         sb.append(ERROR).append(str);
         sb.append(DELIMITER);
         return this;
@@ -83,11 +97,24 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addArray(java.lang.String[])
      */
     @Override
-    public IResponse addArray(Collection<DatabaseValue> array) {
+    public IResponse addArrayValue(Collection<DatabaseValue> array) {
         if (array != null) {
             sb.append(ARRAY).append(array.size()).append(DELIMITER);
             for (DatabaseValue value : array) {
                 addValue(value);
+            }
+        } else {
+            sb.append(ARRAY).append(0).append(DELIMITER);
+        }
+        return this;
+    }
+
+    @Override
+    public IResponse addArray(Collection<String> array) {
+        if (array != null) {
+            sb.append(ARRAY).append(array.size()).append(DELIMITER);
+            for (String value : array) {
+                addBulkStr(value);
             }
         } else {
             sb.append(ARRAY).append(0).append(DELIMITER);

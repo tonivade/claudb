@@ -32,7 +32,7 @@ public class HashSetCommand implements ICommand {
 
             Map<String, String> resultMap = resultValue.getValue();
 
-            response.addInt(resultMap.get(request.getParam(1)));
+            response.addInt(resultMap.get(request.getParam(1)) == null);
         } else {
             response.addError("WRONGTYPE Operation against a key holding the wrong kind of value");
         }
