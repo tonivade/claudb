@@ -5,10 +5,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 public class Database implements IDatabase {
 
-    private Map<String, DatabaseValue> cache = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, DatabaseValue> cache = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * @return
@@ -127,6 +128,14 @@ public class Database implements IDatabase {
     @Override
     public DatabaseValue putIfAbsent(String key, DatabaseValue value) {
         return cache.putIfAbsent(key, value);
+    }
+
+    @Override
+    public DatabaseValue merge(
+            String key,
+            DatabaseValue value,
+            BiFunction<? super DatabaseValue, ? super DatabaseValue, ? extends DatabaseValue> remappingFunction) {
+        return cache.merge(key, value, remappingFunction);
     }
 
 }

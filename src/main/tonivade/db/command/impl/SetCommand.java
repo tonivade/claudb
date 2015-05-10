@@ -19,7 +19,7 @@ public class SetCommand implements ICommand {
         DatabaseValue value = new DatabaseValue();
         value.setType(DataType.STRING);
         value.setValue(request.getParam(1));
-        db.put(request.getParam(0), value);
+        db.merge(request.getParam(0), value, (oldValue, newValue) -> newValue);
         response.addSimpleStr(OK);
     }
 
