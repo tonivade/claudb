@@ -138,4 +138,9 @@ public class Database implements IDatabase {
         return cache.merge(key, value, remappingFunction);
     }
 
+    @Override
+    public boolean isType(String key, DataType type) {
+        return cache.getOrDefault(key, new DatabaseValue(type)).getType() == type;
+    }
+
 }

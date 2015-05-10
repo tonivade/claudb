@@ -12,9 +12,7 @@ public class DecrementByCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = new DatabaseValue();
-            value.setType(DataType.STRING);
-            value.setValue("-1");
+            DatabaseValue value = new DatabaseValue(DataType.STRING, "-1");
             value = db.merge(request.getParam(0), value,
                     (oldValue, newValue) -> {
                         if (oldValue != null) {

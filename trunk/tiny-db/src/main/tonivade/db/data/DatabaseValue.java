@@ -7,6 +7,15 @@ public class DatabaseValue {
 
     private Object value;
 
+    public DatabaseValue(DataType type) {
+        this(type, null);
+    }
+
+    public DatabaseValue(DataType type, Object value) {
+        this.type = type;
+        this.value = value;
+    }
+
     /**
      * @return the type
      */
@@ -24,14 +33,15 @@ public class DatabaseValue {
     /**
      * @return the value
      */
-    public Object getValue() {
-        return value;
+    @SuppressWarnings("unchecked")
+    public <T> T getValue() {
+        return (T) value;
     }
 
     /**
      * @param value the value to set
      */
-    public void setValue(Object value) {
+    public <T> void setValue(T value) {
         this.value = value;
     }
 
