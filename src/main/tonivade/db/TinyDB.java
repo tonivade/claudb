@@ -14,6 +14,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,9 @@ import tonivade.db.command.impl.DelCommand;
 import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
 import tonivade.db.command.impl.GetCommand;
+import tonivade.db.command.impl.HashGetAllCommand;
+import tonivade.db.command.impl.HashGetCommand;
+import tonivade.db.command.impl.HashSetCommand;
 import tonivade.db.command.impl.IncrementByCommand;
 import tonivade.db.command.impl.IncrementCommand;
 import tonivade.db.command.impl.MultiGetCommand;
@@ -40,6 +44,7 @@ import tonivade.db.command.impl.SetCommand;
 import tonivade.db.data.Database;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.RedisToken.ArrayRedisToken;
+import tonivade.db.redis.RedisToken.UnknownRedisToken;
 import tonivade.db.redis.RedisTokenType;
 import tonivade.db.redis.RequestDecoder;
 
@@ -107,6 +112,11 @@ public class TinyDB implements ITinyDB {
         // keys
         commands.put("del", new CommandWrapper(new DelCommand(), 1));
         commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
+
+        // hash
+        commands.put("hset", new CommandWrapper(new HashSetCommand(), 3));
+        commands.put("hget", new CommandWrapper(new HashGetCommand(), 2));
+        commands.put("hgetall", new CommandWrapper(new HashGetAllCommand(), 1));
     }
 
     public void start() {
@@ -131,7 +141,7 @@ public class TinyDB implements ITinyDB {
             throw new TinyDBException(e);
         }
 
-        LOGGER.info(() -> "adapter started: {0}" + host + ":" + port);
+        LOGGER.info(() -> "adapter started: " + host + ":" + port);
     }
 
     public void stop() {
@@ -218,6 +228,14 @@ public class TinyDB implements ITinyDB {
             }
             request.setCommand(params.get(0));
             request.setParams(params.subList(1, params.size()));
+        } else if (message.getType() == RedisTokenType.UNKNOWN) {
+            UnknownRedisToken unknownToken = (UnknownRedisToken) message;
+            String command = unknownToken.getValue();
+            String[] params = command.split(" ");
+            request.setCommand(params[0]);
+            String[] array = new String[params.length - 1];
+            System.arraycopy(params, 1, array, 0, array.length);
+            request.setParams(Arrays.asList(array));
         }
         return request;
     }

@@ -16,9 +16,7 @@ public class SetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = new DatabaseValue();
-        value.setType(DataType.STRING);
-        value.setValue(request.getParam(1));
+        DatabaseValue value = new DatabaseValue(DataType.STRING, request.getParam(1));
         db.merge(request.getParam(0), value, (oldValue, newValue) -> newValue);
         response.addSimpleStr(OK);
     }
