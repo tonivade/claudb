@@ -14,7 +14,7 @@ public class Response implements IResponse {
 
     private static final String DELIMITER = "\r\n";
 
-    private StringBuilder sb = new StringBuilder();
+    private final StringBuilder sb = new StringBuilder();
 
     /* (non-Javadoc)
      * @see tonivade.db.command.IResponse#addValue(tonivade.db.data.DatabaseValue)
@@ -25,9 +25,6 @@ public class Response implements IResponse {
             switch (value.getType()) {
             case STRING:
                 addBulkStr(value.getValue());
-                break;
-            case INTEGER:
-                addInt(value.getValue());
                 break;
             default:
                 break;
@@ -42,9 +39,9 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addBulkStr(java.lang.String)
      */
     @Override
-    public IResponse addBulkStr(String str) {
+    public IResponse addBulkStr(Object str) {
         if (str != null) {
-            sb.append(BULK_STRING).append(str.length()).append(DELIMITER).append(str);
+            sb.append(BULK_STRING).append(str.toString().length()).append(DELIMITER).append(str);
         } else {
             sb.append(BULK_STRING).append(-1);
         }
@@ -56,7 +53,7 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addSimpleStr(java.lang.String)
      */
     @Override
-    public IResponse addSimpleStr(String str) {
+    public IResponse addSimpleStr(Object str) {
         sb.append(SIMPLE_STRING).append(str);
         sb.append(DELIMITER);
         return this;
@@ -66,28 +63,8 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addInt(java.lang.String)
      */
     @Override
-    public IResponse addInt(String str) {
+    public IResponse addInt(Object str) {
         sb.append(INTEGER).append(str);
-        sb.append(DELIMITER);
-        return this;
-    }
-
-    /* (non-Javadoc)
-     * @see tonivade.db.command.IResponse#addInt(int)
-     */
-    @Override
-    public IResponse addInt(int i) {
-        sb.append(INTEGER).append(i);
-        sb.append(DELIMITER);
-        return this;
-    }
-
-    /* (non-Javadoc)
-     * @see tonivade.db.command.IResponse#addInt(boolean)
-     */
-    @Override
-    public IResponse addInt(boolean b) {
-        sb.append(INTEGER).append(b ? 1 : 0);
         sb.append(DELIMITER);
         return this;
     }
@@ -96,7 +73,7 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addError(java.lang.String)
      */
     @Override
-    public IResponse addError(String str) {
+    public IResponse addError(Object str) {
         sb.append(ERROR).append(str);
         sb.append(DELIMITER);
         return this;

@@ -5,7 +5,7 @@ public class DatabaseValue {
 
     private DataType type;
 
-    private String value;
+    private Object value;
 
     /**
      * @return the type
@@ -24,14 +24,14 @@ public class DatabaseValue {
     /**
      * @return the value
      */
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
     /**
      * @param value the value to set
      */
-    public void setValue(String value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -40,21 +40,21 @@ public class DatabaseValue {
      * @return
      * @throws NumberFormatException
      */
-    public int incrementAndGet() throws NumberFormatException {
-        int i = Integer.parseInt(value);
-        this.value = String.valueOf(++i);
+    public int incrementAndGet(int increment) throws NumberFormatException {
+        int i = Integer.parseInt(value.toString()) + increment;
+        this.value = String.valueOf(i);
         return i;
     }
 
     /**
-    *
-    * @return
-    * @throws NumberFormatException
-    */
-   public int decrementAndGet() throws NumberFormatException {
-       int i = Integer.parseInt(value);
-       this.value = String.valueOf(--i);
-       return i;
-   }
+     *
+     * @return
+     * @throws NumberFormatException
+     */
+    public int decrementAndGet(int decrement) throws NumberFormatException {
+        int i = Integer.parseInt(value.toString()) - decrement;
+        this.value = String.valueOf(i);
+        return i;
+    }
 
 }

@@ -7,18 +7,19 @@ import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
-public class DecrementCommand implements ICommand {
+public class IncrementByCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
             DatabaseValue value = new DatabaseValue();
             value.setType(DataType.STRING);
-            value.setValue("-1");
+            value.setValue("1");
             value = db.merge(request.getParam(0), value,
                     (oldValue, newValue) -> {
                         if (oldValue != null) {
-                            oldValue.decrementAndGet(1);
+                            int increment = Integer.parseInt(request.getParam(1));
+                            oldValue.incrementAndGet(increment);
                             return oldValue;
                         }
                         return newValue;
