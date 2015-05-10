@@ -29,6 +29,7 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.Request;
 import tonivade.db.command.Response;
+import tonivade.db.command.impl.DecrementCommand;
 import tonivade.db.command.impl.DelCommand;
 import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
@@ -92,6 +93,7 @@ public class TinyDB implements ITinyDB {
         commands.put("del", new CommandWrapper(new DelCommand(), 1));
         commands.put("get", new CommandWrapper(new GetCommand(), 1));
         commands.put("incr", new CommandWrapper(new IncrementCommand(), 1));
+        commands.put("decr", new CommandWrapper(new DecrementCommand(), 1));
         commands.put("echo", new CommandWrapper(new EchoCommand(), 1));
         commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
         commands.put("mget", new CommandWrapper(new MultiGetCommand(), 1));
