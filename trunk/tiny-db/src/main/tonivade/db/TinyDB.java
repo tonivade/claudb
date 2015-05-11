@@ -244,7 +244,7 @@ public class TinyDB implements ITinyDB {
         LOGGER.info(() -> "received command: " + request);
 
         IResponse response = new Response();
-        ICommand command = commands.get(request.getCommand());
+        ICommand command = commands.get(request.getCommand().toLowerCase());
         if (command != null) {
             command.execute(db, request, response);
         } else {
