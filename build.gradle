@@ -27,4 +27,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'org.mapdb:mapdb:1.0.7'
     testCompile 'junit:junit:4.10'
+    testCompile 'redis.clients:jedis:2.6.3'
 }

@@ -1,15 +1,14 @@
 package tonivade.db.data;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 public class Database implements IDatabase {
 
-    private final Map<String, DatabaseValue> cache = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, DatabaseValue> cache = new ConcurrentHashMap<>();
 
     /**
      * @return
