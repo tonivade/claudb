@@ -166,7 +166,7 @@ public class TinyDB implements ITinyDB {
      */
     @Override
     public void channel(SocketChannel channel) {
-        LOGGER.info(() -> "new channel: " + sourceKey(channel));
+        LOGGER.fine(() -> "new channel: " + sourceKey(channel));
 
         channel.pipeline().addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));
         channel.pipeline().addLast("linDelimiter", new RequestDecoder(MAX_FRAME_SIZE));
@@ -184,7 +184,7 @@ public class TinyDB implements ITinyDB {
     public void connected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
 
-        LOGGER.info(() -> "client connected: " + sourceKey);
+        LOGGER.fine(() -> "client connected: " + sourceKey);
 
         channels.put(sourceKey, ctx);
     }
@@ -198,7 +198,7 @@ public class TinyDB implements ITinyDB {
     public void disconnected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
 
-        LOGGER.info(() -> "client disconnected: " + sourceKey);
+        LOGGER.fine(() -> "client disconnected: " + sourceKey);
 
         channels.remove(sourceKey);
     }
@@ -241,7 +241,7 @@ public class TinyDB implements ITinyDB {
     }
 
     private String processCommand(IRequest request) {
-        LOGGER.info(() -> "received command: " + request);
+        LOGGER.fine(() -> "received command: " + request);
 
         IResponse response = new Response();
         ICommand command = commands.get(request.getCommand().toLowerCase());
