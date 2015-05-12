@@ -32,6 +32,7 @@ import tonivade.db.command.impl.DecrementCommand;
 import tonivade.db.command.impl.DelCommand;
 import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
+import tonivade.db.command.impl.FlushDBCommand;
 import tonivade.db.command.impl.GetCommand;
 import tonivade.db.command.impl.HashGetAllCommand;
 import tonivade.db.command.impl.HashGetCommand;
@@ -41,6 +42,7 @@ import tonivade.db.command.impl.IncrementCommand;
 import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
+import tonivade.db.command.impl.TimeCommand;
 import tonivade.db.data.Database;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.RedisToken.ArrayRedisToken;
@@ -99,6 +101,10 @@ public class TinyDB implements ITinyDB {
         // connection
         commands.put("ping", new PingCommand());
         commands.put("echo", new CommandWrapper(new EchoCommand(), 1));
+
+        // server
+        commands.put("flushdb", new FlushDBCommand());
+        commands.put("time", new TimeCommand());
 
         // strings
         commands.put("get", new CommandWrapper(new GetCommand(), 1));
