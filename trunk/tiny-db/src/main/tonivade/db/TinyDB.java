@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import tonivade.db.command.CommandWrapper;
@@ -44,6 +45,7 @@ import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
 import tonivade.db.command.impl.TimeCommand;
 import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.RedisToken.ArrayRedisToken;
 import tonivade.db.redis.RedisToken.UnknownRedisToken;
@@ -84,7 +86,7 @@ public class TinyDB implements ITinyDB {
 
     private final Map<String, ICommand> commands = new HashMap<>();
 
-    private final Database db = new Database();
+    private final Database db = new Database(new ConcurrentHashMap<String, DatabaseValue>());
 
     private ChannelFuture future;
 
