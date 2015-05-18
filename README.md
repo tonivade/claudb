@@ -2,7 +2,7 @@ TinyDB
 ======
 
 TinyDB is a REDIS implementation in Java. At this moment is in the first stage of development
-and only implementa a small subset of commands. The objetive is implement a full functional
+and only implements a small subset of commands. The objetive is implement a full functional
 one-to-one replacement for REDIS.
 
 You probably will wonder why I do this, the answer is Just For Fun.
@@ -20,7 +20,7 @@ Implemented commands
 - INCRBY
 - DECRBY
 - HGET
-- GSET
+- HSET
 - HGETALL
 - PING
 - ECHO
