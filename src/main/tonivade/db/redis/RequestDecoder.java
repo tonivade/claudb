@@ -36,7 +36,11 @@ public class RequestDecoder extends LineBasedFrameDecoder {
         ByteBuf readLine = (ByteBuf) super.decode(ctx, buffer);
 
         if (readLine != null) {
-            return readLine.toString(Charset.forName("UTF-8"));
+            try {
+                return readLine.toString(Charset.forName("UTF-8"));
+            } finally {
+                readLine.release();
+            }
         } else {
             return null;
         }
