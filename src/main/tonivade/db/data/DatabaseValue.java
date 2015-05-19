@@ -1,17 +1,19 @@
 package tonivade.db.data;
 
+import java.io.Serializable;
 
-public class DatabaseValue {
+
+public class DatabaseValue implements Serializable {
 
     private DataType type;
 
-    private Object value;
+    private Serializable value;
 
     public DatabaseValue(DataType type) {
         this(type, null);
     }
 
-    public DatabaseValue(DataType type, Object value) {
+    public DatabaseValue(DataType type, Serializable value) {
         this.type = type;
         this.value = value;
     }
@@ -34,14 +36,14 @@ public class DatabaseValue {
      * @return the value
      */
     @SuppressWarnings("unchecked")
-    public <T> T getValue() {
+    public <T extends Serializable> T getValue() {
         return (T) value;
     }
 
     /**
      * @param value the value to set
      */
-    public <T> void setValue(T value) {
+    public <T extends Serializable> void setValue(T value) {
         this.value = value;
     }
 

@@ -16,7 +16,7 @@ public class HashSetCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         if (db.isType(request.getParam(0), DataType.HASH)) {
             DatabaseValue value = new DatabaseValue(DataType.HASH);
-            Map<String, String> map = new HashMap<>();
+            HashMap<String, String> map = new HashMap<>();
             map.put(request.getParam(1), request.getParam(2));
             value.setValue(map);
 
