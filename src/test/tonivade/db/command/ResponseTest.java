@@ -9,6 +9,9 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
+import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseValue;
+
 public class ResponseTest {
 
     private Response response;
@@ -20,7 +23,12 @@ public class ResponseTest {
 
     @Test
     public void testAddValue() {
-        fail("Not yet implemented");
+        assertThat(response.addValue(new DatabaseValue(DataType.STRING, "test")).toString(), is("$4\r\ntest\r\n"));
+    }
+
+    @Test
+    public void testAddValueNull() throws Exception {
+        assertThat(response.addValue(null).toString(), is("$-1\r\n"));
     }
 
     @Test
