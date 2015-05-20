@@ -30,7 +30,7 @@ import tonivade.db.command.Request;
 import tonivade.db.command.Response;
 import tonivade.db.command.impl.DecrementByCommand;
 import tonivade.db.command.impl.DecrementCommand;
-import tonivade.db.command.impl.DelCommand;
+import tonivade.db.command.impl.DeleteCommand;
 import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
 import tonivade.db.command.impl.FlushDBCommand;
@@ -118,7 +118,7 @@ public class TinyDB implements ITinyDB {
         commands.put("decrby", new CommandWrapper(new DecrementByCommand(), 2));
 
         // keys
-        commands.put("del", new CommandWrapper(new DelCommand(), 1));
+        commands.put("del", new CommandWrapper(new DeleteCommand(), 1));
         commands.put("exists", new CommandWrapper(new ExistsCommand(), 1));
 
         // hash

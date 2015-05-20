@@ -5,7 +5,7 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.data.IDatabase;
 
-public class DelCommand implements ICommand {
+public class DeleteCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
