@@ -1,6 +1,7 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +26,13 @@ public class EchoCommandTest {
 
     @Test
     public void testExecute() {
+        when(request.getParam(0)).thenReturn("test");
+
         EchoCommand command = new EchoCommand();
 
         command.execute(db, request, response);
 
-        verify(response).addSimpleStr("PONG");
+        verify(response).addBulkStr("test");
     }
 
 }
