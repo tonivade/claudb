@@ -16,8 +16,7 @@ public class DecrementCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = new DatabaseValue(DataType.STRING, "-1");
-            value = db.merge(request.getParam(0), value,
+            DatabaseValue value = db.merge(request.getParam(0), new DatabaseValue(DataType.STRING, "-1"),
                     (oldValue, newValue) -> {
                         if (oldValue != null) {
                             oldValue.decrementAndGet(1);
