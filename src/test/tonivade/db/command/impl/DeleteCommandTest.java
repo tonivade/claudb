@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
@@ -25,11 +26,15 @@ public class DeleteCommandTest {
 
     @Test
     public void testExecute() {
+        Mockito.when(request.getParam(0)).thenReturn("test");
+
         DeleteCommand command = new DeleteCommand();
 
         command.execute(db, request, response);
 
-        verify(response).addSimpleStr("PONG");
+        verify(db).remove("test");
+
+        verify(response).addSimpleStr("OK");
     }
 
 }

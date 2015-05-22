@@ -1,6 +1,7 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +26,14 @@ public class ExistsCommandTest {
 
     @Test
     public void testExecute() {
+        when(request.getParam(0)).thenReturn("test");
+        when(db.containsKey("test")).thenReturn(true);
+
         ExistsCommand command = new ExistsCommand();
 
         command.execute(db, request, response);
 
-        verify(response).addSimpleStr("PONG");
+        verify(response).addInt(true);
     }
 
 }

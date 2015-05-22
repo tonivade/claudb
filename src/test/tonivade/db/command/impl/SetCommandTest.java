@@ -25,7 +25,7 @@ public class SetCommandTest {
 
     @Test
     public void testExecute() {
-        PingCommand command = new PingCommand();
+        SetCommand command = new SetCommand();
 
         command.execute(db, request, response);
 

@@ -29,7 +29,9 @@ public class FlushDBCommandTest {
 
         command.execute(db, request, response);
 
-        verify(response).addSimpleStr("PONG");
+        verify(db).clear();
+
+        verify(response).addSimpleStr("OK");
     }
 
 }
