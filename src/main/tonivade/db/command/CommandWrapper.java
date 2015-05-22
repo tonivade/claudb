@@ -29,7 +29,7 @@ public class CommandWrapper implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         if (request.getLength() < params) {
             response.addError("ERR wrong number of arguments for '" + request.getCommand() + "' command");
-        } else if (!db.isType(request.getParam(0), dataType)) {
+        } else if (dataType != null && !db.isType(request.getParam(0), dataType)) {
             response.addError("WRONGTYPE Operation against a key holding the wrong kind of value");
         } else {
             command.execute(db, request, response);
