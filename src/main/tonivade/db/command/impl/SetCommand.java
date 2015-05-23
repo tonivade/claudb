@@ -1,11 +1,10 @@
 package tonivade.db.command.impl;
 
+import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.ParamLength;
-import tonivade.db.data.DataType;
-import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 /**
@@ -18,8 +17,7 @@ public class SetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = new DatabaseValue(DataType.STRING, request.getParam(1));
-        db.merge(request.getParam(0), value, (oldValue, newValue) -> newValue);
+        db.merge(request.getParam(0), string(request.getParam(1)), (oldValue, newValue) -> newValue);
         response.addSimpleStr(OK);
     }
 

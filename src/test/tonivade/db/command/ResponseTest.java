@@ -2,6 +2,9 @@ package tonivade.db.command;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.data.DatabaseValue.hash;
+import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +12,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 
 public class ResponseTest {
@@ -22,8 +24,13 @@ public class ResponseTest {
     }
 
     @Test
-    public void testAddValue() {
-        assertThat(response.addValue(value("test")).toString(), is("$4\r\ntest\r\n"));
+    public void testAddValueString() {
+        assertThat(response.addValue(string("test")).toString(), is("$4\r\ntest\r\n"));
+    }
+
+    @Test
+    public void testAddValueHash() {
+        assertThat(response.addValue(hash(entry("key", "value"))).toString(), is("*2\r\n$3\r\nkey\r\n$5\r\nvalue\r\n"));
     }
 
     @Test
@@ -68,7 +75,7 @@ public class ResponseTest {
 
     @Test
     public void testAddArrayValue() {
-        List<DatabaseValue> array = Arrays.asList(value("1"), value("2"), value("3"));
+        List<DatabaseValue> array = Arrays.asList(string("1"), string("2"), string("3"));
         assertThat(response.addArrayValue(array).toString(), is("*3\r\n$1\r\n1\r\n$1\r\n2\r\n$1\r\n3\r\n"));
     }
 
@@ -86,10 +93,6 @@ public class ResponseTest {
     @Test
     public void testAddArrayNull() {
         assertThat(response.addArray(null).toString(), is("*0\r\n"));
-    }
-
-    private DatabaseValue value(String value) {
-        return new DatabaseValue(DataType.STRING, value);
     }
 
 }

@@ -4,10 +4,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.data.DatabaseValue.hash;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
-import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
@@ -35,43 +34,29 @@ public class HashGetAllCommandTest {
     private IResponse response;
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<DatabaseValue> captor;
 
     @Test
     public void testExecute() {
         when(request.getParam(0)).thenReturn("a");
-        when(db.get("a")).thenReturn(new DatabaseValue(DataType.HASH, map()));
+        when(db.get("a")).thenReturn(hash(
+                entry("key1", "value1"),
+                entry("key2", "value2"),
+                entry("key3", "value3")));
 
         HashGetAllCommand command = new HashGetAllCommand();
 
         command.execute(db, request, response);
 
-        verify(response).addArray(captor.capture());
+        verify(response).addValue(captor.capture());
 
-        Collection<String> value = captor.getValue();
+        DatabaseValue value = captor.getValue();
 
-        Iterator<String> iterator = value.iterator();
-        String key1 = iterator.next();
-        String value1 = iterator.next();
-        String key2 = iterator.next();
-        String value2 = iterator.next();
-        String key3 = iterator.next();
-        String value3 = iterator.next();
+        Map<String, String> map = value.getValue();
 
-        assertThat(key1, is("key1"));
-        assertThat(value1, is("value1"));
-        assertThat(key2, is("key2"));
-        assertThat(value2, is("value2"));
-        assertThat(key3, is("key3"));
-        assertThat(value3, is("value3"));
-    }
-
-    private HashMap<String, String> map() {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        map.put("key3", "value3");
-        return map;
+        assertThat(map.get("key1"), is("value1"));
+        assertThat(map.get("key2"), is("value2"));
+        assertThat(map.get("key3"), is("value3"));
     }
 
 }

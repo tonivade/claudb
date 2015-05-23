@@ -1,6 +1,8 @@
 package tonivade.db.command.impl;
 
-import java.util.HashMap;
+import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.data.DatabaseValue.hash;
+
 import java.util.Map;
 
 import tonivade.db.command.ICommand;
@@ -18,10 +20,7 @@ public class HashSetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = new DatabaseValue(DataType.HASH);
-        HashMap<String, String> map = new HashMap<>();
-        map.put(request.getParam(1), request.getParam(2));
-        value.setValue(map);
+        DatabaseValue value = hash(entry(request.getParam(1), request.getParam(2)));
 
         DatabaseValue resultValue = db.merge(request.getParam(0), value, (oldValue, newValue) -> {
             if (oldValue != null) {

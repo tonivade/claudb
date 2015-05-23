@@ -4,6 +4,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.function.BiFunction;
 
@@ -65,15 +66,11 @@ public class SetCommandTest {
                             public boolean matches(Object value) {
                                 BiFunction<DatabaseValue, DatabaseValue, DatabaseValue> function =
                                         (BiFunction<DatabaseValue, DatabaseValue, DatabaseValue>) value;
-                                DatabaseValue db = function.apply(value("0"), value("1"));
+                                DatabaseValue db = function.apply(string("0"), string("1"));
                                 return db.getValue().equals("1");
                             }
                         }));
         verify(response).addSimpleStr("OK");
-    }
-
-    private DatabaseValue value(String value) {
-        return new DatabaseValue(DataType.STRING, value);
     }
 
 }

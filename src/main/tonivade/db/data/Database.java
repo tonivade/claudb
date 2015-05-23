@@ -81,12 +81,20 @@ public class Database implements IDatabase {
      */
     @Override
     public DatabaseValue get(Object key) {
-        long stamp = lock.readLock();
-        try {
-            return cache.get(key);
-        } finally {
-            lock.unlockRead(stamp);
+        DatabaseValue value = null;
+
+        long optimistic = lock.tryOptimisticRead();
+        value = cache.get(key);
+        if (!lock.validate(optimistic)) {
+            long stamp = lock.readLock();
+            try {
+                value = cache.get(key);
+            } finally {
+                lock.unlockRead(stamp);
+            }
         }
+
+        return value;
     }
 
     /**

@@ -1,6 +1,9 @@
 package tonivade.db.command;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import tonivade.db.data.DatabaseValue;
 
@@ -25,6 +28,15 @@ public class Response implements IResponse {
             switch (value.getType()) {
             case STRING:
                 addBulkStr(value.getValue());
+                break;
+            case HASH:
+                Map<String, String> map = value.getValue();
+                List<String> list = new LinkedList<>();
+                map.forEach((k, v) ->  {
+                    list.add(k);
+                    list.add(v);
+                });
+                addArray(list);
                 break;
             default:
                 break;

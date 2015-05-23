@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,7 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
-import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
@@ -41,8 +41,8 @@ public class MultiGetCommandTest {
     @Test
     public void testExecute() {
         when(request.getParams()).thenReturn(Arrays.asList("a", "b", "c"));
-        when(db.get("a")).thenReturn(value("1"));
-        when(db.get("c")).thenReturn(value("2"));
+        when(db.get("a")).thenReturn(string("1"));
+        when(db.get("c")).thenReturn(string("2"));
 
         MultiGetCommand command = new MultiGetCommand();
 
@@ -60,10 +60,6 @@ public class MultiGetCommandTest {
         assertThat(a.getValue(), is("1"));
         assertThat(b, is(CoreMatchers.nullValue()));
         assertThat(c.getValue(), is("2"));
-    }
-
-    private DatabaseValue value(String value) {
-        return new DatabaseValue(DataType.STRING, value);
     }
 
 }
