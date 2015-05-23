@@ -34,12 +34,14 @@ import tonivade.db.command.impl.EchoCommand;
 import tonivade.db.command.impl.ExistsCommand;
 import tonivade.db.command.impl.FlushDBCommand;
 import tonivade.db.command.impl.GetCommand;
+import tonivade.db.command.impl.GetSetCommand;
 import tonivade.db.command.impl.HashGetAllCommand;
 import tonivade.db.command.impl.HashGetCommand;
 import tonivade.db.command.impl.HashSetCommand;
 import tonivade.db.command.impl.IncrementByCommand;
 import tonivade.db.command.impl.IncrementCommand;
 import tonivade.db.command.impl.MultiGetCommand;
+import tonivade.db.command.impl.MultiSetCommand;
 import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
 import tonivade.db.command.impl.TimeCommand;
@@ -111,6 +113,8 @@ public class TinyDB implements ITinyDB {
         commands.put("get", new CommandWrapper(new GetCommand()));
         commands.put("mget", new CommandWrapper(new MultiGetCommand()));
         commands.put("set", new CommandWrapper(new SetCommand()));
+        commands.put("mset", new CommandWrapper(new MultiSetCommand()));
+        commands.put("getset", new CommandWrapper(new GetSetCommand()));
         commands.put("incr", new CommandWrapper(new IncrementCommand()));
         commands.put("incrby", new CommandWrapper(new IncrementByCommand()));
         commands.put("decr", new CommandWrapper(new DecrementCommand()));
@@ -273,11 +277,33 @@ public class TinyDB implements ITinyDB {
     }
 
     public static void main(String[] args) throws Exception {
-        TinyDB db = new TinyDB();
+        System.out.println("usage: tinydb <host> <port>");
+
+        TinyDB db = new TinyDB(parseHost(args), parsePort(args));
         db.init();
         db.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
+    }
+
+    private static String parseHost(String[] args) {
+        String host = DEFAULT_HOST;
+        if (args.length > 0) {
+            host = args[0];
+        }
+        return host;
+    }
+
+    private static int parsePort(String[] args) {
+        int port = DEFAULT_PORT;
+        if (args.length > 1) {
+            try {
+                port = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.out.println("worng port value: " + args[1]);
+            }
+        }
+        return port;
     }
 
 }
