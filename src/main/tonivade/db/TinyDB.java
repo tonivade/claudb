@@ -44,6 +44,7 @@ import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.MultiSetCommand;
 import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
+import tonivade.db.command.impl.StringLengthCommand;
 import tonivade.db.command.impl.TimeCommand;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
@@ -119,6 +120,7 @@ public class TinyDB implements ITinyDB {
         commands.put("incrby", new CommandWrapper(new IncrementByCommand()));
         commands.put("decr", new CommandWrapper(new DecrementCommand()));
         commands.put("decrby", new CommandWrapper(new DecrementByCommand()));
+        commands.put("strlen", new CommandWrapper(new StringLengthCommand()));
 
         // keys
         commands.put("del", new CommandWrapper(new DeleteCommand()));

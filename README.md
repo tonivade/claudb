@@ -28,6 +28,7 @@ Implemented commands
 - ECHO
 - TIME
 - FLUSHDB
+- STRLEN
 
 Design
 ------
