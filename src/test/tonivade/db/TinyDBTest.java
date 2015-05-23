@@ -34,9 +34,16 @@ public class TinyDBTest {
     public void testCommands() throws Exception {
         try (Jedis jedis = new Jedis("localhost", 7081)) {
             assertThat(jedis.ping(), is("PONG"));
+            assertThat(jedis.echo("Hi!"), is("Hi!"));
             assertThat(jedis.set("a", "1"), is("OK"));
+            assertThat(jedis.strlen("a"), is(1L));
+            assertThat(jedis.strlen("b"), is(0L));
+            assertThat(jedis.exists("a"), is(true));
+            assertThat(jedis.exists("b"), is(false));
             assertThat(jedis.get("a"), is("1"));
             assertThat(jedis.get("b"), is(nullValue()));
+            assertThat(jedis.getSet("a", "2"), is("1"));
+            assertThat(jedis.get("a"), is("2"));
             assertThat(jedis.del("a"), is(1L));
             assertThat(jedis.get("a"), is(nullValue()));
         }

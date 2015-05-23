@@ -37,9 +37,9 @@ public class GetSetCommandTest {
 
     @Test
     public void testExecute() {
-        when(db.merge(eq("a"), any(), any())).thenReturn(string("1"));
         when(request.getParam(0)).thenReturn("a");
         when(request.getParam(1)).thenReturn("2");
+        when(db.put(eq("a"), any())).thenReturn(string("1"));
 
         GetSetCommand command = new GetSetCommand();
 
