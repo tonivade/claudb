@@ -132,9 +132,9 @@ public class TinyDB implements ITinyDB {
         workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
         acceptHandler = new TinyDBInitializerHandler(this);
         connectionHandler = new TinyDBConnectionHandler(this);
-        try {
-            bootstrap = new ServerBootstrap();
-            bootstrap.group(bossGroup, workerGroup)
+
+        bootstrap = new ServerBootstrap();
+        bootstrap.group(bossGroup, workerGroup)
             .channel(NioServerSocketChannel.class)
             .childHandler(acceptHandler)
             .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
@@ -143,11 +143,8 @@ public class TinyDB implements ITinyDB {
             .childOption(ChannelOption.SO_KEEPALIVE, true)
             .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
-            // Bind and start to accept incoming connections.
-            future = bootstrap.bind(host, port);
-        } catch(RuntimeException e) {
-            throw new TinyDBException(e);
-        }
+        // Bind and start to accept incoming connections.
+        future = bootstrap.bind(host, port);
 
         LOGGER.info(() -> "adapter started: " + host + ":" + port);
     }
