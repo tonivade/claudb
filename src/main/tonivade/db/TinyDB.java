@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import tonivade.db.command.CommandWrapper;
@@ -86,7 +85,7 @@ public class TinyDB implements ITinyDB {
 
     private final Map<String, ICommand> commands = new HashMap<>();
 
-    private final Database db = new Database(new ConcurrentHashMap<String, DatabaseValue>());
+    private final Database db = new Database(new HashMap<String, DatabaseValue>());
 
     private ChannelFuture future;
 

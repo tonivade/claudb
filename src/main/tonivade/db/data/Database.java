@@ -3,9 +3,12 @@ package tonivade.db.data;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiFunction;
 
 public class Database implements IDatabase {
+
+    private StampedLock lock = new StampedLock();
 
     private final Map<String, DatabaseValue> cache;
 
@@ -19,7 +22,12 @@ public class Database implements IDatabase {
      */
     @Override
     public int size() {
-        return cache.size();
+        long stamp = lock.readLock();
+        try {
+            return cache.size();
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
     /**
@@ -28,7 +36,12 @@ public class Database implements IDatabase {
      */
     @Override
     public boolean isEmpty() {
-        return cache.isEmpty();
+        long stamp = lock.readLock();
+        try {
+            return cache.isEmpty();
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
     /**
@@ -38,7 +51,12 @@ public class Database implements IDatabase {
      */
     @Override
     public boolean containsKey(Object key) {
-        return cache.containsKey(key);
+        long stamp = lock.readLock();
+        try {
+            return cache.containsKey(key);
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
     /**
@@ -48,7 +66,12 @@ public class Database implements IDatabase {
      */
     @Override
     public boolean containsValue(Object value) {
-        return cache.containsValue(value);
+        long stamp = lock.readLock();
+        try {
+            return cache.containsValue(value);
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
     /**
@@ -58,7 +81,12 @@ public class Database implements IDatabase {
      */
     @Override
     public DatabaseValue get(Object key) {
-        return cache.get(key);
+        long stamp = lock.readLock();
+        try {
+            return cache.get(key);
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
     /**
@@ -69,7 +97,12 @@ public class Database implements IDatabase {
      */
     @Override
     public DatabaseValue put(String key, DatabaseValue value) {
-        return cache.put(key, value);
+        long stamp = lock.writeLock();
+        try {
+            return cache.put(key, value);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     /**
@@ -79,7 +112,12 @@ public class Database implements IDatabase {
      */
     @Override
     public DatabaseValue remove(Object key) {
-        return cache.remove(key);
+        long stamp = lock.writeLock();
+        try {
+            return cache.remove(key);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     /**
@@ -88,7 +126,12 @@ public class Database implements IDatabase {
      */
     @Override
     public void putAll(Map<? extends String, ? extends DatabaseValue> m) {
-        cache.putAll(m);
+        long stamp = lock.writeLock();
+        try {
+            cache.putAll(m);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     /**
@@ -97,7 +140,12 @@ public class Database implements IDatabase {
      */
     @Override
     public void clear() {
-        cache.clear();
+        long stamp = lock.writeLock();
+        try {
+            cache.clear();
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     /**
@@ -129,7 +177,12 @@ public class Database implements IDatabase {
 
     @Override
     public DatabaseValue putIfAbsent(String key, DatabaseValue value) {
-        return cache.putIfAbsent(key, value);
+        long stamp = lock.writeLock();
+        try {
+            return cache.putIfAbsent(key, value);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     @Override
@@ -137,12 +190,22 @@ public class Database implements IDatabase {
             String key,
             DatabaseValue value,
             BiFunction<? super DatabaseValue, ? super DatabaseValue, ? extends DatabaseValue> remappingFunction) {
-        return cache.merge(key, value, remappingFunction);
+        long stamp = lock.writeLock();
+        try {
+            return cache.merge(key, value, remappingFunction);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
     }
 
     @Override
     public boolean isType(String key, DataType type) {
-        return cache.getOrDefault(key, new DatabaseValue(type)).getType() == type;
+        long stamp = lock.readLock();
+        try {
+            return cache.getOrDefault(key, new DatabaseValue(type)).getType() == type;
+        } finally {
+            lock.unlockRead(stamp);
+        }
     }
 
 }
