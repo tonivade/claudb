@@ -46,6 +46,7 @@ import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.SetCommand;
 import tonivade.db.command.impl.StringLengthCommand;
 import tonivade.db.command.impl.TimeCommand;
+import tonivade.db.command.impl.TypeCommand;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.RedisToken;
@@ -125,6 +126,7 @@ public class TinyDB implements ITinyDB {
         // keys
         commands.put("del", new CommandWrapper(new DeleteCommand()));
         commands.put("exists", new CommandWrapper(new ExistsCommand()));
+        commands.put("type", new CommandWrapper(new TypeCommand()));
 
         // hash
         commands.put("hset", new CommandWrapper(new HashSetCommand()));
