@@ -162,6 +162,8 @@ public class TinyDB implements ITinyDB {
             bossGroup.shutdownGracefully();
         }
 
+        channels.clear();
+
         LOGGER.info("adapter stopped");
     }
 
@@ -223,29 +225,37 @@ public class TinyDB implements ITinyDB {
 
         LOGGER.finest(() -> "message received: " + sourceKey);
 
-        ctx.writeAndFlush(processCommand(parse(message)));
+        ctx.writeAndFlush(processCommand(parseMessage(message)));
     }
 
-    private IRequest parse(RedisToken<?> message) {
+    private IRequest parseMessage(RedisToken<?> message) {
         Request request = new Request();
         if (message.getType() == RedisTokenType.ARRAY) {
-            ArrayRedisToken arrayToken = (ArrayRedisToken) message;
-            List<String> params = new LinkedList<String>();
-            for (RedisToken<?> token : arrayToken.getValue()) {
-                params.add(token.getValue().toString());
-            }
-            request.setCommand(params.get(0));
-            request.setParams(params.subList(1, params.size()));
+            parseArray(message, request);
         } else if (message.getType() == RedisTokenType.UNKNOWN) {
-            UnknownRedisToken unknownToken = (UnknownRedisToken) message;
-            String command = unknownToken.getValue();
-            String[] params = command.split(" ");
-            request.setCommand(params[0]);
-            String[] array = new String[params.length - 1];
-            System.arraycopy(params, 1, array, 0, array.length);
-            request.setParams(Arrays.asList(array));
+            parseLine(message, request);
         }
         return request;
+    }
+
+    private void parseLine(RedisToken<?> message, Request request) {
+        UnknownRedisToken unknownToken = (UnknownRedisToken) message;
+        String command = unknownToken.getValue();
+        String[] params = command.split(" ");
+        request.setCommand(params[0]);
+        String[] array = new String[params.length - 1];
+        System.arraycopy(params, 1, array, 0, array.length);
+        request.setParams(Arrays.asList(array));
+    }
+
+    private void parseArray(RedisToken<?> message, Request request) {
+        ArrayRedisToken arrayToken = (ArrayRedisToken) message;
+        List<String> params = new LinkedList<String>();
+        for (RedisToken<?> token : arrayToken.getValue()) {
+            params.add(token.getValue().toString());
+        }
+        request.setCommand(params.get(0));
+        request.setParams(params.subList(1, params.size()));
     }
 
     private String processCommand(IRequest request) {
