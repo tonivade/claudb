@@ -1,6 +1,5 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,7 +35,7 @@ public class SetCommandTest {
 
         command.execute(db, request, response);
 
-        verify(db).merge(eq("a"), eq(string("1")), any());
+        verify(db).put(eq("a"), eq(string("1")));
         verify(response).addSimpleStr("OK");
     }
 
