@@ -29,6 +29,8 @@ Implemented commands
 - TIME
 - FLUSHDB
 - STRLEN
+- RENAME
+- KEYS
 
 Design
 ------

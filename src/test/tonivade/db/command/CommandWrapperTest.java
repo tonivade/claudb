@@ -19,8 +19,6 @@ import tonivade.db.data.IDatabase;
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {
 
-    private static final String RESULT_OK = "OK";
-
     @Mock
     private IDatabase db;
 
@@ -36,7 +34,7 @@ public class CommandWrapperTest {
 
         wrapper.execute(db, request, response);
 
-        verify(response).addSimpleStr(RESULT_OK);
+        verify(response).addSimpleStr(ICommand.RESULT_OK);
     }
 
     @Test
@@ -47,7 +45,7 @@ public class CommandWrapperTest {
 
         wrapper.execute(db, request, response);
 
-        verify(response).addSimpleStr(RESULT_OK);
+        verify(response).addSimpleStr(ICommand.RESULT_OK);
     }
 
     @Test
@@ -58,7 +56,7 @@ public class CommandWrapperTest {
 
         wrapper.execute(db, request, response);
 
-        verify(response, times(0)).addSimpleStr(RESULT_OK);
+        verify(response, times(0)).addSimpleStr(ICommand.RESULT_OK);
 
         verify(response).addError(anyString());
     }
@@ -72,7 +70,7 @@ public class CommandWrapperTest {
 
         wrapper.execute(db, request, response);
 
-        verify(response).addSimpleStr(RESULT_OK);
+        verify(response).addSimpleStr(ICommand.RESULT_OK);
     }
 
     @Test
@@ -84,7 +82,7 @@ public class CommandWrapperTest {
 
         wrapper.execute(db, request, response);
 
-        verify(response, times(0)).addSimpleStr(RESULT_OK);
+        verify(response, times(0)).addSimpleStr(ICommand.RESULT_OK);
 
         verify(response).addError(anyString());
     }

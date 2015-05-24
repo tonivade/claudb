@@ -40,9 +40,11 @@ import tonivade.db.command.impl.HashGetCommand;
 import tonivade.db.command.impl.HashSetCommand;
 import tonivade.db.command.impl.IncrementByCommand;
 import tonivade.db.command.impl.IncrementCommand;
+import tonivade.db.command.impl.KeysCommand;
 import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.MultiSetCommand;
 import tonivade.db.command.impl.PingCommand;
+import tonivade.db.command.impl.RenameCommand;
 import tonivade.db.command.impl.SetCommand;
 import tonivade.db.command.impl.StringLengthCommand;
 import tonivade.db.command.impl.TimeCommand;
@@ -127,6 +129,8 @@ public class TinyDB implements ITinyDB {
         commands.put("del", new CommandWrapper(new DeleteCommand()));
         commands.put("exists", new CommandWrapper(new ExistsCommand()));
         commands.put("type", new CommandWrapper(new TypeCommand()));
+        commands.put("rename", new CommandWrapper(new RenameCommand()));
+        commands.put("keys", new CommandWrapper(new KeysCommand()));
 
         // hash
         commands.put("hset", new CommandWrapper(new HashSetCommand()));

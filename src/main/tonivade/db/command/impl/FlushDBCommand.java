@@ -10,7 +10,7 @@ public class FlushDBCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         db.clear();
-        response.addSimpleStr(OK);
+        response.addSimpleStr(RESULT_OK);
     }
 
 }
