@@ -35,8 +35,12 @@ import tonivade.db.command.impl.ExistsCommand;
 import tonivade.db.command.impl.FlushDBCommand;
 import tonivade.db.command.impl.GetCommand;
 import tonivade.db.command.impl.GetSetCommand;
+import tonivade.db.command.impl.HashDeleteCommand;
+import tonivade.db.command.impl.HashExistsCommand;
 import tonivade.db.command.impl.HashGetAllCommand;
 import tonivade.db.command.impl.HashGetCommand;
+import tonivade.db.command.impl.HashKeysCommand;
+import tonivade.db.command.impl.HashLengthCommand;
 import tonivade.db.command.impl.HashSetCommand;
 import tonivade.db.command.impl.IncrementByCommand;
 import tonivade.db.command.impl.IncrementCommand;
@@ -136,6 +140,10 @@ public class TinyDB implements ITinyDB {
         commands.put("hset", new CommandWrapper(new HashSetCommand()));
         commands.put("hget", new CommandWrapper(new HashGetCommand()));
         commands.put("hgetall", new CommandWrapper(new HashGetAllCommand()));
+        commands.put("hexists", new CommandWrapper(new HashExistsCommand()));
+        commands.put("hdel", new CommandWrapper(new HashDeleteCommand()));
+        commands.put("hkeys", new CommandWrapper(new HashKeysCommand()));
+        commands.put("hlen", new CommandWrapper(new HashLengthCommand()));
     }
 
     public void start() {
@@ -237,33 +245,31 @@ public class TinyDB implements ITinyDB {
     }
 
     private IRequest parseMessage(RedisToken<?> message) {
-        Request request = new Request();
+        IRequest request = null;
         if (message.getType() == RedisTokenType.ARRAY) {
-            parseArray(message, request);
+            request = parseArray(message);
         } else if (message.getType() == RedisTokenType.UNKNOWN) {
-            parseLine(message, request);
+            request = parseLine(message);
         }
         return request;
     }
 
-    private void parseLine(RedisToken<?> message, Request request) {
+    private Request parseLine(RedisToken<?> message) {
         UnknownRedisToken unknownToken = (UnknownRedisToken) message;
         String command = unknownToken.getValue();
         String[] params = command.split(" ");
-        request.setCommand(params[0]);
         String[] array = new String[params.length - 1];
         System.arraycopy(params, 1, array, 0, array.length);
-        request.setParams(Arrays.asList(array));
+        return new Request(params[0], Arrays.asList(array));
     }
 
-    private void parseArray(RedisToken<?> message, Request request) {
+    private Request parseArray(RedisToken<?> message) {
         ArrayRedisToken arrayToken = (ArrayRedisToken) message;
         List<String> params = new LinkedList<String>();
         for (RedisToken<?> token : arrayToken.getValue()) {
             params.add(token.getValue().toString());
         }
-        request.setCommand(params.get(0));
-        request.setParams(params.subList(1, params.size()));
+        return new Request(params.get(0), params.subList(1, params.size()));
     }
 
     private String processCommand(IRequest request) {

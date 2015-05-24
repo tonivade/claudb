@@ -1,5 +1,6 @@
 package tonivade.db.command;
 
+import java.util.Collections;
 import java.util.List;
 
 public class Request implements IRequest {
@@ -7,6 +8,12 @@ public class Request implements IRequest {
     private String command;
 
     private List<String> params;
+
+    public Request(String command, List<String> params) {
+        super();
+        this.command = command;
+        this.params = params;
+    }
 
     /* (non-Javadoc)
      * @see tonivade.db.command.IRequest#getCommand()
@@ -16,26 +23,12 @@ public class Request implements IRequest {
         return command;
     }
 
-    /**
-     * @param command the command to set
-     */
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
     /* (non-Javadoc)
      * @see tonivade.db.command.IRequest#getParams()
      */
     @Override
     public List<String> getParams() {
-        return params;
-    }
-
-    /**
-     * @param params the params to set
-     */
-    public void setParams(List<String> params) {
-        this.params = params;
+        return Collections.unmodifiableList(params);
     }
 
     /* (non-Javadoc)

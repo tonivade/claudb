@@ -31,6 +31,10 @@ Implemented commands
 - STRLEN
 - RENAME
 - KEYS
+- HEXISTS
+- HDEL
+- HKEYS
+- HLEN
 
 Design
 ------
