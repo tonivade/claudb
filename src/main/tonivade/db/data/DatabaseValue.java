@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 public class DatabaseValue {
 
-    private DataType type;
+    private final DataType type;
 
     private Object value;
 
@@ -61,6 +61,14 @@ public class DatabaseValue {
         int i = Integer.parseInt(value.toString()) - decrement;
         this.value = String.valueOf(i);
         return i;
+    }
+
+    /**
+     *
+     * @param string
+     */
+    public void append(String string) {
+        this.value = this.value + string;
     }
 
     /* (non-Javadoc)
