@@ -8,6 +8,7 @@ import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.hamcrest.CoreMatchers;
@@ -20,14 +21,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MultiGetCommandTest {
 
-    @Mock
-    private IDatabase db;
+    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
 
     @Mock
     private IRequest request;
@@ -41,8 +42,9 @@ public class MultiGetCommandTest {
     @Test
     public void testExecute() {
         when(request.getParams()).thenReturn(Arrays.asList("a", "b", "c"));
-        when(db.get("a")).thenReturn(string("1"));
-        when(db.get("c")).thenReturn(string("2"));
+
+        db.put("a", string("1"));
+        db.put("c", string("2"));
 
         MultiGetCommand command = new MultiGetCommand();
 

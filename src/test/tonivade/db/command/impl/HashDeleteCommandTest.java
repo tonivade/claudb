@@ -1,13 +1,12 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,13 +15,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HashDeleteCommandTest {
 
-    @Mock
-    private IDatabase db;
+    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
 
     @Mock
     private IRequest request;
@@ -35,7 +35,7 @@ public class HashDeleteCommandTest {
         when(request.getParam(0)).thenReturn("key");
         when(request.getParams()).thenReturn(Arrays.asList("key", "a", "b", "c"));
 
-        when(db.getOrDefault(eq("key"), any())).thenReturn(hash(entry("a", "1")));
+        db.put("key", hash(entry("a", "1")));
 
         HashDeleteCommand command = new HashDeleteCommand();
 

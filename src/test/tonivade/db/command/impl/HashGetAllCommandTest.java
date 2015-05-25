@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -18,14 +19,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class HashGetAllCommandTest {
 
-    @Mock
-    private IDatabase db;
+    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
 
     @Mock
     private IRequest request;
@@ -39,7 +40,8 @@ public class HashGetAllCommandTest {
     @Test
     public void testExecute() {
         when(request.getParam(0)).thenReturn("a");
-        when(db.get("a")).thenReturn(hash(
+
+        db.put("a", hash(
                 entry("key1", "value1"),
                 entry("key2", "value2"),
                 entry("key3", "value3")));

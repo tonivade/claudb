@@ -1,9 +1,12 @@
 package tonivade.db.command.impl;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,15 +15,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
-import tonivade.db.data.DataType;
+import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DeleteCommandTest {
 
-    @Mock
-    private IDatabase db;
+    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
 
     @Mock
     private IRequest request;
@@ -30,14 +32,14 @@ public class DeleteCommandTest {
 
     @Test
     public void testExecute() {
+        db.put("test", DatabaseValue.string("value"));
         when(request.getParams()).thenReturn(Arrays.asList("test"));
-        when(db.remove("test")).thenReturn(new DatabaseValue(DataType.STRING));
 
         DeleteCommand command = new DeleteCommand();
 
         command.execute(db, request, response);
 
-        verify(db).remove("test");
+        assertThat(db.containsKey("test"), is(false));
 
         verify(response).addInt(1);
     }

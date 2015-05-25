@@ -9,13 +9,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
-import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PingCommandTest {
-
-    @Mock
-    private IDatabase db;
 
     @Mock
     private IRequest request;
@@ -27,7 +23,7 @@ public class PingCommandTest {
     public void testExecute() {
         PingCommand command = new PingCommand();
 
-        command.execute(db, request, response);
+        command.execute(null, request, response);
 
         verify(response).addSimpleStr("PONG");
     }

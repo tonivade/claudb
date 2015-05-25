@@ -10,13 +10,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
-import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EchoCommandTest {
-
-    @Mock
-    private IDatabase db;
 
     @Mock
     private IRequest request;
@@ -30,7 +26,7 @@ public class EchoCommandTest {
 
         EchoCommand command = new EchoCommand();
 
-        command.execute(db, request, response);
+        command.execute(null, request, response);
 
         verify(response).addBulkStr("test");
     }

@@ -4,10 +4,10 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static tonivade.db.data.DatabaseValue.string;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,13 +18,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KeysCommandTest {
 
-    @Mock
-    private IDatabase db;
+    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
 
     @Mock
     private IRequest request;
@@ -38,7 +39,10 @@ public class KeysCommandTest {
     @Test
     public void testExecute() {
         when(request.getParam(0)).thenReturn("a??");
-        when(db.keySet()).thenReturn(Arrays.asList("abc", "acd", "c").stream().collect(Collectors.toSet()));
+
+        db.put("abc", string("1"));
+        db.put("acd", string("2"));
+        db.put("c", string("3"));
 
         KeysCommand command = new KeysCommand();
 

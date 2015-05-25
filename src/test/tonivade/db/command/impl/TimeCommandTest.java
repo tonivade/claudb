@@ -14,13 +14,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
-import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TimeCommandTest {
-
-    @Mock
-    private IDatabase db;
 
     @Mock
     private IRequest request;
@@ -35,7 +31,7 @@ public class TimeCommandTest {
     public void testExecute() {
         TimeCommand command = new TimeCommand();
 
-        command.execute(db, request, response);
+        command.execute(null, request, response);
 
         verify(response).addArray(captor.capture());
 

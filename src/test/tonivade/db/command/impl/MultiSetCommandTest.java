@@ -1,13 +1,13 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,13 +16,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MultiSetCommandTest {
 
-    @Mock
-    private IDatabase db;
+    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
 
     @Mock
     private IRequest request;
@@ -39,10 +40,10 @@ public class MultiSetCommandTest {
 
         command.execute(db, request, response);
 
-        verify(db).merge(eq("a"), eq(string("1")), any());
-        verify(db).merge(eq("b"), eq(string("2")), any());
-        verify(db).merge(eq("c"), eq(string("3")), any());
-        verifyNoMoreInteractions(db);
+        assertThat(db.get("a"), is(string("1")));
+        assertThat(db.get("b"), is(string("2")));
+        assertThat(db.get("c"), is(string("3")));
+        assertThat(db.size(), is(3));
 
         verify(response).addSimpleStr("OK");
     }
