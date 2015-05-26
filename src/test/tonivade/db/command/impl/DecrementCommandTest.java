@@ -3,43 +3,25 @@ package tonivade.db.command.impl;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
-
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.data.Database;
-import tonivade.db.data.DatabaseValue;
-import tonivade.db.data.IDatabase;
-
-@RunWith(MockitoJUnitRunner.class)
 public class DecrementCommandTest {
 
-    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
-
-    @Mock
-    private IRequest request;
-
-    @Mock
-    private IResponse response;
+    @Rule
+    public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() {
-        when(request.getParam(0)).thenReturn("a");
+        when(rule.getRequest().getParam(0)).thenReturn("a");
 
-        DecrementCommand command = new DecrementCommand();
+        rule.execute(new DecrementCommand());
 
-        command.execute(db, request, response);
+        verify(rule.getResponse()).addInt("-1");
 
-        verify(response).addInt("-1");
+        rule.execute(new DecrementCommand());
 
-        command.execute(db, request, response);
-
-        verify(response).addInt("-2");
+        verify(rule.getResponse()).addInt("-2");
     }
 
 }

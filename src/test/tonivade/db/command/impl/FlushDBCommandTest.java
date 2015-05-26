@@ -1,37 +1,28 @@
 package tonivade.db.command.impl;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.data.IDatabase;
+import tonivade.db.data.DatabaseValue;
 
-@RunWith(MockitoJUnitRunner.class)
 public class FlushDBCommandTest {
 
-    @Mock
-    private IDatabase db;
-
-    @Mock
-    private IRequest request;
-
-    @Mock
-    private IResponse response;
+    @Rule
+    public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() {
-        FlushDBCommand command = new FlushDBCommand();
+        rule.getDatabase().put("a", DatabaseValue.string("test"));
 
-        command.execute(db, request, response);
+        rule.execute(new FlushDBCommand());
 
-        verify(db).clear();
+        assertThat(rule.getDatabase().isEmpty(), is(true));
 
-        verify(response).addSimpleStr("OK");
+        verify(rule.getResponse()).addSimpleStr("OK");
     }
 
 }

@@ -8,47 +8,30 @@ import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
 import java.util.Collection;
-import java.util.HashMap;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.data.Database;
-import tonivade.db.data.DatabaseValue;
-import tonivade.db.data.IDatabase;
-
-@RunWith(MockitoJUnitRunner.class)
 public class HashKeysCommandTest {
 
-    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
-
-    @Mock
-    private IRequest request;
-
-    @Mock
-    private IResponse response;
+    @Rule
+    public final CommandRule rule = new CommandRule(this);
 
     @Captor
     private ArgumentCaptor<Collection<String>> captor;
 
     @Test
     public void testExecute() throws Exception {
-        when(request.getParam(0)).thenReturn("key");
-        when(request.getParam(1)).thenReturn("a");
+        when(rule.getRequest().getParam(0)).thenReturn("key");
+        when(rule.getRequest().getParam(1)).thenReturn("a");
 
-        db.put("key", hash(entry("a", "1"), entry("b", "2")));
+        rule.getDatabase().put("key", hash(entry("a", "1"), entry("b", "2")));
 
-        HashKeysCommand command = new HashKeysCommand();
+        rule.execute(new HashKeysCommand());
 
-        command.execute(db, request, response);
-
-        verify(response).addArray(captor.capture());
+        verify(rule.getResponse()).addArray(captor.capture());
 
         Collection<String> keys = captor.getValue();
 

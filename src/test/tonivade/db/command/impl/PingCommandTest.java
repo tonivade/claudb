@@ -1,31 +1,31 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-
-@RunWith(MockitoJUnitRunner.class)
 public class PingCommandTest {
 
-    @Mock
-    private IRequest request;
-
-    @Mock
-    private IResponse response;
+    @Rule
+    public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() {
-        PingCommand command = new PingCommand();
+        rule.execute(new PingCommand());
 
-        command.execute(null, request, response);
+        verify(rule.getResponse()).addSimpleStr("PONG");
+    }
 
-        verify(response).addSimpleStr("PONG");
+    @Test
+    public void testExecuteWithParam() {
+        when(rule.getRequest().getParam(0)).thenReturn("Hi!");
+        when(rule.getRequest().getLength()).thenReturn(1);
+
+        rule.execute(new PingCommand());
+
+        verify(rule.getResponse()).addBulkStr("Hi!");
     }
 
 }

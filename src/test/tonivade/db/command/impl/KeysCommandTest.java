@@ -7,48 +7,31 @@ import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Collection;
-import java.util.HashMap;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.data.Database;
-import tonivade.db.data.DatabaseValue;
-import tonivade.db.data.IDatabase;
-
-@RunWith(MockitoJUnitRunner.class)
 public class KeysCommandTest {
 
-    private final IDatabase db = new Database(new HashMap<String, DatabaseValue>());
-
-    @Mock
-    private IRequest request;
-
-    @Mock
-    private IResponse response;
+    @Rule
+    public final CommandRule rule = new CommandRule(this);
 
     @Captor
     private ArgumentCaptor<Collection<String>> captor;
 
     @Test
     public void testExecute() {
-        when(request.getParam(0)).thenReturn("a??");
+        when(rule.getRequest().getParam(0)).thenReturn("a??");
 
-        db.put("abc", string("1"));
-        db.put("acd", string("2"));
-        db.put("c", string("3"));
+        rule.getDatabase().put("abc", string("1"));
+        rule.getDatabase().put("acd", string("2"));
+        rule.getDatabase().put("c", string("3"));
 
-        KeysCommand command = new KeysCommand();
+        rule.execute(new KeysCommand());
 
-        command.execute(db, request, response);
-
-        verify(response).addArray(captor.capture());
+        verify(rule.getResponse()).addArray(captor.capture());
 
         Collection<String> value = captor.getValue();
 

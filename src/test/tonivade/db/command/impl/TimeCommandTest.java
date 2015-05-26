@@ -5,35 +5,24 @@ import static org.mockito.Mockito.verify;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-
-@RunWith(MockitoJUnitRunner.class)
 public class TimeCommandTest {
 
-    @Mock
-    private IRequest request;
-
-    @Mock
-    private IResponse response;
+    @Rule
+    public final CommandRule rule = new CommandRule(this);
 
     @Captor
     private ArgumentCaptor<Collection<String>> captor;
 
     @Test
     public void testExecute() {
-        TimeCommand command = new TimeCommand();
+        rule.execute(new TimeCommand());
 
-        command.execute(null, request, response);
-
-        verify(response).addArray(captor.capture());
+        verify(rule.getResponse()).addArray(captor.capture());
 
         Collection<String> value = captor.getValue();
 
