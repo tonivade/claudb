@@ -1,11 +1,14 @@
 package tonivade.db.command.impl;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import tonivade.db.command.ICommand;
@@ -47,8 +50,8 @@ public class CommandRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                request = Mockito.mock(IRequest.class);
-                response = Mockito.mock(IResponse.class);
+                request = mock(IRequest.class);
+                response = mock(IResponse.class);
                 database = new Database(new HashMap<String, DatabaseValue>());
 
                 MockitoAnnotations.initMocks(target);
@@ -62,6 +65,18 @@ public class CommandRule implements TestRule {
 
     public void execute(ICommand command) {
         command.execute(database, request, response);
+    }
+
+    public CommandRule withParams(String ... params) {
+        if (params != null) {
+            when(request.getParams()).thenReturn(Arrays.asList(params));
+            int i = 0;
+            for (String param : params) {
+                when(request.getParam(i++)).thenReturn(param);
+            }
+            when(request.getLength()).thenReturn(params.length);
+        }
+        return this;
     }
 
 }

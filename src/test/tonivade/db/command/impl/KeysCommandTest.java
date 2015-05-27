@@ -3,7 +3,6 @@ package tonivade.db.command.impl;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Collection;
@@ -23,13 +22,11 @@ public class KeysCommandTest {
 
     @Test
     public void testExecute() {
-        when(rule.getRequest().getParam(0)).thenReturn("a??");
-
         rule.getDatabase().put("abc", string("1"));
         rule.getDatabase().put("acd", string("2"));
         rule.getDatabase().put("c", string("3"));
 
-        rule.execute(new KeysCommand());
+        rule.withParams("a??").execute(new KeysCommand());
 
         verify(rule.getResponse()).addArray(captor.capture());
 

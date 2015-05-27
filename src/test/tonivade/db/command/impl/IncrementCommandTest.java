@@ -15,11 +15,11 @@ public class IncrementCommandTest {
     public void testExecute() {
         when(rule.getRequest().getParam(0)).thenReturn("a");
 
-        rule.execute(new IncrementCommand());
+        rule.withParams("a").execute(new IncrementCommand());
 
         verify(rule.getResponse()).addInt("1");
 
-        rule.execute(new IncrementCommand());
+        rule.withParams("a").execute(new IncrementCommand());
 
         verify(rule.getResponse()).addInt("2");
     }

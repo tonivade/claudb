@@ -1,7 +1,6 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,9 +12,7 @@ public class EchoCommandTest {
 
     @Test
     public void testExecute() {
-        when(rule.getRequest().getParam(0)).thenReturn("test");
-
-        rule.execute(new EchoCommand());
+        rule.withParams("test").execute(new EchoCommand());
 
         verify(rule.getResponse()).addBulkStr("test");
     }

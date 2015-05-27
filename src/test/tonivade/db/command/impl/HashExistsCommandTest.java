@@ -1,7 +1,6 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
@@ -15,12 +14,9 @@ public class HashExistsCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        when(rule.getRequest().getParam(0)).thenReturn("key");
-        when(rule.getRequest().getParam(1)).thenReturn("a");
-
         rule.getDatabase().put("key", hash(entry("a", "1")));
 
-        rule.execute(new HashExistsCommand());
+        rule.withParams("key", "a").execute(new HashExistsCommand());
 
         verify(rule.getResponse()).addInt(true);
     }

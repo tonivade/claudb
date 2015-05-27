@@ -3,7 +3,6 @@ package tonivade.db.command.impl;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
@@ -24,12 +23,9 @@ public class HashKeysCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        when(rule.getRequest().getParam(0)).thenReturn("key");
-        when(rule.getRequest().getParam(1)).thenReturn("a");
-
         rule.getDatabase().put("key", hash(entry("a", "1"), entry("b", "2")));
 
-        rule.execute(new HashKeysCommand());
+        rule.withParams("key", "a").execute(new HashKeysCommand());
 
         verify(rule.getResponse()).addArray(captor.capture());
 

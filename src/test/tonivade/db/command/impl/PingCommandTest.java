@@ -1,7 +1,6 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,10 +19,7 @@ public class PingCommandTest {
 
     @Test
     public void testExecuteWithParam() {
-        when(rule.getRequest().getParam(0)).thenReturn("Hi!");
-        when(rule.getRequest().getLength()).thenReturn(1);
-
-        rule.execute(new PingCommand());
+        rule.withParams("Hi!").execute(new PingCommand());
 
         verify(rule.getResponse()).addBulkStr("Hi!");
     }

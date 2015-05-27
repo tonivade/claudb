@@ -3,14 +3,10 @@ package tonivade.db.command.impl;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
+import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
 import org.junit.Test;
-
-import tonivade.db.data.DatabaseValue;
 
 public class DeleteCommandTest {
 
@@ -19,10 +15,9 @@ public class DeleteCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("test", DatabaseValue.string("value"));
-        when(rule.getRequest().getParams()).thenReturn(Arrays.asList("test"));
+        rule.getDatabase().put("test", string("value"));
 
-        rule.execute(new DeleteCommand());
+        rule.withParams("test").execute(new DeleteCommand());
 
         assertThat(rule.getDatabase().containsKey("test"), is(false));
 

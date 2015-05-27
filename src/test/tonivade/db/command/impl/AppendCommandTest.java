@@ -1,7 +1,6 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
@@ -16,12 +15,16 @@ public class AppendCommandTest {
     public void testExecute() {
         rule.getDatabase().put("test", string("Hola"));
 
-        when(rule.getRequest().getParam(0)).thenReturn("test");
-        when(rule.getRequest().getParam(1)).thenReturn(" mundo");
-
-        rule.execute(new AppendCommand());
+        rule.withParams("test", " mundo").execute(new AppendCommand());
 
         verify(rule.getResponse()).addInt(10);
+    }
+
+    @Test
+    public void testExecuteNoExists() {
+        rule.withParams("test", " mundo").execute(new AppendCommand());
+
+        verify(rule.getResponse()).addInt(6);
     }
 
 }

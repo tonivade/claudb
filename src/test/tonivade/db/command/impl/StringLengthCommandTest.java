@@ -1,7 +1,6 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
@@ -14,13 +13,9 @@ public class StringLengthCommandTest {
 
     @Test
     public void testExecute() {
-        when(rule.getRequest().getParam(0)).thenReturn("a");
-
         rule.getDatabase().put("a", string("test"));
 
-        StringLengthCommand command = new StringLengthCommand();
-
-        command.execute(rule.getDatabase(), rule.getRequest(), rule.getResponse());
+        rule.withParams("a").execute(new StringLengthCommand());
 
         verify(rule.getResponse()).addInt(4);
     }

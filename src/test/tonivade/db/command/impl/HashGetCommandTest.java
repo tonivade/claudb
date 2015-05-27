@@ -18,7 +18,7 @@ public class HashGetCommandTest {
         when(rule.getRequest().getParam(0)).thenReturn("a");
         when(rule.getRequest().getParam(1)).thenReturn("key");
 
-        rule.getDatabase().put("a", hash(entry("key", "value")));
+        rule.withParams("a", "key").getDatabase().put("a", hash(entry("key", "value")));
 
         rule.execute(new HashGetCommand());
 

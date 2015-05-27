@@ -1,7 +1,6 @@
 package tonivade.db.command.impl;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
@@ -16,9 +15,7 @@ public class ExistsCommandTest {
     public void testExecute() {
         rule.getDatabase().put("test", string("value"));
 
-        when(rule.getRequest().getParam(0)).thenReturn("test");
-
-        rule.execute(new ExistsCommand());
+        rule.withParams("test").execute(new ExistsCommand());
 
         verify(rule.getResponse()).addInt(true);
     }
