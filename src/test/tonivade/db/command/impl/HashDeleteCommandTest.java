@@ -1,12 +1,12 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(HashDeleteCommand.class)
 public class HashDeleteCommandTest {
 
     @Rule
@@ -14,20 +14,18 @@ public class HashDeleteCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.getDatabase().put("key", hash(entry("a", "1")));
-
-        rule.withParams("key", "a", "b", "c").execute(new HashDeleteCommand());
-
-        verify(rule.getResponse()).addInt(true);
+        rule.withData("key", hash(entry("a", "1")))
+            .withParams("key", "a", "b", "c")
+            .execute()
+            .verify().addInt(true);
     }
 
     @Test
     public void testExecuteNoKeys() throws Exception {
-        rule.getDatabase().put("key", hash(entry("d", "1")));
-
-        rule.withParams("key", "a", "b", "c").execute(new HashDeleteCommand());
-
-        verify(rule.getResponse()).addInt(false);
+        rule.withData("key", hash(entry("d", "1")))
+            .withParams("key", "a", "b", "c")
+            .execute()
+            .verify().addInt(false);
     }
 
 }

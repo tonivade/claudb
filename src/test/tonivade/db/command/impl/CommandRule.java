@@ -6,9 +6,12 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.hamcrest.Matcher;
+import org.junit.Assert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import tonivade.db.command.CommandWrapper;
@@ -29,6 +32,8 @@ public class CommandRule implements TestRule {
 
     private final Object target;
 
+    private ICommand command;
+
     public CommandRule(Object target) {
         super();
         this.target = target;
@@ -47,7 +52,7 @@ public class CommandRule implements TestRule {
     }
 
     @Override
-    public Statement apply(final Statement base, Description description) {
+    public Statement apply(final Statement base, final Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
@@ -57,6 +62,8 @@ public class CommandRule implements TestRule {
 
                 MockitoAnnotations.initMocks(target);
 
+                command = target.getClass().getAnnotation(Command.class).value().newInstance();
+
                 base.evaluate();
 
                 database.clear();
@@ -64,7 +71,12 @@ public class CommandRule implements TestRule {
         };
     }
 
-    public CommandRule execute(ICommand command) {
+    public CommandRule withData(String key, DatabaseValue value) {
+        database.put(key, value);
+        return this;
+    }
+
+    public CommandRule execute() {
         new CommandWrapper(command).execute(database, request, response);
         return this;
     }
@@ -79,6 +91,15 @@ public class CommandRule implements TestRule {
             when(request.getLength()).thenReturn(params.length);
         }
         return this;
+    }
+
+    public CommandRule assertThat(String key, Matcher<DatabaseValue> matcher) {
+        Assert.assertThat(database.get(key), matcher);
+        return this;
+    }
+
+    public IResponse verify() {
+        return Mockito.verify(response);
     }
 
 }

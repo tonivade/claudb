@@ -1,10 +1,9 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Mockito.verify;
-
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(IncrementByCommand.class)
 public class IncrementByCommandTest {
 
     @Rule
@@ -12,13 +11,13 @@ public class IncrementByCommandTest {
 
     @Test
     public void testExecute() {
-        rule.withParams("a", "10").execute(new IncrementByCommand());
+        rule.withParams("a", "10")
+            .execute()
+            .verify().addInt("10");
 
-        verify(rule.getResponse()).addInt("10");
-
-        rule.withParams("a", "10").execute(new IncrementByCommand());
-
-        verify(rule.getResponse()).addInt("20");
+        rule.withParams("a", "10")
+            .execute()
+            .verify().addInt("20");
     }
 
 }

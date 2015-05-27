@@ -1,13 +1,13 @@
 package tonivade.db.command.impl;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(DeleteCommand.class)
 public class DeleteCommandTest {
 
     @Rule
@@ -15,13 +15,11 @@ public class DeleteCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("test", string("value"));
-
-        rule.withParams("test").execute(new DeleteCommand());
-
-        assertThat(rule.getDatabase().containsKey("test"), is(false));
-
-        verify(rule.getResponse()).addInt(1);
+        rule.withData("test", string("value"))
+            .withParams("test")
+            .execute()
+            .assertThat("test", is(nullValue()))
+            .verify().addInt(1);
     }
 
 }

@@ -1,10 +1,9 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Mockito.verify;
-
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(PingCommand.class)
 public class PingCommandTest {
 
     @Rule
@@ -12,16 +11,15 @@ public class PingCommandTest {
 
     @Test
     public void testExecute() {
-        rule.execute(new PingCommand());
-
-        verify(rule.getResponse()).addSimpleStr("PONG");
+        rule.execute()
+            .verify().addSimpleStr("PONG");
     }
 
     @Test
     public void testExecuteWithParam() {
-        rule.withParams("Hi!").execute(new PingCommand());
-
-        verify(rule.getResponse()).addBulkStr("Hi!");
+        rule.withParams("Hi!")
+            .execute()
+            .verify().addBulkStr("Hi!");
     }
 
 }

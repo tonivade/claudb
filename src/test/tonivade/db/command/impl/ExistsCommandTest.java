@@ -1,11 +1,11 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(ExistsCommand.class)
 public class ExistsCommandTest {
 
     @Rule
@@ -13,11 +13,10 @@ public class ExistsCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("test", string("value"));
-
-        rule.withParams("test").execute(new ExistsCommand());
-
-        verify(rule.getResponse()).addInt(true);
+        rule.withData("test", string("value"))
+            .withParams("test")
+            .execute()
+            .verify().addInt(true);
     }
 
 }

@@ -1,11 +1,11 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(StringLengthCommand.class)
 public class StringLengthCommandTest {
 
     @Rule
@@ -13,11 +13,10 @@ public class StringLengthCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("a", string("test"));
-
-        rule.withParams("a").execute(new StringLengthCommand());
-
-        verify(rule.getResponse()).addInt(4);
+        rule.withData("a", string("test"))
+            .withParams("a")
+            .execute()
+            .verify().addInt(4);
     }
 
 }

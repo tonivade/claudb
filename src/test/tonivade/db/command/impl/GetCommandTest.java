@@ -2,7 +2,6 @@ package tonivade.db.command.impl;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
@@ -13,6 +12,7 @@ import org.mockito.Captor;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 
+@Command(GetCommand.class)
 public class GetCommandTest {
 
     @Rule
@@ -23,11 +23,10 @@ public class GetCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("key", string("value"));
-
-        rule.withParams("key").execute(new GetCommand());
-
-        verify(rule.getResponse()).addValue(captor.capture());
+        rule.withData("key", string("value"))
+            .withParams("key")
+            .execute()
+            .verify().addValue(captor.capture());
 
         DatabaseValue value = captor.getValue();
 

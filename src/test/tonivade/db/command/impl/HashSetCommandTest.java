@@ -1,12 +1,12 @@
 package tonivade.db.command.impl;
 
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+@Command(HashSetCommand.class)
 public class HashSetCommandTest {
 
     @Rule
@@ -14,11 +14,10 @@ public class HashSetCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("a", hash(entry("key", "value")));
-
-        rule.withParams("a", "key", "value").execute(new HashSetCommand());
-
-        verify(rule.getResponse()).addInt(false);
+        rule.withData("a", hash(entry("key", "value")))
+            .withParams("a", "key", "value")
+            .execute()
+            .verify().addInt(false);
     }
 
 }

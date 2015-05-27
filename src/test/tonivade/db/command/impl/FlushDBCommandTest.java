@@ -2,13 +2,12 @@ package tonivade.db.command.impl;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
+import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import tonivade.db.data.DatabaseValue;
-
+@Command(FlushDBCommand.class)
 public class FlushDBCommandTest {
 
     @Rule
@@ -16,13 +15,12 @@ public class FlushDBCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("a", DatabaseValue.string("test"));
-
-        rule.execute(new FlushDBCommand());
+        rule.withData("a", string("test"))
+            .execute();
 
         assertThat(rule.getDatabase().isEmpty(), is(true));
 
-        verify(rule.getResponse()).addSimpleStr("OK");
+        rule.verify().addSimpleStr("OK");
     }
 
 }

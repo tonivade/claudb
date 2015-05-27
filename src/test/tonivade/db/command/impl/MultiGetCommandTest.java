@@ -3,7 +3,6 @@ package tonivade.db.command.impl;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.string;
 
 import java.util.Collection;
@@ -16,6 +15,7 @@ import org.mockito.Captor;
 
 import tonivade.db.data.DatabaseValue;
 
+@Command(MultiGetCommand.class)
 public class MultiGetCommandTest {
 
     @Rule
@@ -26,12 +26,11 @@ public class MultiGetCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("a", string("1"));
-        rule.getDatabase().put("c", string("2"));
-
-        rule.withParams("a", "b", "c").execute(new MultiGetCommand());
-
-        verify(rule.getResponse()).addArrayValue(captor.capture());
+        rule.withData("a", string("1"))
+            .withData("c", string("2"))
+            .withParams("a", "b", "c")
+            .execute()
+            .verify().addArrayValue(captor.capture());
 
         Collection<DatabaseValue> result = captor.getValue();
 

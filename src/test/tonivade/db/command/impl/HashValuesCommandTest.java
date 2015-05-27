@@ -2,7 +2,6 @@ package tonivade.db.command.impl;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.verify;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
@@ -13,6 +12,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+@Command(HashValuesCommand.class)
 public class HashValuesCommandTest {
 
     @Rule
@@ -23,12 +23,13 @@ public class HashValuesCommandTest {
 
     @Test
     public void testExecute() {
-        rule.getDatabase().put("test",
-                hash(entry("key1", "value1"), entry("key2", "value2"), entry("key3", "value3")));
-
-        rule.withParams("test").execute(new HashValuesCommand());
-
-        verify(rule.getResponse()).addArray(captor.capture());
+        rule.withData("test",
+                hash(entry("key1", "value1"),
+                     entry("key2", "value2"),
+                     entry("key3", "value3")))
+            .withParams("test")
+            .execute()
+            .verify().addArray(captor.capture());
 
         Collection<String> values = captor.getValue();
 
@@ -40,9 +41,9 @@ public class HashValuesCommandTest {
 
     @Test
     public void testExecuteNotExists() {
-        rule.withParams("test").execute(new HashValuesCommand());
-
-        verify(rule.getResponse()).addArray(captor.capture());
+        rule.withParams("test")
+            .execute()
+            .verify().addArray(captor.capture());
 
         Collection<String> values = captor.getValue();
 
