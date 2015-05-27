@@ -11,6 +11,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.mockito.MockitoAnnotations;
 
+import tonivade.db.command.CommandWrapper;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -63,8 +64,9 @@ public class CommandRule implements TestRule {
         };
     }
 
-    public void execute(ICommand command) {
-        command.execute(database, request, response);
+    public CommandRule execute(ICommand command) {
+        new CommandWrapper(command).execute(database, request, response);
+        return this;
     }
 
     public CommandRule withParams(String ... params) {

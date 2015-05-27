@@ -11,7 +11,7 @@ import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @ParamLength(2)
-@ParamType(DataType.HASH)
+@ParamType(DataType.STRING)
 public class IncrementByCommand implements ICommand {
 
     @Override

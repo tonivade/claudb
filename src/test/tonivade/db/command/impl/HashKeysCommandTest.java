@@ -31,6 +31,7 @@ public class HashKeysCommandTest {
 
         Collection<String> keys = captor.getValue();
 
+        assertThat(keys.size(), is(2));
         assertThat(keys.contains("a"), is(true));
         assertThat(keys.contains("b"), is(true));
     }

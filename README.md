@@ -36,6 +36,7 @@ Implemented commands
 - HKEYS
 - HLEN
 - APPEND
+- HVAL
 
 Design
 ------
