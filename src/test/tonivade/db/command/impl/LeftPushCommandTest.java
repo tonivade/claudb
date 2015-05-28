@@ -18,6 +18,11 @@ public class LeftPushCommandTest {
             .execute()
             .assertThat("key", is(list("a", "b", "c")))
             .verify().addInt(3);
+
+        rule.withParams("key", "d")
+            .execute()
+            .assertThat("key", is(list("d", "a", "b", "c")))
+            .verify().addInt(4);
     }
 
 }
