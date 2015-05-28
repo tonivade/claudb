@@ -5,7 +5,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(StringLengthCommand.class)
+@CommandUnderTest(StringLengthCommand.class)
 public class StringLengthCommandTest {
 
     @Rule

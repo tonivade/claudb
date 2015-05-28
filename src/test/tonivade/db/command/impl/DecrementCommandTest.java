@@ -3,7 +3,7 @@ package tonivade.db.command.impl;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(DecrementCommand.class)
+@CommandUnderTest(DecrementCommand.class)
 public class DecrementCommandTest {
 
     @Rule
@@ -18,6 +18,10 @@ public class DecrementCommandTest {
         rule.withParams("a")
             .execute()
             .verify().addInt("-2");
+
+        rule.withParams("a")
+            .execute()
+            .verify().addInt("-3");
     }
 
 }

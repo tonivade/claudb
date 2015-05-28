@@ -5,7 +5,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(AppendCommand.class)
+@CommandUnderTest(AppendCommand.class)
 public class AppendCommandTest {
 
     @Rule

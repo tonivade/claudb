@@ -3,7 +3,7 @@ package tonivade.db.command.impl;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(IncrementByCommand.class)
+@CommandUnderTest(IncrementByCommand.class)
 public class IncrementByCommandTest {
 
     @Rule
@@ -18,6 +18,10 @@ public class IncrementByCommandTest {
         rule.withParams("a", "10")
             .execute()
             .verify().addInt("20");
+
+        rule.withParams("a", "5")
+            .execute()
+            .verify().addInt("25");
     }
 
 }

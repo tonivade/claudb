@@ -11,7 +11,7 @@ import org.mockito.Captor;
 
 import tonivade.db.data.DatabaseValue;
 
-@Command(GetSetCommand.class)
+@CommandUnderTest(GetSetCommand.class)
 public class GetSetCommandTest {
 
     @Rule

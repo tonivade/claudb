@@ -9,7 +9,7 @@ import tonivade.db.command.ICommand;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Command {
+public @interface CommandUnderTest {
 
     Class<? extends ICommand> value();
 

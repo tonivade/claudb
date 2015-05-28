@@ -7,7 +7,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(DeleteCommand.class)
+@CommandUnderTest(DeleteCommand.class)
 public class DeleteCommandTest {
 
     @Rule

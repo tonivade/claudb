@@ -3,7 +3,7 @@ package tonivade.db.command.impl;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(PingCommand.class)
+@CommandUnderTest(PingCommand.class)
 public class PingCommandTest {
 
     @Rule

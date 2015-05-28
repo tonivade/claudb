@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
-@Command(TimeCommand.class)
+@CommandUnderTest(TimeCommand.class)
 public class TimeCommandTest {
 
     @Rule

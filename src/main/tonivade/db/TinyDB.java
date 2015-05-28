@@ -46,6 +46,8 @@ import tonivade.db.command.impl.HashValuesCommand;
 import tonivade.db.command.impl.IncrementByCommand;
 import tonivade.db.command.impl.IncrementCommand;
 import tonivade.db.command.impl.KeysCommand;
+import tonivade.db.command.impl.LeftPopCommand;
+import tonivade.db.command.impl.LeftPushCommand;
 import tonivade.db.command.impl.MultiGetCommand;
 import tonivade.db.command.impl.MultiSetCommand;
 import tonivade.db.command.impl.PingCommand;
@@ -146,6 +148,10 @@ public class TinyDB implements ITinyDB {
         commands.put("hkeys", new CommandWrapper(new HashKeysCommand()));
         commands.put("hlen", new CommandWrapper(new HashLengthCommand()));
         commands.put("hvals", new CommandWrapper(new HashValuesCommand()));
+
+        // list
+        commands.put("lpush", new CommandWrapper(new LeftPushCommand()));
+        commands.put("lpop", new CommandWrapper(new LeftPopCommand()));
     }
 
     public void start() {

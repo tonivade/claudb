@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
-@Command(KeysCommand.class)
+@CommandUnderTest(KeysCommand.class)
 public class KeysCommandTest {
 
     @Rule

@@ -2,6 +2,7 @@ package tonivade.db.command.impl;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyCollectionOf;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
@@ -14,7 +15,7 @@ import org.mockito.Captor;
 
 import tonivade.db.data.DatabaseValue;
 
-@Command(HashGetAllCommand.class)
+@CommandUnderTest(HashGetAllCommand.class)
 public class HashGetAllCommandTest {
 
     @Rule
@@ -40,6 +41,13 @@ public class HashGetAllCommandTest {
         assertThat(map.get("key1"), is("value1"));
         assertThat(map.get("key2"), is("value2"));
         assertThat(map.get("key3"), is("value3"));
+    }
+
+    @Test
+    public void testExecuteNotExists() {
+        rule.withParams("a")
+            .execute()
+            .verify().addArray(anyCollectionOf(String.class));
     }
 
 }

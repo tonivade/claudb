@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
-@Command(HashValuesCommand.class)
+@CommandUnderTest(HashValuesCommand.class)
 public class HashValuesCommandTest {
 
     @Rule

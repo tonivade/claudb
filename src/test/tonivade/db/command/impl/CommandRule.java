@@ -62,7 +62,7 @@ public class CommandRule implements TestRule {
 
                 MockitoAnnotations.initMocks(target);
 
-                command = target.getClass().getAnnotation(Command.class).value().newInstance();
+                command = target.getClass().getAnnotation(CommandUnderTest.class).value().newInstance();
 
                 base.evaluate();
 

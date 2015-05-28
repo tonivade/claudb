@@ -7,7 +7,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(TypeCommand.class)
+@CommandUnderTest(TypeCommand.class)
 public class TypeCommandTest {
 
     @Rule
@@ -26,6 +26,13 @@ public class TypeCommandTest {
             .withParams("a")
             .execute()
             .verify().addSimpleStr("hash");
+    }
+
+    @Test
+    public void testExecuteNotExists() {
+        rule.withData("a", string("string"))
+            .withParams("b").execute()
+            .verify().addSimpleStr("none");
     }
 
 }

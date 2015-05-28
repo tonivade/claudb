@@ -7,7 +7,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(FlushDBCommand.class)
+@CommandUnderTest(FlushDBCommand.class)
 public class FlushDBCommandTest {
 
     @Rule

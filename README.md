@@ -37,6 +37,8 @@ Implemented commands
 - HLEN
 - APPEND
 - HVALS
+- LPUSH
+- LPOP
 
 Design
 ------

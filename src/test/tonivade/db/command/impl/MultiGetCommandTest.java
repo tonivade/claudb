@@ -15,7 +15,7 @@ import org.mockito.Captor;
 
 import tonivade.db.data.DatabaseValue;
 
-@Command(MultiGetCommand.class)
+@CommandUnderTest(MultiGetCommand.class)
 public class MultiGetCommandTest {
 
     @Rule

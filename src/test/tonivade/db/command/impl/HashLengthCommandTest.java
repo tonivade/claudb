@@ -6,7 +6,7 @@ import static tonivade.db.data.DatabaseValue.hash;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(HashLengthCommand.class)
+@CommandUnderTest(HashLengthCommand.class)
 public class HashLengthCommandTest {
 
     @Rule

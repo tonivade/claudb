@@ -3,7 +3,7 @@ package tonivade.db.command.impl;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(EchoCommand.class)
+@CommandUnderTest(EchoCommand.class)
 public class EchoCommandTest {
 
     @Rule

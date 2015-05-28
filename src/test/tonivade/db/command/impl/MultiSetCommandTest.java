@@ -7,7 +7,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(MultiSetCommand.class)
+@CommandUnderTest(MultiSetCommand.class)
 public class MultiSetCommandTest {
 
     @Rule

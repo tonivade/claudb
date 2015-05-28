@@ -6,7 +6,7 @@ import static tonivade.db.data.DatabaseValue.hash;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Command(HashDeleteCommand.class)
+@CommandUnderTest(HashDeleteCommand.class)
 public class HashDeleteCommandTest {
 
     @Rule
