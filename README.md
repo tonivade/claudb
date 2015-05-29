@@ -39,6 +39,8 @@ Implemented commands
 - HVALS
 - LPUSH
 - LPOP
+- RPUSH
+- RPOP
 
 Design
 ------
