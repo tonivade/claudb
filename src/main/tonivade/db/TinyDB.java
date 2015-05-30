@@ -55,7 +55,9 @@ import tonivade.db.command.impl.PingCommand;
 import tonivade.db.command.impl.RenameCommand;
 import tonivade.db.command.impl.RightPopCommand;
 import tonivade.db.command.impl.RightPushCommand;
+import tonivade.db.command.impl.SetAddCommand;
 import tonivade.db.command.impl.SetCommand;
+import tonivade.db.command.impl.SetMembersCommand;
 import tonivade.db.command.impl.StringLengthCommand;
 import tonivade.db.command.impl.TimeCommand;
 import tonivade.db.command.impl.TypeCommand;
@@ -158,6 +160,10 @@ public class TinyDB implements ITinyDB {
         commands.put("rpush", new CommandWrapper(new RightPushCommand()));
         commands.put("rpop", new CommandWrapper(new RightPopCommand()));
         commands.put("llen", new CommandWrapper(new ListLengthCommand()));
+
+        // set
+        commands.put("sadd", new CommandWrapper(new SetAddCommand()));
+        commands.put("smembers", new CommandWrapper(new SetMembersCommand()));
     }
 
     public void start() {

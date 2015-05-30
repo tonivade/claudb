@@ -42,6 +42,8 @@ Implemented commands
 - RPUSH
 - RPOP
 - LLEN
+- SADD
+- SMEMBERS
 
 Design
 ------
