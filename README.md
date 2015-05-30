@@ -41,6 +41,7 @@ Implemented commands
 - LPOP
 - RPUSH
 - RPOP
+- LLEN
 
 Design
 ------
