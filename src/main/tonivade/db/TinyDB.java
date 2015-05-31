@@ -56,7 +56,9 @@ import tonivade.db.command.impl.RenameCommand;
 import tonivade.db.command.impl.RightPopCommand;
 import tonivade.db.command.impl.RightPushCommand;
 import tonivade.db.command.impl.SetAddCommand;
+import tonivade.db.command.impl.SetCardinalityCommand;
 import tonivade.db.command.impl.SetCommand;
+import tonivade.db.command.impl.SetIsMemberCommand;
 import tonivade.db.command.impl.SetMembersCommand;
 import tonivade.db.command.impl.StringLengthCommand;
 import tonivade.db.command.impl.TimeCommand;
@@ -164,6 +166,8 @@ public class TinyDB implements ITinyDB {
         // set
         commands.put("sadd", new CommandWrapper(new SetAddCommand()));
         commands.put("smembers", new CommandWrapper(new SetMembersCommand()));
+        commands.put("scard", new CommandWrapper(new SetCardinalityCommand()));
+        commands.put("sismember", new CommandWrapper(new SetIsMemberCommand()));
     }
 
     public void start() {

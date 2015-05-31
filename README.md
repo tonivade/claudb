@@ -44,6 +44,8 @@ Implemented commands
 - LLEN
 - SADD
 - SMEMBERS
+- SCARD
+- SISMEMBER
 
 Design
 ------
