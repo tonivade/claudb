@@ -38,8 +38,11 @@ public class Response implements IResponse {
                 });
                 addArray(list);
                 break;
+            case LIST:
             case SET:
+            case ZSET:
                 addArray(value.getValue());
+                break;
             default:
                 break;
             }
