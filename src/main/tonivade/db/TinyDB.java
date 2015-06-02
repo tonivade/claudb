@@ -21,48 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import tonivade.db.command.CommandWrapper;
+import tonivade.db.command.CommandSuite;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.Request;
 import tonivade.db.command.Response;
-import tonivade.db.command.hash.HashDeleteCommand;
-import tonivade.db.command.hash.HashExistsCommand;
-import tonivade.db.command.hash.HashGetAllCommand;
-import tonivade.db.command.hash.HashGetCommand;
-import tonivade.db.command.hash.HashKeysCommand;
-import tonivade.db.command.hash.HashLengthCommand;
-import tonivade.db.command.hash.HashSetCommand;
-import tonivade.db.command.hash.HashValuesCommand;
-import tonivade.db.command.key.DeleteCommand;
-import tonivade.db.command.key.ExistsCommand;
-import tonivade.db.command.key.KeysCommand;
-import tonivade.db.command.key.RenameCommand;
-import tonivade.db.command.key.TypeCommand;
-import tonivade.db.command.list.LeftPopCommand;
-import tonivade.db.command.list.LeftPushCommand;
-import tonivade.db.command.list.ListLengthCommand;
-import tonivade.db.command.list.RightPopCommand;
-import tonivade.db.command.list.RightPushCommand;
-import tonivade.db.command.server.EchoCommand;
-import tonivade.db.command.server.FlushDBCommand;
-import tonivade.db.command.server.PingCommand;
-import tonivade.db.command.server.TimeCommand;
-import tonivade.db.command.set.SetAddCommand;
-import tonivade.db.command.set.SetCardinalityCommand;
-import tonivade.db.command.set.SetIsMemberCommand;
-import tonivade.db.command.set.SetMembersCommand;
-import tonivade.db.command.string.DecrementByCommand;
-import tonivade.db.command.string.DecrementCommand;
-import tonivade.db.command.string.GetCommand;
-import tonivade.db.command.string.GetSetCommand;
-import tonivade.db.command.string.IncrementByCommand;
-import tonivade.db.command.string.IncrementCommand;
-import tonivade.db.command.string.MultiGetCommand;
-import tonivade.db.command.string.MultiSetCommand;
-import tonivade.db.command.string.SetCommand;
-import tonivade.db.command.string.StringLengthCommand;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.RedisToken;
@@ -103,9 +67,9 @@ public class TinyDB implements ITinyDB {
 
     private final Map<String, ChannelHandlerContext> channels = new HashMap<>();
 
-    private final Map<String, ICommand> commands = new HashMap<>();
-
     private final Database db = new Database(new HashMap<String, DatabaseValue>());
+
+    private final CommandSuite commands = new CommandSuite();
 
     private ChannelFuture future;
 
@@ -116,58 +80,6 @@ public class TinyDB implements ITinyDB {
     public TinyDB(String host, int port) {
         this.host = host;
         this.port = port;
-    }
-
-    public void init() {
-        // connection
-        commands.put("ping", new CommandWrapper(new PingCommand()));
-        commands.put("echo", new CommandWrapper(new EchoCommand()));
-
-        // server
-        commands.put("flushdb", new CommandWrapper(new FlushDBCommand()));
-        commands.put("time", new CommandWrapper(new TimeCommand()));
-
-        // strings
-        commands.put("get", new CommandWrapper(new GetCommand()));
-        commands.put("mget", new CommandWrapper(new MultiGetCommand()));
-        commands.put("set", new CommandWrapper(new SetCommand()));
-        commands.put("mset", new CommandWrapper(new MultiSetCommand()));
-        commands.put("getset", new CommandWrapper(new GetSetCommand()));
-        commands.put("incr", new CommandWrapper(new IncrementCommand()));
-        commands.put("incrby", new CommandWrapper(new IncrementByCommand()));
-        commands.put("decr", new CommandWrapper(new DecrementCommand()));
-        commands.put("decrby", new CommandWrapper(new DecrementByCommand()));
-        commands.put("strlen", new CommandWrapper(new StringLengthCommand()));
-
-        // keys
-        commands.put("del", new CommandWrapper(new DeleteCommand()));
-        commands.put("exists", new CommandWrapper(new ExistsCommand()));
-        commands.put("type", new CommandWrapper(new TypeCommand()));
-        commands.put("rename", new CommandWrapper(new RenameCommand()));
-        commands.put("keys", new CommandWrapper(new KeysCommand()));
-
-        // hash
-        commands.put("hset", new CommandWrapper(new HashSetCommand()));
-        commands.put("hget", new CommandWrapper(new HashGetCommand()));
-        commands.put("hgetall", new CommandWrapper(new HashGetAllCommand()));
-        commands.put("hexists", new CommandWrapper(new HashExistsCommand()));
-        commands.put("hdel", new CommandWrapper(new HashDeleteCommand()));
-        commands.put("hkeys", new CommandWrapper(new HashKeysCommand()));
-        commands.put("hlen", new CommandWrapper(new HashLengthCommand()));
-        commands.put("hvals", new CommandWrapper(new HashValuesCommand()));
-
-        // list
-        commands.put("lpush", new CommandWrapper(new LeftPushCommand()));
-        commands.put("lpop", new CommandWrapper(new LeftPopCommand()));
-        commands.put("rpush", new CommandWrapper(new RightPushCommand()));
-        commands.put("rpop", new CommandWrapper(new RightPopCommand()));
-        commands.put("llen", new CommandWrapper(new ListLengthCommand()));
-
-        // set
-        commands.put("sadd", new CommandWrapper(new SetAddCommand()));
-        commands.put("smembers", new CommandWrapper(new SetMembersCommand()));
-        commands.put("scard", new CommandWrapper(new SetCardinalityCommand()));
-        commands.put("sismember", new CommandWrapper(new SetIsMemberCommand()));
     }
 
     public void start() {
@@ -300,7 +212,7 @@ public class TinyDB implements ITinyDB {
         LOGGER.fine(() -> "received command: " + request);
 
         IResponse response = new Response();
-        ICommand command = commands.get(request.getCommand().toLowerCase());
+        ICommand command = commands.getCommand(request.getCommand());
         if (command != null) {
             command.execute(db, request, response);
         } else {
@@ -318,7 +230,6 @@ public class TinyDB implements ITinyDB {
         System.out.println("usage: tinydb <host> <port>");
 
         TinyDB db = new TinyDB(parseHost(args), parsePort(args));
-        db.init();
         db.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));

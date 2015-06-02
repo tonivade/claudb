@@ -4,14 +4,11 @@ import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.IDatabase;
 
-/**
- *
- * @author tomby
- *
- */
+@Command("set")
 @ParamLength(2)
 public class SetCommand implements ICommand {
 

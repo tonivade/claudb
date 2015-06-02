@@ -8,8 +8,10 @@ import java.util.stream.Stream;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.annotation.Command;
 import tonivade.db.data.IDatabase;
 
+@Command("time")
 public class TimeCommand implements ICommand {
 
     private static final int SCALE = 1000;

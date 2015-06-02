@@ -3,10 +3,12 @@ package tonivade.db.command.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
+@Command("mget")
 @ParamLength(2)
 public class MultiSetCommand implements ICommand {
 

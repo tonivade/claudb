@@ -7,12 +7,14 @@ import java.util.Map;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
+@Command("hlen")
 @ParamLength(1)
 @ParamType(DataType.HASH)
 public class HashLengthCommand implements ICommand {

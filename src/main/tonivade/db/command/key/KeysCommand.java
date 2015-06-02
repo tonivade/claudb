@@ -8,9 +8,11 @@ import java.util.stream.Collectors;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.IDatabase;
 
+@Command("keys")
 @ParamLength(1)
 public class KeysCommand implements ICommand {
 

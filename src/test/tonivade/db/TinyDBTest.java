@@ -12,10 +12,9 @@ import redis.clients.jedis.Jedis;
 
 public class TinyDBTest {
 
-    private TinyDB db = new TinyDB();
+    private final TinyDB db = new TinyDB();
 
-    private Thread server = new Thread(() -> {
-        db.init();
+    private final Thread server = new Thread(() -> {
         db.start();
     });
 

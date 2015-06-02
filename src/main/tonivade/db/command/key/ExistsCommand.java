@@ -3,9 +3,11 @@ package tonivade.db.command.key;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.IDatabase;
 
+@Command("exists")
 @ParamLength(1)
 public class ExistsCommand implements ICommand {
 
