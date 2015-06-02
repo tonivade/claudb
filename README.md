@@ -72,3 +72,7 @@ And this is REDIS
     SET: 97751.71 requests per second
     GET: 100000.00 requests per second
 
+CI
+--
+
+[![Build Status](https://drone.io/github.com/tonivade/tiny-db/status.png)](https://drone.io/github.com/tonivade/tiny-db/latest)
