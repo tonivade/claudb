@@ -76,3 +76,9 @@ CI
 --
 
 [![Build Status](https://drone.io/github.com/tonivade/tiny-db/status.png)](https://drone.io/github.com/tonivade/tiny-db/latest)
+
+
+LICENSE
+-------
+
+TinyDB is released under MIT License
