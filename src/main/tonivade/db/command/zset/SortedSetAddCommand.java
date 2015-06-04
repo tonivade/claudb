@@ -32,14 +32,15 @@ public class SortedSetAddCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue initial = db.getOrDefault(request.getParam(0), zset()).copy();
+            DatabaseValue initial = db.getOrDefault(request.getParam(0), zset());
             DatabaseValue result = db.merge(request.getParam(0), parseInput(request),
                     (oldValue, newValue) -> {
-                        Set<Entry<Float, String>> oldSet = oldValue.getValue();
-                        Set<Entry<Float, String>> newSet = newValue.getValue();
-                        oldSet.addAll(newSet);
-                        return oldValue;
-            });
+                        DatabaseValue merged = zset();
+                        Set<Entry<Float, String>> mergedSet = merged.getValue();
+                        mergedSet.addAll(oldValue.getValue());
+                        mergedSet.addAll(newValue.getValue());
+                        return merged;
+                    });
             response.addInt(changed(initial.getValue(), result.getValue()));
         } catch (NumberFormatException e) {
             response.addError("ERR value is not a valid float");

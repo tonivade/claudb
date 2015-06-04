@@ -29,12 +29,14 @@ public class HashSetCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = hash(entry(request.getParam(1), request.getParam(2)));
 
-        DatabaseValue resultValue = db.merge(request.getParam(0), value, (oldValue, newValue) -> {
-            Map<Object, Object> oldMap = oldValue.getValue();
-            Map<Object, Object> newMap = newValue.getValue();
-            oldMap.putAll(newMap);
-            return oldValue;
-        });
+        DatabaseValue resultValue = db.merge(request.getParam(0), value,
+                (oldValue, newValue) -> {
+                    DatabaseValue merged = hash();
+                    Map<String, String> hash = merged.getValue();
+                    hash.putAll(oldValue.getValue());
+                    hash.putAll(newValue.getValue());
+                    return merged;
+                });
 
         Map<String, String> resultMap = resultValue.getValue();
 

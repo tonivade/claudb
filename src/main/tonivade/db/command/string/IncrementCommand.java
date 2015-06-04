@@ -26,8 +26,8 @@ public class IncrementCommand implements ICommand {
         try {
             DatabaseValue value = db.merge(request.getParam(0), string("1"),
                     (oldValue, newValue) -> {
-                        oldValue.incrementAndGet(1);
-                        return oldValue;
+                        int current = Integer.parseInt(oldValue.getValue());
+                        return string(String.valueOf(current + 1));
                     });
             response.addInt(value.getValue());
         } catch (NumberFormatException e) {
