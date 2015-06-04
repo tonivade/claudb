@@ -47,6 +47,7 @@ Implemented commands
 - SCARD
 - SISMEMBER
 - ZADD
+- ZCARD
 
 Design
 ------

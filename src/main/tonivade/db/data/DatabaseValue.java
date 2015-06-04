@@ -5,8 +5,10 @@
 
 package tonivade.db.data;
 
+import static java.util.Collections.synchronizedList;
+import static java.util.Collections.synchronizedSet;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toConcurrentMap;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -94,33 +96,33 @@ public class DatabaseValue {
     public static DatabaseValue list(Collection<String> values) {
         return new DatabaseValue(
                 DataType.LIST,
-                values.stream().collect(toCollection(() -> new LinkedList<>())));
+                values.stream().collect(toCollection(() -> synchronizedList(new LinkedList<>()))));
     }
 
     public static DatabaseValue list(String ... values) {
         return new DatabaseValue(
                 DataType.LIST,
-                Stream.of(values).collect(toCollection(() -> new LinkedList<>())));
+                Stream.of(values).collect(toCollection(() -> synchronizedList(new LinkedList<>()))));
     }
 
     public static DatabaseValue set(Collection<String> values) {
         return new DatabaseValue(
                 DataType.SET,
-                values.stream().collect(toCollection(() -> new LinkedHashSet<>())));
+                values.stream().collect(toCollection(() -> synchronizedSet(new LinkedHashSet<>()))));
     }
 
     public static DatabaseValue set(String ... values) {
         return new DatabaseValue(
                 DataType.SET,
-                Stream.of(values).collect(toCollection(() -> new LinkedHashSet<>())));
+                Stream.of(values).collect(toCollection(() -> synchronizedSet(new LinkedHashSet<>()))));
     }
 
     public static DatabaseValue zset(Collection<Entry<Float, String>> values) {
         return new DatabaseValue(
                 DataType.ZSET,
                 values.stream().collect(
-                        toCollection(() ->
-                                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey())))));
+                        toCollection(() -> synchronizedSet(
+                                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey()))))));
     }
 
     @SafeVarargs
@@ -128,21 +130,21 @@ public class DatabaseValue {
         return new DatabaseValue(
                 DataType.ZSET,
                 Stream.of(values).collect(
-                        toCollection(() ->
-                                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey())))));
+                        toCollection(() -> synchronizedSet(
+                                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey()))))));
     }
 
     public static DatabaseValue hash(Collection<Entry<String, String>> values) {
         return new DatabaseValue(
                 DataType.HASH,
-                values.stream().collect(toMap(Entry::getKey, Entry::getValue)));
+                values.stream().collect(toConcurrentMap(Entry::getKey, Entry::getValue)));
     }
 
     @SafeVarargs
     public static DatabaseValue hash(Entry<String, String> ... values) {
         return new DatabaseValue(
                 DataType.HASH,
-                Stream.of(values).collect(toMap(Entry::getKey, Entry::getValue)));
+                Stream.of(values).collect(toConcurrentMap(Entry::getKey, Entry::getValue)));
     }
 
     public static Entry<String, String> entry(String key, String value) {
