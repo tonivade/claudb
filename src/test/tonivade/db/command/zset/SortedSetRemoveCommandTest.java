@@ -15,31 +15,23 @@ import org.junit.Test;
 import tonivade.db.command.impl.CommandRule;
 import tonivade.db.command.impl.CommandUnderTest;
 
-@CommandUnderTest(SortedSetAddCommand.class)
-public class SortedSetAddCommandTest {
+@CommandUnderTest(SortedSetRemoveCommand.class)
+public class SortedSetRemoveCommandTest {
 
     @Rule
     public final CommandRule rule = new CommandRule(this);
 
     @Test
-    public void testExecute() {
-        rule.withParams("key", "1", "one")
+    public void testExecute() throws Exception {
+        rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
+            .withParams("key", "a")
             .execute()
-            .assertThat("key", is(zset(score(1.0F, "one"))))
+            .assertThat("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
             .verify().addInt(1);
 
-        rule.withParams("key", "2", "two")
+        rule.withParams("key", "a")
             .execute()
-            .assertThat("key", is(zset(
-                    score(1.0F, "one"),
-                    score(2.0F, "two"))))
-            .verify().addInt(1);
-
-        rule.withParams("key", "2", "one")
-            .execute()
-            .assertThat("key", is(zset(
-                    score(1.0F, "one"),
-                    score(2.0F, "two"))))
+            .assertThat("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
             .verify().addInt(0);
     }
 

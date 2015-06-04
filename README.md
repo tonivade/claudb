@@ -49,6 +49,7 @@ Implemented commands
 - ZADD
 - ZCARD
 - SREM
+- ZREM
 
 Design
 ------

@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -172,8 +171,7 @@ public class DatabaseValue {
     }
 
     private static Collector<Entry<Float, String>, ?, Set<Entry<Float, String>>> toSortedSet() {
-        return toCollection(() ->
-                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey())));
+        return toCollection(() -> new SortedSet());
     }
 
     private static Collector<Entry<String, String>, ?, Map<String, String>> toHash() {
