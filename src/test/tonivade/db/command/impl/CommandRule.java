@@ -82,6 +82,7 @@ public class CommandRule implements TestRule {
     }
 
     public CommandRule execute() {
+        Mockito.reset(response);
         new CommandWrapper(command).execute(database, request, response);
         return this;
     }

@@ -30,13 +30,10 @@ public class LeftPushCommand implements ICommand {
         List<String> values = request.getParams().stream().skip(1).collect(Collectors.toList());
 
         DatabaseValue result = db.merge(request.getParam(0), list(values), (oldValue, newValue) -> {
-           if (oldValue != null) {
-               List<String> oldList = oldValue.getValue();
-               List<String> newList = newValue.getValue();
-               oldList.addAll(0, newList);
-               return oldValue;
-           }
-           return newValue;
+            List<String> oldList = oldValue.getValue();
+            List<String> newList = newValue.getValue();
+            oldList.addAll(0, newList);
+            return oldValue;
         });
 
         response.addInt(result.<List<String>>getValue().size());

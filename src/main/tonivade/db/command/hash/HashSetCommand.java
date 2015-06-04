@@ -30,13 +30,10 @@ public class HashSetCommand implements ICommand {
         DatabaseValue value = hash(entry(request.getParam(1), request.getParam(2)));
 
         DatabaseValue resultValue = db.merge(request.getParam(0), value, (oldValue, newValue) -> {
-            if (oldValue != null) {
-                Map<Object, Object> oldMap = oldValue.getValue();
-                Map<Object, Object> newMap = newValue.getValue();
-                oldMap.putAll(newMap);
-                return oldValue;
-            }
-            return newValue;
+            Map<Object, Object> oldMap = oldValue.getValue();
+            Map<Object, Object> newMap = newValue.getValue();
+            oldMap.putAll(newMap);
+            return oldValue;
         });
 
         Map<String, String> resultMap = resultValue.getValue();

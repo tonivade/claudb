@@ -5,12 +5,12 @@
 
 package tonivade.db.command.string;
 
+import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
-import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @Command("mget")
@@ -22,7 +22,7 @@ public class MultiSetCommand implements ICommand {
         String key = null;
         for (String value : request.getParams()) {
             if (key != null) {
-                db.merge(key, DatabaseValue.string(value), (oldValue, newValue) -> newValue);
+                db.put(key, string(value));
                 key = null;
             } else {
                 key = value;

@@ -26,11 +26,8 @@ public class DecrementCommand implements ICommand {
         try {
             DatabaseValue value = db.merge(request.getParam(0), string("-1"),
                     (oldValue, newValue) -> {
-                        if (oldValue != null) {
-                            oldValue.decrementAndGet(1);
-                            return oldValue;
-                        }
-                        return newValue;
+                        oldValue.decrementAndGet(1);
+                        return oldValue;
                     });
             response.addInt(value.getValue());
         } catch (NumberFormatException e) {

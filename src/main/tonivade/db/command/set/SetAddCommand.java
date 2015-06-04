@@ -27,13 +27,10 @@ public class SetAddCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.merge(request.getParam(0), set(request.getParam(1)), (oldValue, newValue)-> {
-            if (oldValue != null) {
-                Set<String> oldSet = oldValue.getValue();
-                Set<String> newSet = newValue.getValue();
-                oldSet.addAll(newSet);
-                return oldValue;
-            }
-            return newValue;
+            Set<String> oldSet = oldValue.getValue();
+            Set<String> newSet = newValue.getValue();
+            oldSet.addAll(newSet);
+            return oldValue;
         });
         response.addInt(value.<Set<String>>getValue().size());
     }

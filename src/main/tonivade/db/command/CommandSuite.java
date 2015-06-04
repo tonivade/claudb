@@ -46,6 +46,7 @@ import tonivade.db.command.string.MultiGetCommand;
 import tonivade.db.command.string.MultiSetCommand;
 import tonivade.db.command.string.SetCommand;
 import tonivade.db.command.string.StringLengthCommand;
+import tonivade.db.command.zset.SortedSetAddCommand;
 
 public class CommandSuite {
 
@@ -103,6 +104,9 @@ public class CommandSuite {
         addCommand(SetMembersCommand.class);
         addCommand(SetCardinalityCommand.class);
         addCommand(SetIsMemberCommand.class);
+
+        // sorted set
+        addCommand(SortedSetAddCommand.class);
     }
 
     private void addCommand(Class<? extends ICommand> clazz) {

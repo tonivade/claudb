@@ -25,11 +25,8 @@ public class AppendCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.merge(
                 request.getParam(0), string(request.getParam(1)), (oldValue, newValue) -> {
-                    if (oldValue != null) {
-                        oldValue.append(newValue.getValue());
-                        return oldValue;
-                    }
-                    return newValue;
+                    oldValue.append(newValue.getValue());
+                    return oldValue;
                 });
 
         response.addInt(value.<String>getValue().length());
