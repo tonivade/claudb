@@ -37,6 +37,7 @@ import tonivade.db.command.set.SetAddCommand;
 import tonivade.db.command.set.SetCardinalityCommand;
 import tonivade.db.command.set.SetIsMemberCommand;
 import tonivade.db.command.set.SetMembersCommand;
+import tonivade.db.command.set.SetRemoveCommand;
 import tonivade.db.command.string.DecrementCommand;
 import tonivade.db.command.string.GetCommand;
 import tonivade.db.command.string.GetSetCommand;
@@ -105,6 +106,7 @@ public class CommandSuite {
         addCommand(SetMembersCommand.class);
         addCommand(SetCardinalityCommand.class);
         addCommand(SetIsMemberCommand.class);
+        addCommand(SetRemoveCommand.class);
 
         // sorted set
         addCommand(SortedSetAddCommand.class);

@@ -48,6 +48,7 @@ Implemented commands
 - SISMEMBER
 - ZADD
 - ZCARD
+- SREM
 
 Design
 ------
