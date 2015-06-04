@@ -35,11 +35,10 @@ public class SortedSetAddCommand implements ICommand {
             DatabaseValue initial = db.getOrDefault(request.getParam(0), zset());
             DatabaseValue result = db.merge(request.getParam(0), parseInput(request),
                     (oldValue, newValue) -> {
-                        DatabaseValue merged = zset();
-                        Set<Entry<Float, String>> mergedSet = merged.getValue();
-                        mergedSet.addAll(oldValue.getValue());
-                        mergedSet.addAll(newValue.getValue());
-                        return merged;
+                        Set<Entry<Float, String>> merge = new HashSet<>();
+                        merge.addAll(oldValue.getValue());
+                        merge.addAll(newValue.getValue());
+                        return zset(merge);
                     });
             response.addInt(changed(initial.getValue(), result.getValue()));
         } catch (NumberFormatException e) {

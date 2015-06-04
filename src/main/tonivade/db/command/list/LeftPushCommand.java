@@ -7,6 +7,7 @@ package tonivade.db.command.list;
 
 import static tonivade.db.data.DatabaseValue.list;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,11 +32,10 @@ public class LeftPushCommand implements ICommand {
 
         DatabaseValue result = db.merge(request.getParam(0), list(values),
                 (oldValue, newValue) -> {
-                    DatabaseValue merged = list();
-                    List<String> list = merged.getValue();
-                    list.addAll(newValue.getValue());
-                    list.addAll(oldValue.getValue());
-                    return merged;
+                    List<String> merge = new LinkedList<>();
+                    merge.addAll(newValue.getValue());
+                    merge.addAll(oldValue.getValue());
+                    return list(merge);
                 });
 
         response.addInt(result.<List<String>>getValue().size());

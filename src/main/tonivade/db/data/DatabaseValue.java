@@ -5,17 +5,21 @@
 
 package tonivade.db.data;
 
-import static java.util.Collections.synchronizedList;
-import static java.util.Collections.synchronizedSet;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toConcurrentMap;
+import static java.util.stream.Collectors.toMap;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 
@@ -89,6 +93,14 @@ public class DatabaseValue {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "DatabaseValue [type=" + type + ", value=" + value + "]";
+    }
+
     public static DatabaseValue string(String value) {
         return new DatabaseValue(DataType.STRING, value);
     }
@@ -96,55 +108,51 @@ public class DatabaseValue {
     public static DatabaseValue list(Collection<String> values) {
         return new DatabaseValue(
                 DataType.LIST,
-                values.stream().collect(toCollection(() -> synchronizedList(new LinkedList<>()))));
+                unmodifiableList(values.stream().collect(toList())));
     }
 
     public static DatabaseValue list(String ... values) {
         return new DatabaseValue(
                 DataType.LIST,
-                Stream.of(values).collect(toCollection(() -> synchronizedList(new LinkedList<>()))));
+                unmodifiableList(Stream.of(values).collect(toList())));
     }
 
     public static DatabaseValue set(Collection<String> values) {
         return new DatabaseValue(
                 DataType.SET,
-                values.stream().collect(toCollection(() -> synchronizedSet(new LinkedHashSet<>()))));
+                unmodifiableSet(values.stream().collect(toSet())));
     }
 
     public static DatabaseValue set(String ... values) {
         return new DatabaseValue(
                 DataType.SET,
-                Stream.of(values).collect(toCollection(() -> synchronizedSet(new LinkedHashSet<>()))));
+                unmodifiableSet(Stream.of(values).collect(toSet())));
     }
 
     public static DatabaseValue zset(Collection<Entry<Float, String>> values) {
         return new DatabaseValue(
                 DataType.ZSET,
-                values.stream().collect(
-                        toCollection(() -> synchronizedSet(
-                                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey()))))));
+                unmodifiableSet(values.stream().collect(toSortedSet())));
     }
 
     @SafeVarargs
     public static DatabaseValue zset(Entry<Float, String> ... values) {
         return new DatabaseValue(
                 DataType.ZSET,
-                Stream.of(values).collect(
-                        toCollection(() -> synchronizedSet(
-                                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey()))))));
+                unmodifiableSet(Stream.of(values).collect(toSortedSet())));
     }
 
     public static DatabaseValue hash(Collection<Entry<String, String>> values) {
         return new DatabaseValue(
                 DataType.HASH,
-                values.stream().collect(toConcurrentMap(Entry::getKey, Entry::getValue)));
+                unmodifiableMap(values.stream().collect(toHash())));
     }
 
     @SafeVarargs
     public static DatabaseValue hash(Entry<String, String> ... values) {
         return new DatabaseValue(
                 DataType.HASH,
-                Stream.of(values).collect(toConcurrentMap(Entry::getKey, Entry::getValue)));
+                unmodifiableMap(Stream.of(values).collect(toHash())));
     }
 
     public static Entry<String, String> entry(String key, String value) {
@@ -155,12 +163,21 @@ public class DatabaseValue {
         return new SimpleEntry<Float, String>(score, value);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "DatabaseValue [type=" + type + ", value=" + value + "]";
+    private static Collector<String, ?, LinkedList<String>> toList() {
+        return toCollection(() -> new LinkedList<>());
+    }
+
+    private static Collector<String, ?, LinkedHashSet<String>> toSet() {
+        return toCollection(() -> new LinkedHashSet<>());
+    }
+
+    private static Collector<Entry<Float, String>, ?, Set<Entry<Float, String>>> toSortedSet() {
+        return toCollection(() ->
+                new TreeSet<>((o1, o2) -> o1.getKey().compareTo(o2.getKey())));
+    }
+
+    private static Collector<Entry<String, String>, ?, Map<String, String>> toHash() {
+        return toMap(Entry::getKey, Entry::getValue);
     }
 
 }

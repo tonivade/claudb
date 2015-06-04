@@ -8,6 +8,7 @@ package tonivade.db.command.hash;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import tonivade.db.command.ICommand;
@@ -31,11 +32,10 @@ public class HashSetCommand implements ICommand {
 
         DatabaseValue resultValue = db.merge(request.getParam(0), value,
                 (oldValue, newValue) -> {
-                    DatabaseValue merged = hash();
-                    Map<String, String> hash = merged.getValue();
-                    hash.putAll(oldValue.getValue());
-                    hash.putAll(newValue.getValue());
-                    return merged;
+                    Map<String, String> merge = new HashMap<>();
+                    merge.putAll(oldValue.getValue());
+                    merge.putAll(newValue.getValue());
+                    return hash(merge.entrySet());
                 });
 
         Map<String, String> resultMap = resultValue.getValue();

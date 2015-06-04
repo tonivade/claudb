@@ -5,6 +5,9 @@
 
 package tonivade.db.command.list;
 
+import static tonivade.db.data.DatabaseValue.list;
+
+import java.util.LinkedList;
 import java.util.List;
 
 import tonivade.db.command.ICommand;
@@ -14,7 +17,6 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
-import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @Command("lpop")
@@ -24,12 +26,21 @@ public class LeftPopCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.get(request.getParam(0));
-        if (value != null) {
-            List<String> list = value.getValue();
-            response.addBulkStr(list.remove(0));
-        } else {
+        List<String> removed = new LinkedList<>();
+        db.merge(request.getParam(0), list(),
+                (oldValue, newValue) -> {
+                    List<String> merge = new LinkedList<>();
+                    merge.addAll(oldValue.getValue());
+                    if (!merge.isEmpty()) {
+                        removed.add(merge.remove(0));
+                    }
+                    return list(merge);
+                });
+
+        if (removed.isEmpty()) {
             response.addBulkStr(null);
+        } else {
+            response.addBulkStr(removed.remove(0));
         }
     }
 
