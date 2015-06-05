@@ -51,6 +51,7 @@ Implemented commands
 - SREM
 - ZREM
 - ZRANGE
+- ZRANGEBYSCORE
 
 Design
 ------

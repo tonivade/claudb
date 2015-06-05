@@ -8,12 +8,14 @@ package tonivade.db.command.zset;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static tonivade.db.data.DatabaseValue.score;
 import static tonivade.db.data.DatabaseValue.zset;
 
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import tonivade.db.command.ICommand;
@@ -26,10 +28,10 @@ import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
-@Command("zrange")
+@Command("zrangebyscore")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetRangeCommand implements ICommand {
+public class SortedSetRangeByScoreCommand implements ICommand {
 
     private static final String PARAM_WITHSCORES = "WITHSCORES";
 
@@ -40,25 +42,19 @@ public class SortedSetRangeCommand implements ICommand {
             NavigableSet<Entry<Float, String>> set = value.getValue();
 
             int from = Integer.parseInt(request.getParam(1));
-            if (from < 0) {
-                from = set.size() + from;
-            }
             int to = Integer.parseInt(request.getParam(2));
-            if (to < 0) {
-                to = set.size() + to;
-            }
 
-            Entry<?, ?>[] array = set.toArray(new Entry<?, ?>[] {});
+            Set<Entry<Float, String>> range = set.subSet(score(from, ""), score(to, ""));
 
             List<String> result = emptyList();
             if (from <= to) {
                 Optional<String> withScores = request.getOptionalParam(3);
                 if (withScores.isPresent() && withScores.get().equals(PARAM_WITHSCORES)) {
-                    result = Stream.of(array).skip(from).limit((to - from) + 1).flatMap(
-                            (o) -> Stream.of(valueOf(o.getKey()), valueOf(o.getValue()))).collect(toList());
+                    result = range.stream().skip(from).limit((to - from) + 1).flatMap(
+                            (o) -> Stream.of(valueOf(o.getKey()), o.getValue())).collect(toList());
                 } else {
-                    result = Stream.of(array).skip(from).limit(
-                            (to - from) + 1).map((o) -> valueOf(o.getValue())).collect(toList());
+                    result = range.stream().skip(from).limit((to - from) + 1).map(
+                            (o) -> o.getValue()).collect(toList());
                 }
             }
 
