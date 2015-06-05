@@ -3,7 +3,7 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.impl;
+package tonivade.db.command;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

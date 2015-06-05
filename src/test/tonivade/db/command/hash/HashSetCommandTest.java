@@ -11,9 +11,9 @@ import static tonivade.db.data.DatabaseValue.hash;
 import org.junit.Rule;
 import org.junit.Test;
 
+import tonivade.db.command.CommandRule;
+import tonivade.db.command.CommandUnderTest;
 import tonivade.db.command.hash.HashSetCommand;
-import tonivade.db.command.impl.CommandRule;
-import tonivade.db.command.impl.CommandUnderTest;
 
 @CommandUnderTest(HashSetCommand.class)
 public class HashSetCommandTest {

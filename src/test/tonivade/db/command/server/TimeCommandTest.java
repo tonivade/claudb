@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
-import tonivade.db.command.impl.CommandRule;
-import tonivade.db.command.impl.CommandUnderTest;
+import tonivade.db.command.CommandRule;
+import tonivade.db.command.CommandUnderTest;
 import tonivade.db.command.server.TimeCommand;
 
 @CommandUnderTest(TimeCommand.class)

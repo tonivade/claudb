@@ -10,8 +10,8 @@ import static tonivade.db.data.DatabaseValue.set;
 import org.junit.Rule;
 import org.junit.Test;
 
-import tonivade.db.command.impl.CommandRule;
-import tonivade.db.command.impl.CommandUnderTest;
+import tonivade.db.command.CommandRule;
+import tonivade.db.command.CommandUnderTest;
 import tonivade.db.command.set.SetCardinalityCommand;
 
 @CommandUnderTest(SetCardinalityCommand.class)

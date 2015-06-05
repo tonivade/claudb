@@ -3,7 +3,7 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.impl;
+package tonivade.db.command;
 
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;

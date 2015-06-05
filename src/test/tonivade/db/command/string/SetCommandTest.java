@@ -11,8 +11,8 @@ import static tonivade.db.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-import tonivade.db.command.impl.CommandRule;
-import tonivade.db.command.impl.CommandUnderTest;
+import tonivade.db.command.CommandRule;
+import tonivade.db.command.CommandUnderTest;
 
 @CommandUnderTest(SetCommand.class)
 public class SetCommandTest {
