@@ -7,6 +7,7 @@ package tonivade.db.command;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class Request implements IRequest {
 
@@ -41,7 +42,19 @@ public class Request implements IRequest {
      */
     @Override
     public String getParam(int i) {
-        return params.get(i);
+        if (params.size() - 1 > i) {
+            return params.get(i);
+        }
+        return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see tonivade.db.command.IRequest#getOptionalParam(int)
+     */
+    @Override
+    public Optional<String> getOptionalParam(int i) {
+        return Optional.of(getParam(i));
     }
 
     /* (non-Javadoc)

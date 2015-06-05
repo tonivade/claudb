@@ -49,6 +49,27 @@ public class SortedSetRangeCommandTest {
     }
 
     @Test
+    public void testExecuteWithScores() throws Exception {
+        rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
+            .withParams("key", "0", "-1", "WITHSCORES")
+            .execute()
+            .verify().addArray(captor.capture());
+
+        Collection<String> array = captor.getValue();
+
+        assertThat(array.size(), is(6));
+
+        Iterator<String> iter = array.iterator();
+
+        assertThat(iter.next(), is("1.0"));
+        assertThat(iter.next(), is("a"));
+        assertThat(iter.next(), is("2.0"));
+        assertThat(iter.next(), is("b"));
+        assertThat(iter.next(), is("3.0"));
+        assertThat(iter.next(), is("c"));
+    }
+
+    @Test
     public void testExecuteHead() throws Exception {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "0", "1")

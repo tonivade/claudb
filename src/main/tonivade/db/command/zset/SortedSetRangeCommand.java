@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import tonivade.db.command.ICommand;
@@ -29,6 +30,8 @@ import tonivade.db.data.IDatabase;
 @ParamType(DataType.ZSET)
 public class SortedSetRangeCommand implements ICommand {
 
+    private static final String PARAM_WITHSCORES = "WITHSCORES";
+
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
@@ -44,11 +47,17 @@ public class SortedSetRangeCommand implements ICommand {
                 to = set.size() + to;
             }
 
+            Optional<String> withScores = request.getOptionalParam(3);
+
             Entry<?, ?>[] array = set.toArray(new Entry<?, ?>[] {});
 
             List<String> result = null;
             if (from <= to) {
-                result = Stream.of(array).skip(from).limit((to - from) + 1).map((o) -> o.getValue().toString()).collect(toList());
+                if (withScores.isPresent() && withScores.get().equals(PARAM_WITHSCORES)) {
+                    result = Stream.of(array).skip(from).limit((to - from) + 1).flatMap((o) -> Stream.of(o.getKey().toString(), o.getValue().toString())).collect(toList());
+                } else {
+                    result = Stream.of(array).skip(from).limit((to - from) + 1).map((o) -> o.getValue().toString()).collect(toList());
+                }
             } else {
                 result = Collections.emptyList();
             }
