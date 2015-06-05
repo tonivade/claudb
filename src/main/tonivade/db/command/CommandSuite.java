@@ -49,6 +49,7 @@ import tonivade.db.command.string.SetCommand;
 import tonivade.db.command.string.StringLengthCommand;
 import tonivade.db.command.zset.SortedSetAddCommand;
 import tonivade.db.command.zset.SortedSetCardinalityCommand;
+import tonivade.db.command.zset.SortedSetRangeCommand;
 import tonivade.db.command.zset.SortedSetRemoveCommand;
 
 public class CommandSuite {
@@ -113,6 +114,7 @@ public class CommandSuite {
         addCommand(SortedSetAddCommand.class);
         addCommand(SortedSetCardinalityCommand.class);
         addCommand(SortedSetRemoveCommand.class);
+        addCommand(SortedSetRangeCommand.class);
     }
 
     private void addCommand(Class<? extends ICommand> clazz) {

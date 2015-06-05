@@ -7,6 +7,7 @@ package tonivade.db.data;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableNavigableSet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
@@ -17,7 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.NavigableSet;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -26,7 +27,7 @@ public class DatabaseValue {
 
     private final DataType type;
 
-    private Object value;
+    private final Object value;
 
     public DatabaseValue(DataType type) {
         this(type, null);
@@ -131,14 +132,14 @@ public class DatabaseValue {
     public static DatabaseValue zset(Collection<Entry<Float, String>> values) {
         return new DatabaseValue(
                 DataType.ZSET,
-                unmodifiableSet(values.stream().collect(toSortedSet())));
+                unmodifiableNavigableSet(values.stream().collect(toSortedSet())));
     }
 
     @SafeVarargs
     public static DatabaseValue zset(Entry<Float, String> ... values) {
         return new DatabaseValue(
                 DataType.ZSET,
-                unmodifiableSet(Stream.of(values).collect(toSortedSet())));
+                unmodifiableNavigableSet(Stream.of(values).collect(toSortedSet())));
     }
 
     public static DatabaseValue hash(Collection<Entry<String, String>> values) {
@@ -170,7 +171,7 @@ public class DatabaseValue {
         return toCollection(() -> new LinkedHashSet<>());
     }
 
-    private static Collector<Entry<Float, String>, ?, Set<Entry<Float, String>>> toSortedSet() {
+    private static Collector<Entry<Float, String>, ?, NavigableSet<Entry<Float, String>>> toSortedSet() {
         return toCollection(() -> new SortedSet());
     }
 

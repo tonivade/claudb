@@ -6,7 +6,9 @@
 package tonivade.db.data;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,11 +16,11 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class SortedSet implements Set<Entry<Float, String>> {
+public class SortedSet implements NavigableSet<Entry<Float, String>> {
 
-    private Map<String, Float> items = new HashMap<>();
+    private final Map<String, Float> items = new HashMap<>();
 
-    private NavigableSet<Entry<Float, String>> scores = new TreeSet<>(
+    private final NavigableSet<Entry<Float, String>> scores = new TreeSet<>(
             (o1, o2) -> {
                 int key = o1.getKey().compareTo(o2.getKey());
                 return key != 0 ? key : o1.getValue().compareTo(o2.getValue());
@@ -76,8 +78,11 @@ public class SortedSet implements Set<Entry<Float, String>> {
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        // TODO Auto-generated method stub
-        return false;
+        boolean result = false;
+        for (Object object : c) {
+            result |= contains(object);
+        }
+        return result;
     }
 
     @Override
@@ -91,8 +96,13 @@ public class SortedSet implements Set<Entry<Float, String>> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        // TODO Auto-generated method stub
-        return false;
+        Set<String> toRemove = new HashSet<>(items.keySet());
+        toRemove.removeAll(c);
+        boolean result = false;
+        for (String key : toRemove) {
+            result |= remove(key);
+        }
+        return result;
     }
 
     @Override
@@ -108,6 +118,95 @@ public class SortedSet implements Set<Entry<Float, String>> {
     public void clear() {
         items.clear();
         scores.clear();
+    }
+
+    @Override
+    public Comparator<? super Entry<Float, String>> comparator() {
+        return scores.comparator();
+    }
+
+    @Override
+    public Entry<Float, String> first() {
+        return scores.first();
+    }
+
+    @Override
+    public Entry<Float, String> last() {
+        return scores.last();
+    }
+
+    @Override
+    public Entry<Float, String> lower(Entry<Float, String> e) {
+        return scores.lower(e);
+    }
+
+    @Override
+    public Entry<Float, String> floor(Entry<Float, String> e) {
+        return scores.floor(e);
+    }
+
+    @Override
+    public Entry<Float, String> ceiling(Entry<Float, String> e) {
+        return scores.ceiling(e);
+    }
+
+    @Override
+    public Entry<Float, String> higher(Entry<Float, String> e) {
+        return scores.higher(e);
+    }
+
+    @Override
+    public Entry<Float, String> pollFirst() {
+        return scores.pollFirst();
+    }
+
+    @Override
+    public Entry<Float, String> pollLast() {
+        return scores.pollLast();
+    }
+
+    @Override
+    public NavigableSet<Entry<Float, String>> descendingSet() {
+        return scores.descendingSet();
+    }
+
+    @Override
+    public Iterator<Entry<Float, String>> descendingIterator() {
+        return scores.descendingIterator();
+    }
+
+    @Override
+    public NavigableSet<Entry<Float, String>> subSet(Entry<Float, String> fromElement,
+            boolean fromInclusive, Entry<Float, String> toElement, boolean toInclusive) {
+        return scores.subSet(fromElement, fromInclusive, toElement, toInclusive);
+    }
+
+    @Override
+    public NavigableSet<Entry<Float, String>> headSet(Entry<Float, String> toElement,
+            boolean inclusive) {
+        return scores.headSet(toElement, inclusive);
+    }
+
+    @Override
+    public NavigableSet<Entry<Float, String>> tailSet(Entry<Float, String> fromElement,
+            boolean inclusive) {
+        return scores.tailSet(fromElement, inclusive);
+    }
+
+    @Override
+    public java.util.SortedSet<Entry<Float, String>> subSet(Entry<Float, String> fromElement,
+            Entry<Float, String> toElement) {
+        return scores.subSet(fromElement, toElement);
+    }
+
+    @Override
+    public java.util.SortedSet<Entry<Float, String>> headSet(Entry<Float, String> toElement) {
+        return scores.headSet(toElement);
+    }
+
+    @Override
+    public java.util.SortedSet<Entry<Float, String>> tailSet(Entry<Float, String> fromElement) {
+        return scores.tailSet(fromElement);
     }
 
     public float score(String key) {
@@ -159,6 +258,10 @@ public class SortedSet implements Set<Entry<Float, String>> {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return scores.toString();

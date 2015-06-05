@@ -50,6 +50,7 @@ Implemented commands
 - ZCARD
 - SREM
 - ZREM
+- ZRANGE
 
 Design
 ------
