@@ -6,6 +6,7 @@
 package tonivade.db.command;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
@@ -24,6 +25,10 @@ public class RequestTest {
         assertThat(request.getParam(0), is("1"));
         assertThat(request.getParam(1), is("2"));
         assertThat(request.getParam(2), is("3"));
+        assertThat(request.getParam(3), is(nullValue()));
+        assertThat(request.getOptionalParam(2).isPresent(), is(true));
+        assertThat(request.getOptionalParam(2).get(), is("3"));
+        assertThat(request.getOptionalParam(3).isPresent(), is(false));
         assertThat(request.toString(), is("a[3]: [1, 2, 3]"));
     }
 

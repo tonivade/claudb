@@ -42,7 +42,7 @@ public class Request implements IRequest {
      */
     @Override
     public String getParam(int i) {
-        if (params.size() - 1 > i) {
+        if (i < params.size()) {
             return params.get(i);
         }
         return null;
@@ -54,7 +54,7 @@ public class Request implements IRequest {
      */
     @Override
     public Optional<String> getOptionalParam(int i) {
-        return Optional.of(getParam(i));
+        return Optional.ofNullable(getParam(i));
     }
 
     /* (non-Javadoc)
