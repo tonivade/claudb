@@ -63,4 +63,22 @@ public class SortedSetTest {
         assertThat(setA, not(is(setB)));
     }
 
+    @Test
+    public void testScore() throws Exception {
+        SortedSet set = new SortedSet();
+        set.add(score(1, "a"));
+        set.add(score(2, "b"));
+        set.add(score(3, "c"));
+        set.add(score(4, "d"));
+        set.add(score(5, "e"));
+        set.add(score(6, "f"));
+        set.add(score(7, "g"));
+        set.add(score(8, "h"));
+        set.add(score(9, "i"));
+
+        assertThat(set.tailSet(score(3, "")).first(), is(score(3.0F, "c")));
+
+        assertThat(set.headSet(score(4, "")).last(), is(score(3.0F, "c")));
+    }
+
 }
