@@ -52,6 +52,7 @@ import tonivade.db.command.zset.SortedSetCardinalityCommand;
 import tonivade.db.command.zset.SortedSetRangeByScoreCommand;
 import tonivade.db.command.zset.SortedSetRangeCommand;
 import tonivade.db.command.zset.SortedSetRemoveCommand;
+import tonivade.db.command.zset.SortedSetReverseRangeCommand;
 
 public class CommandSuite {
 
@@ -117,6 +118,7 @@ public class CommandSuite {
         addCommand(SortedSetRemoveCommand.class);
         addCommand(SortedSetRangeCommand.class);
         addCommand(SortedSetRangeByScoreCommand.class);
+        addCommand(SortedSetReverseRangeCommand.class);
     }
 
     private void addCommand(Class<? extends ICommand> clazz) {

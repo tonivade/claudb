@@ -61,12 +61,12 @@ public class SortedSetRangeCommandTest {
 
         Iterator<String> iter = array.iterator();
 
-        assertThat(iter.next(), is("1.0"));
         assertThat(iter.next(), is("a"));
-        assertThat(iter.next(), is("2.0"));
+        assertThat(iter.next(), is("1.0"));
         assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("3.0"));
+        assertThat(iter.next(), is("2.0"));
         assertThat(iter.next(), is("c"));
+        assertThat(iter.next(), is("3.0"));
     }
 
     @Test

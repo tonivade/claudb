@@ -61,11 +61,28 @@ public class SortedSetRangeByScoreCommandTest {
 
         Iterator<String> iter = array.iterator();
 
-        assertThat(iter.next(), is("1.0"));
         assertThat(iter.next(), is("a"));
-        assertThat(iter.next(), is("2.0"));
+        assertThat(iter.next(), is("1.0"));
         assertThat(iter.next(), is("b"));
+        assertThat(iter.next(), is("2.0"));
+        assertThat(iter.next(), is("c"));
         assertThat(iter.next(), is("3.0"));
+    }
+
+    @Test
+    public void testExecuteWithLimit() throws Exception {
+        rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
+            .withParams("key", "1", "3", "LIMIT", "1", "2")
+            .execute()
+            .verify().addArray(captor.capture());
+
+        Collection<String> array = captor.getValue();
+
+        assertThat(array.size(), is(2));
+
+        Iterator<String> iter = array.iterator();
+
+        assertThat(iter.next(), is("b"));
         assertThat(iter.next(), is("c"));
     }
 
