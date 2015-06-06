@@ -18,12 +18,23 @@ import java.util.TreeSet;
 
 public class SortedSet implements NavigableSet<Entry<Float, String>> {
 
+    private static final String EMPTY_STRING = "";
+
     private final Map<String, Float> items = new HashMap<>();
 
     private final NavigableSet<Entry<Float, String>> scores = new TreeSet<>(
             (o1, o2) -> {
                 int key = o1.getKey().compareTo(o2.getKey());
-                return key != 0 ? key : o1.getValue().compareTo(o2.getValue());
+                if (key != 0) {
+                    return key;
+                }
+                if (EMPTY_STRING.equals(o1.getValue())) {
+                    return 0;
+                }
+                if (EMPTY_STRING.equals(o2.getValue())) {
+                    return 0;
+                }
+                return o1.getValue().compareTo(o2.getValue());
             });
 
     @Override

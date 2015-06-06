@@ -33,7 +33,7 @@ public class SortedSetRangeByScoreCommandTest {
     @Test
     public void testExecute() throws Exception {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
-            .withParams("key", "0", "4")
+            .withParams("key", "1", "3")
             .execute()
             .verify().addArray(captor.capture());
 
@@ -51,7 +51,7 @@ public class SortedSetRangeByScoreCommandTest {
     @Test
     public void testExecuteWithScores() throws Exception {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
-            .withParams("key", "0", "4", "WITHSCORES")
+            .withParams("key", "1", "3", "WITHSCORES")
             .execute()
             .verify().addArray(captor.capture());
 
@@ -66,6 +66,41 @@ public class SortedSetRangeByScoreCommandTest {
         assertThat(iter.next(), is("2.0"));
         assertThat(iter.next(), is("b"));
         assertThat(iter.next(), is("3.0"));
+        assertThat(iter.next(), is("c"));
+    }
+
+    @Test
+    public void testExecuteExclusive() throws Exception {
+        rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
+            .withParams("key", "(1", "3")
+            .execute()
+            .verify().addArray(captor.capture());
+
+        Collection<String> array = captor.getValue();
+
+        assertThat(array.size(), is(2));
+
+        Iterator<String> iter = array.iterator();
+
+        assertThat(iter.next(), is("b"));
+        assertThat(iter.next(), is("c"));
+    }
+
+    @Test
+    public void testExecuteInfinity() throws Exception {
+        rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
+            .withParams("key", "-inf", "+inf")
+            .execute()
+            .verify().addArray(captor.capture());
+
+        Collection<String> array = captor.getValue();
+
+        assertThat(array.size(), is(3));
+
+        Iterator<String> iter = array.iterator();
+
+        assertThat(iter.next(), is("a"));
+        assertThat(iter.next(), is("b"));
         assertThat(iter.next(), is("c"));
     }
 

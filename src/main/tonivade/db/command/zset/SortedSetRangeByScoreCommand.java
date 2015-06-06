@@ -33,6 +33,10 @@ import tonivade.db.data.IDatabase;
 @ParamType(DataType.ZSET)
 public class SortedSetRangeByScoreCommand implements ICommand {
 
+    private static final String EMPTY_STRING = "";
+    private static final String EXCLUSIVE = "(";
+    private static final String MINUS_INFINITY = "-inf";
+    private static final String INIFITY = "+inf";
     private static final String PARAM_WITHSCORES = "WITHSCORES";
 
     @Override
@@ -41,19 +45,21 @@ public class SortedSetRangeByScoreCommand implements ICommand {
             DatabaseValue value = db.getOrDefault(request.getParam(0), zset());
             NavigableSet<Entry<Float, String>> set = value.getValue();
 
-            int from = Integer.parseInt(request.getParam(1));
-            int to = Integer.parseInt(request.getParam(2));
+            float from = parseRange(request.getParam(1));
+            float to = parseRange(request.getParam(2));
 
-            Set<Entry<Float, String>> range = set.subSet(score(from, ""), score(to, ""));
+            Set<Entry<Float, String>> range = set.subSet(
+                    score(from, EMPTY_STRING), inclusive(request.getParam(1)),
+                    score(to, EMPTY_STRING), inclusive(request.getParam(2)));
 
             List<String> result = emptyList();
             if (from <= to) {
                 Optional<String> withScores = request.getOptionalParam(3);
                 if (withScores.isPresent() && withScores.get().equals(PARAM_WITHSCORES)) {
-                    result = range.stream().skip(from).limit((to - from) + 1).flatMap(
+                    result = range.stream().flatMap(
                             (o) -> Stream.of(valueOf(o.getKey()), o.getValue())).collect(toList());
                 } else {
-                    result = range.stream().skip(from).limit((to - from) + 1).map(
+                    result = range.stream().map(
                             (o) -> o.getValue()).collect(toList());
                 }
             }
@@ -61,6 +67,24 @@ public class SortedSetRangeByScoreCommand implements ICommand {
             response.addArray(result);
         } catch (NumberFormatException e) {
             response.addError("ERR value is not an integer or out of range");
+        }
+    }
+
+    private boolean inclusive(String param) {
+        return !param.startsWith(EXCLUSIVE);
+    }
+
+    private float parseRange(String param) {
+        switch (param) {
+        case INIFITY:
+            return Float.MAX_VALUE;
+        case MINUS_INFINITY:
+            return Float.MIN_VALUE;
+        default:
+            if (param.startsWith(EXCLUSIVE)) {
+                return Float.parseFloat(param.substring(1));
+            }
+            return Float.parseFloat(param);
         }
     }
 
