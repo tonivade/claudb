@@ -53,6 +53,9 @@ Implemented commands
 - ZRANGE
 - ZRANGEBYSCORE
 - ZREVRANGE
+- SINTER
+- SUNION
+- SDIFF
 
 Design
 ------

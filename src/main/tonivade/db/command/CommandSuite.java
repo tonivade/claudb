@@ -35,9 +35,12 @@ import tonivade.db.command.server.PingCommand;
 import tonivade.db.command.server.TimeCommand;
 import tonivade.db.command.set.SetAddCommand;
 import tonivade.db.command.set.SetCardinalityCommand;
+import tonivade.db.command.set.SetDifferenceCommand;
+import tonivade.db.command.set.SetIntersectionCommand;
 import tonivade.db.command.set.SetIsMemberCommand;
 import tonivade.db.command.set.SetMembersCommand;
 import tonivade.db.command.set.SetRemoveCommand;
+import tonivade.db.command.set.SetUnionCommand;
 import tonivade.db.command.string.DecrementCommand;
 import tonivade.db.command.string.GetCommand;
 import tonivade.db.command.string.GetSetCommand;
@@ -111,6 +114,9 @@ public class CommandSuite {
         addCommand(SetCardinalityCommand.class);
         addCommand(SetIsMemberCommand.class);
         addCommand(SetRemoveCommand.class);
+        addCommand(SetUnionCommand.class);
+        addCommand(SetIntersectionCommand.class);
+        addCommand(SetDifferenceCommand.class);
 
         // sorted set
         addCommand(SortedSetAddCommand.class);
@@ -127,7 +133,7 @@ public class CommandSuite {
 
             Command annotation = clazz.getAnnotation(Command.class);
             if (annotation != null) {
-                commands.put(annotation.value(), command(command));
+                commands.put(annotation.value(), wrap(command));
             } else {
                 LOGGER.warning(() -> "annotation not present at " + clazz.getName());
             }
@@ -136,7 +142,7 @@ public class CommandSuite {
         }
     }
 
-    private ICommand command(ICommand command) {
+    private ICommand wrap(ICommand command) {
         return new CommandWrapper(command);
     }
 
