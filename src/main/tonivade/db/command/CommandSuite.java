@@ -26,7 +26,10 @@ import tonivade.db.command.key.RenameCommand;
 import tonivade.db.command.key.TypeCommand;
 import tonivade.db.command.list.LeftPopCommand;
 import tonivade.db.command.list.LeftPushCommand;
+import tonivade.db.command.list.ListIndexCommand;
 import tonivade.db.command.list.ListLengthCommand;
+import tonivade.db.command.list.ListRangeCommand;
+import tonivade.db.command.list.ListSetCommand;
 import tonivade.db.command.list.RightPopCommand;
 import tonivade.db.command.list.RightPushCommand;
 import tonivade.db.command.server.EchoCommand;
@@ -107,6 +110,9 @@ public class CommandSuite {
         addCommand(RightPushCommand.class);
         addCommand(RightPopCommand.class);
         addCommand(ListLengthCommand.class);
+        addCommand(ListRangeCommand.class);
+        addCommand(ListIndexCommand.class);
+        addCommand(ListSetCommand.class);
 
         // set
         addCommand(SetAddCommand.class);

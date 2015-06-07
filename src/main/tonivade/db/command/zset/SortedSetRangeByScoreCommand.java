@@ -59,7 +59,7 @@ public class SortedSetRangeByScoreCommand implements ICommand {
             if (from <= to) {
                 if (options.withScores) {
                     result = range.stream().flatMap(
-                            (o) -> Stream.of(valueOf(o.getValue()), valueOf(o.getKey()))).collect(toList());
+                            (o) -> Stream.of(o.getValue(), valueOf(o.getKey()))).collect(toList());
                 } else {
                     result = range.stream().map(
                             (o) -> valueOf(o.getValue())).collect(toList());

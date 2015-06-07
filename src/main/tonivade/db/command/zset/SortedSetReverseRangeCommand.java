@@ -49,17 +49,15 @@ public class SortedSetReverseRangeCommand implements ICommand {
                 to = set.size() + to;
             }
 
-            Entry<?, ?>[] array = set.toArray(new Entry<?, ?>[] {});
-
             List<String> result = emptyList();
             if (from <= to) {
                 Optional<String> withScores = request.getOptionalParam(3);
                 if (withScores.isPresent() && withScores.get().equals(PARAM_WITHSCORES)) {
-                    result = Stream.of(array).skip(from).limit((to - from) + 1).flatMap(
-                            (o) -> Stream.of(valueOf(o.getValue()), valueOf(o.getKey()))).collect(toList());
+                    result = set.stream().skip(from).limit((to - from) + 1).flatMap(
+                            (o) -> Stream.of(o.getValue(), valueOf(o.getKey()))).collect(toList());
                 } else {
-                    result = Stream.of(array).skip(from).limit(
-                            (to - from) + 1).map((o) -> valueOf(o.getValue())).collect(toList());
+                    result = set.stream().skip(from).limit(
+                            (to - from) + 1).map((o) -> o.getValue()).collect(toList());
                 }
             }
             reverse(result);

@@ -46,7 +46,10 @@ Implemented commands
 - List
     - LPOP
     - LPUSH
+    - LINDEX
     - LLEN
+    - LRANGE
+    - LSET
     - RPOP
     - RPUSH
 - Set
