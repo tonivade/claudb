@@ -10,52 +10,63 @@ You probably will wonder why I do this, the answer is Just For Fun.
 Implemented commands
 --------------------
 
-- SET
-- GET
-- DEL
-- GETSET
-- EXISTS
-- MGET
-- MSET
-- INCR
-- DECR
-- INCRBY
-- DECRBY
-- HGET
-- HSET
-- HGETALL
-- PING
-- ECHO
-- TIME
-- FLUSHDB
-- STRLEN
-- RENAME
-- KEYS
-- HEXISTS
-- HDEL
-- HKEYS
-- HLEN
-- APPEND
-- HVALS
-- LPUSH
-- LPOP
-- RPUSH
-- RPOP
-- LLEN
-- SADD
-- SMEMBERS
-- SCARD
-- SISMEMBER
-- ZADD
-- ZCARD
-- SREM
-- ZREM
-- ZRANGE
-- ZRANGEBYSCORE
-- ZREVRANGE
-- SINTER
-- SUNION
-- SDIFF
+- Server
+    - FLUSHDB
+- Connection
+    - ECHO
+    - PING
+    - TIME
+- Key
+    - DEL
+    - EXISTS
+    - KEYS
+    - RENAME
+    - TYPE
+- String
+    - APPEND
+    - DECRBY
+    - DECR
+    - GET
+    - GETSET
+    - INCRBY
+    - INCR
+    - MGET
+    - MGET
+    - SET
+    - STRLEN
+- Hash
+    - HDEL
+    - HEXISTS
+    - HGETALL
+    - HGET
+    - HKEYS
+    - HLEN
+    - HSET
+    - HVALS
+- List
+    - LPOP
+    - LPUSH
+    - LLEN
+    - RPOP
+    - RPUSH
+- Set
+    - SADD
+    - SCARD
+    - SDIFF
+    - SINTER
+    - SISMEMBER
+    - SMEMBERS
+    - SPOP
+    - SRANDMEMBER
+    - SREM
+    - SUNION
+- Sorted Set
+    - ZADD
+    - ZCARD
+    - ZRANGEBYSCORE
+    - ZRANGE
+    - ZREM
+    - ZREVRANGE
 
 Design
 ------
@@ -81,6 +92,19 @@ And this is REDIS
     $ redis-benchmark -t set,get -h localhost -p 6379 -n 100000 -q
     SET: 97751.71 requests per second
     GET: 100000.00 requests per second
+
+TODO
+----
+
+- Pipelining.
+- Key expiration.
+- Transactions (MULTI & EXEC).
+- Persistence to disk.
+- Publish/Subscribe.
+- Master - Slave Replication.
+- Scripting with Javascript/Lua.
+- Partitioning?
+- Clustering?
 
 CI
 --

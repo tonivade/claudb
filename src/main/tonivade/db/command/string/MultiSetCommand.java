@@ -13,7 +13,7 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.IDatabase;
 
-@Command("mget")
+@Command("mset")
 @ParamLength(2)
 public class MultiSetCommand implements ICommand {
 
