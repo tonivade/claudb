@@ -17,7 +17,7 @@ public class RequestTest {
 
     @Test
     public void testRequest() throws Exception {
-        Request request = new Request("a", Arrays.asList("1", "2", "3"));
+        Request request = new Request(null, null, "a", Arrays.asList("1", "2", "3"));
 
         assertThat(request.getCommand(), is("a"));
         assertThat(request.getLength(), is(3));

@@ -5,6 +5,7 @@
 
 package tonivade.db;
 
+import static java.util.Collections.emptyList;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -30,8 +31,11 @@ import tonivade.db.command.CommandSuite;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
+import tonivade.db.command.IServerContext;
+import tonivade.db.command.ISession;
 import tonivade.db.command.Request;
 import tonivade.db.command.Response;
+import tonivade.db.command.Session;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.RedisToken;
@@ -46,7 +50,7 @@ import tonivade.db.redis.RequestDecoder;
  * @author tomby
  *
  */
-public class TinyDB implements ITinyDB {
+public class TinyDB implements ITinyDB, IServerContext {
 
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
@@ -70,7 +74,7 @@ public class TinyDB implements ITinyDB {
     private TinyDBInitializerHandler acceptHandler;
     private TinyDBConnectionHandler connectionHandler;
 
-    private final Map<String, ChannelHandlerContext> channels = new HashMap<>();
+    private final Map<String, ISession> clients = new HashMap<>();
 
     private final Database db = new Database(new HashMap<String, DatabaseValue>());
 
@@ -119,7 +123,7 @@ public class TinyDB implements ITinyDB {
             bossGroup.shutdownGracefully();
         }
 
-        channels.clear();
+        clients.clear();
 
         LOGGER.info("adapter stopped");
     }
@@ -153,7 +157,7 @@ public class TinyDB implements ITinyDB {
 
         LOGGER.fine(() -> "client connected: " + sourceKey);
 
-        channels.put(sourceKey, ctx);
+        clients.put(sourceKey, new Session(sourceKey, ctx));
     }
 
     /**
@@ -167,7 +171,12 @@ public class TinyDB implements ITinyDB {
 
         LOGGER.fine(() -> "client disconnected: " + sourceKey);
 
-        channels.remove(sourceKey);
+        cleanSession(clients.remove(sourceKey));
+    }
+
+    private void cleanSession(ISession session) {
+        ICommand command = commands.getCommand("unsubscribe");
+        command.execute(db, new Request(this, session, "unsubscribe", emptyList()), new Response());
     }
 
     /**
@@ -182,35 +191,35 @@ public class TinyDB implements ITinyDB {
 
         LOGGER.finest(() -> "message received: " + sourceKey);
 
-        ctx.writeAndFlush(processCommand(parseMessage(message)));
+        ctx.writeAndFlush(processCommand(parseMessage(sourceKey, message)));
     }
 
-    private IRequest parseMessage(RedisToken<?> message) {
+    private IRequest parseMessage(String sourceKey, RedisToken<?> message) {
         IRequest request = null;
         if (message.getType() == RedisTokenType.ARRAY) {
-            request = parseArray(message);
+            request = parseArray(sourceKey, message);
         } else if (message.getType() == RedisTokenType.UNKNOWN) {
-            request = parseLine(message);
+            request = parseLine(sourceKey, message);
         }
         return request;
     }
 
-    private Request parseLine(RedisToken<?> message) {
+    private Request parseLine(String sourceKey, RedisToken<?> message) {
         UnknownRedisToken unknownToken = (UnknownRedisToken) message;
         String command = unknownToken.getValue();
         String[] params = command.split(" ");
         String[] array = new String[params.length - 1];
         System.arraycopy(params, 1, array, 0, array.length);
-        return new Request(params[0], Arrays.asList(array));
+        return new Request(this, clients.get(sourceKey), params[0], Arrays.asList(array));
     }
 
-    private Request parseArray(RedisToken<?> message) {
+    private Request parseArray(String sourceKey, RedisToken<?> message) {
         ArrayRedisToken arrayToken = (ArrayRedisToken) message;
         List<String> params = new LinkedList<String>();
         for (RedisToken<?> token : arrayToken.getValue()) {
             params.add(token.getValue().toString());
         }
-        return new Request(params.get(0), params.subList(1, params.size()));
+        return new Request(this, clients.get(sourceKey), params.get(0), params.subList(1, params.size()));
     }
 
     private String processCommand(IRequest request) {
@@ -229,6 +238,14 @@ public class TinyDB implements ITinyDB {
     private String sourceKey(Channel channel) {
         InetSocketAddress remoteAddress = (InetSocketAddress) channel.remoteAddress();
         return remoteAddress.getHostName() + ":" + remoteAddress.getPort();
+    }
+
+    @Override
+    public void publish(String sourceKey, String message) {
+        ISession session = clients.get(sourceKey);
+        if (session != null) {
+            session.getContext().writeAndFlush(message);
+        }
     }
 
     public static void main(String[] args) throws Exception {

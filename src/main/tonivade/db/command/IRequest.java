@@ -26,4 +26,8 @@ public interface IRequest {
 
     public int getLength();
 
+    public ISession getSession();
+
+    public IServerContext getServerContext();
+
 }

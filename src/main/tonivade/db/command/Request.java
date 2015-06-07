@@ -15,8 +15,14 @@ public class Request implements IRequest {
 
     private List<String> params;
 
-    public Request(String command, List<String> params) {
+    private ISession session;
+
+    private IServerContext server;
+
+    public Request(IServerContext server, ISession session, String command, List<String> params) {
         super();
+        this.server = server;
+        this.session = session;
         this.command = command;
         this.params = params;
     }
@@ -63,6 +69,24 @@ public class Request implements IRequest {
     @Override
     public int getLength() {
         return params.size();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see tonivade.db.command.IRequest#getSession()
+     */
+    @Override
+    public ISession getSession() {
+        return session;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see tonivade.db.command.IRequest#getTinyDB()
+     */
+    @Override
+    public IServerContext getServerContext() {
+        return server;
     }
 
     @Override

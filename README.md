@@ -70,6 +70,10 @@ Implemented commands
     - ZRANGE
     - ZREM
     - ZREVRANGE
+- Pub/Sub
+    - SUBSCRIBE
+    - UNSUBSCRIBE
+    - PUBLISH
 
 Design
 ------

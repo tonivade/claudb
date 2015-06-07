@@ -23,10 +23,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import tonivade.db.command.CommandWrapper;
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
@@ -38,6 +34,10 @@ public class CommandRule implements TestRule {
     private IResponse response;
 
     private IDatabase database;
+
+    private IServerContext server;
+
+    private ISession session;
 
     private final Object target;
 
@@ -65,8 +65,15 @@ public class CommandRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+                server = mock(IServerContext.class);
                 request = mock(IRequest.class);
                 response = mock(IResponse.class);
+                session = mock(ISession.class);
+
+                when(request.getServerContext()).thenReturn(server);
+                when(request.getSession()).thenReturn(session);
+                when(session.getId()).thenReturn("localhost:12345");
+
                 database = new Database(new HashMap<String, DatabaseValue>());
 
                 MockitoAnnotations.initMocks(target);
@@ -120,6 +127,16 @@ public class CommandRule implements TestRule {
 
     public IResponse verify() {
         return Mockito.verify(response);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T verify(Class<T> type) {
+        if (type.equals(IServerContext.class)) {
+            return (T) Mockito.verify(server);
+        } else if (type.equals(ISession.class)) {
+            return (T) Mockito.verify(session);
+        }
+        return (T) verify();
     }
 
 }

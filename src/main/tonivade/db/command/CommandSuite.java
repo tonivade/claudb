@@ -32,6 +32,9 @@ import tonivade.db.command.list.ListRangeCommand;
 import tonivade.db.command.list.ListSetCommand;
 import tonivade.db.command.list.RightPopCommand;
 import tonivade.db.command.list.RightPushCommand;
+import tonivade.db.command.pubsub.PublishCommand;
+import tonivade.db.command.pubsub.SubscribeCommand;
+import tonivade.db.command.pubsub.UnsubscribeCommand;
 import tonivade.db.command.server.EchoCommand;
 import tonivade.db.command.server.FlushDBCommand;
 import tonivade.db.command.server.PingCommand;
@@ -131,6 +134,11 @@ public class CommandSuite {
         addCommand(SortedSetRangeCommand.class);
         addCommand(SortedSetRangeByScoreCommand.class);
         addCommand(SortedSetReverseRangeCommand.class);
+
+        // pub & sub
+        addCommand(PublishCommand.class);
+        addCommand(SubscribeCommand.class);
+        addCommand(UnsubscribeCommand.class);
     }
 
     private void addCommand(Class<? extends ICommand> clazz) {
