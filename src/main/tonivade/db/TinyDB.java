@@ -183,7 +183,10 @@ public class TinyDB implements ITinyDB, IServerContext {
 
         LOGGER.fine(() -> "client disconnected: " + sourceKey);
 
-        cleanSession(clients.remove(sourceKey));
+        ISession session = clients.remove(sourceKey);
+        if (session != null) {
+            cleanSession(session);
+        }
     }
 
     private void cleanSession(ISession session) {
