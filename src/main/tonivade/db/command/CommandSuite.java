@@ -38,6 +38,7 @@ import tonivade.db.command.pubsub.UnsubscribeCommand;
 import tonivade.db.command.server.EchoCommand;
 import tonivade.db.command.server.FlushDBCommand;
 import tonivade.db.command.server.PingCommand;
+import tonivade.db.command.server.SelectCommand;
 import tonivade.db.command.server.TimeCommand;
 import tonivade.db.command.set.SetAddCommand;
 import tonivade.db.command.set.SetCardinalityCommand;
@@ -73,6 +74,7 @@ public class CommandSuite {
         // connection
         addCommand(PingCommand.class);
         addCommand(EchoCommand.class);
+        addCommand(SelectCommand.class);
 
         // server
         addCommand(FlushDBCommand.class);

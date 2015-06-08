@@ -5,8 +5,12 @@
 
 package tonivade.db.command;
 
+import tonivade.db.data.IDatabase;
+
 public interface IServerContext {
 
     public void publish(String destination, String message);
+
+    public IDatabase getDatabase();
 
 }

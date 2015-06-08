@@ -26,9 +26,10 @@ public class UnsubscribeCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
+        IDatabase admin = request.getServerContext().getDatabase();
         int i = request.getLength();
         for (String channel : request.getParams()) {
-            db.merge(SUBSCRIPTIONS_PREFIX + channel, set(request.getSession().getId()),
+            admin.merge(SUBSCRIPTIONS_PREFIX + channel, set(request.getSession().getId()),
                     (oldValue, newValue) -> {
                         Set<String> merge = new HashSet<>();
                         merge.addAll(oldValue.getValue());

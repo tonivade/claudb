@@ -20,6 +20,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,6 +39,7 @@ import tonivade.db.command.Response;
 import tonivade.db.command.Session;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
+import tonivade.db.data.IDatabase;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.RedisToken.ArrayRedisToken;
 import tonivade.db.redis.RedisToken.UnknownRedisToken;
@@ -62,6 +64,8 @@ public class TinyDB implements ITinyDB, IServerContext {
     private static final int DEFAULT_PORT = 7081;
     // Default host name
     private static final String DEFAULT_HOST = "localhost";
+    // Default database number
+    private static final int DEFAULT_DATABASES = 10;
 
     private final int port;
     private final String host;
@@ -76,7 +80,8 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private final Map<String, ISession> clients = new HashMap<>();
 
-    private final Database db = new Database(new HashMap<String, DatabaseValue>());
+    private final List<IDatabase> databases = new ArrayList<IDatabase>();
+    private final IDatabase admin = new Database(new HashMap<String, DatabaseValue>());
 
     private final CommandSuite commands = new CommandSuite();
 
@@ -87,8 +92,15 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     public TinyDB(String host, int port) {
+        this(host, port, DEFAULT_DATABASES);
+    }
+
+    public TinyDB(String host, int port, int databases) {
         this.host = host;
         this.port = port;
+        for (int i = 0; i < databases; i++) {
+            this.databases.add(new Database(new HashMap<String, DatabaseValue>()));
+        }
     }
 
     public void start() {
@@ -176,6 +188,7 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private void cleanSession(ISession session) {
         ICommand command = commands.getCommand("unsubscribe");
+        IDatabase db = databases.get(session.getCurrentDB());
         command.execute(db, new Request(this, session, "unsubscribe", emptyList()), new Response());
     }
 
@@ -226,6 +239,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         LOGGER.fine(() -> "received command: " + request);
 
         IResponse response = new Response();
+        IDatabase db = databases.get(request.getSession().getCurrentDB());
         ICommand command = commands.getCommand(request.getCommand());
         if (command != null) {
             command.execute(db, request, response);
@@ -246,6 +260,11 @@ public class TinyDB implements ITinyDB, IServerContext {
         if (session != null) {
             session.getContext().writeAndFlush(message);
         }
+    }
+
+    @Override
+    public IDatabase getDatabase() {
+        return admin;
     }
 
     public static void main(String[] args) throws Exception {

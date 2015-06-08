@@ -27,9 +27,10 @@ public class SubscribeCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
+        IDatabase admin = request.getServerContext().getDatabase();
         int i = 1;
         for (String chanel : request.getParams()) {
-            db.merge(SUBSCRIPTIONS_PREFIX + chanel, set(request.getSession().getId()),
+            admin.merge(SUBSCRIPTIONS_PREFIX + chanel, set(request.getSession().getId()),
                     (oldValue, newValue) -> {
                         Set<String> merge = new HashSet<>();
                         merge.addAll(oldValue.getValue());
