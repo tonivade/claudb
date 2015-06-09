@@ -5,12 +5,14 @@
 
 package tonivade.db.command;
 
+import static java.util.Collections.emptySet;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -32,6 +34,15 @@ public class CommandWrapperTest {
 
     @Mock
     private IResponse response;
+
+    @Mock
+    private ISession session;
+
+    @Before
+    public void setUp() throws Exception {
+        when(request.getSession()).thenReturn(session);
+        when(session.getSubscriptions()).thenReturn(emptySet());
+    }
 
     @Test
     public void testExecute() {
