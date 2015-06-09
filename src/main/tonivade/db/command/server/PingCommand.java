@@ -9,9 +9,11 @@ import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
+import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.data.IDatabase;
 
 @Command("ping")
+@PubSubAllowed
 public class PingCommand implements ICommand {
 
     public static final String PONG = "PONG";

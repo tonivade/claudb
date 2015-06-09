@@ -17,10 +17,12 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.data.IDatabase;
 
 @Command("subscribe")
 @ParamLength(1)
+@PubSubAllowed
 public class SubscribeCommand implements ICommand {
 
     private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
