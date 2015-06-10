@@ -15,7 +15,7 @@ public interface IResponse {
 
     public IResponse addArrayValue(Collection<DatabaseValue> array);
 
-    public IResponse addArray(Collection<String> array);
+    public IResponse addArray(Collection<?> array);
 
     public IResponse addBulkStr(String str);
 

@@ -5,9 +5,9 @@
 
 package tonivade.db.command.pubsub;
 
+import static java.util.Arrays.asList;
 import static tonivade.db.data.DatabaseValue.set;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +41,7 @@ public class UnsubscribeCommand implements ICommand {
                         return set(merge);
                     });
             request.getSession().removeSubscription(channel);
-            response.addArray(Arrays.asList("unsubscribe", channel, String.valueOf(--i)));
+            response.addArray(asList("unsubscribe", channel, --i));
         }
     }
 

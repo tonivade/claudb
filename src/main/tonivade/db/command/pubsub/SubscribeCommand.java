@@ -5,7 +5,6 @@
 
 package tonivade.db.command.pubsub;
 
-import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static tonivade.db.data.DatabaseValue.set;
 
@@ -40,7 +39,7 @@ public class SubscribeCommand implements ICommand {
                         return set(merge);
                     });
             request.getSession().addSubscription(chanel);
-            response.addArray(asList("subscribe", chanel, valueOf(i++)));
+            response.addArray(asList("subscribe", chanel, i++));
         }
     }
 

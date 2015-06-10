@@ -28,7 +28,7 @@ public class SubscribeCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<?>> captor;
 
     @Test
     public void testExecute() throws Exception {
@@ -40,15 +40,15 @@ public class SubscribeCommandTest {
 
         rule.verify().addArray(captor.capture());
 
-        Collection<String> response = captor.getValue();
+        Collection<?> response = captor.getValue();
 
         assertThat(response.size(), is(3));
 
-        Iterator<String> iter = response.iterator();
+        Iterator<?> iter = response.iterator();
 
         assertThat(iter.next(), is("subscribe"));
         assertThat(iter.next(), is("test"));
-        assertThat(iter.next(), is("1"));
+        assertThat(iter.next(), is(1));
     }
 
 }

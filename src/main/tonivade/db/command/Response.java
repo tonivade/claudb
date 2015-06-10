@@ -36,7 +36,7 @@ public class Response implements IResponse {
                 break;
             case HASH:
                 Map<String, String> map = value.getValue();
-                List<String> list = new LinkedList<>();
+                List<Object> list = new LinkedList<>();
                 map.forEach((k, v) ->  {
                     list.add(k);
                     list.add(v);
@@ -132,11 +132,16 @@ public class Response implements IResponse {
     }
 
     @Override
-    public IResponse addArray(Collection<String> array) {
+    public IResponse addArray(Collection<?> array) {
         if (array != null) {
             sb.append(ARRAY).append(array.size()).append(DELIMITER);
-            for (String value : array) {
-                addBulkStr(value);
+            for (Object value : array) {
+                String string = String.valueOf(value);
+                if (value instanceof Integer) {
+                    addInt(Integer.valueOf(string));
+                } else {
+                    addBulkStr(string);
+                }
             }
         } else {
             sb.append(ARRAY).append(0).append(DELIMITER);
