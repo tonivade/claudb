@@ -270,6 +270,16 @@ public class TinyDB implements ITinyDB, IServerContext {
         return admin;
     }
 
+    @Override
+    public int getPort() {
+        return port;
+    }
+
+    @Override
+    public int getClients() {
+        return clients.size();
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println("usage: tinydb <host> <port>");
 

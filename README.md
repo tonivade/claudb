@@ -12,10 +12,11 @@ Implemented commands
 
 - Server
     - FLUSHDB
+    - INFO
+    - TIME
 - Connection
     - ECHO
     - PING
-    - TIME
 - Key
     - DEL
     - EXISTS

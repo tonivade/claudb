@@ -9,6 +9,10 @@ import tonivade.db.data.IDatabase;
 
 public interface IServerContext {
 
+    public int getPort();
+
+    public int getClients();
+
     public void publish(String destination, String message);
 
     public IDatabase getDatabase();
