@@ -22,6 +22,8 @@ public class Response implements IResponse {
 
     private static final String DELIMITER = "\r\n";
 
+    private boolean exit;
+
     private final StringBuilder sb = new StringBuilder();
 
     /* (non-Javadoc)
@@ -147,6 +149,16 @@ public class Response implements IResponse {
             sb.append(ARRAY).append(0).append(DELIMITER);
         }
         return this;
+    }
+
+    @Override
+    public void exit() {
+        this.exit = true;
+    }
+
+    @Override
+    public boolean isExit() {
+        return exit;
     }
 
     @Override

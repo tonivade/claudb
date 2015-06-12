@@ -29,5 +29,9 @@ public interface IResponse {
 
     public IResponse addError(String str);
 
+    public void exit();
+
+    boolean isExit();
+
 
 }

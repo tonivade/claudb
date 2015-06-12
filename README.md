@@ -17,6 +17,8 @@ Implemented commands
 - Connection
     - ECHO
     - PING
+    - QUIT
+    - SELECT
 - Key
     - DEL
     - EXISTS

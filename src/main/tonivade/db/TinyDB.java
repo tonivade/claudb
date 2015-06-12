@@ -207,7 +207,14 @@ public class TinyDB implements ITinyDB, IServerContext {
 
         LOGGER.finest(() -> "message received: " + sourceKey);
 
-        ctx.writeAndFlush(processCommand(parseMessage(sourceKey, message)));
+        IResponse response = processCommand(parseMessage(sourceKey, message));
+        if (response != null) {
+            ctx.writeAndFlush(response.toString());
+
+            if (response.isExit()) {
+                ctx.close();
+            }
+        }
     }
 
     private IRequest parseMessage(String sourceKey, RedisToken<?> message) {
@@ -238,7 +245,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         return new Request(this, clients.get(sourceKey), params.get(0), params.subList(1, params.size()));
     }
 
-    private String processCommand(IRequest request) {
+    private IResponse processCommand(IRequest request) {
         LOGGER.fine(() -> "received command: " + request);
 
         IResponse response = new Response();
@@ -249,7 +256,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         } else {
             response.addError("ERR unknown command '" + request.getCommand() + "'");
         }
-        return response.toString();
+        return response;
     }
 
     private String sourceKey(Channel channel) {
