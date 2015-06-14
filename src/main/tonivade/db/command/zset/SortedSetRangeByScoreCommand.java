@@ -109,7 +109,7 @@ public class SortedSetRangeByScoreCommand implements ICommand {
         }
     }
 
-    private class Options {
+    private static class Options {
         boolean withScores;
         boolean withLimit;
         int offset;

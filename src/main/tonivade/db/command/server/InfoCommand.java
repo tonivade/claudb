@@ -27,6 +27,7 @@ import tonivade.db.data.IDatabase;
 @Command("info")
 public class InfoCommand implements ICommand {
 
+    private static final String SHARP = "#";
     private static final String SEPARATOR = ":";
     private static final String DELIMITER = "\r\n";
 
@@ -57,7 +58,7 @@ public class InfoCommand implements ICommand {
     private String makeString(Map<String, Map<String, String>> sections) {
         StringBuilder sb = new StringBuilder();
         for (Entry<String, Map<String, String>> section : sections.entrySet()) {
-            sb.append("#").append(section.getKey()).append(DELIMITER);
+            sb.append(SHARP).append(section.getKey()).append(DELIMITER);
             for (Entry<String, String> entry : section.getValue().entrySet()) {
                 sb.append(entry.getKey()).append(SEPARATOR).append(entry.getValue()).append(DELIMITER);
             }

@@ -202,13 +202,14 @@ public class TinyDB implements ITinyDB, IServerContext {
      * @param buffer
      */
     @Override
-    public void receive(ChannelHandlerContext ctx, RedisToken<?> message) {
+    public void receive(ChannelHandlerContext ctx, RedisToken<?> token) {
         String sourceKey = sourceKey(ctx.channel());
 
         LOGGER.finest(() -> "message received: " + sourceKey);
 
-        IResponse response = processCommand(parseMessage(sourceKey, message));
-        if (response != null) {
+        IRequest message = parseMessage(sourceKey, token);
+        if (message != null) {
+            IResponse response = processCommand(message);
             ctx.writeAndFlush(response.toString());
 
             if (response.isExit()) {

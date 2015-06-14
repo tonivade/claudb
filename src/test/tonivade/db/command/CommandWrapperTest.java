@@ -103,7 +103,7 @@ public class CommandWrapperTest {
         verify(response).addError(anyString());
     }
 
-    private class SomeCommand implements ICommand {
+    private static class SomeCommand implements ICommand {
         @Override
         public void execute(IDatabase db, IRequest request, IResponse response) {
             response.addSimpleStr(RESULT_OK);
@@ -111,7 +111,7 @@ public class CommandWrapperTest {
     }
 
     @ParamLength(2)
-    private class LengthCommand implements ICommand {
+    private static class LengthCommand implements ICommand {
         @Override
         public void execute(IDatabase db, IRequest request, IResponse response) {
             response.addSimpleStr(RESULT_OK);
@@ -119,7 +119,7 @@ public class CommandWrapperTest {
     }
 
     @ParamType(DataType.STRING)
-    private class TypeCommand implements ICommand {
+    private static class TypeCommand implements ICommand {
         @Override
         public void execute(IDatabase db, IRequest request, IResponse response) {
             response.addSimpleStr(RESULT_OK);
