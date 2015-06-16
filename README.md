@@ -123,6 +123,8 @@ CI
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5353/badge.svg)](https://scan.coverity.com/projects/5353)
 
+[![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg)](https://coveralls.io/r/tonivade/tiny-db)
+
 LICENSE
 -------
 
