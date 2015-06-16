@@ -31,7 +31,6 @@ import java.util.logging.Logger;
 import tonivade.db.command.CommandSuite;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.ISession;
 import tonivade.db.command.Request;
@@ -190,9 +189,13 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     private void cleanSession(ISession session) {
-        ICommand command = commands.getCommand("unsubscribe");
-        IDatabase db = databases.get(session.getCurrentDB());
-        command.execute(db, new Request(this, session, "unsubscribe", emptyList()), new Response());
+        try {
+            ICommand command = commands.getCommand("unsubscribe");
+            IDatabase db = databases.get(session.getCurrentDB());
+            command.execute(db, new Request(this, session, "unsubscribe", emptyList()), new Response());
+        } finally {
+            session.destroy();
+        }
     }
 
     /**
@@ -202,19 +205,14 @@ public class TinyDB implements ITinyDB, IServerContext {
      * @param buffer
      */
     @Override
-    public void receive(ChannelHandlerContext ctx, RedisToken<?> token) {
+    public void receive(ChannelHandlerContext ctx, RedisToken<?> message) {
         String sourceKey = sourceKey(ctx.channel());
 
         LOGGER.finest(() -> "message received: " + sourceKey);
 
-        IRequest message = parseMessage(sourceKey, token);
-        if (message != null) {
-            IResponse response = processCommand(message);
-            ctx.writeAndFlush(response.toString());
-
-            if (response.isExit()) {
-                ctx.close();
-            }
+        IRequest request = parseMessage(sourceKey, message);
+        if (request != null) {
+            processCommand(request);
         }
     }
 
@@ -246,18 +244,17 @@ public class TinyDB implements ITinyDB, IServerContext {
         return new Request(this, clients.get(sourceKey), params.get(0), params.subList(1, params.size()));
     }
 
-    private IResponse processCommand(IRequest request) {
+    private void processCommand(IRequest request) {
         LOGGER.fine(() -> "received command: " + request);
 
-        IResponse response = new Response();
-        IDatabase db = databases.get(request.getSession().getCurrentDB());
+        ISession session = request.getSession();
+        IDatabase db = databases.get(session.getCurrentDB());
         ICommand command = commands.getCommand(request.getCommand());
         if (command != null) {
-            command.execute(db, request, response);
+            session.enqueue(command, db, request, new Response());
         } else {
-            response.addError("ERR unknown command '" + request.getCommand() + "'");
+            session.getContext().writeAndFlush("-ERR unknown command '" + request.getCommand() + "'");
         }
-        return response;
     }
 
     private String sourceKey(Channel channel) {

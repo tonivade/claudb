@@ -9,16 +9,22 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import tonivade.db.data.IDatabase;
 
 public class Session implements ISession {
 
-    private String id;
+    private final String id;
 
-    private ChannelHandlerContext ctx;
+    private final ChannelHandlerContext ctx;
 
     private int db;
 
-    private Set<String> subscriptions = new HashSet<>();
+    private final Set<String> subscriptions = new HashSet<>();
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public Session(String id, ChannelHandlerContext ctx) {
         super();
@@ -59,6 +65,24 @@ public class Session implements ISession {
     @Override
     public void removeSubscription(String channel) {
         subscriptions.remove(channel);
+    }
+
+    @Override
+    public void enqueue(ICommand command, IDatabase db, IRequest request, IResponse response) {
+        executor.submit(() -> {
+            command.execute(db, request, response);
+
+            ctx.writeAndFlush(response.toString());
+
+            if (response.isExit()) {
+                ctx.close();
+            }
+        });
+    }
+
+    @Override
+    public void destroy() {
+        executor.shutdown();
     }
 
 }

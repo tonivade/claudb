@@ -9,6 +9,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Set;
 
+import tonivade.db.data.IDatabase;
+
 public interface ISession {
 
     public String getId();
@@ -24,5 +26,9 @@ public interface ISession {
     public int getCurrentDB();
 
     public void setCurrentDB(int db);
+
+    public void enqueue(ICommand command, IDatabase db, IRequest request, IResponse response);
+
+    public void destroy();
 
 }
