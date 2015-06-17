@@ -7,6 +7,7 @@ package tonivade.db;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
 import org.junit.After;
@@ -53,27 +54,29 @@ public class TinyDBTest {
         }
     }
 
-    @Test(timeout=1000)
+    @Test
     public void testLoad1000() throws Exception {
         loadTest(1000);
     }
 
-    @Test(timeout=3000)
+    @Test
     public void testLoad10000() throws Exception {
         loadTest(10000);
     }
 
-    @Test(timeout=30000)
+    @Test
     public void testLoad100000() throws Exception {
         loadTest(100000);
     }
 
     private void loadTest(int times) {
+        long start = System.nanoTime();
         try (Jedis jedis = new Jedis("localhost", 7081)) {
             for (int i = 0; i < times; i++) {
                 jedis.set(key(i), value(i));
             }
         }
+        assertThat((System.nanoTime() - start) / times, is(lessThan(1000000L)));
     }
 
     private String value(int i) {
