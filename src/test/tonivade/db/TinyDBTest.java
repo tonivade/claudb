@@ -58,12 +58,12 @@ public class TinyDBTest {
         loadTest(1000);
     }
 
-    @Test(timeout=2000)
+    @Test(timeout=3000)
     public void testLoad10000() throws Exception {
         loadTest(10000);
     }
 
-    @Test(timeout=20000)
+    @Test(timeout=30000)
     public void testLoad100000() throws Exception {
         loadTest(100000);
     }
