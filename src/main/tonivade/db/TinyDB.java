@@ -238,7 +238,15 @@ public class TinyDB implements ITinyDB, IServerContext {
         IDatabase db = databases.get(session.getCurrentDB());
         ICommand command = commands.getCommand(request.getCommand());
         if (command != null) {
-            session.enqueue(command, db, request, new Response());
+            session.enqueue(() -> {
+                Response response = new Response();
+                command.execute(db, request, response);
+                session.getContext().writeAndFlush(response.toString());
+
+                if (response.isExit()) {
+                    session.getContext().close();
+                }
+            });
         } else {
             session.getContext().writeAndFlush("-ERR unknown command '" + request.getCommand() + "'");
         }

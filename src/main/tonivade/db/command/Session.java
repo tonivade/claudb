@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import tonivade.db.data.IDatabase;
-
 public class Session implements ISession {
 
     private final String id;
@@ -68,16 +66,8 @@ public class Session implements ISession {
     }
 
     @Override
-    public void enqueue(ICommand command, IDatabase db, IRequest request, IResponse response) {
-        executor.submit(() -> {
-            command.execute(db, request, response);
-
-            ctx.writeAndFlush(response.toString());
-
-            if (response.isExit()) {
-                ctx.close();
-            }
-        });
+    public void enqueue(Runnable task) {
+        executor.submit(task);
     }
 
     @Override
