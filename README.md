@@ -106,11 +106,11 @@ And this is REDIS
 TODO
 ----
 
-- Pipelining.
+- Pipelining._(Testing)_
 - Key expiration.
 - Transactions (MULTI & EXEC).
 - Persistence to disk.
-- Publish/Subscribe.
+- Publish/Subscribe._(Partially implemented)_
 - Master - Slave Replication.
 - Scripting with Javascript/Lua.
 - Partitioning?
@@ -123,7 +123,7 @@ CI
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5353/badge.svg)](https://scan.coverity.com/projects/5353)
 
-[![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg)](https://coveralls.io/r/tonivade/tiny-db)
+[![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg?branch=master)](https://coveralls.io/r/tonivade/tiny-db?branch=master)
 
 LICENSE
 -------
