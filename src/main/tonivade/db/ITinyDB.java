@@ -10,6 +10,7 @@ import io.netty.channel.socket.SocketChannel;
 import tonivade.db.redis.RedisToken;
 
 /**
+ * Server interface
  *
  * @author tomby
  *
@@ -17,28 +18,28 @@ import tonivade.db.redis.RedisToken;
 public interface ITinyDB {
 
     /**
-     * Metodo llamado cuando se crea un nuevo canal
+     * When a new channel is created, and the server has to prepare the pipeline
      *
      * @param channel
      */
     public void channel(SocketChannel channel);
 
     /**
-     * Método llamado cuando la conexión se ha establecido y está activa
+     * When a new client is connected
      *
      * @param ctx
      */
     public void connected(ChannelHandlerContext ctx);
 
     /**
-     * Metodo llamado cuando se pierde la conexión
+     * When a client is disconnected
      *
      * @param ctx
      */
     public void disconnected(ChannelHandlerContext ctx);
 
     /**
-     * Método llamado cuando se recibe un mensaje
+     * When a message is received
      *
      * @param ctx
      * @param message

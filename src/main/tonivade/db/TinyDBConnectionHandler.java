@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import tonivade.db.redis.RedisToken;
 
 /**
- * Se encarga de gestionar la conexión con el servidor
+ * Netty channel handler
  *
  * @author tomby
  *
@@ -32,13 +32,16 @@ public class TinyDBConnectionHandler extends ChannelInboundHandlerAdapter {
         this.impl = impl;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         impl.connected(ctx);
     }
 
     /**
-     * Se recibe un mensaje
+     * {@inheritDoc}
      */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -50,7 +53,7 @@ public class TinyDBConnectionHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Se ha cerrado el canal
+     * {@inheritDoc}
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
@@ -60,7 +63,7 @@ public class TinyDBConnectionHandler extends ChannelInboundHandlerAdapter {
     }
 
     /**
-     * Se produce una excepción
+     * {@inheritDoc}
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

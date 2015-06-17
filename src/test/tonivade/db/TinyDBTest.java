@@ -10,13 +10,19 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
 
 public class TinyDBTest {
+
+    private static final String DEFAULT_HOST = "localhost";
+    private static final int DEFAULT_PORT = 7081;
 
     private final TinyDB db = new TinyDB();
 
@@ -37,7 +43,7 @@ public class TinyDBTest {
 
     @Test
     public void testCommands() throws Exception {
-        try (Jedis jedis = new Jedis("localhost", 7081)) {
+        try (Jedis jedis = new Jedis(DEFAULT_HOST, DEFAULT_PORT)) {
             assertThat(jedis.ping(), is("PONG"));
             assertThat(jedis.echo("Hi!"), is("Hi!"));
             assertThat(jedis.set("a", "1"), is("OK"));
@@ -51,6 +57,41 @@ public class TinyDBTest {
             assertThat(jedis.get("a"), is("2"));
             assertThat(jedis.del("a"), is(1L));
             assertThat(jedis.get("a"), is(nullValue()));
+        }
+    }
+
+    @Test
+    public void testPipeline() throws Exception {
+        try (Jedis jedis = new Jedis(DEFAULT_HOST, DEFAULT_PORT)) {
+            Pipeline p = jedis.pipelined();
+            p.ping();
+            p.echo("Hi!");
+            p.set("a", "1");
+            p.strlen("a");
+            p.strlen("b");
+            p.exists("a");
+            p.exists("b");
+            p.get("a");
+            p.get("b");
+            p.getSet("a", "2");
+            p.get("a");
+            p.del("a");
+            p.get("a");
+
+            List<Object> result = p.syncAndReturnAll();
+            assertThat(result.get(0), is("PONG"));
+            assertThat(result.get(1), is("Hi!"));
+            assertThat(result.get(2), is("OK"));
+            assertThat(result.get(3), is(1L));
+            assertThat(result.get(4), is(0L));
+            assertThat(result.get(5), is(true));
+            assertThat(result.get(6), is(false));
+            assertThat(result.get(7), is("1"));
+            assertThat(result.get(8), is(nullValue()));
+            assertThat(result.get(9), is("1"));
+            assertThat(result.get(10), is("2"));
+            assertThat(result.get(11), is(1L));
+            assertThat(result.get(12), is(nullValue()));
         }
     }
 
@@ -71,7 +112,7 @@ public class TinyDBTest {
 
     private void loadTest(int times) {
         long start = System.nanoTime();
-        try (Jedis jedis = new Jedis("localhost", 7081)) {
+        try (Jedis jedis = new Jedis(DEFAULT_HOST, DEFAULT_PORT)) {
             for (int i = 0; i < times; i++) {
                 jedis.set(key(i), value(i));
             }

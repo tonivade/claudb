@@ -140,11 +140,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     /**
-     * Metodo llamado cuando se establece la conexión con un nuevo cliente.
-     *
-     * Se inicializa el pipeline, añadiendo el handler
-     *
-     * @param channel
+     * {@inheritDoc}
      */
     @Override
     public void channel(SocketChannel channel) {
@@ -156,11 +152,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     /**
-     * Método llamado cuando el canal está activo.
-     *
-     * Se notifica la conexión de un nuevo cliente.
-     *
-     * @param ctx
+     * {@inheritDoc}
      */
     @Override
     public void connected(ChannelHandlerContext ctx) {
@@ -172,9 +164,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     /**
-     * Metodo llamado cuando se pierde la conexión con un cliente
-     *
-     * @param ctx
+     * {@inheritDoc}
      */
     @Override
     public void disconnected(ChannelHandlerContext ctx) {
@@ -199,10 +189,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     /**
-     * Método llamado cuando se recibe un mensaje de un cliente
-     *
-     * @param ctx
-     * @param buffer
+     * {@inheritDoc}
      */
     @Override
     public void receive(ChannelHandlerContext ctx, RedisToken<?> message) {
@@ -262,6 +249,9 @@ public class TinyDB implements ITinyDB, IServerContext {
         return remoteAddress.getHostName() + ":" + remoteAddress.getPort();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void publish(String sourceKey, String message) {
         ISession session = clients.get(sourceKey);
@@ -270,16 +260,25 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public IDatabase getDatabase() {
         return admin;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getPort() {
         return port;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getClients() {
         return clients.size();

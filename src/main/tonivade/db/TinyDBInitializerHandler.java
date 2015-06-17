@@ -4,12 +4,13 @@
  */
 
 package tonivade.db;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
 /**
- * Se encarga de iniciar la conexión con el servidor
+ * Netty initialization handler
  *
  * @author tomby
  *
@@ -23,7 +24,7 @@ public class TinyDBInitializerHandler extends ChannelInitializer<SocketChannel> 
     }
 
     /**
-     * Se realiza la conexión
+     * {@inheritDoc}
      */
     @Override
     protected void initChannel(SocketChannel channel) throws Exception {
@@ -31,7 +32,7 @@ public class TinyDBInitializerHandler extends ChannelInitializer<SocketChannel> 
     }
 
     /**
-     * Se pierde la conexión
+     * {@inheritDoc}
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
