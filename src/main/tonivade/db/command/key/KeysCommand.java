@@ -24,7 +24,9 @@ public class KeysCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         Pattern pattern = createPattern(request.getParam(0));
-        Predicate<? super String> predicate = (key) -> pattern.matcher(key).matches();
+        Predicate<? super String> predicate = (key) -> {
+            return pattern.matcher(key).matches();
+        };
         Set<String> keys = db.keySet().stream().filter(predicate).collect(Collectors.toSet());
         response.addArray(keys);
     }
@@ -39,15 +41,6 @@ public class KeysCommand implements ICommand {
     private String convertGlobToRegEx(String line) {
         int strLen = line.length();
         StringBuilder sb = new StringBuilder(strLen);
-        // Remove beginning and ending * globs because they're useless
-        if (line.startsWith("*")) {
-            line = line.substring(1);
-            strLen--;
-        }
-        if (line.endsWith("*")) {
-            line = line.substring(0, strLen - 1);
-            strLen--;
-        }
         boolean escaping = false;
         int inCurlies = 0;
         for (char currentChar : line.toCharArray()) {

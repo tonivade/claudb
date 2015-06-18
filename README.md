@@ -106,7 +106,7 @@ And this is REDIS
 TODO
 ----
 
-- Pipelining._(Testing)_
+- ~~Pipelining.~~ **Done!**
 - Key expiration.
 - Transactions (MULTI & EXEC).
 - Persistence to disk.

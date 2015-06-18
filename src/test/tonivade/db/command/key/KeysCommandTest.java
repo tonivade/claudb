@@ -18,7 +18,6 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.key.KeysCommand;
 
 @CommandUnderTest(KeysCommand.class)
 public class KeysCommandTest {
@@ -34,7 +33,41 @@ public class KeysCommandTest {
         rule.withData("abc", string("1"))
             .withData("acd", string("2"))
             .withData("c", string("3"))
+            .withParams("*")
+            .execute()
+            .verify().addArray(captor.capture());
+
+        Collection<String> value = captor.getValue();
+
+        assertThat(value.size(), is(3));
+        assertThat(value.contains("abc"), is(true));
+        assertThat(value.contains("acd"), is(true));
+        assertThat(value.contains("c"), is(true));
+    }
+
+    @Test
+    public void testExecuteExclamation() {
+        rule.withData("abc", string("1"))
+            .withData("acd", string("2"))
+            .withData("c", string("3"))
             .withParams("a??")
+            .execute()
+            .verify().addArray(captor.capture());
+
+        Collection<String> value = captor.getValue();
+
+        assertThat(value.size(), is(2));
+        assertThat(value.contains("abc"), is(true));
+        assertThat(value.contains("acd"), is(true));
+        assertThat(value.contains("c"), is(false));
+    }
+
+    @Test
+    public void testExecuteAsterisk() {
+        rule.withData("abc", string("1"))
+            .withData("acd", string("2"))
+            .withData("c", string("3"))
+            .withParams("a*")
             .execute()
             .verify().addArray(captor.capture());
 
