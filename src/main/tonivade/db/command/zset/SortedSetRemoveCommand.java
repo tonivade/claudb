@@ -35,7 +35,7 @@ public class SortedSetRemoveCommand implements ICommand {
         List<String> removed = new LinkedList<String>();
         db.merge(request.getParam(0), zset(),
                 (oldValue, newValue) -> {
-                    Set<Entry<Float, String>> merge = new SortedSet();
+                    Set<Entry<Double, String>> merge = new SortedSet();
                     merge.addAll(oldValue.getValue());
                     for (String item : items) {
                         if (merge.remove(item)) {

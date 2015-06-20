@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Set;
+import java.util.zip.CheckedOutputStream;
 
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -24,11 +25,12 @@ public class RDBOutputStream {
     private static final byte[] REDIS = "REDIS".getBytes();
     private static final int END_OF_STREAM = 0xFF;
     private static final int SELECT = 0xFE;
-    private CRC64OutputStream out;
+
+    private CheckedOutputStream out;
 
     public RDBOutputStream(OutputStream out) {
         super();
-        this.out = new CRC64OutputStream(out);
+        this.out = new CheckedOutputStream(out, new CRC64());
     }
 
     public void preamble(int version) throws IOException {
@@ -38,7 +40,7 @@ public class RDBOutputStream {
 
     private byte[] version(int version) {
         StringBuilder sb = new StringBuilder(String.valueOf(version));
-        for (int i = sb.length(); i <= Integer.BYTES; i++) {
+        for (int i = sb.length(); i < Integer.BYTES; i++) {
             sb.insert(0, '0');
         }
         return sb.toString().getBytes();
@@ -93,22 +95,26 @@ public class RDBOutputStream {
 
     private void length(int length) throws IOException {
         if (length < 0x40) {
-            // 00XX XXXX
+            // 1 byte: 00XXXXXX
             out.write(length);
         } else if (length < 0x4000) {
-            // 01XX XXXX XXXX XXXX
+            // 2 bytes: 01XXXXXX XXXXXXXX
             out.write(0x4000 & length);
         } else {
-            // 10.. .... XXXX XXXX XXXX XXXX XXXX XXXX XXXX XXXX
+            // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
             out.write(0x80);
             out.write(toByteArray(length));
         }
     }
 
     private void string(String value) throws IOException {
-        byte[] bytes = value.getBytes();
+        byte[] bytes = value.getBytes("UTF-8");
         length(bytes.length);
         out.write(bytes);
+    }
+
+    private void string(double value) throws IOException {
+        string(String.valueOf(value));
     }
 
     private void list(List<String> value) throws IOException {
@@ -133,13 +139,17 @@ public class RDBOutputStream {
         }
     }
 
-    private void zset(NavigableSet<String> value) throws IOException {
-        // TODO:
+    private void zset(NavigableSet<Entry<Double, String>> value) throws IOException {
+        length(value.size());
+        for (Entry<Double, String> item : value) {
+            string(item.getValue());
+            string(item.getKey());
+        }
     }
 
     public void end() throws IOException {
         out.write(END_OF_STREAM);
-        out.checksum();
+        out.write(toByteArray(out.getChecksum().getValue()));
     }
 
 }

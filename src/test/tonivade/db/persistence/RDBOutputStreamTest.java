@@ -3,16 +3,18 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.persistence;
+package tonivade.db.persistence;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.command.persistence.HexUtil.toHexString;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.data.DatabaseValue.score;
 import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.data.DatabaseValue.zset;
+import static tonivade.db.persistence.HexUtil.toHexString;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -23,7 +25,6 @@ import org.junit.Test;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.persistence.RDBOutputStream;
 
 public class RDBOutputStreamTest {
 
@@ -39,41 +40,45 @@ public class RDBOutputStreamTest {
     @Test
     public void testStartEnd() throws Exception {
         out.preamble(3);
+        out.select(0);
         out.end();
 
-        assertThat(toHexString(baos.toByteArray()), is("52454449533030303033FF66A145766BC31005"));
+        assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE00FF77DE0394AC9D23EA"));
     }
 
     @Test
     public void testString() throws Exception {
-        out.select(0);
         out.dabatase(database().add("a", string("test")).build());
 
-        assertThat(toHexString(baos.toByteArray()), is("FE000001610474657374"));
+        assertThat(toHexString(baos.toByteArray()), is("0001610474657374"));
     }
 
     @Test
     public void testList() throws Exception {
-        out.select(0);
         out.dabatase(database().add("a", list("test")).build());
 
-        assertThat(toHexString(baos.toByteArray()), is("FE00010161010474657374"));
+        assertThat(toHexString(baos.toByteArray()), is("010161010474657374"));
     }
 
     @Test
     public void testSet() throws Exception {
-        out.select(0);
         out.dabatase(database().add("a", set("test")).build());
 
-        assertThat(toHexString(baos.toByteArray()), is("FE00020161010474657374"));
+        assertThat(toHexString(baos.toByteArray()), is("020161010474657374"));
+    }
+
+    @Test
+    public void testSortedSet() throws Exception {
+        out.dabatase(database().add("a", zset(score(1.0, "test"))).build());
+
+        assertThat(toHexString(baos.toByteArray()), is("03016101047465737403312E30"));
     }
 
     @Test
     public void testHash() throws Exception {
-        out.select(0);
         out.dabatase(database().add("a", hash(entry("1", "test"))).build());
 
-        assertThat(toHexString(baos.toByteArray()), is("FE000401610101310474657374"));
+        assertThat(toHexString(baos.toByteArray()), is("0401610101310474657374"));
     }
 
     public static DatabaseBuiler database() {

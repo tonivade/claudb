@@ -16,13 +16,13 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class SortedSet implements NavigableSet<Entry<Float, String>> {
+public class SortedSet implements NavigableSet<Entry<Double, String>> {
 
     private static final String EMPTY_STRING = "";
 
-    private final Map<String, Float> items = new HashMap<>();
+    private final Map<String, Double> items = new HashMap<>();
 
-    private final NavigableSet<Entry<Float, String>> scores = new TreeSet<>(
+    private final NavigableSet<Entry<Double, String>> scores = new TreeSet<>(
             (o1, o2) -> {
                 int key = o1.getKey().compareTo(o2.getKey());
                 if (key != 0) {
@@ -53,7 +53,7 @@ public class SortedSet implements NavigableSet<Entry<Float, String>> {
     }
 
     @Override
-    public Iterator<Entry<Float, String>> iterator() {
+    public Iterator<Entry<Double, String>> iterator() {
         return scores.iterator();
     }
 
@@ -68,7 +68,7 @@ public class SortedSet implements NavigableSet<Entry<Float, String>> {
     }
 
     @Override
-    public boolean add(Entry<Float, String> e) {
+    public boolean add(Entry<Double, String> e) {
         if (!items.containsKey(e.getValue())) {
             items.put(e.getValue(), e.getKey());
             scores.add(e);
@@ -80,7 +80,7 @@ public class SortedSet implements NavigableSet<Entry<Float, String>> {
     @Override
     public boolean remove(Object o) {
         if (items.containsKey(o)) {
-            float score = items.remove(o);
+            double score = items.remove(o);
             scores.remove(DatabaseValue.score(score, (String) o));
             return true;
         }
@@ -97,9 +97,9 @@ public class SortedSet implements NavigableSet<Entry<Float, String>> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends Entry<Float, String>> c) {
+    public boolean addAll(Collection<? extends Entry<Double, String>> c) {
         boolean result = false;
-        for (Entry<Float, String> entry : c) {
+        for (Entry<Double, String> entry : c) {
             result |= add(entry);
         }
         return result;
@@ -132,106 +132,106 @@ public class SortedSet implements NavigableSet<Entry<Float, String>> {
     }
 
     @Override
-    public Comparator<? super Entry<Float, String>> comparator() {
+    public Comparator<? super Entry<Double, String>> comparator() {
         return scores.comparator();
     }
 
     @Override
-    public Entry<Float, String> first() {
+    public Entry<Double, String> first() {
         return scores.first();
     }
 
     @Override
-    public Entry<Float, String> last() {
+    public Entry<Double, String> last() {
         return scores.last();
     }
 
     @Override
-    public Entry<Float, String> lower(Entry<Float, String> e) {
+    public Entry<Double, String> lower(Entry<Double, String> e) {
         return scores.lower(e);
     }
 
     @Override
-    public Entry<Float, String> floor(Entry<Float, String> e) {
+    public Entry<Double, String> floor(Entry<Double, String> e) {
         return scores.floor(e);
     }
 
     @Override
-    public Entry<Float, String> ceiling(Entry<Float, String> e) {
+    public Entry<Double, String> ceiling(Entry<Double, String> e) {
         return scores.ceiling(e);
     }
 
     @Override
-    public Entry<Float, String> higher(Entry<Float, String> e) {
+    public Entry<Double, String> higher(Entry<Double, String> e) {
         return scores.higher(e);
     }
 
     @Override
-    public Entry<Float, String> pollFirst() {
+    public Entry<Double, String> pollFirst() {
         return scores.pollFirst();
     }
 
     @Override
-    public Entry<Float, String> pollLast() {
+    public Entry<Double, String> pollLast() {
         return scores.pollLast();
     }
 
     @Override
-    public NavigableSet<Entry<Float, String>> descendingSet() {
+    public NavigableSet<Entry<Double, String>> descendingSet() {
         return scores.descendingSet();
     }
 
     @Override
-    public Iterator<Entry<Float, String>> descendingIterator() {
+    public Iterator<Entry<Double, String>> descendingIterator() {
         return scores.descendingIterator();
     }
 
     @Override
-    public NavigableSet<Entry<Float, String>> subSet(Entry<Float, String> fromElement,
-            boolean fromInclusive, Entry<Float, String> toElement, boolean toInclusive) {
+    public NavigableSet<Entry<Double, String>> subSet(Entry<Double, String> fromElement,
+            boolean fromInclusive, Entry<Double, String> toElement, boolean toInclusive) {
         return scores.subSet(fromElement, fromInclusive, toElement, toInclusive);
     }
 
     @Override
-    public NavigableSet<Entry<Float, String>> headSet(Entry<Float, String> toElement,
+    public NavigableSet<Entry<Double, String>> headSet(Entry<Double, String> toElement,
             boolean inclusive) {
         return scores.headSet(toElement, inclusive);
     }
 
     @Override
-    public NavigableSet<Entry<Float, String>> tailSet(Entry<Float, String> fromElement,
+    public NavigableSet<Entry<Double, String>> tailSet(Entry<Double, String> fromElement,
             boolean inclusive) {
         return scores.tailSet(fromElement, inclusive);
     }
 
     @Override
-    public java.util.SortedSet<Entry<Float, String>> subSet(Entry<Float, String> fromElement,
-            Entry<Float, String> toElement) {
+    public java.util.SortedSet<Entry<Double, String>> subSet(Entry<Double, String> fromElement,
+            Entry<Double, String> toElement) {
         return scores.subSet(fromElement, toElement);
     }
 
     @Override
-    public java.util.SortedSet<Entry<Float, String>> headSet(Entry<Float, String> toElement) {
+    public java.util.SortedSet<Entry<Double, String>> headSet(Entry<Double, String> toElement) {
         return scores.headSet(toElement);
     }
 
     @Override
-    public java.util.SortedSet<Entry<Float, String>> tailSet(Entry<Float, String> fromElement) {
+    public java.util.SortedSet<Entry<Double, String>> tailSet(Entry<Double, String> fromElement) {
         return scores.tailSet(fromElement);
     }
 
-    public float score(String key) {
+    public double score(String key) {
         if (items.containsKey(key)) {
             return items.get(key);
         }
-        return Float.MIN_VALUE;
+        return Double.MIN_VALUE;
     }
 
     public int ranking(String key) {
         if (items.containsKey(key)) {
-            float score = items.get(key);
+            double score = items.get(key);
 
-            Set<Entry<Float, String>> head = scores.headSet(DatabaseValue.score(score, key));
+            Set<Entry<Double, String>> head = scores.headSet(DatabaseValue.score(score, key));
 
             return head.size();
         }

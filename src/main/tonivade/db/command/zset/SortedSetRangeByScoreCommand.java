@@ -44,14 +44,14 @@ public class SortedSetRangeByScoreCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
             DatabaseValue value = db.getOrDefault(request.getParam(0), zset());
-            NavigableSet<Entry<Float, String>> set = value.getValue();
+            NavigableSet<Entry<Double, String>> set = value.getValue();
 
             float from = parseRange(request.getParam(1));
             float to = parseRange(request.getParam(2));
 
             Options options = parseOptions(request);
 
-            Set<Entry<Float, String>> range = set.subSet(
+            Set<Entry<Double, String>> range = set.subSet(
                     score(from, EMPTY_STRING), inclusive(request.getParam(1)),
                     score(to, EMPTY_STRING), inclusive(request.getParam(2)));
 

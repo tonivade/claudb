@@ -129,14 +129,14 @@ public class DatabaseValue {
                 unmodifiableSet(Stream.of(values).collect(toSet())));
     }
 
-    public static DatabaseValue zset(Collection<Entry<Float, String>> values) {
+    public static DatabaseValue zset(Collection<Entry<Double, String>> values) {
         return new DatabaseValue(
                 DataType.ZSET,
                 unmodifiableNavigableSet(values.stream().collect(toSortedSet())));
     }
 
     @SafeVarargs
-    public static DatabaseValue zset(Entry<Float, String> ... values) {
+    public static DatabaseValue zset(Entry<Double, String> ... values) {
         return new DatabaseValue(
                 DataType.ZSET,
                 unmodifiableNavigableSet(Stream.of(values).collect(toSortedSet())));
@@ -159,8 +159,8 @@ public class DatabaseValue {
         return new SimpleEntry<String, String>(key, value);
     }
 
-    public static Entry<Float, String> score(float score, String value) {
-        return new SimpleEntry<Float, String>(score, value);
+    public static Entry<Double, String> score(double score, String value) {
+        return new SimpleEntry<Double, String>(score, value);
     }
 
     private static Collector<String, ?, LinkedList<String>> toList() {
@@ -171,7 +171,7 @@ public class DatabaseValue {
         return toCollection(() -> new LinkedHashSet<>());
     }
 
-    private static Collector<Entry<Float, String>, ?, NavigableSet<Entry<Float, String>>> toSortedSet() {
+    private static Collector<Entry<Double, String>, ?, NavigableSet<Entry<Double, String>>> toSortedSet() {
         return toCollection(() -> new SortedSet());
     }
 

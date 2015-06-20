@@ -3,7 +3,7 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.persistence;
+package tonivade.db.persistence;
 
 public class HexUtil {
 
@@ -16,6 +16,14 @@ public class HexUtil {
             sb.append(CHARS[v >>> 4]).append(CHARS[v & 0x0F]);
         }
         return sb.toString();
+    }
+
+    public static byte[] toByteArray(String string) {
+        byte[] array = new byte[string.length() / 2];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = (byte) Integer.parseInt(string.substring((i * 2), (i * 2) + 2), 16);
+        }
+        return array;
     }
 
 }
