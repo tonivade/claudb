@@ -27,8 +27,8 @@ public class SortedSetTest {
         assertThat(set.contains("b"), is(true));
         assertThat(set.contains("c"), is(false));
 
-        assertThat(set.score("a"), is(1.0F));
-        assertThat(set.score("b"), is(2.0F));
+        assertThat(set.score("a"), is(1.0));
+        assertThat(set.score("b"), is(2.0));
 
         assertThat(set.ranking("a"), is(0));
         assertThat(set.ranking("b"), is(1));
@@ -76,9 +76,9 @@ public class SortedSetTest {
         set.add(score(8, "h"));
         set.add(score(9, "i"));
 
-        assertThat(set.tailSet(score(3, "")).first(), is(score(3.0F, "c")));
+        assertThat(set.tailSet(score(3, "")).first(), is(score(3.0, "c")));
 
-        assertThat(set.headSet(score(4, "")).last(), is(score(3.0F, "c")));
+        assertThat(set.headSet(score(4, "")).last(), is(score(3.0, "c")));
     }
 
 }
