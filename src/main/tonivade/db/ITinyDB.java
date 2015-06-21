@@ -44,6 +44,6 @@ public interface ITinyDB {
      * @param ctx
      * @param message
      */
-    public void receive(ChannelHandlerContext ctx, RedisToken<?> message);
+    public void receive(ChannelHandlerContext ctx, RedisToken message);
 
 }

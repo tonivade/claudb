@@ -19,6 +19,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +29,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import tonivade.db.command.CommandSuite;
@@ -39,9 +45,10 @@ import tonivade.db.command.Session;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.persistence.RDBInputStream;
+import tonivade.db.persistence.RDBOutputStream;
+import tonivade.db.redis.RedisArray;
 import tonivade.db.redis.RedisToken;
-import tonivade.db.redis.RedisToken.ArrayRedisToken;
-import tonivade.db.redis.RedisToken.UnknownRedisToken;
 import tonivade.db.redis.RedisTokenType;
 import tonivade.db.redis.RequestDecoder;
 
@@ -55,15 +62,11 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
-    // Buffer size
     private static final int BUFFER_SIZE = 1024 * 1024;
-    // Max message size
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
-    // Default port number
+
     private static final int DEFAULT_PORT = 7081;
-    // Default host name
     private static final String DEFAULT_HOST = "localhost";
-    // Default database number
     private static final int DEFAULT_DATABASES = 10;
 
     private final int port;
@@ -83,6 +86,8 @@ public class TinyDB implements ITinyDB, IServerContext {
     private final IDatabase admin = new Database(new HashMap<String, DatabaseValue>());
 
     private final CommandSuite commands = new CommandSuite();
+
+    private BlockingQueue<IRequest> queue = new LinkedBlockingQueue<>();
 
     private ChannelFuture future;
 
@@ -192,7 +197,7 @@ public class TinyDB implements ITinyDB, IServerContext {
      * {@inheritDoc}
      */
     @Override
-    public void receive(ChannelHandlerContext ctx, RedisToken<?> message) {
+    public void receive(ChannelHandlerContext ctx, RedisToken message) {
         String sourceKey = sourceKey(ctx.channel());
 
         LOGGER.finest(() -> "message received: " + sourceKey);
@@ -203,7 +208,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
-    private IRequest parseMessage(String sourceKey, RedisToken<?> message) {
+    private IRequest parseMessage(String sourceKey, RedisToken message) {
         IRequest request = null;
         if (message.getType() == RedisTokenType.ARRAY) {
             request = parseArray(sourceKey, message);
@@ -213,20 +218,18 @@ public class TinyDB implements ITinyDB, IServerContext {
         return request;
     }
 
-    private Request parseLine(String sourceKey, RedisToken<?> message) {
-        UnknownRedisToken unknownToken = (UnknownRedisToken) message;
-        String command = unknownToken.getValue();
+    private Request parseLine(String sourceKey, RedisToken message) {
+        String command = message.getValue();
         String[] params = command.split(" ");
         String[] array = new String[params.length - 1];
         System.arraycopy(params, 1, array, 0, array.length);
         return new Request(this, clients.get(sourceKey), params[0], Arrays.asList(array));
     }
 
-    private Request parseArray(String sourceKey, RedisToken<?> message) {
-        ArrayRedisToken arrayToken = (ArrayRedisToken) message;
+    private Request parseArray(String sourceKey, RedisToken message) {
         List<String> params = new LinkedList<String>();
-        for (RedisToken<?> token : arrayToken.getValue()) {
-            params.add(token.getValue().toString());
+        for (RedisToken token : message.<RedisArray>getValue()) {
+            params.add(token.getValue());
         }
         return new Request(this, clients.get(sourceKey), params.get(0), params.subList(1, params.size()));
     }
@@ -242,6 +245,8 @@ public class TinyDB implements ITinyDB, IServerContext {
                 Response response = new Response();
                 command.execute(db, request, response);
                 session.getContext().writeAndFlush(response.toString());
+
+                queue.add(request);
 
                 if (response.isExit()) {
                     session.getContext().close();
@@ -290,6 +295,36 @@ public class TinyDB implements ITinyDB, IServerContext {
     @Override
     public int getClients() {
         return clients.size();
+    }
+
+    @Override
+    public List<IRequest> getCommands() {
+        List<IRequest> current = new LinkedList<>();
+        queue.drainTo(current);
+        return current;
+    }
+
+    @Override
+    public void exportRDB(OutputStream output) throws IOException {
+        RDBOutputStream rdb = new RDBOutputStream(output);
+        rdb.preamble(6);
+        for (int i = 0; i < databases.size(); i++) {
+            IDatabase db = databases.get(i);
+            if (db.isEmpty()) {
+                rdb.select(i);
+                rdb.dabatase(db);
+            }
+        }
+        rdb.end();
+    }
+
+    @Override
+    public void importRDB(InputStream input) throws IOException {
+        RDBInputStream rdb = new RDBInputStream(input);
+
+        for (Entry<Integer, IDatabase> entry : rdb.parse().entrySet()) {
+            this.databases.set(entry.getKey(), entry.getValue());
+        }
     }
 
     public static void main(String[] args) throws Exception {

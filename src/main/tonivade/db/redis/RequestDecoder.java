@@ -10,8 +10,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LineBasedFrameDecoder;
 
 import java.nio.charset.Charset;
-import java.util.LinkedList;
-import java.util.List;
 
 import tonivade.db.redis.RedisToken.ArrayRedisToken;
 import tonivade.db.redis.RedisToken.ErrorRedisToken;
@@ -51,10 +49,10 @@ public class RequestDecoder extends LineBasedFrameDecoder {
         }
     }
 
-    private RedisToken<?> parseResponse(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
+    private RedisToken parseResponse(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
         String line = readLine(ctx, buffer);
 
-        RedisToken<?> token = null;
+        RedisToken token = null;
 
         if (line != null) {
             if (line.startsWith(ARRAY_PREFIX)) {
@@ -84,7 +82,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
     }
 
     private ArrayRedisToken parseArray(ChannelHandlerContext ctx, ByteBuf buffer, int size) throws Exception {
-        List<RedisToken<?>> response = new LinkedList<RedisToken<?>>();
+        RedisArray response = new RedisArray();
 
         for (int i = 0 ; i < size; i++) {
             String line = readLine(ctx, buffer);

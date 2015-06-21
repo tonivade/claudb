@@ -46,7 +46,7 @@ public class TinyDBConnectionHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         try {
-            impl.receive(ctx, (RedisToken<?>) msg);
+            impl.receive(ctx, (RedisToken) msg);
         } finally {
             ReferenceCountUtil.release(msg);
         }

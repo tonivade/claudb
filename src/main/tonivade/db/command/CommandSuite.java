@@ -41,6 +41,8 @@ import tonivade.db.command.server.InfoCommand;
 import tonivade.db.command.server.PingCommand;
 import tonivade.db.command.server.QuitCommand;
 import tonivade.db.command.server.SelectCommand;
+import tonivade.db.command.server.SlaveOfCommand;
+import tonivade.db.command.server.SyncCommand;
 import tonivade.db.command.server.TimeCommand;
 import tonivade.db.command.set.SetAddCommand;
 import tonivade.db.command.set.SetCardinalityCommand;
@@ -78,6 +80,8 @@ public class CommandSuite {
         addCommand(EchoCommand.class);
         addCommand(SelectCommand.class);
         addCommand(QuitCommand.class);
+        addCommand(SyncCommand.class);
+        addCommand(SlaveOfCommand.class);
 
         // server
         addCommand(FlushDBCommand.class);
