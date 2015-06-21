@@ -5,12 +5,13 @@
 
 package tonivade.db.command.server;
 
+import static tonivade.db.redis.SafeString.fromString;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.server.EchoCommand;
 
 @CommandUnderTest(EchoCommand.class)
 public class EchoCommandTest {
@@ -22,7 +23,7 @@ public class EchoCommandTest {
     public void testExecute() {
         rule.withParams("test")
             .execute()
-            .verify().addBulkStr("test");
+            .verify().addBulkStr(fromString("test"));
     }
 
 }

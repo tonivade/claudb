@@ -7,13 +7,13 @@ package tonivade.db.command.hash;
 
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
+import static tonivade.db.redis.SafeString.fromString;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.hash.HashGetCommand;
 
 @CommandUnderTest(HashGetCommand.class)
 public class HashGetCommandTest {
@@ -26,7 +26,7 @@ public class HashGetCommandTest {
         rule.withData("a", hash(entry("key", "value")))
             .withParams("a", "key")
             .execute()
-            .verify().addBulkStr("value");
+            .verify().addBulkStr(fromString("value"));
     }
 
 }

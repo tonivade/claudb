@@ -13,6 +13,7 @@ import tonivade.db.ITinyDBCallback;
 import tonivade.db.TinyDBClient;
 import tonivade.db.command.IServerContext;
 import tonivade.db.redis.RedisToken;
+import tonivade.db.redis.SafeString;
 
 public class SlaveReplication implements ITinyDBCallback {
 
@@ -49,7 +50,7 @@ public class SlaveReplication implements ITinyDBCallback {
         case STRING:
             // RDB dump
             try {
-                String value = token.getValue();
+                SafeString value = token.getValue();
                 server.importRDB(array(value));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -65,9 +66,9 @@ public class SlaveReplication implements ITinyDBCallback {
         }
     }
 
-    private ByteArrayInputStream array(String value)
+    private ByteArrayInputStream array(SafeString value)
             throws UnsupportedEncodingException {
-        return new ByteArrayInputStream(value.getBytes("UTF-8"));
+        return new ByteArrayInputStream(value.getBytes());
     }
 
 }

@@ -5,13 +5,14 @@
 
 package tonivade.db.command.server;
 
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(InfoCommand.class)
 public class InfoCommandTest {
@@ -23,6 +24,6 @@ public class InfoCommandTest {
     public void testExecute() throws Exception {
         rule.withParams()
             .execute()
-            .verify().addBulkStr(anyString());
+            .verify().addBulkStr(any(SafeString.class));
     }
 }

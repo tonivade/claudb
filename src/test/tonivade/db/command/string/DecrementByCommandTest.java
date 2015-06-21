@@ -5,12 +5,13 @@
 
 package tonivade.db.command.string;
 
+import static tonivade.db.redis.SafeString.fromString;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.string.DecrementByCommand;
 
 @CommandUnderTest(DecrementByCommand.class)
 public class DecrementByCommandTest {
@@ -22,15 +23,15 @@ public class DecrementByCommandTest {
     public void testExecute() {
         rule.withParams("a", "10")
             .execute()
-            .verify().addInt("-10");
+            .verify().addInt(fromString("-10"));
 
         rule.withParams("a", "10")
             .execute()
-            .verify().addInt("-20");
+            .verify().addInt(fromString("-20"));
 
         rule.withParams("a", "5")
             .execute()
-            .verify().addInt("-25");
+            .verify().addInt(fromString("-25"));
     }
 
 }

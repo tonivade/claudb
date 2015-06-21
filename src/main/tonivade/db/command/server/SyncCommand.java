@@ -14,6 +14,7 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 import tonivade.db.replication.MasterReplication;
 
 @Command("sync")
@@ -29,7 +30,7 @@ public class SyncCommand implements ICommand {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             server.exportRDB(baos);
 
-            response.addBulkStr(baos.toString("UTF-8"));
+            response.addBulkStr(new SafeString(baos.toByteArray()));
 
             if (master == null) {
                 master = new MasterReplication(server);

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.redis.SafeString.fromString;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ResponseTest {
 
     @Test
     public void testAddBulkStr() {
-        assertThat(response.addBulkStr("test").toString(), is("$4\r\ntest\r\n"));
+        assertThat(response.addBulkStr(fromString("test")).toString(), is("$4\r\ntest\r\n"));
     }
 
     @Test
@@ -55,7 +56,7 @@ public class ResponseTest {
 
     @Test
     public void testAddIntString() {
-        assertThat(response.addInt("1").toString(), is(":1\r\n"));
+        assertThat(response.addInt(fromString("1")).toString(), is(":1\r\n"));
     }
 
     @Test
@@ -91,7 +92,7 @@ public class ResponseTest {
 
     @Test
     public void testAddArray() {
-        List<?> array = Arrays.asList("1", "2", "3", 1, 2 , 3);
+        List<?> array = Arrays.asList(fromString("1"), fromString("2"), fromString("3"), 1, 2 , 3);
         assertThat(response.addArray(array).toString(), is("*6\r\n$1\r\n1\r\n$1\r\n2\r\n$1\r\n3\r\n"
                 + ":1\r\n:2\r\n:3\r\n"));
     }

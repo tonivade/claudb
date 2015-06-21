@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 
 import java.io.InputStream;
 
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -54,7 +56,7 @@ public class SlaveReplicationTest {
         // XXX: not working
         System.out.println(HexUtil.toHexString(buffer));
 
-        //assertThat(stream.available(), is(37));
+        Assert.assertThat(buffer.length, CoreMatchers.is(38));
     }
 
 }

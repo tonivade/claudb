@@ -7,6 +7,7 @@ package tonivade.db.command.list;
 
 import static org.mockito.Matchers.startsWith;
 import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.redis.SafeString.fromString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,12 +26,12 @@ public class ListIndexCommandTest {
         rule.withData("key", list("a", "b", "c"))
             .withParams("key", "0")
             .execute()
-            .verify().addBulkStr("a");
+            .verify().addBulkStr(fromString("a"));
 
         rule.withData("key", list("a", "b", "c"))
             .withParams("key", "-1")
             .execute()
-            .verify().addBulkStr("c");
+            .verify().addBulkStr(fromString("c"));
 
         rule.withData("key", list("a", "b", "c"))
             .withParams("key", "-4")

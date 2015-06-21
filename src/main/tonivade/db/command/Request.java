@@ -5,21 +5,25 @@
 
 package tonivade.db.command;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import tonivade.db.redis.SafeString;
+
 public class Request implements IRequest {
 
-    private String command;
+    private SafeString command;
 
-    private List<String> params;
+    private List<SafeString> params;
 
     private ISession session;
 
     private IServerContext server;
 
-    public Request(IServerContext server, ISession session, String command, List<String> params) {
+    public Request(IServerContext server, ISession session, SafeString command, List<SafeString> params) {
         super();
         this.server = server;
         this.session = session;
@@ -32,7 +36,7 @@ public class Request implements IRequest {
      */
     @Override
     public String getCommand() {
-        return command;
+        return command.toString();
     }
 
     /* (non-Javadoc)
@@ -40,6 +44,11 @@ public class Request implements IRequest {
      */
     @Override
     public List<String> getParams() {
+        return params.stream().map((item) -> item.toString()).collect(toList());
+    }
+
+    @Override
+    public List<SafeString> getParamsSafe() {
         return Collections.unmodifiableList(params);
     }
 
@@ -48,6 +57,14 @@ public class Request implements IRequest {
      */
     @Override
     public String getParam(int i) {
+        if (i < params.size()) {
+            return params.get(i).toString();
+        }
+        return null;
+    }
+
+    @Override
+    public SafeString getParamSafe(int i) {
         if (i < params.size()) {
             return params.get(i);
         }

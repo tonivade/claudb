@@ -6,6 +6,8 @@
 package tonivade.db;
 
 import static java.util.Collections.emptyList;
+import static tonivade.db.redis.SafeString.asList;
+import static tonivade.db.redis.SafeString.fromString;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -24,7 +26,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -51,6 +52,7 @@ import tonivade.db.redis.RedisArray;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.RedisTokenType;
 import tonivade.db.redis.RequestDecoder;
+import tonivade.db.redis.SafeString;
 
 /**
  * Java Redis Implementation
@@ -187,7 +189,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         try {
             ICommand command = commands.getCommand("unsubscribe");
             IDatabase db = databases.get(session.getCurrentDB());
-            command.execute(db, new Request(this, session, "unsubscribe", emptyList()), new Response());
+            command.execute(db, new Request(this, session, fromString("unsubscribe"), emptyList()), new Response());
         } finally {
             session.destroy();
         }
@@ -223,15 +225,17 @@ public class TinyDB implements ITinyDB, IServerContext {
         String[] params = command.split(" ");
         String[] array = new String[params.length - 1];
         System.arraycopy(params, 1, array, 0, array.length);
-        return new Request(this, clients.get(sourceKey), params[0], Arrays.asList(array));
+        return new Request(this, clients.get(sourceKey), fromString(params[0]), asList(array));
     }
 
     private Request parseArray(String sourceKey, RedisToken message) {
-        List<String> params = new LinkedList<String>();
+        List<SafeString> params = new LinkedList<SafeString>();
         for (RedisToken token : message.<RedisArray>getValue()) {
-            params.add(token.getValue());
+            if (token.getType() == RedisTokenType.STRING) {
+                params.add(token.getValue());
+            }
         }
-        return new Request(this, clients.get(sourceKey), params.get(0), params.subList(1, params.size()));
+        return new Request(this, clients.get(sourceKey), params.remove(0), params);
     }
 
     private void processCommand(IRequest request) {

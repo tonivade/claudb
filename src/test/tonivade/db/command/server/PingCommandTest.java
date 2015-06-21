@@ -5,12 +5,13 @@
 
 package tonivade.db.command.server;
 
+import static tonivade.db.redis.SafeString.fromString;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.server.PingCommand;
 
 @CommandUnderTest(PingCommand.class)
 public class PingCommandTest {
@@ -28,7 +29,7 @@ public class PingCommandTest {
     public void testExecuteWithParam() {
         rule.withParams("Hi!")
             .execute()
-            .verify().addBulkStr("Hi!");
+            .verify().addBulkStr(fromString("Hi!"));
     }
 
 }

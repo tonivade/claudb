@@ -6,6 +6,7 @@
 package tonivade.db.persistence;
 
 import static tonivade.db.persistence.Util.toByteArray;
+import static tonivade.db.redis.SafeString.fromString;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,6 +20,7 @@ import java.util.zip.CheckedOutputStream;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 public class RDBOutputStream {
 
@@ -77,7 +79,7 @@ public class RDBOutputStream {
     private void value(DatabaseValue value) throws IOException {
         switch (value.getType()) {
         case STRING:
-            string(value.getValue());
+            safeString(value.getValue());
             break;
         case LIST:
             list(value.getValue());
@@ -111,7 +113,11 @@ public class RDBOutputStream {
     }
 
     private void string(String value) throws IOException {
-        byte[] bytes = value.getBytes(DEFAULT_CHARSET);
+        safeString(fromString(value));
+    }
+
+    private void safeString(SafeString value) throws IOException {
+        byte[] bytes = value.getBytes();
         length(bytes.length);
         out.write(bytes);
     }

@@ -25,6 +25,7 @@ import tonivade.db.command.Request;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
@@ -51,7 +52,7 @@ public class MasterReplicationTest {
     }
 
     private IRequest request() {
-        return new Request(server, null, "set", asList("a", "b"));
+        return new Request(server, null, SafeString.fromString("set"), SafeString.asList("a", "b"));
     }
 
 }

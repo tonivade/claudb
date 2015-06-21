@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.redis.SafeString.fromString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,7 +21,6 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.string.MultiGetCommand;
 import tonivade.db.data.DatabaseValue;
 
 @CommandUnderTest(MultiGetCommand.class)
@@ -47,9 +47,9 @@ public class MultiGetCommandTest {
         DatabaseValue b = iterator.next();
         DatabaseValue c = iterator.next();
 
-        assertThat(a.getValue(), is("1"));
+        assertThat(a.getValue(), is(fromString("1")));
         assertThat(b, is(nullValue()));
-        assertThat(c.getValue(), is("2"));
+        assertThat(c.getValue(), is(fromString("2")));
     }
 
 }

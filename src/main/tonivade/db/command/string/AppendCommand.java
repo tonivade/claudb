@@ -15,6 +15,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("append")
 @ParamLength(1)
@@ -25,10 +26,10 @@ public class AppendCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.merge(request.getParam(0), string(request.getParam(1)),
                 (oldValue, newValue) -> {
-                    return string(oldValue.<String>getValue() + newValue.<String>getValue());
+                    return string(oldValue.<SafeString>getValue().toString() + newValue.<SafeString>getValue().toString());
                 });
 
-        response.addInt(value.<String>getValue().length());
+        response.addInt(value.<SafeString>getValue().length());
     }
 
 }

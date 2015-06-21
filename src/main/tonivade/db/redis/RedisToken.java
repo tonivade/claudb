@@ -5,7 +5,6 @@
 
 package tonivade.db.redis;
 
-
 public class RedisToken {
 
     private static final String SEPARATOR = "=>";
@@ -40,7 +39,7 @@ public class RedisToken {
     }
 
     public static class StringRedisToken extends RedisToken {
-        public StringRedisToken(String value) {
+        public StringRedisToken(SafeString value) {
             super(RedisTokenType.STRING, value);
         }
     }

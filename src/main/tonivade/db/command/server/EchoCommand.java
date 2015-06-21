@@ -5,6 +5,7 @@
 
 package tonivade.db.command.server;
 
+import static tonivade.db.redis.SafeString.fromString;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -18,7 +19,7 @@ public class EchoCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        response.addBulkStr(request.getParam(0));
+        response.addBulkStr(fromString(request.getParam(0)));
     }
 
 }

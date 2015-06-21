@@ -5,26 +5,33 @@
 
 package tonivade.db.command;
 
+import static tonivade.db.redis.SafeString.fromString;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOError;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import tonivade.db.data.DatabaseValue;
+import tonivade.db.redis.SafeString;
 
 public class Response implements IResponse {
 
-    private static final String ARRAY = "*";
-    private static final String ERROR = "-";
-    private static final String INTEGER = ":";
-    private static final String SIMPLE_STRING = "+";
-    private static final String BULK_STRING = "$";
+    private static final byte ARRAY = '*';
+    private static final byte ERROR = '-';
+    private static final byte INTEGER = ':';
+    private static final byte SIMPLE_STRING = '+';
+    private static final byte BULK_STRING = '$';
 
-    private static final String DELIMITER = "\r\n";
+    private static final byte[] DELIMITER = new byte[] { '\r', '\n' };
 
     private boolean exit;
 
-    private final StringBuilder sb = new StringBuilder();
+    private final ByteArrayBuilder sb = new ByteArrayBuilder();
 
     /* (non-Javadoc)
      * @see tonivade.db.command.IResponse#addValue(tonivade.db.data.DatabaseValue)
@@ -40,8 +47,8 @@ public class Response implements IResponse {
                 Map<String, String> map = value.getValue();
                 List<Object> list = new LinkedList<>();
                 map.forEach((k, v) ->  {
-                    list.add(k);
-                    list.add(v);
+                    list.add(fromString(k));
+                    list.add(fromString(v));
                 });
                 addArray(list);
                 break;
@@ -63,7 +70,7 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addBulkStr(java.lang.String)
      */
     @Override
-    public IResponse addBulkStr(String str) {
+    public IResponse addBulkStr(SafeString str) {
         if (str != null) {
             sb.append(BULK_STRING).append(str.length()).append(DELIMITER).append(str);
         } else {
@@ -87,7 +94,7 @@ public class Response implements IResponse {
      * @see tonivade.db.command.IResponse#addInt(java.lang.String)
      */
     @Override
-    public IResponse addInt(String str) {
+    public IResponse addInt(SafeString str) {
         sb.append(INTEGER).append(str);
         sb.append(DELIMITER);
         return this;
@@ -138,11 +145,12 @@ public class Response implements IResponse {
         if (array != null) {
             sb.append(ARRAY).append(array.size()).append(DELIMITER);
             for (Object value : array) {
-                String string = String.valueOf(value);
                 if (value instanceof Integer) {
-                    addInt(Integer.valueOf(string));
-                } else {
-                    addBulkStr(string);
+                    addInt((Integer) value);
+                } else if (value instanceof SafeString) {
+                    addBulkStr((SafeString) value);
+                } else if (value instanceof String) {
+                    addSimpleStr((String) value);
                 }
             }
         } else {
@@ -164,6 +172,58 @@ public class Response implements IResponse {
     @Override
     public String toString() {
         return sb.toString();
+    }
+
+    private static class ByteArrayBuilder {
+
+        private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        public ByteArrayBuilder append(int i) {
+            append(String.valueOf(i));
+            return this;
+        }
+
+        public ByteArrayBuilder append(byte b) {
+            output.write(b);
+            return this;
+        }
+
+        public ByteArrayBuilder append(byte[] buf) {
+            try {
+                output.write(buf);
+            } catch (IOException e) {
+                throw new IOError(e);
+            }
+            return this;
+        }
+
+        public ByteArrayBuilder append(String str) {
+            try {
+                output.write(str.getBytes("UTF-8"));
+            } catch (IOException e) {
+                throw new IOError(e);
+            }
+            return this;
+        }
+
+        public ByteArrayBuilder append(SafeString str) {
+            try {
+                output.write(str.getBytes());
+            } catch (IOException e) {
+                throw new IOError(e);
+            }
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            try {
+                return output.toString("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new IOError(e);
+            }
+        }
+
     }
 
 }

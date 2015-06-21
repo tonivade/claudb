@@ -5,8 +5,8 @@
 
 package tonivade.db.command.pubsub;
 
-import static java.util.Arrays.asList;
 import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.redis.SafeString.asList;
 
 import java.util.Set;
 

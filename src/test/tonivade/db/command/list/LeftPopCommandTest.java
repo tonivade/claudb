@@ -7,13 +7,13 @@ package tonivade.db.command.list;
 
 import static org.hamcrest.CoreMatchers.is;
 import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.redis.SafeString.fromString;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.list.LeftPopCommand;
 
 @CommandUnderTest(LeftPopCommand.class)
 public class LeftPopCommandTest {
@@ -27,7 +27,7 @@ public class LeftPopCommandTest {
             .withParams("key")
             .execute()
             .assertThat("key", is(list("b", "c")))
-            .verify().addBulkStr("a");
+            .verify().addBulkStr(fromString("a"));
     }
 
 }

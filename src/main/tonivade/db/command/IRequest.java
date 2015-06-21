@@ -8,6 +8,8 @@ package tonivade.db.command;
 import java.util.List;
 import java.util.Optional;
 
+import tonivade.db.redis.SafeString;
+
 public interface IRequest {
 
     /**
@@ -20,7 +22,11 @@ public interface IRequest {
      */
     public List<String> getParams();
 
+    public List<SafeString> getParamsSafe();
+
     public String getParam(int i);
+
+    public SafeString getParamSafe(int i);
 
     public Optional<String> getOptionalParam(int i);
 

@@ -56,23 +56,20 @@ public class RequestDecoder extends LineBasedFrameDecoder {
 
         if (line != null) {
             if (line.startsWith(ARRAY_PREFIX)) {
-                // array
                 int size = Integer.parseInt(line.substring(1));
                 token = parseArray(ctx, buffer, size);
             } else if (line.startsWith(STATUS_PREFIX)) {
-                // simple string
                 token = new StatusRedisToken(line.substring(1));
             } else if (line.startsWith(ERROR_PREFIX)) {
-                // error
                 token = new ErrorRedisToken(line.substring(1));
             } else if (line.startsWith(INTEGER_PREFIX)) {
-                // integer
                 Integer value = Integer.valueOf(line.substring(1));
                 token = new IntegerRedisToken(value);
             } else if (line.startsWith(STRING_PREFIX)) {
-                // bulk string
-                String value = readLine(ctx, buffer);
-                token = new StringRedisToken(value);
+                int length = Integer.parseInt(line.substring(1));
+                ByteBuf bulk = buffer.readBytes(length);
+                token = new StringRedisToken(new SafeString(bulk.array()));
+                readLine(ctx, buffer);
             } else {
                 token = new UnknownRedisToken(line);
             }
@@ -89,9 +86,10 @@ public class RequestDecoder extends LineBasedFrameDecoder {
 
             if (line != null) {
                 if (line.startsWith(STRING_PREFIX)) {
-                    // bulk string
-                    String value = readLine(ctx, buffer);
-                    response.add(new StringRedisToken(value));
+                    int length = Integer.parseInt(line.substring(1));
+                    ByteBuf bulk = buffer.readBytes(length);
+                    response.add(new StringRedisToken(new SafeString(bulk.array())));
+                    readLine(ctx, buffer);
                 } else if (line.startsWith(INTEGER_PREFIX)) {
                     // integer
                     Integer value = Integer.valueOf(line.substring(1));

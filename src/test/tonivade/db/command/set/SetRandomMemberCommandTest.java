@@ -19,6 +19,7 @@ import org.junit.Test;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 import tonivade.db.data.DatabaseValue;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(SetRandomMemberCommand.class)
 public class SetRandomMemberCommandTest {
@@ -31,7 +32,7 @@ public class SetRandomMemberCommandTest {
         rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
-            .verify().addBulkStr(notNull(String.class));
+            .verify().addBulkStr(notNull(SafeString.class));
 
         DatabaseValue value = rule.getDatabase().get("key");
         assertThat(value.<Set<String>>getValue().size(), is(3));
@@ -41,7 +42,7 @@ public class SetRandomMemberCommandTest {
     public void testExecuteNotExists() throws Exception {
         rule.withParams("key")
             .execute()
-            .verify().addBulkStr(isNull(String.class));
+            .verify().addBulkStr(isNull(SafeString.class));
     }
 
 }

@@ -8,6 +8,7 @@ package tonivade.db.command;
 import java.util.Collection;
 
 import tonivade.db.data.DatabaseValue;
+import tonivade.db.redis.SafeString;
 
 public interface IResponse {
 
@@ -17,11 +18,11 @@ public interface IResponse {
 
     public IResponse addArray(Collection<?> array);
 
-    public IResponse addBulkStr(String str);
+    public IResponse addBulkStr(SafeString str);
 
     public IResponse addSimpleStr(String str);
 
-    public IResponse addInt(String str);
+    public IResponse addInt(SafeString str);
 
     public IResponse addInt(int value);
 

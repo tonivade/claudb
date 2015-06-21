@@ -15,6 +15,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("strlen")
 @ParamLength(1)
@@ -24,7 +25,7 @@ public class StringLengthCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.getOrDefault(request.getParam(0), string(""));
-        String string = value.getValue();
+        SafeString string = value.getValue();
         response.addInt(string.length());
     }
 

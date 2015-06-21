@@ -8,6 +8,7 @@ package tonivade.db.data;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.redis.SafeString.fromString;
 
 import java.util.HashMap;
 
@@ -21,7 +22,7 @@ public class DatabaseTest {
     public void testDatabase() throws Exception {
         database.put("a", string("value"));
 
-        assertThat(database.get("a").getValue(), is("value"));
+        assertThat(database.get("a").getValue(), is(fromString("value")));
         assertThat(database.containsKey("a"), is(true));
         assertThat(database.containsKey("b"), is(false));
         assertThat(database.isEmpty(), is(false));

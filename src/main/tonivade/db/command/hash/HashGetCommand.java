@@ -5,6 +5,8 @@
 
 package tonivade.db.command.hash;
 
+import static tonivade.db.redis.SafeString.fromString;
+
 import java.util.Map;
 
 import tonivade.db.command.ICommand;
@@ -26,7 +28,7 @@ public class HashGetCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.get(request.getParam(0));
         Map<String, String> map = value.getValue();
-        response.addBulkStr(map.get(request.getParam(1)));
+        response.addBulkStr(fromString(map.get(request.getParam(1))));
     }
 
 }
