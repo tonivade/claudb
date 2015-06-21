@@ -81,6 +81,24 @@ public class RDBOutputStreamTest {
         assertThat(toHexString(baos.toByteArray()), is("0401610101310474657374"));
     }
 
+    @Test
+    public void testAll() throws Exception {
+        out.preamble(3);
+        out.select(0);
+        out.dabatase(database().add("a", string("test")).build());
+        out.select(1);
+        out.dabatase(database().add("a", list("test")).build());
+        out.select(2);
+        out.dabatase(database().add("a", set("test")).build());
+        out.select(3);
+        out.dabatase(database().add("a", zset(score(1.0, "test"))).build());
+        out.select(4);
+        out.dabatase(database().add("a", hash(entry("1", "test"))).build());
+        out.end();
+
+        assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FFE5C54809420836EA"));
+    }
+
     public static DatabaseBuiler database() {
         return new DatabaseBuiler();
     }

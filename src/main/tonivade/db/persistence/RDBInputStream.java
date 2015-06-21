@@ -64,8 +64,8 @@ public class RDBInputStream {
             throw new IOException("invalid version: " + version);
         }
 
+        IDatabase db = null;
         for (boolean end = false; !end;) {
-            IDatabase db = null;
             int read = in.read();
             switch (read) {
             case SELECT:
@@ -97,6 +97,7 @@ public class RDBInputStream {
             case END_OF_STREAM:
                 // end of stream
                 end = true;
+                db = null;
                 break;
             default:
                 throw new IOException("not supported: " + read);
@@ -169,7 +170,9 @@ public class RDBInputStream {
         int size = parseLength();
         Set<Entry<Double, String>> entries = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
-            entries.add(score(parseDouble(), parseString()));
+            String value = parseString();
+            Double score = parseDouble();
+            entries.add(score(score, value));
         }
         ensure(db, key, zset(entries));
     }
