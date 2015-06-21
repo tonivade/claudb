@@ -31,15 +31,20 @@ import tonivade.db.data.IDatabase;
 
 public class RDBInputStream {
 
+    private static final String REDIS_PREAMBLE = "REDIS";
+    private static final String DEFAULT_CHARSET = "UTF-8";
+
     private static final int HASH = 0x04;
     private static final int SORTED_SET = 0x03;
     private static final int SET = 0x02;
     private static final int LIST = 0x01;
     private static final int STRING = 0x00;
+
     private static final int TTL_MILISECONDS = 0xFC;
     private static final int TTL_SECONDS = 0xFD;
     private static final int SELECT = 0xFE;
     private static final int END_OF_STREAM = 0xFF;
+
     private static final int VERSION_LENGTH = 4;
     private static final int REDIS_LENGTH = 5;
 
@@ -114,17 +119,15 @@ public class RDBInputStream {
     }
 
     private long parseChecksum() throws IOException {
-        byte[] buf = new byte[Long.BYTES];
-        in.read(buf);
-        return Util.byteArrayToLong(buf);
+        return Util.byteArrayToLong(read(Long.BYTES));
     }
 
     private int version() throws IOException {
-        byte[] redis = new byte[REDIS_LENGTH];
-        in.read(redis);
-        byte[] version = new byte[VERSION_LENGTH];
-        in.read(version);
-        return parseVersion(version);
+        String redis = new String(read(REDIS_LENGTH), DEFAULT_CHARSET);
+        if (!redis.equals(REDIS_PREAMBLE)) {
+            throw new IOException("not valid stream");
+        }
+        return parseVersion(read(VERSION_LENGTH));
     }
 
     private int parseVersion(byte[] version) {
@@ -200,21 +203,26 @@ public class RDBInputStream {
             return ((length & 0x3F) << 8) | (next & 0xFF);
         } else {
             // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-            byte[] array = new byte[Integer.BYTES];
-            in.read(array);
-            return byteArrayToInt(array);
+            return byteArrayToInt(read(Integer.BYTES));
         }
     }
 
     private String parseString() throws IOException {
         int length = parseLength();
-        byte[] buf = new byte[length];
-        in.read(buf);
-        return new String(buf, "UTF-8");
+        return new String(read(length), DEFAULT_CHARSET);
     }
 
     private Double parseDouble() throws IOException {
         return Double.parseDouble(parseString());
+    }
+
+    private byte[] read(int size) throws IOException {
+        byte[] array = new byte[size];
+        int read = in.read(array);
+        if (read != size) {
+            throw new IOException("error reading stream");
+        }
+        return array;
     }
 
 }

@@ -17,7 +17,7 @@ public class CRC64Test {
     @Test
     public void testOne() throws Exception {
         CRC64 crc = new CRC64();
-        byte[] bytes = "123456789".getBytes();
+        byte[] bytes = "123456789".getBytes("UTF-8");
         for (byte b : bytes) {
             crc.update(b);
         }
@@ -28,7 +28,7 @@ public class CRC64Test {
     @Test
     public void testString() throws Exception {
         CRC64 crc = new CRC64();
-        byte[] bytes = "This is a test of the emergency broadcast system.".getBytes();
+        byte[] bytes = "This is a test of the emergency broadcast system.".getBytes("UTF-8");
         crc.update(bytes, 0, bytes.length);
 
         assertThat(toHexString(toByteArray(crc.getValue())), is("27DB187FC15BBC72"));
