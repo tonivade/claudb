@@ -5,17 +5,22 @@
 
 package tonivade.db.replication;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import tonivade.db.ITinyDBCallback;
 import tonivade.db.TinyDBClient;
 import tonivade.db.command.IServerContext;
+import tonivade.db.persistence.ByteBufferInputStream;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.SafeString;
 
 public class SlaveReplication implements ITinyDBCallback {
+
+    private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
 
     private TinyDBClient client;
 
@@ -53,8 +58,7 @@ public class SlaveReplication implements ITinyDBCallback {
                 SafeString value = token.getValue();
                 server.importRDB(array(value));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "error importing RDB file", e);
             }
             break;
         case ARRAY:
@@ -66,9 +70,9 @@ public class SlaveReplication implements ITinyDBCallback {
         }
     }
 
-    private ByteArrayInputStream array(SafeString value)
+    private InputStream array(SafeString value)
             throws UnsupportedEncodingException {
-        return new ByteArrayInputStream(value.getBytes());
+        return new ByteBufferInputStream(value.getBytes());
     }
 
 }

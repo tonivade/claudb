@@ -30,8 +30,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tonivade.db.command.CommandSuite;
@@ -61,9 +63,11 @@ import tonivade.db.redis.SafeString;
  */
 public class TinyDB implements ITinyDB, IServerContext {
 
+
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
-    private static final int BUFFER_SIZE = 1024 * 1024;
+    private static final int INITIAL_SIZE = 1024;
+    private static final int BUFFER_SIZE = INITIAL_SIZE * INITIAL_SIZE;
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
 
     private static final int DEFAULT_PORT = 7081;
@@ -242,20 +246,30 @@ public class TinyDB implements ITinyDB, IServerContext {
         ICommand command = commands.getCommand(request.getCommand());
         if (command != null) {
             session.enqueue(() -> {
-                Response response = new Response();
-                command.execute(db, request, response);
-                ByteBuf buffer = session.getContext().alloc().buffer(1024);
-                buffer.writeBytes(response.getBytes());
-                session.getContext().writeAndFlush(buffer);
+                try {
+                    Response response = new Response();
+                    command.execute(db, request, response);
+                    ByteBuf buffer = session.getContext().alloc().buffer(INITIAL_SIZE, BUFFER_SIZE);
+                    buffer.writeBytes(response.getBytes());
+                    session.getContext().writeAndFlush(buffer);
 
-                queue.add(request);
+                    replication(request);
 
-                if (response.isExit()) {
-                    session.getContext().close();
+                    if (response.isExit()) {
+                        session.getContext().close();
+                    }
+                } catch (RuntimeException e) {
+                    LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
                 }
             });
         } else {
             session.getContext().writeAndFlush("-ERR unknown command '" + request.getCommand() + "'");
+        }
+    }
+
+    private void replication(IRequest request) {
+        if (!admin.getOrDefault("slaves", DatabaseValue.set()).<Set<String>>getValue().isEmpty()) {
+            queue.add(request);
         }
     }
 

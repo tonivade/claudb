@@ -89,7 +89,7 @@ public class TinyDBClient implements ITinyDB {
     }
 
     private void connect() {
-        LOGGER.info(() -> "trying to reconnect");
+        LOGGER.info(() -> "trying to connect");
 
         future = bootstrap.connect(host, port).addListener(new ChannelFutureListener() {
             @Override

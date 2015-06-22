@@ -5,7 +5,6 @@
 
 package tonivade.db.command.server;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import tonivade.db.command.ICommand;
@@ -14,6 +13,7 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.data.IDatabase;
+import tonivade.db.persistence.ByteBufferOutputStream;
 import tonivade.db.redis.SafeString;
 import tonivade.db.replication.MasterReplication;
 
@@ -27,10 +27,10 @@ public class SyncCommand implements ICommand {
         try {
             IServerContext server = request.getServerContext();
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            server.exportRDB(baos);
+            ByteBufferOutputStream output = new ByteBufferOutputStream();
+            server.exportRDB(output);
 
-            response.addBulkStr(new SafeString(baos.toByteArray()));
+            response.addBulkStr(new SafeString(output.toByteArray()));
 
             if (master == null) {
                 master = new MasterReplication(server);
@@ -39,8 +39,7 @@ public class SyncCommand implements ICommand {
 
             master.addSlave(request.getSession().getId());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            response.addError("ERROR replication error");
         }
     }
 

@@ -21,15 +21,31 @@ public class SlaveOfCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        if (slave == null) {
-            slave = new SlaveReplication(
-                    request.getServerContext(),
-                    request.getParam(0),
-                    Integer.parseInt(request.getParam(1)));
+        String host = request.getParam(0);
+        String port = request.getParam(1);
 
-            slave.start();
+        boolean stopCurrent = host.equals("NO") && port.equals("ONE");
+
+        if (slave == null) {
+            if (!stopCurrent) {
+                startReplication(request, host, port);
+            }
+        } else {
+            slave.stop();
+
+            if (!stopCurrent) {
+                startReplication(request, host, port);
+            }
         }
 
+        response.addSimpleStr(RESULT_OK);
+    }
+
+    private void startReplication(IRequest request, String host, String port) {
+        slave = new SlaveReplication(
+                request.getServerContext(), host, Integer.parseInt(port));
+
+        slave.start();
     }
 
 }

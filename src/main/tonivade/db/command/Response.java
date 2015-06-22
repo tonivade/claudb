@@ -169,10 +169,7 @@ public class Response implements IResponse {
     }
 
     public byte[] getBytes() {
-        ByteBuffer buffer = builder.build();
-        byte[] array = new byte[buffer.position()];
-        System.arraycopy(buffer.array(), 0, array, 0, array.length);
-        return array;
+        return builder.build();
     }
 
     @Override
@@ -217,8 +214,11 @@ public class Response implements IResponse {
             return this;
         }
 
-        public ByteBuffer build() {
-            return buffer;
+        public byte[] build() {
+            byte[] array = new byte[buffer.position()];
+            buffer.rewind();
+            buffer.get(array);
+            return array;
         }
 
     }
