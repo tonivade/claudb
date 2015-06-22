@@ -11,6 +11,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -19,12 +20,8 @@ import tonivade.db.redis.RedisTokenType;
 
 public class TinyDBClientTest {
 
-    private static TinyDB server;
-
-    static {
-        server = new TinyDB();
-        server.start();
-    }
+    @Rule
+    public TinyDBRule rule = new TinyDBRule();
 
     @Test
     public void testClient() throws Exception {

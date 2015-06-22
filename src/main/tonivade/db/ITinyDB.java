@@ -17,6 +17,9 @@ import tonivade.db.redis.RedisToken;
  */
 public interface ITinyDB {
 
+    public static final int DEFAULT_PORT = 7081;
+    public static final String DEFAULT_HOST = "localhost";
+
     /**
      * When a new channel is created, and the server has to prepare the pipeline
      *

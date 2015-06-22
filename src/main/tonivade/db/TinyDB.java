@@ -70,8 +70,6 @@ public class TinyDB implements ITinyDB, IServerContext {
     private static final int BUFFER_SIZE = INITIAL_SIZE * INITIAL_SIZE;
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
 
-    private static final int DEFAULT_PORT = 7081;
-    private static final String DEFAULT_HOST = "localhost";
     private static final int DEFAULT_DATABASES = 10;
 
     private final int port;
@@ -131,7 +129,9 @@ public class TinyDB implements ITinyDB, IServerContext {
         // Bind and start to accept incoming connections.
         future = bootstrap.bind(host, port);
 
-        LOGGER.info(() -> "adapter started: " + host + ":" + port);
+        future.syncUninterruptibly();
+
+        LOGGER.info(() -> "server started: " + host + ":" + port);
     }
 
     public void stop() {
@@ -145,8 +145,10 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
 
         clients.clear();
+        queue.clear();
+        admin.clear();
 
-        LOGGER.info("adapter stopped");
+        LOGGER.info(() -> "server stopped");
     }
 
     /**

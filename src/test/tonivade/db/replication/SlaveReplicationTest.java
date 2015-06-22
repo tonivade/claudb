@@ -13,7 +13,7 @@ import static tonivade.db.persistence.HexUtil.toHexString;
 
 import java.io.InputStream;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -21,25 +21,20 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.TinyDB;
+import tonivade.db.TinyDBRule;
 import tonivade.db.command.IServerContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
 
-    private TinyDB server;
+    @Rule
+    public TinyDBRule rule = new TinyDBRule();
 
     @Mock
     private IServerContext context;
 
     @Captor
     private ArgumentCaptor<InputStream> captor;
-
-    @Before
-    public void setUp() throws Exception {
-        server = new TinyDB();
-        server.start();
-    }
 
     @Test
     public void testReplication() throws Exception {

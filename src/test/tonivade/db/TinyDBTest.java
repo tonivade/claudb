@@ -12,8 +12,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
@@ -21,29 +20,12 @@ import redis.clients.jedis.Pipeline;
 
 public class TinyDBTest {
 
-    private static final String DEFAULT_HOST = "localhost";
-    private static final int DEFAULT_PORT = 7081;
-
-    private final TinyDB db = new TinyDB();
-
-    private final Thread server = new Thread(() -> {
-        db.start();
-    });
-
-    @Before
-    public void setUp() throws Exception {
-        server.start();
-        Thread.sleep(1000);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        db.stop();
-    }
+    @Rule
+    public TinyDBRule rule = new TinyDBRule();
 
     @Test
     public void testCommands() throws Exception {
-        try (Jedis jedis = new Jedis(DEFAULT_HOST, DEFAULT_PORT)) {
+        try (Jedis jedis = new Jedis(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT)) {
             assertThat(jedis.ping(), is("PONG"));
             assertThat(jedis.echo("Hi!"), is("Hi!"));
             assertThat(jedis.set("a", "1"), is("OK"));
@@ -62,7 +44,7 @@ public class TinyDBTest {
 
     @Test
     public void testPipeline() throws Exception {
-        try (Jedis jedis = new Jedis(DEFAULT_HOST, DEFAULT_PORT)) {
+        try (Jedis jedis = new Jedis(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT)) {
             Pipeline p = jedis.pipelined();
             p.ping();
             p.echo("Hi!");
@@ -112,7 +94,7 @@ public class TinyDBTest {
 
     private void loadTest(int times) {
         long start = System.nanoTime();
-        try (Jedis jedis = new Jedis(DEFAULT_HOST, DEFAULT_PORT)) {
+        try (Jedis jedis = new Jedis(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT)) {
             for (int i = 0; i < times; i++) {
                 jedis.set(key(i), value(i));
             }
