@@ -79,7 +79,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
     }
 
     private ArrayRedisToken parseArray(ChannelHandlerContext ctx, ByteBuf buffer, int size) throws Exception {
-        RedisArray response = new RedisArray();
+        RedisArray array = new RedisArray();
 
         for (int i = 0 ; i < size; i++) {
             String line = readLine(ctx, buffer);
@@ -88,17 +88,17 @@ public class RequestDecoder extends LineBasedFrameDecoder {
                 if (line.startsWith(STRING_PREFIX)) {
                     int length = Integer.parseInt(line.substring(1));
                     ByteBuf bulk = buffer.readBytes(length);
-                    response.add(new StringRedisToken(new SafeString(bulk.array())));
+                    array.add(new StringRedisToken(new SafeString(bulk.array())));
                     readLine(ctx, buffer);
                 } else if (line.startsWith(INTEGER_PREFIX)) {
                     // integer
                     Integer value = Integer.valueOf(line.substring(1));
-                    response.add(new IntegerRedisToken(value));
+                    array.add(new IntegerRedisToken(value));
                 }
             }
         }
 
-        return new ArrayRedisToken(response);
+        return new ArrayRedisToken(array);
     }
 
 }

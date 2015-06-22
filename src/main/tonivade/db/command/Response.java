@@ -7,10 +7,9 @@ package tonivade.db.command;
 
 import static tonivade.db.redis.SafeString.fromString;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOError;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +30,7 @@ public class Response implements IResponse {
 
     private boolean exit;
 
-    private final ByteArrayBuilder sb = new ByteArrayBuilder();
+    private final ByteArrayBuilder builder = new ByteArrayBuilder();
 
     /* (non-Javadoc)
      * @see tonivade.db.command.IResponse#addValue(tonivade.db.data.DatabaseValue)
@@ -72,11 +71,11 @@ public class Response implements IResponse {
     @Override
     public IResponse addBulkStr(SafeString str) {
         if (str != null) {
-            sb.append(BULK_STRING).append(str.length()).append(DELIMITER).append(str);
+            builder.append(BULK_STRING).append(str.length()).append(DELIMITER).append(str);
         } else {
-            sb.append(BULK_STRING).append(-1);
+            builder.append(BULK_STRING).append(-1);
         }
-        sb.append(DELIMITER);
+        builder.append(DELIMITER);
         return this;
     }
 
@@ -85,8 +84,8 @@ public class Response implements IResponse {
      */
     @Override
     public IResponse addSimpleStr(String str) {
-        sb.append(SIMPLE_STRING).append(str);
-        sb.append(DELIMITER);
+        builder.append(SIMPLE_STRING).append(str);
+        builder.append(DELIMITER);
         return this;
     }
 
@@ -95,22 +94,22 @@ public class Response implements IResponse {
      */
     @Override
     public IResponse addInt(SafeString str) {
-        sb.append(INTEGER).append(str);
-        sb.append(DELIMITER);
+        builder.append(INTEGER).append(str);
+        builder.append(DELIMITER);
         return this;
     }
 
     @Override
     public IResponse addInt(int value) {
-        sb.append(INTEGER).append(value);
-        sb.append(DELIMITER);
+        builder.append(INTEGER).append(value);
+        builder.append(DELIMITER);
         return this;
     }
 
     @Override
     public IResponse addInt(boolean value) {
-        sb.append(INTEGER).append(value ? "1" : "0");
-        sb.append(DELIMITER);
+        builder.append(INTEGER).append(value ? "1" : "0");
+        builder.append(DELIMITER);
         return this;
     }
 
@@ -119,8 +118,8 @@ public class Response implements IResponse {
      */
     @Override
     public IResponse addError(String str) {
-        sb.append(ERROR).append(str);
-        sb.append(DELIMITER);
+        builder.append(ERROR).append(str);
+        builder.append(DELIMITER);
         return this;
     }
 
@@ -130,12 +129,12 @@ public class Response implements IResponse {
     @Override
     public IResponse addArrayValue(Collection<DatabaseValue> array) {
         if (array != null) {
-            sb.append(ARRAY).append(array.size()).append(DELIMITER);
+            builder.append(ARRAY).append(array.size()).append(DELIMITER);
             for (DatabaseValue value : array) {
                 addValue(value);
             }
         } else {
-            sb.append(ARRAY).append(0).append(DELIMITER);
+            builder.append(ARRAY).append(0).append(DELIMITER);
         }
         return this;
     }
@@ -143,7 +142,7 @@ public class Response implements IResponse {
     @Override
     public IResponse addArray(Collection<?> array) {
         if (array != null) {
-            sb.append(ARRAY).append(array.size()).append(DELIMITER);
+            builder.append(ARRAY).append(array.size()).append(DELIMITER);
             for (Object value : array) {
                 if (value instanceof Integer) {
                     addInt((Integer) value);
@@ -154,7 +153,7 @@ public class Response implements IResponse {
                 }
             }
         } else {
-            sb.append(ARRAY).append(0).append(DELIMITER);
+            builder.append(ARRAY).append(0).append(DELIMITER);
         }
         return this;
     }
@@ -169,14 +168,25 @@ public class Response implements IResponse {
         return exit;
     }
 
+    public byte[] getBytes() {
+        ByteBuffer buffer = builder.build();
+        byte[] array = new byte[buffer.position()];
+        System.arraycopy(buffer.array(), 0, array, 0, array.length);
+        return array;
+    }
+
     @Override
     public String toString() {
-        return sb.toString();
+        try {
+            return new String(getBytes(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IOError(e);
+        }
     }
 
     private static class ByteArrayBuilder {
 
-        private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        private final ByteBuffer buffer = ByteBuffer.allocate(1024);
 
         public ByteArrayBuilder append(int i) {
             append(String.valueOf(i));
@@ -184,44 +194,31 @@ public class Response implements IResponse {
         }
 
         public ByteArrayBuilder append(byte b) {
-            output.write(b);
+            buffer.put(b);
             return this;
         }
 
         public ByteArrayBuilder append(byte[] buf) {
-            try {
-                output.write(buf);
-            } catch (IOException e) {
-                throw new IOError(e);
-            }
+            buffer.put(buf);
             return this;
         }
 
         public ByteArrayBuilder append(String str) {
             try {
-                output.write(str.getBytes("UTF-8"));
-            } catch (IOException e) {
+                buffer.put(str.getBytes("UTF-8"));
+            } catch (UnsupportedEncodingException e) {
                 throw new IOError(e);
             }
             return this;
         }
 
         public ByteArrayBuilder append(SafeString str) {
-            try {
-                output.write(str.getBytes());
-            } catch (IOException e) {
-                throw new IOError(e);
-            }
+            buffer.put(str.getBytes());
             return this;
         }
 
-        @Override
-        public String toString() {
-            try {
-                return output.toString("UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new IOError(e);
-            }
+        public ByteBuffer build() {
+            return buffer;
         }
 
     }

@@ -9,6 +9,7 @@ import static java.util.Collections.emptyList;
 import static tonivade.db.redis.SafeString.asList;
 import static tonivade.db.redis.SafeString.fromString;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -18,8 +19,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -153,7 +152,6 @@ public class TinyDB implements ITinyDB, IServerContext {
     public void channel(SocketChannel channel) {
         LOGGER.fine(() -> "new channel: " + sourceKey(channel));
 
-        channel.pipeline().addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));
         channel.pipeline().addLast("linDelimiter", new RequestDecoder(MAX_FRAME_SIZE));
         channel.pipeline().addLast(connectionHandler);
     }
@@ -187,9 +185,7 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private void cleanSession(ISession session) {
         try {
-            ICommand command = commands.getCommand("unsubscribe");
-            IDatabase db = databases.get(session.getCurrentDB());
-            command.execute(db, new Request(this, session, fromString("unsubscribe"), emptyList()), new Response());
+            processCommand(new Request(this, session, fromString("unsubscribe"), emptyList()));
         } finally {
             session.destroy();
         }
@@ -248,7 +244,9 @@ public class TinyDB implements ITinyDB, IServerContext {
             session.enqueue(() -> {
                 Response response = new Response();
                 command.execute(db, request, response);
-                session.getContext().writeAndFlush(response.toString());
+                ByteBuf buffer = session.getContext().alloc().buffer(1024);
+                buffer.writeBytes(response.getBytes());
+                session.getContext().writeAndFlush(buffer);
 
                 queue.add(request);
 
@@ -314,7 +312,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         rdb.preamble(6);
         for (int i = 0; i < databases.size(); i++) {
             IDatabase db = databases.get(i);
-            if (db.isEmpty()) {
+            if (!db.isEmpty()) {
                 rdb.select(i);
                 rdb.dabatase(db);
             }
