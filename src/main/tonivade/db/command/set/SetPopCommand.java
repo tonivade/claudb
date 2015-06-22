@@ -6,7 +6,7 @@
 package tonivade.db.command.set;
 
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -40,7 +40,7 @@ public class SetPopCommand implements ICommand {
         if (removed.isEmpty()) {
             response.addBulkStr(null);
         } else {
-            response.addBulkStr(fromString(removed.get(0)));
+            response.addBulkStr(safeString(removed.get(0)));
         }
     }
 

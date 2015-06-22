@@ -6,7 +6,7 @@
 package tonivade.db.command.pubsub;
 
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.db.redis.SafeString.asList;
+import static tonivade.db.redis.SafeString.safeAsList;
 
 import java.util.Set;
 
@@ -27,7 +27,7 @@ public class PublishCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        IDatabase admin = request.getServerContext().getDatabase();
+        IDatabase admin = request.getServerContext().getAdminDatabase();
         DatabaseValue value = admin.getOrDefault(SUBSCRIPTIONS_PREFIX + request.getParam(0), set());
 
         Set<String> subscribers = value.<Set<String>>getValue();
@@ -40,7 +40,7 @@ public class PublishCommand implements ICommand {
 
     private String message(IRequest request) {
         Response stream = new Response();
-        stream.addArray(asList("message", request.getParam(0), request.getParam(1)));
+        stream.addArray(safeAsList("message", request.getParam(0), request.getParam(1)));
         return stream.toString();
     }
 

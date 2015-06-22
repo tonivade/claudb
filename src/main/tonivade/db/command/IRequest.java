@@ -22,11 +22,11 @@ public interface IRequest {
      */
     public List<String> getParams();
 
-    public List<SafeString> getParamsSafe();
+    public List<SafeString> getSafeParams();
 
     public String getParam(int i);
 
-    public SafeString getParamSafe(int i);
+    public SafeString getSafeParam(int i);
 
     public Optional<String> getOptionalParam(int i);
 

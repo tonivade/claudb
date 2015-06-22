@@ -21,7 +21,7 @@ import tonivade.db.redis.RedisTokenType;
 public class TinyDBClientTest {
 
     @Rule
-    public TinyDBRule rule = new TinyDBRule();
+    public final TinyDBRule rule = new TinyDBRule();
 
     @Test
     public void testClient() throws Exception {

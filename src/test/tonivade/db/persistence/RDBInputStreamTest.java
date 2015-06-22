@@ -17,7 +17,7 @@ import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toByteArray;
 
-import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.junit.Test;
@@ -56,8 +56,8 @@ public class RDBInputStreamTest {
         assertThat(db.get("a"), is(value));
     }
 
-    private ByteArrayInputStream array(String string) {
-        return new ByteArrayInputStream(toByteArray(string));
+    private InputStream array(String string) {
+        return new ByteBufferInputStream(toByteArray(string));
     }
 
 }

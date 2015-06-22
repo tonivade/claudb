@@ -29,7 +29,7 @@ public class UnsubscribeCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        IDatabase admin = request.getServerContext().getDatabase();
+        IDatabase admin = request.getServerContext().getAdminDatabase();
         Collection<String> channels = getChannels(request);
         int i = channels.size();
         for (String channel : channels) {

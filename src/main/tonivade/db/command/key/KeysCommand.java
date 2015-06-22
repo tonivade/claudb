@@ -5,10 +5,12 @@
 
 package tonivade.db.command.key;
 
+import static java.util.stream.Collectors.toSet;
+import static tonivade.db.redis.SafeString.safeString;
+
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -16,6 +18,7 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("keys")
 @ParamLength(1)
@@ -27,7 +30,7 @@ public class KeysCommand implements ICommand {
         Predicate<? super String> predicate = (key) -> {
             return pattern.matcher(key).matches();
         };
-        Set<String> keys = db.keySet().stream().filter(predicate).collect(Collectors.toSet());
+        Set<SafeString> keys = db.keySet().stream().filter(predicate).map((item) -> safeString(item)).collect(toSet());
         response.addArray(keys);
     }
 

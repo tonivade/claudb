@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -47,9 +47,9 @@ public class MultiGetCommandTest {
         DatabaseValue b = iterator.next();
         DatabaseValue c = iterator.next();
 
-        assertThat(a.getValue(), is(fromString("1")));
+        assertThat(a.getValue(), is(safeString("1")));
         assertThat(b, is(nullValue()));
-        assertThat(c.getValue(), is(fromString("2")));
+        assertThat(c.getValue(), is(safeString("2")));
     }
 
 }

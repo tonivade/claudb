@@ -43,7 +43,7 @@ public class SlaveOfCommand implements ICommand {
 
     private void startReplication(IRequest request, String host, String port) {
         slave = new SlaveReplication(
-                request.getServerContext(), host, Integer.parseInt(port));
+                request.getServerContext(), request.getSession(), host, Integer.parseInt(port));
 
         slave.start();
     }

@@ -11,7 +11,7 @@ import static java.util.Collections.unmodifiableNavigableSet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -105,7 +105,7 @@ public class DatabaseValue {
     }
 
     public static DatabaseValue string(String value) {
-        return string(fromString(value));
+        return string(safeString(value));
     }
 
     public static DatabaseValue string(SafeString value) {

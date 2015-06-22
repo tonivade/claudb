@@ -8,8 +8,8 @@ package tonivade.db.command;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.redis.SafeString.asList;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeAsList;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Arrays;
 
@@ -19,7 +19,7 @@ public class RequestTest {
 
     @Test
     public void testRequest() throws Exception {
-        Request request = new Request(null, null, fromString("a"), asList("1", "2", "3"));
+        Request request = new Request(null, null, safeString("a"), safeAsList("1", "2", "3"));
 
         assertThat(request.getCommand(), is("a"));
         assertThat(request.getLength(), is(3));

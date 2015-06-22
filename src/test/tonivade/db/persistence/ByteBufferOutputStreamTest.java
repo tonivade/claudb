@@ -7,6 +7,7 @@ package tonivade.db.persistence;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static tonivade.db.persistence.HexUtil.toByteArray;
 import static tonivade.db.persistence.HexUtil.toHexString;
 
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class ByteBufferOutputStreamTest {
         ByteBufferOutputStream out =  new ByteBufferOutputStream();
 
         out.write(9);
-        out.write("Hola mundo!".getBytes("UTF-8"));
+        out.write(toByteArray("486F6C61206D756E646F21"));
 
         byte[] array = out.toByteArray();
 

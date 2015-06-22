@@ -79,7 +79,7 @@ public class CommandRule implements TestRule {
                 when(request.getServerContext()).thenReturn(server);
                 when(request.getSession()).thenReturn(session);
                 when(session.getId()).thenReturn("localhost:12345");
-                when(server.getDatabase()).thenReturn(database);
+                when(server.getAdminDatabase()).thenReturn(database);
 
                 MockitoAnnotations.initMocks(target);
 

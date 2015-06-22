@@ -23,22 +23,26 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.TinyDBRule;
 import tonivade.db.command.IServerContext;
+import tonivade.db.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
 
     @Rule
-    public TinyDBRule rule = new TinyDBRule();
+    public final TinyDBRule rule = new TinyDBRule();
 
     @Mock
     private IServerContext context;
+
+    @Mock
+    private ISession session;
 
     @Captor
     private ArgumentCaptor<InputStream> captor;
 
     @Test
     public void testReplication() throws Exception {
-        SlaveReplication slave = new SlaveReplication(context, "localhost", 7081);
+        SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
 
         slave.start();
 

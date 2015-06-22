@@ -21,7 +21,7 @@ import redis.clients.jedis.Pipeline;
 public class TinyDBTest {
 
     @Rule
-    public TinyDBRule rule = new TinyDBRule();
+    public final TinyDBRule rule = new TinyDBRule();
 
     @Test
     public void testCommands() throws Exception {

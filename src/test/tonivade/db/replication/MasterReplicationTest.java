@@ -10,6 +10,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.HashMap;
 
@@ -19,13 +20,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.IRequest;
 import tonivade.db.command.IServerContext;
-import tonivade.db.command.Request;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.db.redis.RedisArray;
+import tonivade.db.redis.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
@@ -41,7 +41,7 @@ public class MasterReplicationTest {
     @Test
     public void testReplication() throws Exception {
         when(server.getCommands()).thenReturn(asList(request()));
-        when(server.getDatabase()).thenReturn(db);
+        when(server.getAdminDatabase()).thenReturn(db);
 
         master.addSlave("slave:1");
         master.addSlave("slave:2");
@@ -51,8 +51,12 @@ public class MasterReplicationTest {
         verify(server, timeout(10000).times(2)).publish(anyString(), anyString());
     }
 
-    private IRequest request() {
-        return new Request(server, null, SafeString.fromString("set"), SafeString.asList("a", "b"));
+    private RedisArray request() {
+        RedisArray array = new RedisArray();
+        array.add(new StringRedisToken(safeString("set")));
+        array.add(new StringRedisToken(safeString("a")));
+        array.add(new StringRedisToken(safeString("b")));
+        return array;
     }
 
 }

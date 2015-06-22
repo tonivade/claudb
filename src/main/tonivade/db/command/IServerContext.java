@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.RedisArray;
 
 public interface IServerContext {
 
@@ -20,12 +21,16 @@ public interface IServerContext {
 
     public void publish(String destination, String message);
 
-    public IDatabase getDatabase();
+    public IDatabase getAdminDatabase();
+
+    public IDatabase getDatabase(int i);
 
     public void exportRDB(OutputStream output) throws IOException;
 
     public void importRDB(InputStream input) throws IOException;
 
-    public List<IRequest> getCommands();
+    public List<RedisArray> getCommands();
+
+    public ICommand getCommand(String name);
 
 }

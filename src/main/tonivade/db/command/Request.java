@@ -48,7 +48,7 @@ public class Request implements IRequest {
     }
 
     @Override
-    public List<SafeString> getParamsSafe() {
+    public List<SafeString> getSafeParams() {
         return Collections.unmodifiableList(params);
     }
 
@@ -64,7 +64,7 @@ public class Request implements IRequest {
     }
 
     @Override
-    public SafeString getParamSafe(int i) {
+    public SafeString getSafeParam(int i) {
         if (i < params.size()) {
             return params.get(i);
         }

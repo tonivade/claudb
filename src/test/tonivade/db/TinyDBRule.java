@@ -22,9 +22,13 @@ public class TinyDBRule  implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                server.start();
-                base.evaluate();
-                server.stop();
+                try {
+                    server.start();
+                    base.evaluate();
+                } finally {
+                    server.stop();
+                }
+
             }
         };
     }

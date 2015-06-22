@@ -8,6 +8,7 @@ package tonivade.db.command.key;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 
@@ -40,9 +41,9 @@ public class KeysCommandTest {
         Collection<String> value = captor.getValue();
 
         assertThat(value.size(), is(3));
-        assertThat(value.contains("abc"), is(true));
-        assertThat(value.contains("acd"), is(true));
-        assertThat(value.contains("c"), is(true));
+        assertThat(value.contains(safeString("abc")), is(true));
+        assertThat(value.contains(safeString("acd")), is(true));
+        assertThat(value.contains(safeString("c")), is(true));
     }
 
     @Test
@@ -57,9 +58,9 @@ public class KeysCommandTest {
         Collection<String> value = captor.getValue();
 
         assertThat(value.size(), is(2));
-        assertThat(value.contains("abc"), is(true));
-        assertThat(value.contains("acd"), is(true));
-        assertThat(value.contains("c"), is(false));
+        assertThat(value.contains(safeString("abc")), is(true));
+        assertThat(value.contains(safeString("acd")), is(true));
+        assertThat(value.contains(safeString("c")), is(false));
     }
 
     @Test
@@ -74,9 +75,9 @@ public class KeysCommandTest {
         Collection<String> value = captor.getValue();
 
         assertThat(value.size(), is(2));
-        assertThat(value.contains("abc"), is(true));
-        assertThat(value.contains("acd"), is(true));
-        assertThat(value.contains("c"), is(false));
+        assertThat(value.contains(safeString("abc")), is(true));
+        assertThat(value.contains(safeString("acd")), is(true));
+        assertThat(value.contains(safeString("c")), is(false));
     }
 
 }

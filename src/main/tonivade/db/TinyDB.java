@@ -6,8 +6,8 @@
 package tonivade.db;
 
 import static java.util.Collections.emptyList;
-import static tonivade.db.redis.SafeString.asList;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeAsList;
+import static tonivade.db.redis.SafeString.safeString;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -51,6 +51,8 @@ import tonivade.db.persistence.RDBInputStream;
 import tonivade.db.persistence.RDBOutputStream;
 import tonivade.db.redis.RedisArray;
 import tonivade.db.redis.RedisToken;
+import tonivade.db.redis.RedisToken.IntegerRedisToken;
+import tonivade.db.redis.RedisToken.StringRedisToken;
 import tonivade.db.redis.RedisTokenType;
 import tonivade.db.redis.RequestDecoder;
 import tonivade.db.redis.SafeString;
@@ -90,7 +92,7 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private final CommandSuite commands = new CommandSuite();
 
-    private BlockingQueue<IRequest> queue = new LinkedBlockingQueue<>();
+    private BlockingQueue<RedisArray> queue = new LinkedBlockingQueue<>();
 
     private ChannelFuture future;
 
@@ -191,7 +193,7 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private void cleanSession(ISession session) {
         try {
-            processCommand(new Request(this, session, fromString("unsubscribe"), emptyList()));
+            processCommand(new Request(this, session, safeString("unsubscribe"), emptyList()));
         } finally {
             session.destroy();
         }
@@ -227,7 +229,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         String[] params = command.split(" ");
         String[] array = new String[params.length - 1];
         System.arraycopy(params, 1, array, 0, array.length);
-        return new Request(this, clients.get(sourceKey), fromString(params[0]), asList(array));
+        return new Request(this, clients.get(sourceKey), safeString(params[0]), safeAsList(array));
     }
 
     private Request parseArray(String sourceKey, RedisToken message) {
@@ -271,8 +273,21 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private void replication(IRequest request) {
         if (!admin.getOrDefault("slaves", DatabaseValue.set()).<Set<String>>getValue().isEmpty()) {
-            queue.add(request);
+            queue.add(requestToArray(request));
         }
+    }
+
+    private RedisArray requestToArray(IRequest request) {
+        RedisArray array = new RedisArray();
+        // currentDB
+        array.add(new IntegerRedisToken(request.getSession().getCurrentDB()));
+        // command
+        array.add(new StringRedisToken(safeString(request.getCommand())));
+        //params
+        for (SafeString safeStr : request.getSafeParams()) {
+            array.add(new StringRedisToken(safeStr));
+        }
+        return array;
     }
 
     private String sourceKey(Channel channel) {
@@ -287,7 +302,9 @@ public class TinyDB implements ITinyDB, IServerContext {
     public void publish(String sourceKey, String message) {
         ISession session = clients.get(sourceKey);
         if (session != null) {
-            session.getContext().writeAndFlush(message);
+            ByteBuf buffer = session.getContext().alloc().buffer(INITIAL_SIZE, BUFFER_SIZE);
+            buffer.writeBytes(safeString(message).getBytes());
+            session.getContext().writeAndFlush(buffer);
         }
     }
 
@@ -295,8 +312,13 @@ public class TinyDB implements ITinyDB, IServerContext {
      * {@inheritDoc}
      */
     @Override
-    public IDatabase getDatabase() {
+    public IDatabase getAdminDatabase() {
         return admin;
+    }
+
+    @Override
+    public IDatabase getDatabase(int i) {
+        return databases.get(i);
     }
 
     /**
@@ -316,10 +338,15 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     @Override
-    public List<IRequest> getCommands() {
-        List<IRequest> current = new LinkedList<>();
+    public List<RedisArray> getCommands() {
+        List<RedisArray> current = new LinkedList<>();
         queue.drainTo(current);
         return current;
+    }
+
+    @Override
+    public ICommand getCommand(String name) {
+        return commands.getCommand(name);
     }
 
     @Override

@@ -8,7 +8,7 @@ package tonivade.db.command.server;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
@@ -53,7 +53,7 @@ public class InfoCommand implements ICommand {
                 sections.put(section, section(section, request.getServerContext()));
             }
         }
-        response.addBulkStr(fromString(makeString(sections)));
+        response.addBulkStr(safeString(makeString(sections)));
     }
 
     private String makeString(Map<String, Map<String, String>> sections) {

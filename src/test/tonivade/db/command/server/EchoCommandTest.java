@@ -5,7 +5,7 @@
 
 package tonivade.db.command.server;
 
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class EchoCommandTest {
     public void testExecute() {
         rule.withParams("test")
             .execute()
-            .verify().addBulkStr(fromString("test"));
+            .verify().addBulkStr(safeString("test"));
     }
 
 }

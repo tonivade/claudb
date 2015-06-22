@@ -5,7 +5,7 @@
 
 package tonivade.db.command.string;
 
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,15 +23,15 @@ public class IncrementByCommandTest {
     public void testExecute() {
         rule.withParams("a", "10")
             .execute()
-            .verify().addInt(fromString("10"));
+            .verify().addInt(safeString("10"));
 
         rule.withParams("a", "10")
             .execute()
-            .verify().addInt(fromString("20"));
+            .verify().addInt(safeString("20"));
 
         rule.withParams("a", "5")
             .execute()
-            .verify().addInt(fromString("25"));
+            .verify().addInt(safeString("25"));
     }
 
 }

@@ -8,7 +8,7 @@ package tonivade.db.command.string;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class GetSetCommandTest {
 
         DatabaseValue value = captor.getValue();
 
-        assertThat(value.getValue(), is(fromString("1")));
+        assertThat(value.getValue(), is(safeString("1")));
     }
 
 }

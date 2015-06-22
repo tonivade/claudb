@@ -16,7 +16,6 @@ import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toHexString;
 
-import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import org.junit.Before;
@@ -28,12 +27,12 @@ import tonivade.db.data.IDatabase;
 
 public class RDBOutputStreamTest {
 
-    private ByteArrayOutputStream baos;
+    private ByteBufferOutputStream baos;
     private RDBOutputStream out;
 
     @Before
     public void setUp() throws Exception {
-        baos = new ByteArrayOutputStream();
+        baos = new ByteBufferOutputStream();
         out = new RDBOutputStream(baos);
     }
 

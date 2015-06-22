@@ -6,7 +6,7 @@
 package tonivade.db.command.list;
 
 import static tonivade.db.data.DatabaseValue.list;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class LeftPopCommand implements ICommand {
         if (removed.isEmpty()) {
             response.addBulkStr(null);
         } else {
-            response.addBulkStr(fromString(removed.remove(0)));
+            response.addBulkStr(safeString(removed.remove(0)));
         }
     }
 

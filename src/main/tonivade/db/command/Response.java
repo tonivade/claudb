@@ -5,7 +5,7 @@
 
 package tonivade.db.command;
 
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.io.IOError;
 import java.io.UnsupportedEncodingException;
@@ -46,8 +46,8 @@ public class Response implements IResponse {
                 Map<String, String> map = value.getValue();
                 List<Object> list = new LinkedList<>();
                 map.forEach((k, v) ->  {
-                    list.add(fromString(k));
-                    list.add(fromString(v));
+                    list.add(safeString(k));
+                    list.add(safeString(v));
                 });
                 addArray(list);
                 break;

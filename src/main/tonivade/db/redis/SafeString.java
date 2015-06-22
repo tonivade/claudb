@@ -63,14 +63,14 @@ public class SafeString {
         return new String(bytes, DEFAULT_CHARSET);
     }
 
-    public static SafeString fromString(String str) {
+    public static SafeString safeString(String str) {
         Objects.nonNull(str);
         return new SafeString(str.getBytes(DEFAULT_CHARSET));
     }
 
-    public static List<SafeString> asList(String ... strs) {
+    public static List<SafeString> safeAsList(String ... strs) {
         Objects.nonNull(strs);
-        return Stream.of(strs).map((item) -> fromString(item)).collect(toList());
+        return Stream.of(strs).map((item) -> safeString(item)).collect(toList());
     }
 
 }

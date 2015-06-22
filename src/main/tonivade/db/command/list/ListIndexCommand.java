@@ -6,7 +6,7 @@
 package tonivade.db.command.list;
 
 import static tonivade.db.data.DatabaseValue.list;
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class ListIndexCommand implements ICommand {
                 index = list.size() + index;
             }
 
-            response.addBulkStr(fromString(list.get(index)));
+            response.addBulkStr(safeString(list.get(index)));
         } catch (NumberFormatException e) {
             response.addError("ERR value is not an integer or out of range");
         } catch (IndexOutOfBoundsException e) {

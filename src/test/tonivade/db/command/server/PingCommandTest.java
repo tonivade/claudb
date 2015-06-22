@@ -5,7 +5,7 @@
 
 package tonivade.db.command.server;
 
-import static tonivade.db.redis.SafeString.fromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class PingCommandTest {
     public void testExecuteWithParam() {
         rule.withParams("Hi!")
             .execute()
-            .verify().addBulkStr(fromString("Hi!"));
+            .verify().addBulkStr(safeString("Hi!"));
     }
 
 }
