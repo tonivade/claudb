@@ -5,14 +5,15 @@
 
 package tonivade.db.replication;
 
-import static org.junit.Assert.fail;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static tonivade.db.persistence.HexUtil.toHexString;
 
 import java.io.InputStream;
 
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -22,23 +23,23 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.TinyDB;
 import tonivade.db.command.IServerContext;
-import tonivade.db.persistence.HexUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
 
-    private static TinyDB server;
-
-    static {
-        server = new TinyDB();
-        server.start();
-    }
+    private TinyDB server;
 
     @Mock
     private IServerContext context;
 
     @Captor
     private ArgumentCaptor<InputStream> captor;
+
+    @Before
+    public void setUp() throws Exception {
+        server = new TinyDB();
+        server.start();
+    }
 
     @Test
     public void testReplication() throws Exception {
@@ -54,14 +55,8 @@ public class SlaveReplicationTest {
 
         int readed = stream.read(buffer);
 
-        if (readed != buffer.length) {
-            fail("read fail");
-        }
-
-        // XXX: not working
-        System.out.println(HexUtil.toHexString(buffer));
-
-        Assert.assertThat(buffer.length, CoreMatchers.is(18));
+        assertThat(readed, is(buffer.length));
+        assertThat(toHexString(buffer), is("524544495330303036FF224AF218835A1E69"));
     }
 
 }
