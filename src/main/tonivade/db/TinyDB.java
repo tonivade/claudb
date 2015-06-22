@@ -65,7 +65,6 @@ import tonivade.db.redis.SafeString;
  */
 public class TinyDB implements ITinyDB, IServerContext {
 
-
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
     private static final int INITIAL_SIZE = 1024;
@@ -303,7 +302,7 @@ public class TinyDB implements ITinyDB, IServerContext {
         ISession session = clients.get(sourceKey);
         if (session != null) {
             ByteBuf buffer = session.getContext().alloc().buffer(INITIAL_SIZE, BUFFER_SIZE);
-            buffer.writeBytes(safeString(message).getBytes());
+            buffer.writeBytes(safeString(message).getBuffer());
             session.getContext().writeAndFlush(buffer);
         }
     }

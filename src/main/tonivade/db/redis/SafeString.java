@@ -7,8 +7,8 @@ package tonivade.db.redis;
 
 import static java.util.stream.Collectors.toList;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -17,26 +17,38 @@ public class SafeString {
 
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    private byte[] bytes;
+    private ByteBuffer buffer;
 
     public SafeString(byte[] bytes) {
         Objects.nonNull(bytes);
-        this.bytes = bytes;
+        this.buffer = ByteBuffer.wrap(bytes);
+    }
+
+    public SafeString(ByteBuffer buffer) {
+        Objects.nonNull(buffer);
+        this.buffer = buffer;
     }
 
     public byte[] getBytes() {
+        ByteBuffer copy = buffer.duplicate();
+        byte[] bytes = new byte[copy.remaining()];
+        copy.get(bytes);
         return bytes;
     }
 
+    public ByteBuffer getBuffer() {
+        return buffer.duplicate();
+    }
+
     public int length() {
-        return bytes.length;
+        return buffer.remaining();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Arrays.hashCode(bytes);
+        result = prime * result + buffer.hashCode();
         return result;
     }
 
@@ -52,7 +64,7 @@ public class SafeString {
             return false;
         }
         SafeString other = (SafeString) obj;
-        if (!Arrays.equals(bytes, other.bytes)) {
+        if (!buffer.equals(other.buffer)) {
             return false;
         }
         return true;
@@ -60,12 +72,12 @@ public class SafeString {
 
     @Override
     public String toString() {
-        return new String(bytes, DEFAULT_CHARSET);
+        return DEFAULT_CHARSET.decode(buffer.duplicate()).toString();
     }
 
     public static SafeString safeString(String str) {
         Objects.nonNull(str);
-        return new SafeString(str.getBytes(DEFAULT_CHARSET));
+        return new SafeString(DEFAULT_CHARSET.encode(str));
     }
 
     public static List<SafeString> safeAsList(String ... strs) {

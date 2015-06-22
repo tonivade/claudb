@@ -10,6 +10,7 @@ import static tonivade.db.redis.SafeString.safeString;
 import java.io.IOError;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +28,8 @@ public class Response implements IResponse {
     private static final byte BULK_STRING = '$';
 
     private static final byte[] DELIMITER = new byte[] { '\r', '\n' };
+
+    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
     private boolean exit;
 
@@ -201,16 +204,12 @@ public class Response implements IResponse {
         }
 
         public ByteArrayBuilder append(String str) {
-            try {
-                buffer.put(str.getBytes("UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new IOError(e);
-            }
+            buffer.put(DEFAULT_CHARSET.encode(str));
             return this;
         }
 
         public ByteArrayBuilder append(SafeString str) {
-            buffer.put(str.getBytes());
+            buffer.put(str.getBuffer());
             return this;
         }
 
