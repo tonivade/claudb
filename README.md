@@ -14,8 +14,8 @@ Implemented commands
     - FLUSHDB
     - INFO
     - TIME
-    - _SYNC_
-    - _SLAVEOF_
+    - SYNC
+    - SLAVEOF
 - Connection
     - ECHO
     - PING
@@ -111,9 +111,13 @@ TODO
 - ~~Pipelining.~~ **Done!**
 - Key expiration.
 - Transactions (MULTI & EXEC).
-- Persistence to disk.
-- Publish/Subscribe._(Partially implemented)_
+- Persistence to disk. _(Working on it!)_
+    - 80% RDB file format implemented (strings, lists, sets, sorted sets and hashes).
+    - Ziplist and Maplist encoding not implemented yet.
+- Publish/Subscribe. _(Partially implemented)_
+    - PSUBSCRIBE and PUNSUBSCRIBE commands not implemented yet.
 - Master - Slave Replication. _(Working on it!)_
+    - Initial implementation finished, with only one slave per master
 - Scripting with Javascript/Lua.
 - Partitioning?
 - Clustering?
