@@ -20,6 +20,7 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.data.SortedSet;
 
@@ -33,7 +34,7 @@ public class SortedSetRemoveCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         List<String> items =  request.getParams().stream().skip(1).collect(toList());
         List<String> removed = new LinkedList<String>();
-        db.merge(request.getParam(0), zset(),
+        db.merge(request.getParam(0), DatabaseValue.EMPTY_ZSET,
                 (oldValue, newValue) -> {
                     Set<Entry<Double, String>> merge = new SortedSet();
                     merge.addAll(oldValue.getValue());

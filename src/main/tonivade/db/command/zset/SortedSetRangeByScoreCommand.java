@@ -10,7 +10,6 @@ import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static tonivade.db.data.DatabaseValue.score;
-import static tonivade.db.data.DatabaseValue.zset;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -43,7 +42,7 @@ public class SortedSetRangeByScoreCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = db.getOrDefault(request.getParam(0), zset());
+            DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_ZSET);
             NavigableSet<Entry<Double, String>> set = value.getValue();
 
             float from = parseRange(request.getParam(1));

@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.Response;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.RedisArray;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.SafeString;
@@ -55,7 +56,7 @@ public class MasterReplication implements Runnable {
     }
 
     private Set<String> getSlaves() {
-        return server.getAdminDatabase().getOrDefault("slaves", set()).getValue();
+        return server.getAdminDatabase().getOrDefault("slaves", DatabaseValue.EMPTY_SET).getValue();
     }
 
     private String createCommands() {

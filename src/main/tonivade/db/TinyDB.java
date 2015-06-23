@@ -271,7 +271,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     private void replication(IRequest request) {
-        if (!admin.getOrDefault("slaves", DatabaseValue.set()).<Set<String>>getValue().isEmpty()) {
+        if (!admin.getOrDefault("slaves", DatabaseValue.EMPTY_SET).<Set<String>>getValue().isEmpty()) {
             queue.add(requestToArray(request));
         }
     }

@@ -8,7 +8,6 @@ package tonivade.db.command.zset;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
-import static tonivade.db.data.DatabaseValue.zset;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -36,7 +35,7 @@ public class SortedSetRangeCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = db.getOrDefault(request.getParam(0), zset());
+            DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_ZSET);
             NavigableSet<Entry<Float, String>> set = value.getValue();
 
             int from = Integer.parseInt(request.getParam(1));

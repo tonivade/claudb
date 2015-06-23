@@ -17,6 +17,7 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @Command("lset")
@@ -28,7 +29,7 @@ public class ListSetCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
             int index = Integer.parseInt(request.getParam(1));
-            db.merge(request.getParam(0), list(),
+            db.merge(request.getParam(0), DatabaseValue.EMPTY_LIST,
                     (oldValue, newValue) -> {
                         List<String> merge = new ArrayList<>(oldValue.<List<String>>getValue());
                         merge.set(index > -1 ? index : merge.size() + index, request.getParam(2));

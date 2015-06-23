@@ -68,7 +68,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
             } else if (line.startsWith(STRING_PREFIX)) {
                 int length = Integer.parseInt(line.substring(1));
                 ByteBuf bulk = buffer.readBytes(length);
-                token = new StringRedisToken(new SafeString(bulk.array()));
+                token = new StringRedisToken(new SafeString(bulk.nioBuffer()));
                 readLine(ctx, buffer);
             } else {
                 token = new UnknownRedisToken(line);
@@ -88,7 +88,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
                 if (line.startsWith(STRING_PREFIX)) {
                     int length = Integer.parseInt(line.substring(1));
                     ByteBuf bulk = buffer.readBytes(length);
-                    array.add(new StringRedisToken(new SafeString(bulk.array())));
+                    array.add(new StringRedisToken(new SafeString(bulk.nioBuffer())));
                     readLine(ctx, buffer);
                 } else if (line.startsWith(INTEGER_PREFIX)) {
                     // integer

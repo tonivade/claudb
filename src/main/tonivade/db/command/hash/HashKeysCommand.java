@@ -24,7 +24,7 @@ public class HashKeysCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.hash());
+        DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_HASH);
 
         Map<String, String> map = value.getValue();
 

@@ -18,6 +18,7 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @Command("rpop")
@@ -28,7 +29,7 @@ public class RightPopCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         List<String> removed = new LinkedList<>();
-        db.merge(request.getParam(0), list(),
+        db.merge(request.getParam(0), DatabaseValue.EMPTY_LIST,
                 (oldValue, newValue) -> {
                     List<String> merge = new LinkedList<>();
                     merge.addAll(oldValue.getValue());

@@ -5,7 +5,6 @@
 
 package tonivade.db.command.string;
 
-import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -24,7 +23,7 @@ public class StringLengthCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(request.getParam(0), string(""));
+        DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_STRING);
         SafeString string = value.getValue();
         response.addInt(string.length());
     }

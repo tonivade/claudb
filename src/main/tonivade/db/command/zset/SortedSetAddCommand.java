@@ -6,12 +6,12 @@
 package tonivade.db.command.zset;
 
 import static java.lang.Float.parseFloat;
+import static java.util.stream.Collectors.toList;
 import static tonivade.db.data.DatabaseValue.score;
 import static tonivade.db.data.DatabaseValue.zset;
 
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -32,7 +32,7 @@ public class SortedSetAddCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue initial = db.getOrDefault(request.getParam(0), zset());
+            DatabaseValue initial = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_ZSET);
             DatabaseValue result = db.merge(request.getParam(0), parseInput(request),
                     (oldValue, newValue) -> {
                         Set<Entry<Double, String>> merge = new SortedSet();
@@ -53,7 +53,7 @@ public class SortedSetAddCommand implements ICommand {
     private DatabaseValue parseInput(IRequest request) throws NumberFormatException {
         Set<Entry<Double, String>> set = new SortedSet();
         String score = null;
-        for (String string : request.getParams().stream().skip(1).collect(Collectors.toList())) {
+        for (String string : request.getParams().stream().skip(1).collect(toList())) {
             if (score != null) {
                 set.add(score(parseFloat(score), string));
                 score =  null;

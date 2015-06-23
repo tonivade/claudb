@@ -11,24 +11,41 @@ import java.nio.ByteBuffer;
 
 public class ByteBufferOutputStream extends OutputStream {
 
+    private static final int DEFAULT_CAPACITY = 1024;
+
+    private int growing;
+
     private ByteBuffer buffer;
 
     public ByteBufferOutputStream() {
-        this(1024);
+        this(DEFAULT_CAPACITY, DEFAULT_CAPACITY);
     }
 
     public ByteBufferOutputStream(int capacity) {
+        this(capacity, capacity);
+    }
+
+    public ByteBufferOutputStream(int capacity, int growing) {
         this.buffer = ByteBuffer.allocate(capacity);
+        this.growing = growing;
     }
 
     @Override
     public void write(int b) throws IOException {
+        ensureCapacity(1);
         buffer.put((byte) b);
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
+        ensureCapacity(len);
         buffer.put(b, off, len);
+    }
+
+    private void ensureCapacity(int len) {
+        if (buffer.remaining() < len) {
+            buffer = ByteBuffer.allocate(buffer.capacity() + growing).put(toByteArray());
+        }
     }
 
     public byte[] toByteArray() {

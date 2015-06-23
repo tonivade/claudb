@@ -5,8 +5,6 @@
 
 package tonivade.db.command.set;
 
-import static tonivade.db.data.DatabaseValue.set;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,10 +26,10 @@ public class SetUnionCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue first = db.getOrDefault(request.getParam(0), set());
+        DatabaseValue first = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_SET);
         Set<String> result = new HashSet<>(first.<Set<String>>getValue());
         for (String param : request.getParams().stream().skip(1).collect(Collectors.toList())) {
-            result.addAll(db.getOrDefault(param, set()).<Set<String>>getValue());
+            result.addAll(db.getOrDefault(param, DatabaseValue.EMPTY_SET).<Set<String>>getValue());
         }
         response.addArray(result);
     }

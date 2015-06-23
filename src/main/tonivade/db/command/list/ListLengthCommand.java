@@ -5,8 +5,6 @@
 
 package tonivade.db.command.list;
 
-import static tonivade.db.data.DatabaseValue.list;
-
 import java.util.List;
 
 import tonivade.db.command.ICommand;
@@ -26,7 +24,7 @@ public class ListLengthCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(request.getParam(0), list());
+        DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_LIST);
         List<String> list = value.getValue();
         response.addInt(list.size());
     }

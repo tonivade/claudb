@@ -28,6 +28,12 @@ import tonivade.db.redis.SafeString;
 
 public class DatabaseValue {
 
+    public static final DatabaseValue EMPTY_STRING = string("");
+    public static final DatabaseValue EMPTY_LIST = list();
+    public static final DatabaseValue EMPTY_SET = set();
+    public static final DatabaseValue EMPTY_ZSET = zset();
+    public static final DatabaseValue EMPTY_HASH = hash();
+
     private final DataType type;
 
     private final Object value;

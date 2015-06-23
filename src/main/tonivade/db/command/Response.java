@@ -33,7 +33,7 @@ public class Response implements IResponse {
 
     private boolean exit;
 
-    private final ByteArrayBuilder builder = new ByteArrayBuilder();
+    private final ByteBufferBuilder builder = new ByteBufferBuilder();
 
     /* (non-Javadoc)
      * @see tonivade.db.command.IResponse#addValue(tonivade.db.data.DatabaseValue)
@@ -184,33 +184,47 @@ public class Response implements IResponse {
         }
     }
 
-    private static class ByteArrayBuilder {
+    private static class ByteBufferBuilder {
 
-        private final ByteBuffer buffer = ByteBuffer.allocate(1024);
+        private ByteBuffer buffer = ByteBuffer.allocate(1024);
 
-        public ByteArrayBuilder append(int i) {
+        public ByteBufferBuilder append(int i) {
             append(String.valueOf(i));
             return this;
         }
 
-        public ByteArrayBuilder append(byte b) {
+        public ByteBufferBuilder append(byte b) {
+            ensureCapacity(1);
             buffer.put(b);
             return this;
         }
 
-        public ByteArrayBuilder append(byte[] buf) {
+        public ByteBufferBuilder append(byte[] buf) {
+            ensureCapacity(buf.length);
             buffer.put(buf);
             return this;
         }
 
-        public ByteArrayBuilder append(String str) {
-            buffer.put(DEFAULT_CHARSET.encode(str));
+        public ByteBufferBuilder append(String str) {
+            append(DEFAULT_CHARSET.encode(str));
             return this;
         }
 
-        public ByteArrayBuilder append(SafeString str) {
-            buffer.put(str.getBuffer());
+        public ByteBufferBuilder append(SafeString str) {
+            append(str.getBuffer());
             return this;
+        }
+
+        public ByteBufferBuilder append(ByteBuffer b) {
+            ensureCapacity(b.capacity());
+            buffer.put(b);
+            return this;
+        }
+
+        private void ensureCapacity(int len) {
+            if (buffer.remaining() < len) {
+                buffer = ByteBuffer.allocate(buffer.capacity() + 1024).put(build());
+            }
         }
 
         public byte[] build() {

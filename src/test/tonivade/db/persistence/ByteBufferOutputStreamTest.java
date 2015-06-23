@@ -16,14 +16,12 @@ public class ByteBufferOutputStreamTest {
 
     @Test
     public void testStream() throws Exception {
-        ByteBufferOutputStream out =  new ByteBufferOutputStream();
+        ByteBufferOutputStream out =  new ByteBufferOutputStream(10);
 
         out.write(9);
         out.write(toByteArray("486F6C61206D756E646F21"));
 
-        byte[] array = out.toByteArray();
-
-        assertThat(toHexString(array), is("09486F6C61206D756E646F21"));
+        assertThat(toHexString(out.toByteArray()), is("09486F6C61206D756E646F21"));
 
         out.close();
     }

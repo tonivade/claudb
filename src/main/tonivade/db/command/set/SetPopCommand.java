@@ -21,6 +21,7 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @Command("spop")
@@ -31,7 +32,7 @@ public class SetPopCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         List<String> removed = new LinkedList<>();
-        db.merge(request.getParam(0), set(),
+        db.merge(request.getParam(0), DatabaseValue.EMPTY_SET,
                 (oldValue, newValue) -> {
                     List<String> merge = new ArrayList<>(oldValue.<Set<String>>getValue());
                     removed.add(merge.remove(random(merge)));
