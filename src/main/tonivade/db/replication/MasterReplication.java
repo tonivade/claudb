@@ -47,6 +47,10 @@ public class MasterReplication implements Runnable {
         executor.scheduleWithFixedDelay(this, TASK_DELAY, TASK_DELAY, TimeUnit.SECONDS);
     }
 
+    public void stop() {
+        executor.shutdown();
+    }
+
     public void addSlave(String id) {
         server.getAdminDatabase().merge(SLAVES_KEY, set(id), (oldValue, newValue) -> {
             List<String> merge = new LinkedList<>();

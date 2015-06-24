@@ -47,6 +47,7 @@ import tonivade.db.command.Session;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.persistence.PersistenceManager;
 import tonivade.db.persistence.RDBInputStream;
 import tonivade.db.persistence.RDBOutputStream;
 import tonivade.db.redis.RedisArray;
@@ -68,7 +69,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
     private static final String SLAVES_KEY = "slaves";
-    
+
     private static final int BUFFER_SIZE = 1024 * 1024;
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
 
@@ -96,6 +97,8 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private ChannelFuture future;
 
+    private PersistenceManager persistence;
+
     public TinyDB() {
         this(DEFAULT_HOST, DEFAULT_PORT);
     }
@@ -107,12 +110,15 @@ public class TinyDB implements ITinyDB, IServerContext {
     public TinyDB(String host, int port, int databases) {
         this.host = host;
         this.port = port;
+        this.persistence = new PersistenceManager(this);
         for (int i = 0; i < databases; i++) {
             this.databases.add(new Database(new HashMap<String, DatabaseValue>()));
         }
     }
 
     public void start() {
+        persistence.start();
+
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
         acceptHandler = new TinyDBInitializerHandler(this);
@@ -141,6 +147,7 @@ public class TinyDB implements ITinyDB, IServerContext {
             if (future != null) {
                 future.channel().close();
             }
+            persistence.stop();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
@@ -278,9 +285,11 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private void replication(IRequest request) {
         if (!commands.isReadOnlyCommand(request.getCommand())) {
+            RedisArray array = requestToArray(request);
             if (!admin.getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).<Set<String>>getValue().isEmpty()) {
-                queue.add(requestToArray(request));
+                queue.add(array);
             }
+            persistence.append(array);
         }
     }
 
