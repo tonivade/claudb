@@ -39,6 +39,7 @@ public class TinyDBTest {
             assertThat(jedis.get("a"), is("2"));
             assertThat(jedis.del("a"), is(1L));
             assertThat(jedis.get("a"), is(nullValue()));
+            assertThat(jedis.quit(), is("OK"));
         }
     }
 
@@ -74,6 +75,8 @@ public class TinyDBTest {
             assertThat(result.get(10), is("2"));
             assertThat(result.get(11), is(1L));
             assertThat(result.get(12), is(nullValue()));
+
+            jedis.quit();
         }
     }
 
@@ -98,6 +101,7 @@ public class TinyDBTest {
             for (int i = 0; i < times; i++) {
                 jedis.set(key(i), value(i));
             }
+            jedis.quit();
         }
         assertThat((System.nanoTime() - start) / times, is(lessThan(1000000L)));
     }

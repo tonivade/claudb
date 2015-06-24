@@ -94,10 +94,10 @@ public class SlaveReplication implements ITinyDBCallback {
     }
 
     private Request request(RedisToken commandToken, RedisArray array) {
-        return new Request(server, session, commandToken.getValue(), toList(array));
+        return new Request(server, session, commandToken.getValue(), arrayToList(array));
     }
 
-    private List<SafeString> toList(RedisArray request) {
+    private List<SafeString> arrayToList(RedisArray request) {
         List<SafeString> cmd = new LinkedList<>();
         for (RedisToken token : request) {
             cmd.add(token.<SafeString>getValue());

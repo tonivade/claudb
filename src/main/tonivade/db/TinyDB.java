@@ -6,6 +6,7 @@
 package tonivade.db;
 
 import static java.util.Collections.emptyList;
+import static tonivade.db.TinyDBConfig.withoutPersistence;
 import static tonivade.db.redis.SafeString.safeAsList;
 import static tonivade.db.redis.SafeString.safeString;
 import io.netty.bootstrap.ServerBootstrap;
@@ -30,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -73,8 +75,6 @@ public class TinyDB implements ITinyDB, IServerContext {
     private static final int BUFFER_SIZE = 1024 * 1024;
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
 
-    private static final int DEFAULT_DATABASES = 10;
-
     private final int port;
     private final String host;
 
@@ -97,27 +97,31 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private ChannelFuture future;
 
-    private PersistenceManager persistence;
+    private Optional<PersistenceManager> persistence;
 
     public TinyDB() {
         this(DEFAULT_HOST, DEFAULT_PORT);
     }
 
     public TinyDB(String host, int port) {
-        this(host, port, DEFAULT_DATABASES);
+        this(host, port, withoutPersistence());
     }
 
-    public TinyDB(String host, int port, int databases) {
+    public TinyDB(String host, int port, TinyDBConfig config) {
         this.host = host;
         this.port = port;
-        this.persistence = new PersistenceManager(this);
-        for (int i = 0; i < databases; i++) {
+        if (config.isPersistenceActive()) {
+            this.persistence = Optional.of(new PersistenceManager(this, config));
+        } else {
+            this.persistence = Optional.empty();
+        }
+        for (int i = 0; i < config.getNumDatabases(); i++) {
             this.databases.add(new Database(new HashMap<String, DatabaseValue>()));
         }
     }
 
     public void start() {
-        persistence.start();
+        persistence.ifPresent((p) -> p.start());
 
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 2);
@@ -147,7 +151,7 @@ public class TinyDB implements ITinyDB, IServerContext {
             if (future != null) {
                 future.channel().close();
             }
-            persistence.stop();
+            persistence.ifPresent((p) -> p.stop());
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
@@ -289,7 +293,7 @@ public class TinyDB implements ITinyDB, IServerContext {
             if (!admin.getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).<Set<String>>getValue().isEmpty()) {
                 queue.add(array);
             }
-            persistence.append(array);
+            persistence.ifPresent((p) -> p.append(array));
         }
     }
 

@@ -212,14 +212,15 @@ public class Response implements IResponse {
         }
 
         public ByteBufferBuilder append(ByteBuffer b) {
-            ensureCapacity(b.capacity());
-            buffer.put(b);
+            byte[] array = new byte[b.remaining()];
+            b.get(array);
+            append(array);
             return this;
         }
 
         private void ensureCapacity(int len) {
             if (buffer.remaining() < len) {
-                buffer = ByteBuffer.allocate(buffer.capacity() + INITIAL_CAPACITY).put(build());
+                buffer = ByteBuffer.allocate(buffer.capacity() + Math.max(len, INITIAL_CAPACITY)).put(build());
             }
         }
 

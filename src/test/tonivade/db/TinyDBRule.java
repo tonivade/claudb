@@ -5,6 +5,8 @@
 
 package tonivade.db;
 
+import static tonivade.db.TinyDBConfig.withoutPersistence;
+
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -18,7 +20,11 @@ public class TinyDBRule  implements TestRule {
     }
 
     public TinyDBRule(String host, int port) {
-        this.server = new TinyDB(host, port);
+        this(host, port, withoutPersistence());
+    }
+
+    public TinyDBRule(String host, int port, TinyDBConfig config) {
+        this.server = new TinyDB(host, port, config);
     }
 
     @Override
@@ -32,7 +38,6 @@ public class TinyDBRule  implements TestRule {
                 } finally {
                     server.stop();
                 }
-
             }
         };
     }

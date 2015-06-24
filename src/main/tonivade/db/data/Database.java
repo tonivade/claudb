@@ -5,7 +5,9 @@
 
 package tonivade.db.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.StampedLock;
@@ -167,7 +169,14 @@ public class Database implements IDatabase {
      */
     @Override
     public Set<String> keySet() {
-        return cache.keySet();
+        Set<String> keySet = null;
+        long stamp = lock.readLock();
+        try {
+            keySet = new HashSet<>(cache.keySet());
+        } finally {
+            lock.unlockRead(stamp);
+        }
+        return keySet;
     }
 
     /**
@@ -176,7 +185,14 @@ public class Database implements IDatabase {
      */
     @Override
     public Collection<DatabaseValue> values() {
-        return cache.values();
+        Collection<DatabaseValue> values = null;
+        long stamp = lock.readLock();
+        try {
+            values = new ArrayList<>(cache.values());
+        } finally {
+            lock.unlockRead(stamp);
+        }
+        return values;
     }
 
     /**
@@ -185,7 +201,14 @@ public class Database implements IDatabase {
      */
     @Override
     public Set<java.util.Map.Entry<String, DatabaseValue>> entrySet() {
-        return cache.entrySet();
+        Set<java.util.Map.Entry<String, DatabaseValue>> entrySet = null;
+        long stamp = lock.readLock();
+        try {
+            entrySet = new HashSet<>(cache.entrySet());
+        } finally {
+            lock.unlockRead(stamp);
+        }
+        return entrySet;
     }
 
     @Override

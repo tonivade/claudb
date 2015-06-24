@@ -9,8 +9,12 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static tonivade.db.TinyDBConfig.withPersistence;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.io.File;
@@ -24,12 +28,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import tonivade.db.command.ICommand;
 import tonivade.db.command.IServerContext;
 import tonivade.db.data.IDatabase;
 import tonivade.db.redis.RedisArray;
@@ -46,11 +50,11 @@ public class PersistenceManagerTest {
     @Mock
     private IServerContext server;
 
-    @InjectMocks
     private PersistenceManager manager;
 
     @Before
     public void setUp() throws Exception {
+        this.manager = new PersistenceManager(server, withPersistence());
         deleteFiles();
     }
 
@@ -79,13 +83,34 @@ public class PersistenceManagerTest {
 
     @Test
     public void testStart() throws Exception {
+        ICommand cmd = mock(ICommand.class);
+        when(server.getCommand(anyString())).thenReturn(cmd);
+
         writeRDB();
+        writeAOF();
 
         manager.start();
 
         verify(server).importRDB(any());
+        verify(cmd).execute(any(), any(), any());
 
         assertThat(new File(REDO_FILE).exists(), is(true));
+    }
+
+    private void writeRDB() {
+        try (FileOutputStream out = new FileOutputStream(DUMP_FILE)) {
+            out.write("Test".getBytes(DEFAULT_CHARSET));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeAOF() {
+        try (FileOutputStream out = new FileOutputStream(REDO_FILE)) {
+            out.write("*1\r\n$4\r\nPING\r\n".getBytes(DEFAULT_CHARSET));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -120,14 +145,6 @@ public class PersistenceManagerTest {
 
     private RedisToken token(String string) {
         return new StringRedisToken(safeString(string));
-    }
-
-    private void writeRDB() {
-        try (FileOutputStream out = new FileOutputStream(DUMP_FILE)) {
-            out.write("Test".getBytes(DEFAULT_CHARSET));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test
