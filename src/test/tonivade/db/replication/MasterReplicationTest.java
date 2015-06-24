@@ -12,8 +12,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.redis.SafeString.safeString;
 
-import java.util.HashMap;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -22,7 +20,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.command.IServerContext;
 import tonivade.db.data.Database;
-import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.redis.RedisArray;
 import tonivade.db.redis.RedisToken.StringRedisToken;
@@ -36,7 +33,7 @@ public class MasterReplicationTest {
     @InjectMocks
     private MasterReplication master;
 
-    private IDatabase db = new Database(new HashMap<String, DatabaseValue>());
+    private IDatabase db = new Database();
 
     @Test
     public void testReplication() throws Exception {

@@ -64,8 +64,17 @@ public class PersistenceManagerTest {
     }
 
     private void deleteFiles() {
-        new File(DUMP_FILE).delete();
-        new File(REDO_FILE).delete();
+        deleteFile(DUMP_FILE);
+        deleteFile(REDO_FILE);
+    }
+
+    private void deleteFile(String name) {
+        File file = new File(name);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println(file + " deleted");
+            }
+        }
     }
 
     @Test

@@ -6,6 +6,7 @@
 package tonivade.db;
 
 import static java.util.Collections.emptyList;
+import static tonivade.db.TinyDBConfig.withPersistence;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
 import static tonivade.db.redis.SafeString.safeAsList;
 import static tonivade.db.redis.SafeString.safeString;
@@ -89,7 +90,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     private final Map<String, ISession> clients = new HashMap<>();
 
     private final List<IDatabase> databases = new ArrayList<IDatabase>();
-    private final IDatabase admin = new Database(new HashMap<String, DatabaseValue>());
+    private final IDatabase admin = new Database();
 
     private final CommandSuite commands = new CommandSuite();
 
@@ -116,7 +117,7 @@ public class TinyDB implements ITinyDB, IServerContext {
             this.persistence = Optional.empty();
         }
         for (int i = 0; i < config.getNumDatabases(); i++) {
-            this.databases.add(new Database(new HashMap<String, DatabaseValue>()));
+            this.databases.add(new Database());
         }
     }
 
@@ -394,9 +395,9 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("usage: tinydb <host> <port>");
+        System.out.println("usage: tinydb <host> <port> <persistence>");
 
-        TinyDB db = new TinyDB(parseHost(args), parsePort(args));
+        TinyDB db = new TinyDB(parseHost(args), parsePort(args), parseConfig(args));
         db.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
@@ -420,6 +421,16 @@ public class TinyDB implements ITinyDB, IServerContext {
             }
         }
         return port;
+    }
+
+    private static TinyDBConfig parseConfig(String[] args) {
+        TinyDBConfig config = withoutPersistence();
+        if (args.length > 2) {
+            if (Boolean.parseBoolean(args[2])) {
+                config = withPersistence();
+            }
+        }
+        return config;
     }
 
 }

@@ -70,7 +70,7 @@ public class RDBInputStream {
             switch (read) {
             case SELECT:
                 // select db
-                db = new Database(new HashMap<>());
+                db = new Database();
                 databases.put(parseLength(), db);
                 break;
             case TTL_SECONDS:

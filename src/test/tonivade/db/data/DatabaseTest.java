@@ -10,13 +10,15 @@ import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.redis.SafeString.safeString;
 
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.junit.Test;
 
 public class DatabaseTest {
 
-    private Database database = new Database(new HashMap<String, DatabaseValue>());
+    private Database database = new Database();
 
     @Test
     public void testDatabase() throws Exception {
@@ -27,6 +29,25 @@ public class DatabaseTest {
         assertThat(database.containsKey("b"), is(false));
         assertThat(database.isEmpty(), is(false));
         assertThat(database.size(), is(1));
+
+        Collection<DatabaseValue> values = database.values();
+
+        assertThat(values.size(), is(1));
+        assertThat(values.contains(string("value")), is(true));
+
+        Set<String> keySet = database.keySet();
+
+        assertThat(keySet.size(), is(1));
+        assertThat(keySet.contains("a"), is(true));
+
+        Set<Entry<String, DatabaseValue>> entrySet = database.entrySet();
+
+        assertThat(entrySet.size(), is(1));
+
+        Entry<String, DatabaseValue> entry = entrySet.iterator().next();
+
+        assertThat(entry.getKey(), is("a"));
+        assertThat(entry.getValue(), is(string("value")));
     }
 
 }

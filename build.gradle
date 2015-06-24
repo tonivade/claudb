@@ -43,9 +43,6 @@ repositories {
 
 dependencies {
     compile 'io.netty:netty-all:4.0.23.Final'
-    compile 'com.google.code.gson:gson:2.3.1'
-    compile 'org.mapdb:mapdb:1.0.7'
-    compile 'com.google.guava:guava:18.0'
     testCompile 'junit:junit:4.10'
     testCompile 'redis.clients:jedis:2.6.3'
     testCompile 'org.mockito:mockito-all:1.9.5'

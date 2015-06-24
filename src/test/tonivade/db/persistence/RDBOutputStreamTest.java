@@ -16,8 +16,6 @@ import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toHexString;
 
-import java.util.HashMap;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -104,7 +102,7 @@ public class RDBOutputStreamTest {
 
     private static class DatabaseBuiler {
 
-        private IDatabase db = new Database(new HashMap<String, DatabaseValue>());
+        private IDatabase db = new Database();
 
         public DatabaseBuiler add(String key, DatabaseValue value) {
             db.put(key, value);

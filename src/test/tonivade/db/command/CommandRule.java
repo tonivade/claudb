@@ -10,7 +10,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Optional;
 
 import org.hamcrest.Matcher;
@@ -74,7 +73,7 @@ public class CommandRule implements TestRule {
                     }
                 });
                 session = mock(ISession.class);
-                database = new Database(new HashMap<String, DatabaseValue>());
+                database = new Database();
 
                 when(request.getServerContext()).thenReturn(server);
                 when(request.getSession()).thenReturn(session);

@@ -5,9 +5,14 @@
 
 package tonivade.db.data;
 
-import java.util.ArrayList;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.StampedLock;
@@ -18,6 +23,10 @@ public class Database implements IDatabase {
     private StampedLock lock = new StampedLock();
 
     private final Map<String, DatabaseValue> cache;
+
+    public Database() {
+        this(new HashMap<>());
+    }
 
     public Database(Map<String, DatabaseValue> cache) {
         this.cache = cache;
@@ -169,14 +178,12 @@ public class Database implements IDatabase {
      */
     @Override
     public Set<String> keySet() {
-        Set<String> keySet = null;
         long stamp = lock.readLock();
         try {
-            keySet = new HashSet<>(cache.keySet());
+            return unmodifiableSet(cache.keySet().stream().collect(toSet()));
         } finally {
             lock.unlockRead(stamp);
         }
-        return keySet;
     }
 
     /**
@@ -185,14 +192,12 @@ public class Database implements IDatabase {
      */
     @Override
     public Collection<DatabaseValue> values() {
-        Collection<DatabaseValue> values = null;
         long stamp = lock.readLock();
         try {
-            values = new ArrayList<>(cache.values());
+            return unmodifiableList(cache.values().stream().collect(toList()));
         } finally {
             lock.unlockRead(stamp);
         }
-        return values;
     }
 
     /**
@@ -201,14 +206,12 @@ public class Database implements IDatabase {
      */
     @Override
     public Set<java.util.Map.Entry<String, DatabaseValue>> entrySet() {
-        Set<java.util.Map.Entry<String, DatabaseValue>> entrySet = null;
         long stamp = lock.readLock();
         try {
-            entrySet = new HashSet<>(cache.entrySet());
+            return cache.entrySet().stream().map((entry) -> new SimpleEntry<String, DatabaseValue>(entry.getKey(), entry.getValue())).collect(toSet());
         } finally {
             lock.unlockRead(stamp);
         }
-        return entrySet;
     }
 
     @Override
