@@ -10,9 +10,11 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.replication.SlaveReplication;
 
+@ReadOnly
 @Command("slaveof")
 @ParamLength(2)
 public class SlaveOfCommand implements ICommand {

@@ -17,8 +17,10 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.PubSubAllowed;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 
+@ReadOnly
 @Command("subscribe")
 @ParamLength(1)
 @PubSubAllowed

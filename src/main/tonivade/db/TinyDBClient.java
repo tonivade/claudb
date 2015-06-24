@@ -26,7 +26,7 @@ import tonivade.db.redis.RequestDecoder;
 
 public class TinyDBClient implements ITinyDB {
 
-    private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(TinyDBClient.class.getName());
 
     private static final int BUFFER_SIZE = 1024 * 1024;
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
@@ -112,7 +112,7 @@ public class TinyDBClient implements ITinyDB {
 
     @Override
     public void channel(SocketChannel channel) {
-        LOGGER.fine(() -> "connected to server");
+        LOGGER.info(() -> "connected to server: " + host + ":" + port);
 
         channel.pipeline().addLast("stringEncoder", new StringEncoder(CharsetUtil.UTF_8));
         channel.pipeline().addLast("linDelimiter", new RequestDecoder(MAX_FRAME_SIZE));
@@ -130,12 +130,12 @@ public class TinyDBClient implements ITinyDB {
 
     @Override
     public void disconnected(ChannelHandlerContext ctx) {
+        LOGGER.info(() -> "client disconected from server: " + host + ":" + port);
+
         if (this.ctx != null) {
-            LOGGER.info(() -> "client disconected from server");
+            callback.onDisconnect();
 
             this.ctx = null;
-
-            callback.onDisconnect();
 
             // reconnect
             connect();

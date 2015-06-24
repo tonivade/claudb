@@ -9,8 +9,10 @@ import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 
+@ReadOnly
 @Command("quit")
 public class QuitCommand implements ICommand {
 

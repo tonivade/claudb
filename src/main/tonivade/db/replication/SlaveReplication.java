@@ -28,6 +28,8 @@ import tonivade.db.redis.SafeString;
 
 public class SlaveReplication implements ITinyDBCallback {
 
+    private static final String SYNC_COMMAND = "SYNC\r\n";
+
     private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
 
     private TinyDBClient client;
@@ -52,12 +54,13 @@ public class SlaveReplication implements ITinyDBCallback {
 
     @Override
     public void onConnect() {
-        client.send("SYNC\r\n");
+        LOGGER.info(() -> "Connected with master");
+        client.send(SYNC_COMMAND);
     }
 
     @Override
     public void onDisconnect() {
-
+        LOGGER.info(() -> "Disconnected from master");
     }
 
     @Override
@@ -80,6 +83,8 @@ public class SlaveReplication implements ITinyDBCallback {
 
         RedisToken commandToken = array.remove(0);
 
+        LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
+
         ICommand command = server.getCommand(commandToken.getValue().toString());
 
         if (command != null) {
@@ -101,10 +106,10 @@ public class SlaveReplication implements ITinyDBCallback {
     }
 
     private void processRDB(RedisToken token) {
-        // RDB dump
         try {
             SafeString value = token.getValue();
             server.importRDB(array(value));
+            LOGGER.info(() -> "loaded RDB file from master");
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "error importing RDB file", e);
         }

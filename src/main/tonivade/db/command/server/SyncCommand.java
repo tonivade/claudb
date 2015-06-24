@@ -12,11 +12,13 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.annotation.Command;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.ByteBufferOutputStream;
 import tonivade.db.redis.SafeString;
 import tonivade.db.replication.MasterReplication;
 
+@ReadOnly
 @Command("sync")
 public class SyncCommand implements ICommand {
 

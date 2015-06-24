@@ -11,8 +11,10 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.PubSubAllowed;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 
+@ReadOnly
 @Command("ping")
 @PubSubAllowed
 public class PingCommand implements ICommand {

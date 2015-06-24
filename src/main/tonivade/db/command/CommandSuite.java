@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import tonivade.db.command.annotation.Command;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.command.hash.HashDeleteCommand;
 import tonivade.db.command.hash.HashExistsCommand;
 import tonivade.db.command.hash.HashGetAllCommand;
@@ -72,6 +73,7 @@ public class CommandSuite {
 
     private static final Logger LOGGER = Logger.getLogger(CommandSuite.class.getName());
 
+    private final Map<String, Class<? extends ICommand>> metadata = new HashMap<>();
     private final Map<String, ICommand> commands = new HashMap<>();
 
     public CommandSuite() {
@@ -158,6 +160,7 @@ public class CommandSuite {
             Command annotation = clazz.getAnnotation(Command.class);
             if (annotation != null) {
                 commands.put(annotation.value(), wrap(command));
+                metadata.put(annotation.value(), clazz);
             } else {
                 LOGGER.warning(() -> "annotation not present at " + clazz.getName());
             }
@@ -172,6 +175,14 @@ public class CommandSuite {
 
     public ICommand getCommand(String name) {
         return commands.get(name.toLowerCase());
+    }
+
+    public boolean isReadOnlyCommand(String command) {
+        Class<? extends ICommand> clazz = metadata.get(command);
+        if (clazz != null) {
+            return clazz.isAnnotationPresent(ReadOnly.class);
+        }
+        return true;
     }
 
 }

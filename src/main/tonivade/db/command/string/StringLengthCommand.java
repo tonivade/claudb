@@ -11,11 +11,13 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.redis.SafeString;
 
+@ReadOnly
 @Command("strlen")
 @ParamLength(1)
 @ParamType(DataType.STRING)

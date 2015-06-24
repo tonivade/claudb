@@ -23,8 +23,10 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.annotation.Command;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 
+@ReadOnly
 @Command("info")
 public class InfoCommand implements ICommand {
 

@@ -7,8 +7,6 @@ package tonivade.db.command;
 
 import static tonivade.db.redis.SafeString.safeString;
 
-import java.io.IOError;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -177,16 +175,14 @@ public class Response implements IResponse {
 
     @Override
     public String toString() {
-        try {
-            return new String(getBytes(), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IOError(e);
-        }
+        return new String(getBytes(), DEFAULT_CHARSET);
     }
 
     private static class ByteBufferBuilder {
 
-        private ByteBuffer buffer = ByteBuffer.allocate(1024);
+        private static final int INITIAL_CAPACITY = 1024;
+
+        private ByteBuffer buffer = ByteBuffer.allocate(INITIAL_CAPACITY);
 
         public ByteBufferBuilder append(int i) {
             append(String.valueOf(i));
@@ -223,7 +219,7 @@ public class Response implements IResponse {
 
         private void ensureCapacity(int len) {
             if (buffer.remaining() < len) {
-                buffer = ByteBuffer.allocate(buffer.capacity() + 1024).put(build());
+                buffer = ByteBuffer.allocate(buffer.capacity() + INITIAL_CAPACITY).put(build());
             }
         }
 

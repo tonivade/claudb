@@ -14,7 +14,11 @@ public class TinyDBRule  implements TestRule {
     private TinyDB server;
 
     public TinyDBRule() {
-        this.server = new TinyDB();
+        this(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT);
+    }
+
+    public TinyDBRule(String host, int port) {
+        this.server = new TinyDB(host, port);
     }
 
     @Override

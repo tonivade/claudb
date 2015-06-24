@@ -67,8 +67,9 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
-    private static final int INITIAL_SIZE = 1024;
-    private static final int BUFFER_SIZE = INITIAL_SIZE * INITIAL_SIZE;
+    private static final String SLAVES_KEY = "slaves";
+    
+    private static final int BUFFER_SIZE = 1024 * 1024;
     private static final int MAX_FRAME_SIZE = BUFFER_SIZE * 100;
 
     private static final int DEFAULT_DATABASES = 10;
@@ -252,9 +253,7 @@ public class TinyDB implements ITinyDB, IServerContext {
                 try {
                     Response response = new Response();
                     command.execute(db, request, response);
-                    ByteBuf buffer = session.getContext().alloc().buffer(INITIAL_SIZE, BUFFER_SIZE);
-                    buffer.writeBytes(response.getBytes());
-                    session.getContext().writeAndFlush(buffer);
+                    session.getContext().writeAndFlush(responseToBuffer(session, response));
 
                     replication(request);
 
@@ -270,9 +269,18 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
+    private ByteBuf responseToBuffer(ISession session, Response response) {
+        byte[] array = response.getBytes();
+        ByteBuf buffer = session.getContext().alloc().buffer(array.length);
+        buffer.writeBytes(array);
+        return buffer;
+    }
+
     private void replication(IRequest request) {
-        if (!admin.getOrDefault("slaves", DatabaseValue.EMPTY_SET).<Set<String>>getValue().isEmpty()) {
-            queue.add(requestToArray(request));
+        if (!commands.isReadOnlyCommand(request.getCommand())) {
+            if (!admin.getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).<Set<String>>getValue().isEmpty()) {
+                queue.add(requestToArray(request));
+            }
         }
     }
 
@@ -301,8 +309,9 @@ public class TinyDB implements ITinyDB, IServerContext {
     public void publish(String sourceKey, String message) {
         ISession session = clients.get(sourceKey);
         if (session != null) {
-            ByteBuf buffer = session.getContext().alloc().buffer(INITIAL_SIZE, BUFFER_SIZE);
-            buffer.writeBytes(safeString(message).getBuffer());
+            SafeString safeString = safeString(message);
+            ByteBuf buffer = session.getContext().alloc().buffer(safeString.length());
+            buffer.writeBytes(safeString.getBuffer());
             session.getContext().writeAndFlush(buffer);
         }
     }

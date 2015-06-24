@@ -10,8 +10,10 @@ import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 
+@ReadOnly
 @Command("exists")
 @ParamLength(1)
 public class ExistsCommand implements ICommand {
