@@ -105,6 +105,29 @@ And this is REDIS
     SET: 97751.71 requests per second
     GET: 100000.00 requests per second
 
+BUILD
+-----
+
+You need to clon the repo:
+
+    $ git clone https://github.com/tonivade/tiny-db.git
+
+TinyDB uses Gradle as building tool, but you don't need Gradle installed, just type:
+
+    $ ./gradlew build
+
+This scripts automatically download Gradle and then runs the tasks. 
+
+Or if you have Gradle installed, just type
+
+    $ gradle build
+
+DOWNLOADS
+---------
+
+- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db.jar)
+- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-all.jar)
+
 TODO
 ----
 

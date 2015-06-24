@@ -5,14 +5,14 @@
 
 package tonivade.db.command;
 
+import static java.util.stream.Collectors.toList;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.SafeString;
@@ -45,17 +45,14 @@ public class Response implements IResponse {
                 break;
             case HASH:
                 Map<String, String> map = value.getValue();
-                List<Object> list = new LinkedList<>();
-                map.forEach((k, v) ->  {
-                    list.add(safeString(k));
-                    list.add(safeString(v));
-                });
-                addArray(list);
+                addArray(map.entrySet().stream().flatMap(
+                        (entry) -> Stream.of(safeString(entry.getKey()), safeString(entry.getValue()))).collect(toList()));
                 break;
             case LIST:
             case SET:
             case ZSET:
-                addArray(value.getValue());
+                Collection<String> col = value.getValue();
+                addArray(col.stream().map((item) -> safeString(item)).collect(toList()));
                 break;
             default:
                 break;
