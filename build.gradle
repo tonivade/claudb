@@ -52,4 +52,15 @@ dependencies {
 compileJava {  
     options.fork = true  
     options.forkOptions.executable = "javac"  
-}  
+}
+
+task fatJar(type: Jar) {
+    manifest { 
+        attributes "Main-Class": "tonivade.db.TinyDB"
+    }
+    baseName = project.name + '-all'
+    from { 
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
+    }
+    with jar
+}
