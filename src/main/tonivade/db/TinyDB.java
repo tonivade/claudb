@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -69,6 +70,8 @@ import tonivade.db.redis.SafeString;
  */
 public class TinyDB implements ITinyDB, IServerContext {
 
+    private static final Charset DEFAULT_CHATSET = Charset.forName("UTF-8");
+
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
     private static final String SLAVES_KEY = "slaves";
@@ -94,11 +97,13 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private final CommandSuite commands = new CommandSuite();
 
-    private BlockingQueue<RedisArray> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<RedisArray> queue = new LinkedBlockingQueue<>();
 
     private ChannelFuture future;
 
     private Optional<PersistenceManager> persistence;
+
+    private boolean master;
 
     public TinyDB() {
         this(DEFAULT_HOST, DEFAULT_PORT);
@@ -122,6 +127,8 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     public void start() {
+        setMaster(true);
+
         persistence.ifPresent((p) -> p.start());
 
         bossGroup = new NioEventLoopGroup();
@@ -261,28 +268,48 @@ public class TinyDB implements ITinyDB, IServerContext {
         IDatabase db = databases.get(session.getCurrentDB());
         ICommand command = commands.getCommand(request.getCommand());
         if (command != null) {
-            session.enqueue(() -> {
-                try {
-                    Response response = new Response();
-                    command.execute(db, request, response);
-                    session.getContext().writeAndFlush(responseToBuffer(session, response));
+            if (!isReadOnly(request.getCommand())) {
+                session.enqueue(() -> {
+                    try {
+                        Response response = new Response();
+                        command.execute(db, request, response);
+                        session.getContext().writeAndFlush(responseToBuffer(session, response));
 
-                    replication(request);
+                        replication(request);
 
-                    if (response.isExit()) {
-                        session.getContext().close();
+                        if (response.isExit()) {
+                            session.getContext().close();
+                        }
+                    } catch (RuntimeException e) {
+                        LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
                     }
-                } catch (RuntimeException e) {
-                    LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
-                }
-            });
+                });
+            } else {
+                session.getContext().writeAndFlush(
+                        stringToBuffer(session, "-READONLY You can't write against a read only slave"));
+            }
         } else {
-            session.getContext().writeAndFlush("-ERR unknown command '" + request.getCommand() + "'");
+            session.getContext().writeAndFlush(
+                    stringToBuffer(session, "-ERR unknown command '" + request.getCommand() + "'"));
         }
+    }
+
+    private boolean isReadOnly(String command) {
+        return !isMaster()
+                && !commands.isReadOnlyCommand(command);
+    }
+
+    private ByteBuf stringToBuffer(ISession session, String str) {
+        byte[] array = DEFAULT_CHATSET.encode(str + "\r\n").array();
+        return bytesToBuffer(session, array);
     }
 
     private ByteBuf responseToBuffer(ISession session, Response response) {
         byte[] array = response.getBytes();
+        return bytesToBuffer(session, array);
+    }
+
+    private ByteBuf bytesToBuffer(ISession session, byte[] array) {
         ByteBuf buffer = session.getContext().alloc().buffer(array.length);
         buffer.writeBytes(array);
         return buffer;
@@ -392,6 +419,16 @@ public class TinyDB implements ITinyDB, IServerContext {
         for (Entry<Integer, IDatabase> entry : rdb.parse().entrySet()) {
             this.databases.set(entry.getKey(), entry.getValue());
         }
+    }
+
+    @Override
+    public boolean isMaster() {
+        return master;
+    }
+
+    @Override
+    public void setMaster(boolean master) {
+        this.master = master;
     }
 
     public static void main(String[] args) throws Exception {

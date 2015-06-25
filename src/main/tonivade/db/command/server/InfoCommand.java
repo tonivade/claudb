@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import tonivade.db.command.ICommand;
@@ -24,6 +25,7 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ReadOnly;
+import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
 @ReadOnly
@@ -109,8 +111,13 @@ public class InfoCommand implements ICommand {
     }
 
     private Map<String, String> replication(IServerContext ctx) {
-        return map(entry("role", "master"),
-                entry("connected_slaves", "0"));
+        return map(entry("role", ctx.isMaster() ? "master" : "slave"),
+                entry("connected_slaves", slaves(ctx)));
+    }
+
+    private String slaves(IServerContext ctx) {
+        DatabaseValue slaves = ctx.getAdminDatabase().getOrDefault("slaves", DatabaseValue.EMPTY_SET);
+        return String.valueOf(slaves.<Set<String>>getValue().size());
     }
 
     private Map<String, String> clients(IServerContext ctx) {

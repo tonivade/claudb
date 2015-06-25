@@ -46,10 +46,12 @@ public class SlaveReplication implements ITinyDBCallback {
 
     public void start() {
         client.start();
+        server.setMaster(false);
     }
 
     public void stop() {
         client.stop();
+        server.setMaster(true);
     }
 
     @Override

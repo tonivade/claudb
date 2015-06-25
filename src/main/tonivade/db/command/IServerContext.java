@@ -15,6 +15,10 @@ import tonivade.db.redis.RedisArray;
 
 public interface IServerContext {
 
+    public void setMaster(boolean master);
+
+    public boolean isMaster();
+
     public int getPort();
 
     public int getClients();
