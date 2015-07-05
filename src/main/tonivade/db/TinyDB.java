@@ -40,6 +40,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 import tonivade.db.command.CommandSuite;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -432,40 +435,31 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("usage: tinydb <host> <port> <persistence>");
+        OptionParser parser = new OptionParser();
+        OptionSpec<Void> help = parser.accepts("help", "print help");
+        OptionSpec<Void> persist = parser.accepts("P", "with persistence");
+        OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class).defaultsTo(DEFAULT_HOST);
+        OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class).defaultsTo(DEFAULT_PORT);
 
-        TinyDB db = new TinyDB(parseHost(args), parsePort(args), parseConfig(args));
-        db.start();
+        OptionSet options = parser.parse(args);
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
-    }
+        if (options.has(help)) {
+            parser.printHelpOn(System.out);
+        } else {
+            TinyDB db = new TinyDB(
+                    options.valueOf(host), options.valueOf(port), parseConfig(options.has(persist)));
+            db.start();
 
-    private static String parseHost(String[] args) {
-        String host = DEFAULT_HOST;
-        if (args.length > 0) {
-            host = args[0];
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
         }
-        return host;
     }
 
-    private static int parsePort(String[] args) {
-        int port = DEFAULT_PORT;
-        if (args.length > 1) {
-            try {
-                port = Integer.parseInt(args[1]);
-            } catch (NumberFormatException e) {
-                System.out.println("worng port value: " + args[1]);
-            }
-        }
-        return port;
-    }
-
-    private static TinyDBConfig parseConfig(String[] args) {
-        TinyDBConfig config = withoutPersistence();
-        if (args.length > 2) {
-            if (Boolean.parseBoolean(args[2])) {
-                config = withPersistence();
-            }
+    private static TinyDBConfig parseConfig(boolean persist) {
+        TinyDBConfig config = null;
+        if (persist) {
+            config = withPersistence();
+        } else {
+            config = withoutPersistence();
         }
         return config;
     }
