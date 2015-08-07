@@ -128,31 +128,31 @@ public class RDBOutputStream {
         string(String.valueOf(value));
     }
 
-    private void list(List<String> value) throws IOException {
+    private void list(List<SafeString> value) throws IOException {
         length(value.size());
-        for (String item : value) {
+        for (SafeString item : value) {
             string(item);
         }
     }
 
-    private void hash(Map<String, String> value) throws IOException {
+    private void hash(Map<SafeString, SafeString> value) throws IOException {
         length(value.size());
-        for (Entry<String, String> entry : value.entrySet()) {
+        for (Entry<SafeString, SafeString> entry : value.entrySet()) {
             string(entry.getKey());
             string(entry.getValue());
         }
     }
 
-    private void set(Set<String> value) throws IOException {
+    private void set(Set<SafeString> value) throws IOException {
         length(value.size());
-        for (String item : value) {
+        for (SafeString item : value) {
             string(item);
         }
     }
 
-    private void zset(NavigableSet<Entry<Double, String>> value) throws IOException {
+    private void zset(NavigableSet<Entry<Double, SafeString>> value) throws IOException {
         length(value.size());
-        for (Entry<Double, String> item : value) {
+        for (Entry<Double, SafeString> item : value) {
             string(item.getValue());
             string(item.getKey());
         }

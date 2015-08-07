@@ -118,81 +118,93 @@ public class DatabaseValue {
         return new DatabaseValue(DataType.STRING, value);
     }
 
-    public static DatabaseValue list(Collection<String> values) {
+    public static DatabaseValue list(Collection<SafeString> values) {
         return new DatabaseValue(
                 DataType.LIST,
                 unmodifiableList(values.stream().collect(toList())));
     }
 
-    public static DatabaseValue list(String ... values) {
+    public static DatabaseValue list(SafeString ... values) {
         return new DatabaseValue(
                 DataType.LIST,
                 unmodifiableList(Stream.of(values).collect(toList())));
     }
 
-    public static DatabaseValue set(Collection<String> values) {
+    public static DatabaseValue listFromString(String ... values) {
+        return list(SafeString.safeAsList(values));
+    }
+
+    public static DatabaseValue set(Collection<SafeString> values) {
         return new DatabaseValue(
                 DataType.SET,
                 unmodifiableSet(values.stream().collect(toSet())));
     }
 
-    public static DatabaseValue set(String ... values) {
+    public static DatabaseValue set(SafeString ... values) {
         return new DatabaseValue(
                 DataType.SET,
                 unmodifiableSet(Stream.of(values).collect(toSet())));
     }
 
-    public static DatabaseValue zset(Collection<Entry<Double, String>> values) {
+    public static DatabaseValue setFromString(String ... values) {
+        return set(SafeString.safeAsList(values));
+    }
+
+    public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
         return new DatabaseValue(
                 DataType.ZSET,
                 unmodifiableNavigableSet(values.stream().collect(toSortedSet())));
     }
 
     @SafeVarargs
-    public static DatabaseValue zset(Entry<Double, String> ... values) {
+    public static DatabaseValue zset(Entry<Double, SafeString> ... values) {
         return new DatabaseValue(
                 DataType.ZSET,
                 unmodifiableNavigableSet(Stream.of(values).collect(toSortedSet())));
     }
 
-    public static DatabaseValue hash(Collection<Entry<String, String>> values) {
+    public static DatabaseValue hash(Collection<Entry<SafeString, SafeString>> values) {
         return new DatabaseValue(
                 DataType.HASH,
                 unmodifiableMap(values.stream().collect(toHash())));
     }
 
     @SafeVarargs
-    public static DatabaseValue hash(Entry<String, String> ... values) {
+    public static DatabaseValue hash(Entry<SafeString, SafeString> ... values) {
         return new DatabaseValue(
                 DataType.HASH,
                 unmodifiableMap(Stream.of(values).collect(toHash())));
     }
 
-    public static Entry<String, String> entry(String key, String value) {
-        return new SimpleEntry<String, String>(key, value);
+    public static Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {
+        return new SimpleEntry<SafeString, SafeString>(key, value);
     }
 
-    public static Entry<String, String> entry(SafeString key, SafeString value) {
-        return new SimpleEntry<String, String>(key.toString(), value.toString());
+    public static Entry<SafeString, SafeString> entry(String key, String value) {
+        return new SimpleEntry<SafeString, SafeString>(safeString(key), safeString(value));
     }
 
-    public static Entry<Double, String> score(double score, String value) {
-        return new SimpleEntry<Double, String>(score, value);
+    public static Entry<Double, SafeString> score(double score, SafeString value) {
+        return new SimpleEntry<Double, SafeString>(score, value);
     }
 
-    private static Collector<String, ?, LinkedList<String>> toList() {
+    public static Entry<Double, SafeString> score(double score, String value) {
+        return new SimpleEntry<Double, SafeString>(score, safeString(value));
+    }
+
+    private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {
         return toCollection(() -> new LinkedList<>());
     }
 
-    private static Collector<String, ?, LinkedHashSet<String>> toSet() {
+    private static Collector<SafeString, ?, LinkedHashSet<SafeString>> toSet() {
         return toCollection(() -> new LinkedHashSet<>());
     }
 
-    private static Collector<Entry<Double, String>, ?, NavigableSet<Entry<Double, String>>> toSortedSet() {
+    private static Collector<Entry<Double, SafeString>, ?, NavigableSet<Entry<Double, SafeString>>> toSortedSet() {
         return toCollection(() -> new SortedSet());
     }
 
-    private static Collector<Entry<String, String>, ?, Map<String, String>> toHash() {
+    private static Collector<Entry<SafeString, SafeString>, ?, Map<SafeString, SafeString>> toHash() {
         return toMap(Entry::getKey, Entry::getValue);
     }
 

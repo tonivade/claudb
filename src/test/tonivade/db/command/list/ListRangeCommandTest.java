@@ -7,7 +7,8 @@ package tonivade.db.command.list;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.data.DatabaseValue.listFromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(ListRangeCommand.class)
 public class ListRangeCommandTest {
@@ -27,24 +29,24 @@ public class ListRangeCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", list("a", "b", "c"))
+        rule.withData("key", listFromString("a", "b", "c"))
             .withParams("key", "0", "-1")
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(3));
 
-        Iterator<String> iter = result.iterator();
+        Iterator<SafeString> iter = result.iterator();
 
-        assertThat(iter.next(), is("a"));
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("c"));
+        assertThat(iter.next(), is(safeString("a")));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(safeString("c")));
     }
 
 }

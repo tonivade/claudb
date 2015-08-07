@@ -7,7 +7,6 @@ package tonivade.db.command.set;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -25,6 +24,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("srandmember")
@@ -34,21 +34,21 @@ public class SetRandomMemberCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<String> random = new LinkedList<>();
+        List<SafeString> random = new LinkedList<>();
         db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
                 (oldValue, newValue) -> {
-                    List<String> merge = new ArrayList<>(oldValue.<Set<String>>getValue());
+                    List<SafeString> merge = new ArrayList<>(oldValue.<Set<SafeString>>getValue());
                     random.add(merge.get(random(merge)));
                     return set(merge);
                 });
         if (random.isEmpty()) {
             response.addBulkStr(null);
         } else {
-            response.addBulkStr(safeString(random.get(0)));
+            response.addBulkStr(random.get(0));
         }
     }
 
-    private int random(List<String> merge) {
+    private int random(List<?> merge) {
         return new Random().nextInt(merge.size());
     }
 

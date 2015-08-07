@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 
@@ -19,7 +20,6 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.hash.HashKeysCommand;
 
 @CommandUnderTest(HashKeysCommand.class)
 public class HashKeysCommandTest {
@@ -40,8 +40,8 @@ public class HashKeysCommandTest {
         Collection<String> keys = captor.getValue();
 
         assertThat(keys.size(), is(2));
-        assertThat(keys.contains("a"), is(true));
-        assertThat(keys.contains("b"), is(true));
+        assertThat(keys.contains(safeString("a")), is(true));
+        assertThat(keys.contains(safeString("b")), is(true));
     }
 
 }

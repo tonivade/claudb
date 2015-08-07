@@ -147,14 +147,14 @@ public class RDBInputStream {
 
     private void parseString(IDatabase db) throws IOException {
         DatabaseKey key = parseKey();
-        SafeString value = parseSafeString();
+        SafeString value = parseString();
         ensure(db, key, string(value));
     }
 
     private void parseList(IDatabase db) throws IOException {
         DatabaseKey key = parseKey();
         int size = parseLength();
-        List<String> list = new LinkedList<>();
+        List<SafeString> list = new LinkedList<>();
         for (int i = 0; i < size; i++) {
             list.add(parseString());
         }
@@ -164,7 +164,7 @@ public class RDBInputStream {
     private void parseSet(IDatabase db) throws IOException {
         DatabaseKey key = parseKey();
         int size = parseLength();
-        Set<String> set = new LinkedHashSet<>();
+        Set<SafeString> set = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
             set.add(parseString());
         }
@@ -174,9 +174,9 @@ public class RDBInputStream {
     private void parseSortedSet(IDatabase db) throws IOException {
         DatabaseKey key = parseKey();
         int size = parseLength();
-        Set<Entry<Double, String>> entries = new LinkedHashSet<>();
+        Set<Entry<Double, SafeString>> entries = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
-            String value = parseString();
+            SafeString value = parseString();
             Double score = parseDouble();
             entries.add(score(score, value));
         }
@@ -186,7 +186,7 @@ public class RDBInputStream {
     private void parseHash(IDatabase db) throws IOException {
         DatabaseKey key = parseKey();
         int size = parseLength();
-        Set<Entry<String, String>> entries = new LinkedHashSet<>();
+        Set<Entry<SafeString, SafeString>> entries = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
             entries.add(entry(parseString(), parseString()));
         }
@@ -220,21 +220,17 @@ public class RDBInputStream {
         return ((length & 0x3F) << 8) | (next & 0xFF);
     }
 
-    private SafeString parseSafeString() throws IOException {
+    private SafeString parseString() throws IOException {
         int length = parseLength();
         return new SafeString(read(length));
     }
 
-    private String parseString() throws IOException {
-        return parseSafeString().toString();
-    }
-
     private DatabaseKey parseKey() throws IOException {
-        return DatabaseKey.safeKey(parseSafeString());
+        return DatabaseKey.safeKey(parseString());
     }
 
     private Double parseDouble() throws IOException {
-        return Double.parseDouble(parseString());
+        return Double.parseDouble(parseString().toString());
     }
 
     private byte[] read(int size) throws IOException {

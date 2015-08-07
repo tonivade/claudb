@@ -5,12 +5,12 @@
 
 package tonivade.db.command.list;
 
+import static java.util.stream.Collectors.toList;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.list;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -30,17 +30,17 @@ public class RightPushCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<String> values = request.getParams().stream().skip(1).map(SafeString::toString).collect(Collectors.toList());
+        List<SafeString> values = request.getParams().stream().skip(1).collect(toList());
 
         DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
                 (oldValue, newValue) -> {
-                    List<String> merge = new LinkedList<>();
+                    List<SafeString> merge = new LinkedList<>();
                     merge.addAll(oldValue.getValue());
                     merge.addAll(newValue.getValue());
                     return list(merge);
                 });
 
-        response.addInt(result.<List<String>>getValue().size());
+        response.addInt(result.<List<SafeString>>getValue().size());
     }
 
 }

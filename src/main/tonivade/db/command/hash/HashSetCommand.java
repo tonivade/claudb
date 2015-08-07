@@ -21,6 +21,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("hset")
 @ParamLength(3)
@@ -33,15 +34,15 @@ public class HashSetCommand implements ICommand {
 
         DatabaseValue resultValue = db.merge(safeKey(request.getParam(0)), value,
                 (oldValue, newValue) -> {
-                    Map<String, String> merge = new HashMap<>();
+                    Map<SafeString, SafeString> merge = new HashMap<>();
                     merge.putAll(oldValue.getValue());
                     merge.putAll(newValue.getValue());
                     return hash(merge.entrySet());
                 });
 
-        Map<String, String> resultMap = resultValue.getValue();
+        Map<SafeString, SafeString> resultMap = resultValue.getValue();
 
-        response.addInt(resultMap.get(request.getParam(1).toString()) == null);
+        response.addInt(resultMap.get(request.getParam(1)) == null);
     }
 
 }

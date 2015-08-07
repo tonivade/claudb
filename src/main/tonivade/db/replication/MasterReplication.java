@@ -9,6 +9,7 @@ import static java.lang.String.valueOf;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.redis.SafeString.safeAsList;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -54,8 +55,8 @@ public class MasterReplication implements Runnable {
     }
 
     public void addSlave(String id) {
-        server.getAdminDatabase().merge(SLAVES_KEY, set(id), (oldValue, newValue) -> {
-            List<String> merge = new LinkedList<>();
+        server.getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
+            List<SafeString> merge = new LinkedList<>();
             merge.addAll(oldValue.getValue());
             merge.addAll(newValue.getValue());
             return set(merge);
@@ -64,8 +65,8 @@ public class MasterReplication implements Runnable {
     }
 
     public void removeSlave(String id) {
-        server.getAdminDatabase().merge(SLAVES_KEY, set(id), (oldValue, newValue) -> {
-            List<String> merge = new LinkedList<>();
+        server.getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
+            List<SafeString> merge = new LinkedList<>();
             merge.addAll(oldValue.getValue());
             merge.removeAll(newValue.getValue());
             return set(merge);

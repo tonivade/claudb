@@ -5,14 +5,14 @@
 
 package tonivade.db.command.set;
 
-import org.hamcrest.CoreMatchers;
+import static org.hamcrest.CoreMatchers.is;
+import static tonivade.db.data.DatabaseValue.setFromString;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.set.SetAddCommand;
-import tonivade.db.data.DatabaseValue;
 
 @CommandUnderTest(SetAddCommand.class)
 public class SetAddCommandTest {
@@ -24,7 +24,7 @@ public class SetAddCommandTest {
     public void testExecute() throws Exception {
         rule.withParams("key", "value")
             .execute()
-            .assertThat("key", CoreMatchers.is(DatabaseValue.set("value")))
+            .assertThat("key", is(setFromString("value")))
             .verify().addInt(1);
     }
 

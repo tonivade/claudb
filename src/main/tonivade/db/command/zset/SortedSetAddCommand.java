@@ -37,7 +37,7 @@ public class SortedSetAddCommand implements ICommand {
             DatabaseValue initial = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
             DatabaseValue result = db.merge(safeKey(request.getParam(0)), parseInput(request),
                     (oldValue, newValue) -> {
-                        Set<Entry<Double, String>> merge = new SortedSet();
+                        Set<Entry<Double, SafeString>> merge = new SortedSet();
                         merge.addAll(oldValue.getValue());
                         merge.addAll(newValue.getValue());
                         return zset(merge);
@@ -53,11 +53,11 @@ public class SortedSetAddCommand implements ICommand {
     }
 
     private DatabaseValue parseInput(IRequest request) throws NumberFormatException {
-        Set<Entry<Double, String>> set = new SortedSet();
-        String score = null;
-        for (String string : request.getParams().stream().skip(1).map(SafeString::toString).collect(toList())) {
+        Set<Entry<Double, SafeString>> set = new SortedSet();
+        SafeString score = null;
+        for (SafeString string : request.getParams().stream().skip(1).collect(toList())) {
             if (score != null) {
-                set.add(score(parseFloat(score), string));
+                set.add(score(parseFloat(score.toString()), string));
                 score =  null;
             } else {
                 score = string;

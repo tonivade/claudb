@@ -19,6 +19,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("hvals")
@@ -29,9 +30,7 @@ public class HashValuesCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
-
-        Map<String, String> map = value.getValue();
-
+        Map<SafeString, SafeString> map = value.getValue();
         response.addArray(map.values());
     }
 

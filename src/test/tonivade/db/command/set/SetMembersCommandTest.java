@@ -5,14 +5,13 @@
 
 package tonivade.db.command.set;
 
-import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.data.DatabaseValue.setFromString;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.set.SetMembersCommand;
 
 @CommandUnderTest(SetMembersCommand.class)
 public class SetMembersCommandTest {
@@ -22,9 +21,9 @@ public class SetMembersCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", set("a", "b", "c"))
+        rule.withData("key", setFromString("a", "b", "c"))
             .withParams("key")
             .execute()
-            .verify().addValue(set("a", "b", "c"));
+            .verify().addValue(setFromString("a", "b", "c"));
     }
 }

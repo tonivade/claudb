@@ -6,7 +6,7 @@
 package tonivade.db.command.set;
 
 import static org.hamcrest.CoreMatchers.is;
-import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.data.DatabaseValue.setFromString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,15 +22,15 @@ public class SetRemoveCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", set("a", "b", "c"))
+        rule.withData("key", setFromString("a", "b", "c"))
             .withParams("key", "a")
             .execute()
-            .assertThat("key", is(set("b", "c")))
+            .assertThat("key", is(setFromString("b", "c")))
             .verify().addInt(1);
 
         rule.withParams("key", "a")
             .execute()
-            .assertThat("key", is(set("b", "c")))
+            .assertThat("key", is(setFromString("b", "c")))
             .verify().addInt(0);
     }
 

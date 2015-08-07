@@ -20,6 +20,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("sadd")
 @ParamLength(2)
@@ -28,8 +29,8 @@ public class SetAddCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.merge(safeKey(request.getParam(0)), set(request.getParam(1).toString()), (oldValue, newValue)-> {
-            Set<String> merge = new HashSet<>();
+        DatabaseValue value = db.merge(safeKey(request.getParam(0)), set(request.getParam(1)), (oldValue, newValue)-> {
+            Set<SafeString> merge = new HashSet<>();
             merge.addAll(oldValue.getValue());
             merge.addAll(newValue.getValue());
             return set(merge);

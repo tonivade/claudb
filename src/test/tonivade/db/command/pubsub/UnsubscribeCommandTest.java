@@ -7,7 +7,7 @@ package tonivade.db.command.pubsub;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.data.DatabaseValue.setFromString;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
@@ -33,10 +33,10 @@ public class UnsubscribeCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("subscriptions:test", set("localhost:12345"))
+        rule.withData("subscriptions:test", setFromString("localhost:12345"))
             .withParams("test")
             .execute()
-            .assertThat("subscriptions:test", is(set()));
+            .assertThat("subscriptions:test", is(setFromString()));
 
         rule.verify(ISession.class).removeSubscription(safeString("test"));
 

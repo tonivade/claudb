@@ -6,7 +6,6 @@
 package tonivade.db.command;
 
 import static java.util.stream.Collectors.toList;
-import static tonivade.db.redis.SafeString.safeString;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -44,15 +43,14 @@ public class Response implements IResponse {
                 addBulkStr(value.getValue());
                 break;
             case HASH:
-                Map<String, String> map = value.getValue();
+                Map<SafeString, SafeString> map = value.getValue();
                 addArray(map.entrySet().stream().flatMap(
-                        (entry) -> Stream.of(safeString(entry.getKey()), safeString(entry.getValue()))).collect(toList()));
+                        (entry) -> Stream.of(entry.getKey(), entry.getValue())).collect(toList()));
                 break;
             case LIST:
             case SET:
             case ZSET:
-                Collection<String> col = value.getValue();
-                addArray(col.stream().map((item) -> safeString(item)).collect(toList()));
+                addArray(value.getValue());
                 break;
             default:
                 break;

@@ -5,7 +5,7 @@
 
 package tonivade.db.command.pubsub;
 
-import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.data.DatabaseValue.setFromString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class PublishCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("subscriptions:test", set("localhost:12345"))
+        rule.withData("subscriptions:test", setFromString("localhost:12345"))
             .withParams("test", "Hello World!")
             .execute();
         rule.verify(IServerContext.class).publish("localhost:12345", "*3\r\n$7\r\nmessage\r\n$4\r\ntest\r\n$12\r\nHello World!\r\n");

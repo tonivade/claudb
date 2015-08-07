@@ -10,9 +10,9 @@ import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.data.DatabaseValue.listFromString;
 import static tonivade.db.data.DatabaseValue.score;
-import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.data.DatabaseValue.setFromString;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toHexString;
@@ -54,14 +54,14 @@ public class RDBOutputStreamTest {
 
     @Test
     public void testList() throws Exception {
-        out.dabatase(database().add(safeKey("a"), list("test")).build());
+        out.dabatase(database().add(safeKey("a"), listFromString("test")).build());
 
         assertThat(toHexString(baos.toByteArray()), is("010161010474657374"));
     }
 
     @Test
     public void testSet() throws Exception {
-        out.dabatase(database().add(safeKey("a"), set("test")).build());
+        out.dabatase(database().add(safeKey("a"), setFromString("test")).build());
 
         assertThat(toHexString(baos.toByteArray()), is("020161010474657374"));
     }
@@ -86,9 +86,9 @@ public class RDBOutputStreamTest {
         out.select(0);
         out.dabatase(database().add(safeKey("a"), string("test")).build());
         out.select(1);
-        out.dabatase(database().add(safeKey("a"), list("test")).build());
+        out.dabatase(database().add(safeKey("a"), listFromString("test")).build());
         out.select(2);
-        out.dabatase(database().add(safeKey("a"), set("test")).build());
+        out.dabatase(database().add(safeKey("a"), setFromString("test")).build());
         out.select(3);
         out.dabatase(database().add(safeKey("a"), zset(score(1.0, "test"))).build());
         out.select(4);

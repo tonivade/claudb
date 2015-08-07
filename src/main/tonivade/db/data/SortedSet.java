@@ -16,22 +16,22 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class SortedSet implements NavigableSet<Entry<Double, String>> {
+import tonivade.db.redis.SafeString;
 
-    private static final String EMPTY_STRING = "";
+public class SortedSet implements NavigableSet<Entry<Double, SafeString>> {
 
-    private final Map<String, Double> items = new HashMap<>();
+    private final Map<SafeString, Double> items = new HashMap<>();
 
-    private final NavigableSet<Entry<Double, String>> scores = new TreeSet<>(
+    private final NavigableSet<Entry<Double, SafeString>> scores = new TreeSet<>(
             (o1, o2) -> {
                 int key = o1.getKey().compareTo(o2.getKey());
                 if (key != 0) {
                     return key;
                 }
-                if (EMPTY_STRING.equals(o1.getValue())) {
+                if (SafeString.EMPTY_STRING.equals(o1.getValue())) {
                     return 0;
                 }
-                if (EMPTY_STRING.equals(o2.getValue())) {
+                if (SafeString.EMPTY_STRING.equals(o2.getValue())) {
                     return 0;
                 }
                 return o1.getValue().compareTo(o2.getValue());
@@ -53,7 +53,7 @@ public class SortedSet implements NavigableSet<Entry<Double, String>> {
     }
 
     @Override
-    public Iterator<Entry<Double, String>> iterator() {
+    public Iterator<Entry<Double, SafeString>> iterator() {
         return scores.iterator();
     }
 
@@ -68,7 +68,7 @@ public class SortedSet implements NavigableSet<Entry<Double, String>> {
     }
 
     @Override
-    public boolean add(Entry<Double, String> e) {
+    public boolean add(Entry<Double, SafeString> e) {
         if (!items.containsKey(e.getValue())) {
             items.put(e.getValue(), e.getKey());
             scores.add(e);
@@ -81,7 +81,7 @@ public class SortedSet implements NavigableSet<Entry<Double, String>> {
     public boolean remove(Object o) {
         if (items.containsKey(o)) {
             double score = items.remove(o);
-            scores.remove(DatabaseValue.score(score, (String) o));
+            scores.remove(DatabaseValue.score(score, (SafeString) o));
             return true;
         }
         return false;
@@ -97,9 +97,9 @@ public class SortedSet implements NavigableSet<Entry<Double, String>> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends Entry<Double, String>> c) {
+    public boolean addAll(Collection<? extends Entry<Double, SafeString>> c) {
         boolean result = false;
-        for (Entry<Double, String> entry : c) {
+        for (Entry<Double, SafeString> entry : c) {
             result |= add(entry);
         }
         return result;
@@ -107,10 +107,10 @@ public class SortedSet implements NavigableSet<Entry<Double, String>> {
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        Set<String> toRemove = new HashSet<>(items.keySet());
+        Set<SafeString> toRemove = new HashSet<>(items.keySet());
         toRemove.removeAll(c);
         boolean result = false;
-        for (String key : toRemove) {
+        for (SafeString key : toRemove) {
             result |= remove(key);
         }
         return result;
@@ -132,106 +132,106 @@ public class SortedSet implements NavigableSet<Entry<Double, String>> {
     }
 
     @Override
-    public Comparator<? super Entry<Double, String>> comparator() {
+    public Comparator<? super Entry<Double, SafeString>> comparator() {
         return scores.comparator();
     }
 
     @Override
-    public Entry<Double, String> first() {
+    public Entry<Double, SafeString> first() {
         return scores.first();
     }
 
     @Override
-    public Entry<Double, String> last() {
+    public Entry<Double, SafeString> last() {
         return scores.last();
     }
 
     @Override
-    public Entry<Double, String> lower(Entry<Double, String> e) {
+    public Entry<Double, SafeString> lower(Entry<Double, SafeString> e) {
         return scores.lower(e);
     }
 
     @Override
-    public Entry<Double, String> floor(Entry<Double, String> e) {
+    public Entry<Double, SafeString> floor(Entry<Double, SafeString> e) {
         return scores.floor(e);
     }
 
     @Override
-    public Entry<Double, String> ceiling(Entry<Double, String> e) {
+    public Entry<Double, SafeString> ceiling(Entry<Double, SafeString> e) {
         return scores.ceiling(e);
     }
 
     @Override
-    public Entry<Double, String> higher(Entry<Double, String> e) {
+    public Entry<Double, SafeString> higher(Entry<Double, SafeString> e) {
         return scores.higher(e);
     }
 
     @Override
-    public Entry<Double, String> pollFirst() {
+    public Entry<Double, SafeString> pollFirst() {
         return scores.pollFirst();
     }
 
     @Override
-    public Entry<Double, String> pollLast() {
+    public Entry<Double, SafeString> pollLast() {
         return scores.pollLast();
     }
 
     @Override
-    public NavigableSet<Entry<Double, String>> descendingSet() {
+    public NavigableSet<Entry<Double, SafeString>> descendingSet() {
         return scores.descendingSet();
     }
 
     @Override
-    public Iterator<Entry<Double, String>> descendingIterator() {
+    public Iterator<Entry<Double, SafeString>> descendingIterator() {
         return scores.descendingIterator();
     }
 
     @Override
-    public NavigableSet<Entry<Double, String>> subSet(Entry<Double, String> fromElement,
-            boolean fromInclusive, Entry<Double, String> toElement, boolean toInclusive) {
+    public NavigableSet<Entry<Double, SafeString>> subSet(Entry<Double, SafeString> fromElement,
+            boolean fromInclusive, Entry<Double, SafeString> toElement, boolean toInclusive) {
         return scores.subSet(fromElement, fromInclusive, toElement, toInclusive);
     }
 
     @Override
-    public NavigableSet<Entry<Double, String>> headSet(Entry<Double, String> toElement,
+    public NavigableSet<Entry<Double, SafeString>> headSet(Entry<Double, SafeString> toElement,
             boolean inclusive) {
         return scores.headSet(toElement, inclusive);
     }
 
     @Override
-    public NavigableSet<Entry<Double, String>> tailSet(Entry<Double, String> fromElement,
+    public NavigableSet<Entry<Double, SafeString>> tailSet(Entry<Double, SafeString> fromElement,
             boolean inclusive) {
         return scores.tailSet(fromElement, inclusive);
     }
 
     @Override
-    public java.util.SortedSet<Entry<Double, String>> subSet(Entry<Double, String> fromElement,
-            Entry<Double, String> toElement) {
+    public java.util.SortedSet<Entry<Double, SafeString>> subSet(Entry<Double, SafeString> fromElement,
+            Entry<Double, SafeString> toElement) {
         return scores.subSet(fromElement, toElement);
     }
 
     @Override
-    public java.util.SortedSet<Entry<Double, String>> headSet(Entry<Double, String> toElement) {
+    public java.util.SortedSet<Entry<Double, SafeString>> headSet(Entry<Double, SafeString> toElement) {
         return scores.headSet(toElement);
     }
 
     @Override
-    public java.util.SortedSet<Entry<Double, String>> tailSet(Entry<Double, String> fromElement) {
+    public java.util.SortedSet<Entry<Double, SafeString>> tailSet(Entry<Double, SafeString> fromElement) {
         return scores.tailSet(fromElement);
     }
 
-    public double score(String key) {
+    public double score(SafeString key) {
         if (items.containsKey(key)) {
             return items.get(key);
         }
         return Double.MIN_VALUE;
     }
 
-    public int ranking(String key) {
+    public int ranking(SafeString key) {
         if (items.containsKey(key)) {
             double score = items.get(key);
 
-            Set<Entry<Double, String>> head = scores.headSet(DatabaseValue.score(score, key));
+            Set<Entry<Double, SafeString>> head = scores.headSet(DatabaseValue.score(score, key));
 
             return head.size();
         }

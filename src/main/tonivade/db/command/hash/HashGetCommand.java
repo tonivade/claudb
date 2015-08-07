@@ -6,7 +6,6 @@
 package tonivade.db.command.hash;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
-import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Map;
 
@@ -20,6 +19,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("hget")
@@ -30,8 +30,8 @@ public class HashGetCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.get(safeKey(request.getParam(0)));
-        Map<String, String> map = value.getValue();
-        response.addBulkStr(safeString(map.get(request.getParam(1).toString())));
+        Map<SafeString, SafeString> map = value.getValue();
+        response.addBulkStr(map.get(request.getParam(1)));
     }
 
 }

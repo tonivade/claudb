@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.score;
 import static tonivade.db.data.DatabaseValue.zset;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ public class SortedSetRangeByScoreCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<?>> captor;
 
     @Test
     public void testExecute() throws Exception {
@@ -37,15 +38,15 @@ public class SortedSetRangeByScoreCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> array = captor.getValue();
+        Collection<?> array = captor.getValue();
 
         assertThat(array.size(), is(3));
 
-        Iterator<String> iter = array.iterator();
+        Iterator<?> iter = array.iterator();
 
-        assertThat(iter.next(), is("a"));
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("c"));
+        assertThat(iter.next(), is(safeString("a")));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(safeString("c")));
     }
 
     @Test
@@ -55,18 +56,18 @@ public class SortedSetRangeByScoreCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> array = captor.getValue();
+        Collection<?> array = captor.getValue();
 
         assertThat(array.size(), is(6));
 
-        Iterator<String> iter = array.iterator();
+        Iterator<?> iter = array.iterator();
 
-        assertThat(iter.next(), is("a"));
-        assertThat(iter.next(), is("1.0"));
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("2.0"));
-        assertThat(iter.next(), is("c"));
-        assertThat(iter.next(), is("3.0"));
+        assertThat(iter.next(), is(safeString("a")));
+        assertThat(iter.next(), is(1.0));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(2.0));
+        assertThat(iter.next(), is(safeString("c")));
+        assertThat(iter.next(), is(3.0));
     }
 
     @Test
@@ -76,14 +77,14 @@ public class SortedSetRangeByScoreCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> array = captor.getValue();
+        Collection<?> array = captor.getValue();
 
         assertThat(array.size(), is(2));
 
-        Iterator<String> iter = array.iterator();
+        Iterator<?> iter = array.iterator();
 
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("c"));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(safeString("c")));
     }
 
     @Test
@@ -93,14 +94,14 @@ public class SortedSetRangeByScoreCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> array = captor.getValue();
+        Collection<?> array = captor.getValue();
 
         assertThat(array.size(), is(2));
 
-        Iterator<String> iter = array.iterator();
+        Iterator<?> iter = array.iterator();
 
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("c"));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(safeString("c")));
     }
 
     @Test
@@ -110,15 +111,15 @@ public class SortedSetRangeByScoreCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> array = captor.getValue();
+        Collection<?> array = captor.getValue();
 
         assertThat(array.size(), is(3));
 
-        Iterator<String> iter = array.iterator();
+        Iterator<?> iter = array.iterator();
 
-        assertThat(iter.next(), is("a"));
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("c"));
+        assertThat(iter.next(), is(safeString("a")));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(safeString("c")));
     }
 
 }

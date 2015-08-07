@@ -34,9 +34,9 @@ public class PublishCommand implements ICommand {
         IDatabase admin = request.getServerContext().getAdminDatabase();
         DatabaseValue value = admin.getOrDefault(safeKey(SUBSCRIPTIONS_PREFIX + request.getParam(0)), DatabaseValue.EMPTY_SET);
 
-        Set<String> subscribers = value.<Set<String>>getValue();
-        for (String subscriber : subscribers) {
-            request.getServerContext().publish(subscriber, message(request));
+        Set<SafeString> subscribers = value.<Set<SafeString>>getValue();
+        for (SafeString subscriber : subscribers) {
+            request.getServerContext().publish(subscriber.toString(), message(request));
         }
 
         response.addInt(subscribers.size());

@@ -20,6 +20,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("zcard")
@@ -30,7 +31,7 @@ public class SortedSetCardinalityCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-        Set<Entry<Float, String>> set = value.getValue();
+        Set<Entry<Float, SafeString>> set = value.getValue();
         response.addInt(set.size());
     }
 

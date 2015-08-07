@@ -6,7 +6,6 @@
 package tonivade.db.command.list;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
-import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.List;
 
@@ -20,6 +19,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("lindex")
@@ -31,14 +31,14 @@ public class ListIndexCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
             DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
-            List<String> list = value.getValue();
+            List<SafeString> list = value.getValue();
 
             int index = Integer.parseInt(request.getParam(1).toString());
             if (index < 0) {
                 index = list.size() + index;
             }
 
-            response.addBulkStr(safeString(list.get(index)));
+            response.addBulkStr(list.get(index));
         } catch (NumberFormatException e) {
             response.addError("ERR value is not an integer or out of range");
         } catch (IndexOutOfBoundsException e) {

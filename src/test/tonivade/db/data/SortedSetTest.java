@@ -10,6 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.score;
+import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Test;
 
@@ -19,33 +20,33 @@ public class SortedSetTest {
     public void testName() throws Exception {
         SortedSet set = new SortedSet();
 
-        assertThat(set.add(score(1, "a")), is(true));
-        assertThat(set.add(score(2, "a")), is(false));
-        assertThat(set.add(score(2, "b")), is(true));
+        assertThat(set.add(score(1, safeString("a"))), is(true));
+        assertThat(set.add(score(2, safeString("a"))), is(false));
+        assertThat(set.add(score(2, safeString("b"))), is(true));
 
-        assertThat(set.contains("a"), is(true));
-        assertThat(set.contains("b"), is(true));
-        assertThat(set.contains("c"), is(false));
+        assertThat(set.contains(safeString("a")), is(true));
+        assertThat(set.contains(safeString("b")), is(true));
+        assertThat(set.contains(safeString("c")), is(false));
 
-        assertThat(set.score("a"), is(1.0));
-        assertThat(set.score("b"), is(2.0));
+        assertThat(set.score(safeString("a")), is(1.0));
+        assertThat(set.score(safeString("b")), is(2.0));
 
-        assertThat(set.ranking("a"), is(0));
-        assertThat(set.ranking("b"), is(1));
+        assertThat(set.ranking(safeString("a")), is(0));
+        assertThat(set.ranking(safeString("b")), is(1));
 
-        assertThat(set.remove("a"), is(true));
-        assertThat(set.contains("a"), is(false));
+        assertThat(set.remove(safeString("a")), is(true));
+        assertThat(set.contains(safeString("a")), is(false));
     }
 
     @Test
     public void testEquals() throws Exception {
         SortedSet setA = new SortedSet();
-        setA.add(score(1, "a"));
-        setA.add(score(2, "b"));
+        setA.add(score(1, safeString("a")));
+        setA.add(score(2, safeString("b")));
 
         SortedSet setB = new SortedSet();
-        setB.add(score(1, "a"));
-        setB.add(score(2, "b"));
+        setB.add(score(1, safeString("a")));
+        setB.add(score(2, safeString("b")));
 
         assertThat(setA, is(setB));
         assertThat(unmodifiableSet(setA), is(unmodifiableSet(setB)));
@@ -54,11 +55,11 @@ public class SortedSetTest {
     @Test
     public void testNotEquals() throws Exception {
         SortedSet setA = new SortedSet();
-        setA.add(score(1, "a"));
+        setA.add(score(1, safeString("a")));
 
         SortedSet setB = new SortedSet();
-        setB.add(score(1, "a"));
-        setB.add(score(2, "b"));
+        setB.add(score(1, safeString("a")));
+        setB.add(score(2, safeString("b")));
 
         assertThat(setA, not(is(setB)));
     }
@@ -66,19 +67,19 @@ public class SortedSetTest {
     @Test
     public void testScore() throws Exception {
         SortedSet set = new SortedSet();
-        set.add(score(1, "a"));
-        set.add(score(2, "b"));
-        set.add(score(3, "c"));
-        set.add(score(4, "d"));
-        set.add(score(5, "e"));
-        set.add(score(6, "f"));
-        set.add(score(7, "g"));
-        set.add(score(8, "h"));
-        set.add(score(9, "i"));
+        set.add(score(1, safeString("a")));
+        set.add(score(2, safeString("b")));
+        set.add(score(3, safeString("c")));
+        set.add(score(4, safeString("d")));
+        set.add(score(5, safeString("e")));
+        set.add(score(6, safeString("f")));
+        set.add(score(7, safeString("g")));
+        set.add(score(8, safeString("h")));
+        set.add(score(9, safeString("i")));
 
-        assertThat(set.tailSet(score(3, "")).first(), is(score(3.0, "c")));
+        assertThat(set.tailSet(score(3, safeString(""))).first(), is(score(3.0, safeString("c"))));
 
-        assertThat(set.headSet(score(4, "")).last(), is(score(3.0, "c")));
+        assertThat(set.headSet(score(4, safeString(""))).last(), is(score(3.0, safeString("c"))));
     }
 
 }

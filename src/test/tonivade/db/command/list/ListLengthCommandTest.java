@@ -5,14 +5,13 @@
 
 package tonivade.db.command.list;
 
-import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.data.DatabaseValue.listFromString;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.list.ListLengthCommand;
 
 @CommandUnderTest(ListLengthCommand.class)
 public class ListLengthCommandTest {
@@ -22,7 +21,7 @@ public class ListLengthCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", list("a", "b", "c"))
+        rule.withData("key", listFromString("a", "b", "c"))
             .withParams("key")
             .execute()
             .verify().addInt(3);

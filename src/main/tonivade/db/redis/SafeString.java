@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class SafeString {
+public class SafeString implements Comparable<SafeString> {
+
+    public static final SafeString EMPTY_STRING = new SafeString(new byte[] {});
 
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
@@ -68,6 +70,12 @@ public class SafeString {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int compareTo(SafeString o) {
+        // FIXME:
+        return toString().compareTo(o.toString());
     }
 
     @Override

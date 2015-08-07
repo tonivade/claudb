@@ -5,7 +5,6 @@
 
 package tonivade.db.command.zset;
 
-import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.reverse;
 import static java.util.stream.Collectors.toList;
@@ -41,7 +40,7 @@ public class SortedSetReverseRangeCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
             DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-            NavigableSet<Entry<Float, String>> set = value.getValue();
+            NavigableSet<Entry<Float, SafeString>> set = value.getValue();
 
             int from = Integer.parseInt(request.getParam(2).toString());
             if (from < 0) {
@@ -52,12 +51,12 @@ public class SortedSetReverseRangeCommand implements ICommand {
                 to = set.size() + to;
             }
 
-            List<String> result = emptyList();
+            List<Object> result = emptyList();
             if (from <= to) {
                 Optional<SafeString> withScores = request.getOptionalParam(3);
                 if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
                     result = set.stream().skip(from).limit((to - from) + 1).flatMap(
-                            (o) -> Stream.of(o.getValue(), valueOf(o.getKey()))).collect(toList());
+                            (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
                 } else {
                     result = set.stream().skip(from).limit(
                             (to - from) + 1).map((o) -> o.getValue()).collect(toList());

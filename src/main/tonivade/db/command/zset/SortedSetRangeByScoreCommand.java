@@ -6,7 +6,6 @@
 package tonivade.db.command.zset;
 
 import static java.lang.Integer.parseInt;
-import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static tonivade.db.data.DatabaseKey.safeKey;
@@ -28,6 +27,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("zrangebyscore")
@@ -35,7 +35,6 @@ import tonivade.db.data.IDatabase;
 @ParamType(DataType.ZSET)
 public class SortedSetRangeByScoreCommand implements ICommand {
 
-    private static final String EMPTY_STRING = "";
     private static final String EXCLUSIVE = "(";
     private static final String MINUS_INFINITY = "-inf";
     private static final String INIFITY = "+inf";
@@ -46,25 +45,25 @@ public class SortedSetRangeByScoreCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
             DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-            NavigableSet<Entry<Double, String>> set = value.getValue();
+            NavigableSet<Entry<Double, SafeString>> set = value.getValue();
 
             float from = parseRange(request.getParam(1).toString());
             float to = parseRange(request.getParam(2).toString());
 
             Options options = parseOptions(request);
 
-            Set<Entry<Double, String>> range = set.subSet(
-                    score(from, EMPTY_STRING), inclusive(request.getParam(1).toString()),
-                    score(to, EMPTY_STRING), inclusive(request.getParam(2).toString()));
+            Set<Entry<Double, SafeString>> range = set.subSet(
+                    score(from, SafeString.EMPTY_STRING), inclusive(request.getParam(1)),
+                    score(to, SafeString.EMPTY_STRING), inclusive(request.getParam(2)));
 
-            List<String> result = emptyList();
+            List<Object> result = emptyList();
             if (from <= to) {
                 if (options.withScores) {
                     result = range.stream().flatMap(
-                            (o) -> Stream.of(o.getValue(), valueOf(o.getKey()))).collect(toList());
+                            (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
                 } else {
                     result = range.stream().map(
-                            (o) -> valueOf(o.getValue())).collect(toList());
+                            (o) -> o.getValue()).collect(toList());
                 }
 
                 if (options.withLimit) {
@@ -93,8 +92,8 @@ public class SortedSetRangeByScoreCommand implements ICommand {
         return options;
     }
 
-    private boolean inclusive(String param) {
-        return !param.startsWith(EXCLUSIVE);
+    private boolean inclusive(SafeString param) {
+        return !param.toString().startsWith(EXCLUSIVE);
     }
 
     private float parseRange(String param) throws NumberFormatException {

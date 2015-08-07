@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.score;
 import static tonivade.db.data.DatabaseValue.zset;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,9 +44,9 @@ public class SortedSetReverseRangeCommandTest {
 
         Iterator<String> iter = array.iterator();
 
-        assertThat(iter.next(), is("c"));
-        assertThat(iter.next(), is("b"));
-        assertThat(iter.next(), is("a"));
+        assertThat(iter.next(), is(safeString("c")));
+        assertThat(iter.next(), is(safeString("b")));
+        assertThat(iter.next(), is(safeString("a")));
     }
 
 }

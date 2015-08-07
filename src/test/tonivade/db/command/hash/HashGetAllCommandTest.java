@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Map;
 
@@ -20,8 +21,8 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.hash.HashGetAllCommand;
 import tonivade.db.data.DatabaseValue;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(HashGetAllCommand.class)
 public class HashGetAllCommandTest {
@@ -46,16 +47,16 @@ public class HashGetAllCommandTest {
 
         Map<String, String> map = value.getValue();
 
-        assertThat(map.get("key1"), is("value1"));
-        assertThat(map.get("key2"), is("value2"));
-        assertThat(map.get("key3"), is("value3"));
+        assertThat(map.get(safeString("key1")), is(safeString("value1")));
+        assertThat(map.get(safeString("key2")), is(safeString("value2")));
+        assertThat(map.get(safeString("key3")), is(safeString("value3")));
     }
 
     @Test
     public void testExecuteNotExists() {
         rule.withParams("a")
             .execute()
-            .verify().addArray(anyCollectionOf(String.class));
+            .verify().addArray(anyCollectionOf(SafeString.class));
     }
 
 }

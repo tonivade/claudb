@@ -7,7 +7,8 @@ package tonivade.db.command.set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 
@@ -30,8 +31,8 @@ public class SetDifferenceCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("a", set("1", "2", "3"))
-            .withData("b", set("3", "4"))
+        rule.withData("a", setFromString("1", "2", "3"))
+            .withData("b", setFromString("3", "4"))
             .withParams("a", "b")
             .execute()
             .verify().addArray(captor.capture());
@@ -40,13 +41,13 @@ public class SetDifferenceCommandTest {
 
         assertThat(result.size(), is(2));
 
-        assertThat(result.contains("1"), is(true));
-        assertThat(result.contains("2"), is(true));
+        assertThat(result.contains(safeString("1")), is(true));
+        assertThat(result.contains(safeString("2")), is(true));
     }
 
     @Test
     public void testExecuteNoExists() throws Exception {
-        rule.withData("a", set("1", "2", "3"))
+        rule.withData("a", setFromString("1", "2", "3"))
             .withParams("a", "b")
             .execute()
             .verify().addArray(captor.capture());
@@ -55,9 +56,9 @@ public class SetDifferenceCommandTest {
 
         assertThat(result.size(), is(3));
 
-        assertThat(result.contains("1"), is(true));
-        assertThat(result.contains("2"), is(true));
-        assertThat(result.contains("3"), is(true));
+        assertThat(result.contains(safeString("1")), is(true));
+        assertThat(result.contains(safeString("2")), is(true));
+        assertThat(result.contains(safeString("3")), is(true));
     }
 
 }

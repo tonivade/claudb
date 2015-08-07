@@ -20,6 +20,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("lset")
 @ParamLength(3)
@@ -32,8 +33,8 @@ public class ListSetCommand implements ICommand {
             int index = Integer.parseInt(request.getParam(1).toString());
             db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
                     (oldValue, newValue) -> {
-                        List<String> merge = new ArrayList<>(oldValue.<List<String>>getValue());
-                        merge.set(index > -1 ? index : merge.size() + index, request.getParam(2).toString());
+                        List<SafeString> merge = new ArrayList<>(oldValue.<List<SafeString>>getValue());
+                        merge.set(index > -1 ? index : merge.size() + index, request.getParam(2));
                         return list(merge);
                     });
             response.addSimpleStr("OK");
