@@ -27,6 +27,7 @@ import org.mockito.stubbing.Answer;
 import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 public class CommandRule implements TestRule {
 
@@ -113,12 +114,12 @@ public class CommandRule implements TestRule {
                 when(request.getParam(i++)).thenReturn(safeString(param));
             }
             when(request.getLength()).thenReturn(params.length);
-            when(request.getOptionalParam(anyInt())).thenAnswer(new Answer<Optional<String>>() {
+            when(request.getOptionalParam(anyInt())).thenAnswer(new Answer<Optional<SafeString>>() {
                 @Override
-                public Optional<String> answer(InvocationOnMock invocation) throws Throwable {
+                public Optional<SafeString> answer(InvocationOnMock invocation) throws Throwable {
                     Integer i = (Integer) invocation.getArguments()[0];
                     if (i < params.length) {
-                        return Optional.of(params[i]);
+                        return Optional.of(safeString(params[i]));
                     }
                     return Optional.empty();
                 }
