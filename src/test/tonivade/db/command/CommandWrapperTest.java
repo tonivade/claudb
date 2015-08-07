@@ -6,11 +6,13 @@
 package tonivade.db.command;
 
 import static java.util.Collections.emptySet;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -79,8 +82,8 @@ public class CommandWrapperTest {
 
     @Test
     public void testTypeOK() {
-        when(db.isType(anyString(), eq(DataType.STRING))).thenReturn(true);
-        when(request.getParam(0)).thenReturn("test");
+        when(db.isType(any(DatabaseKey.class), eq(DataType.STRING))).thenReturn(true);
+        when(request.getParam(0)).thenReturn(safeString("test"));
 
         CommandWrapper wrapper = new CommandWrapper(new TypeCommand());
 
@@ -91,8 +94,8 @@ public class CommandWrapperTest {
 
     @Test
     public void testTypeKO() {
-        when(db.isType(anyString(), eq(DataType.STRING))).thenReturn(false);
-        when(request.getParam(0)).thenReturn("test");
+        when(db.isType(any(DatabaseKey.class), eq(DataType.STRING))).thenReturn(false);
+        when(request.getParam(0)).thenReturn(safeString("test"));
 
         CommandWrapper wrapper = new CommandWrapper(new TypeCommand());
 

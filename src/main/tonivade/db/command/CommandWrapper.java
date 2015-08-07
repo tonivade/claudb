@@ -5,6 +5,7 @@
 
 package tonivade.db.command;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.PubSubAllowed;
@@ -38,7 +39,7 @@ public class CommandWrapper implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         if (request.getLength() < params) {
             response.addError("ERR wrong number of arguments for '" + request.getCommand() + "' command");
-        } else if (dataType != null && !db.isType(request.getParam(0), dataType)) {
+        } else if (dataType != null && !db.isType(safeKey(request.getParam(0)), dataType)) {
             response.addError("WRONGTYPE Operation against a key holding the wrong kind of value");
         } else if (isSubscribed(request) && !pubSubAllowed) {
             response.addError("ERR only (P)SUBSCRIBE / (P)UNSUBSCRIBE / QUIT allowed in this context");

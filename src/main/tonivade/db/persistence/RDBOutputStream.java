@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.zip.CheckedOutputStream;
 
 import tonivade.db.data.DataType;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.redis.SafeString;
@@ -58,12 +59,12 @@ public class RDBOutputStream {
     }
 
     public void dabatase(IDatabase db) throws IOException {
-        for (Entry<String, DatabaseValue> entry : db.entrySet()) {
+        for (Entry<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
             value(entry.getKey(), entry.getValue());
         }
     }
 
-    private void value(String key, DatabaseValue value) throws IOException {
+    private void value(DatabaseKey key, DatabaseValue value) throws IOException {
         type(value.getType());
         key(key);
         value(value);
@@ -73,8 +74,8 @@ public class RDBOutputStream {
         out.write(type.ordinal());
     }
 
-    private void key(String key) throws IOException {
-        string(key);
+    private void key(DatabaseKey key) throws IOException {
+        string(key.getValue());
     }
 
     private void value(DatabaseValue value) throws IOException {

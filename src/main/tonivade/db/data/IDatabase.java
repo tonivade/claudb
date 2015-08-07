@@ -7,10 +7,10 @@ package tonivade.db.data;
 
 import java.util.Map;
 
-public interface IDatabase extends Map<String, DatabaseValue> {
+public interface IDatabase extends Map<DatabaseKey, DatabaseValue> {
 
-    public boolean rename(String from, String to);
+    public boolean rename(DatabaseKey from, DatabaseKey to);
 
-    public boolean isType(String key, DataType type);
+    public boolean isType(DatabaseKey key, DataType type);
 
 }

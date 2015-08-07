@@ -8,8 +8,9 @@ package tonivade.db.command;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static tonivade.db.redis.SafeString.safeAsList;
+import static tonivade.db.redis.SafeString.safeString;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.hamcrest.Matcher;
@@ -23,6 +24,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 
@@ -92,7 +94,7 @@ public class CommandRule implements TestRule {
         };
     }
 
-    public CommandRule withData(String key, DatabaseValue value) {
+    public CommandRule withData(DatabaseKey key, DatabaseValue value) {
         database.put(key, value);
         return this;
     }
@@ -105,10 +107,10 @@ public class CommandRule implements TestRule {
 
     public CommandRule withParams(String ... params) {
         if (params != null) {
-            when(request.getParams()).thenReturn(Arrays.asList(params));
+            when(request.getParams()).thenReturn(safeAsList(params));
             int i = 0;
             for (String param : params) {
-                when(request.getParam(i++)).thenReturn(param);
+                when(request.getParam(i++)).thenReturn(safeString(param));
             }
             when(request.getLength()).thenReturn(params.length);
             when(request.getOptionalParam(anyInt())).thenAnswer(new Answer<Optional<String>>() {

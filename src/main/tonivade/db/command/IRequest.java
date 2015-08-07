@@ -12,23 +12,13 @@ import tonivade.db.redis.SafeString;
 
 public interface IRequest {
 
-    /**
-     * @return the command
-     */
-    public String getCommand();
+    public SafeString getCommand();
 
-    /**
-     * @return the params
-     */
-    public List<String> getParams();
+    public List<SafeString> getParams();
 
-    public List<SafeString> getSafeParams();
+    public SafeString getParam(int i);
 
-    public String getParam(int i);
-
-    public SafeString getSafeParam(int i);
-
-    public Optional<String> getOptionalParam(int i);
+    public Optional<SafeString> getOptionalParam(int i);
 
     public int getLength();
 

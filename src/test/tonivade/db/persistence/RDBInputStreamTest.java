@@ -8,6 +8,7 @@ package tonivade.db.persistence;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.list;
@@ -53,7 +54,7 @@ public class RDBInputStreamTest {
 
     private void assertDB(IDatabase db,DatabaseValue value) {
         assertThat(db, notNullValue());
-        assertThat(db.get("a"), is(value));
+        assertThat(db.get(safeKey("a")), is(value));
     }
 
     private InputStream array(String string) {

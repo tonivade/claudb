@@ -13,6 +13,7 @@ import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.Util.byteArrayToInt;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,13 +27,17 @@ import java.util.Set;
 import java.util.zip.CheckedInputStream;
 
 import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 public class RDBInputStream {
 
-    private static final String REDIS_PREAMBLE = "REDIS";
-    private static final String DEFAULT_CHARSET = "UTF-8";
+    private static final SafeString REDIS_PREAMBLE = safeString("REDIS");
+
+    private static final int TWO_BYTES_LENGTH = 0x4000;
+    private static final int ONE_BYTE_LENGTH = 0x40;
 
     private static final int HASH = 0x04;
     private static final int SORTED_SET = 0x03;
@@ -45,6 +50,7 @@ public class RDBInputStream {
     private static final int SELECT = 0xFE;
     private static final int END_OF_STREAM = 0xFF;
 
+    private static final int REDIS_VERSION = 6;
     private static final int VERSION_LENGTH = 4;
     private static final int REDIS_LENGTH = 5;
 
@@ -60,7 +66,7 @@ public class RDBInputStream {
 
         int version = version();
 
-        if (version > 6) {
+        if (version > REDIS_VERSION) {
             throw new IOException("invalid version: " + version);
         }
 
@@ -124,7 +130,7 @@ public class RDBInputStream {
     }
 
     private int version() throws IOException {
-        String redis = new String(read(REDIS_LENGTH), DEFAULT_CHARSET);
+        SafeString redis = new SafeString(read(REDIS_LENGTH));
         if (!redis.equals(REDIS_PREAMBLE)) {
             throw new IOException("not valid stream");
         }
@@ -140,13 +146,13 @@ public class RDBInputStream {
     }
 
     private void parseString(IDatabase db) throws IOException {
-        String key = parseString();
-        String value = parseString();
+        DatabaseKey key = parseKey();
+        SafeString value = parseSafeString();
         ensure(db, key, string(value));
     }
 
     private void parseList(IDatabase db) throws IOException {
-        String key = parseString();
+        DatabaseKey key = parseKey();
         int size = parseLength();
         List<String> list = new LinkedList<>();
         for (int i = 0; i < size; i++) {
@@ -156,7 +162,7 @@ public class RDBInputStream {
     }
 
     private void parseSet(IDatabase db) throws IOException {
-        String key = parseString();
+        DatabaseKey key = parseKey();
         int size = parseLength();
         Set<String> set = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
@@ -166,7 +172,7 @@ public class RDBInputStream {
     }
 
     private void parseSortedSet(IDatabase db) throws IOException {
-        String key = parseString();
+        DatabaseKey key = parseKey();
         int size = parseLength();
         Set<Entry<Double, String>> entries = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
@@ -178,7 +184,7 @@ public class RDBInputStream {
     }
 
     private void parseHash(IDatabase db) throws IOException {
-        String key = parseString();
+        DatabaseKey key = parseKey();
         int size = parseLength();
         Set<Entry<String, String>> entries = new LinkedHashSet<>();
         for (int i = 0; i < size; i++) {
@@ -187,7 +193,7 @@ public class RDBInputStream {
         ensure(db, key, hash(entries));
     }
 
-    private void ensure(IDatabase db, String key, DatabaseValue value) throws IOException {
+    private void ensure(IDatabase db, DatabaseKey key, DatabaseValue value) throws IOException {
         if (db != null) {
             db.put(key, value);
         } else {
@@ -197,22 +203,34 @@ public class RDBInputStream {
 
     private int parseLength() throws IOException {
         int length = in.read();
-        if (length < 0x40) {
+        if (length < ONE_BYTE_LENGTH) {
             // 1 byte: 00XXXXXX
             return length;
-        } else if (length < 0x4000) {
+        } else if (length < TWO_BYTES_LENGTH) {
             // 2 bytes: 01XXXXXX XXXXXXXX
             int next = in.read();
-            return ((length & 0x3F) << 8) | (next & 0xFF);
+            return parseLength(length, next);
         } else {
             // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
             return byteArrayToInt(read(Integer.BYTES));
         }
     }
 
-    private String parseString() throws IOException {
+    private int parseLength(int length, int next) {
+        return ((length & 0x3F) << 8) | (next & 0xFF);
+    }
+
+    private SafeString parseSafeString() throws IOException {
         int length = parseLength();
-        return new String(read(length), DEFAULT_CHARSET);
+        return new SafeString(read(length));
+    }
+
+    private String parseString() throws IOException {
+        return parseSafeString().toString();
+    }
+
+    private DatabaseKey parseKey() throws IOException {
+        return DatabaseKey.safeKey(parseSafeString());
     }
 
     private Double parseDouble() throws IOException {

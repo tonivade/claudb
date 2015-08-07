@@ -7,6 +7,7 @@ package tonivade.db.data;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.redis.SafeString.safeString;
 
@@ -22,11 +23,11 @@ public class DatabaseTest {
 
     @Test
     public void testDatabase() throws Exception {
-        database.put("a", string("value"));
+        database.put(safeKey("a"), string("value"));
 
-        assertThat(database.get("a").getValue(), is(safeString("value")));
-        assertThat(database.containsKey("a"), is(true));
-        assertThat(database.containsKey("b"), is(false));
+        assertThat(database.get(safeKey("a")).getValue(), is(safeString("value")));
+        assertThat(database.containsKey(safeKey("a")), is(true));
+        assertThat(database.containsKey(safeKey("b")), is(false));
         assertThat(database.isEmpty(), is(false));
         assertThat(database.size(), is(1));
 
@@ -35,18 +36,18 @@ public class DatabaseTest {
         assertThat(values.size(), is(1));
         assertThat(values.contains(string("value")), is(true));
 
-        Set<String> keySet = database.keySet();
+        Set<DatabaseKey> keySet = database.keySet();
 
         assertThat(keySet.size(), is(1));
-        assertThat(keySet.contains("a"), is(true));
+        assertThat(keySet.contains(safeKey("a")), is(true));
 
-        Set<Entry<String, DatabaseValue>> entrySet = database.entrySet();
+        Set<Entry<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
 
         assertThat(entrySet.size(), is(1));
 
-        Entry<String, DatabaseValue> entry = entrySet.iterator().next();
+        Entry<DatabaseKey, DatabaseValue> entry = entrySet.iterator().next();
 
-        assertThat(entry.getKey(), is("a"));
+        assertThat(entry.getKey(), is(safeKey("a")));
         assertThat(entry.getValue(), is(string("value")));
     }
 

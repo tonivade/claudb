@@ -5,8 +5,6 @@
 
 package tonivade.db.command;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,76 +29,39 @@ public class Request implements IRequest {
         this.params = params;
     }
 
-    /* (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getCommand()
-     */
     @Override
-    public String getCommand() {
-        return command.toString();
-    }
-
-    /* (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getParams()
-     */
-    @Override
-    public List<String> getParams() {
-        return params.stream().map((item) -> item.toString()).collect(toList());
+    public SafeString getCommand() {
+        return command;
     }
 
     @Override
-    public List<SafeString> getSafeParams() {
+    public List<SafeString> getParams() {
         return Collections.unmodifiableList(params);
     }
 
-    /* (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getParam(int)
-     */
     @Override
-    public String getParam(int i) {
-        if (i < params.size()) {
-            return params.get(i).toString();
-        }
-        return null;
-    }
-
-    @Override
-    public SafeString getSafeParam(int i) {
+    public SafeString getParam(int i) {
         if (i < params.size()) {
             return params.get(i);
         }
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getOptionalParam(int)
-     */
     @Override
-    public Optional<String> getOptionalParam(int i) {
+    public Optional<SafeString> getOptionalParam(int i) {
         return Optional.ofNullable(getParam(i));
     }
 
-    /* (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getLength()
-     */
     @Override
     public int getLength() {
         return params.size();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getSession()
-     */
     @Override
     public ISession getSession() {
         return session;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see tonivade.db.command.IRequest#getTinyDB()
-     */
     @Override
     public IServerContext getServerContext() {
         return server;

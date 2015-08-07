@@ -6,6 +6,7 @@
 package tonivade.db.replication;
 
 import static java.lang.String.valueOf;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.redis.SafeString.safeAsList;
 
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 
 import tonivade.db.command.IServerContext;
 import tonivade.db.command.Response;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.redis.RedisArray;
 import tonivade.db.redis.RedisToken;
@@ -31,7 +33,7 @@ public class MasterReplication implements Runnable {
     private static final String SELECT_COMMAND = "SELECT";
     private static final String PING_COMMAND = "PING";
 
-    private static final String SLAVES_KEY = "slaves";
+    private static final DatabaseKey SLAVES_KEY = safeKey("slaves");
 
     private static final int TASK_DELAY = 2;
 
