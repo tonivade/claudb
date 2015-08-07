@@ -5,6 +5,8 @@
 
 package tonivade.db.command.hash;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
+
 import java.util.Map;
 
 import tonivade.db.command.ICommand;
@@ -26,7 +28,7 @@ public class HashValuesCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_HASH);
+        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
 
         Map<String, String> map = value.getValue();
 

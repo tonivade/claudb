@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.key.DeleteCommand;
 
 @CommandUnderTest(DeleteCommand.class)
 public class DeleteCommandTest {

@@ -8,6 +8,7 @@ package tonivade.db.command.pubsub;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,7 +37,7 @@ public class SubscribeCommandTest {
             .execute()
             .assertThat("subscriptions:test", is(set("localhost:12345")));
 
-        rule.verify(ISession.class).addSubscription("test");
+        rule.verify(ISession.class).addSubscription(safeString("test"));
 
         rule.verify().addArray(captor.capture());
 
@@ -46,8 +47,8 @@ public class SubscribeCommandTest {
 
         Iterator<?> iter = response.iterator();
 
-        assertThat(iter.next(), is("subscribe"));
-        assertThat(iter.next(), is("test"));
+        assertThat(iter.next(), is(safeString("subscribe")));
+        assertThat(iter.next(), is(safeString("test")));
         assertThat(iter.next(), is(1));
     }
 

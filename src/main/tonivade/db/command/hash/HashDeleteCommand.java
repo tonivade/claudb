@@ -5,6 +5,7 @@
 
 package tonivade.db.command.hash;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.hash;
 
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("hdel")
 @ParamLength(2)
@@ -30,14 +32,14 @@ public class HashDeleteCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<String> keys = request.getParams().stream().skip(1).collect(Collectors.toList());
+        List<SafeString> keys = request.getParams().stream().skip(1).collect(Collectors.toList());
 
         List<String> removedKeys = new LinkedList<>();
-        db.merge(request.getParam(0), DatabaseValue.EMPTY_HASH, (oldValue, newValue) -> {
+        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH, (oldValue, newValue) -> {
             Map<String, String> merge = new HashMap<>();
             merge.putAll(oldValue.getValue());
-            for (String key : keys) {
-                String data = merge.remove(key);
+            for (SafeString key : keys) {
+                String data = merge.remove(key.toString());
                 if (data != null) {
                     removedKeys.add(data);
                 }

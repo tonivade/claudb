@@ -5,6 +5,7 @@
 
 package tonivade.db.command.key;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -20,7 +21,7 @@ public class ExistsCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        response.addInt(db.containsKey(request.getParam(0)));
+        response.addInt(db.containsKey(safeKey(request.getParam(0))));
     }
 
 }

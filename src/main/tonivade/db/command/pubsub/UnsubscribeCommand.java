@@ -6,7 +6,9 @@
 package tonivade.db.command.pubsub;
 
 import static java.util.Arrays.asList;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
+import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +22,7 @@ import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("unsubscribe")
@@ -27,15 +30,16 @@ import tonivade.db.data.IDatabase;
 @PubSubAllowed
 public class UnsubscribeCommand implements ICommand {
 
+    private static final SafeString UNSUBSCRIBE = safeString("unsubscribe");
     private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         IDatabase admin = request.getServerContext().getAdminDatabase();
-        Collection<String> channels = getChannels(request);
+        Collection<SafeString> channels = getChannels(request);
         int i = channels.size();
-        for (String channel : channels) {
-            admin.merge(SUBSCRIPTIONS_PREFIX + channel, set(request.getSession().getId()),
+        for (SafeString channel : channels) {
+            admin.merge(safeKey(SUBSCRIPTIONS_PREFIX + channel), set(request.getSession().getId()),
                     (oldValue, newValue) -> {
                         Set<String> merge = new HashSet<>();
                         merge.addAll(oldValue.getValue());
@@ -43,11 +47,11 @@ public class UnsubscribeCommand implements ICommand {
                         return set(merge);
                     });
             request.getSession().removeSubscription(channel);
-            response.addArray(asList("unsubscribe", channel, --i));
+            response.addArray(asList(UNSUBSCRIBE, channel, --i));
         }
     }
 
-    private Collection<String> getChannels(IRequest request) {
+    private Collection<SafeString> getChannels(IRequest request) {
         if (request.getParams().isEmpty()) {
             return request.getSession().getSubscriptions();
         }

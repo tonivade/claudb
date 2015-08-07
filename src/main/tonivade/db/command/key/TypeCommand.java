@@ -5,6 +5,7 @@
 
 package tonivade.db.command.key;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -22,7 +23,7 @@ public class TypeCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.get(request.getParam(0));
+        DatabaseValue value = db.get(safeKey(request.getParam(0)));
         if (value != null) {
             response.addSimpleStr(value.getType().text());
         } else {

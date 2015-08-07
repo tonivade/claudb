@@ -9,17 +9,19 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Set;
 
+import tonivade.db.redis.SafeString;
+
 public interface ISession {
 
     public String getId();
 
     public ChannelHandlerContext getContext();
 
-    public Set<String> getSubscriptions();
+    public Set<SafeString> getSubscriptions();
 
-    public void addSubscription(String channel);
+    public void addSubscription(SafeString channel);
 
-    public void removeSubscription(String channel);
+    public void removeSubscription(SafeString channel);
 
     public int getCurrentDB();
 

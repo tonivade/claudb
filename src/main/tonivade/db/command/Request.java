@@ -30,8 +30,8 @@ public class Request implements IRequest {
     }
 
     @Override
-    public SafeString getCommand() {
-        return command;
+    public String getCommand() {
+        return command.toString();
     }
 
     @Override

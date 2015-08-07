@@ -45,6 +45,11 @@ public class DatabaseKey {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return value.toString();
+    }
+
     public static DatabaseKey safeKey(SafeString str) {
         return new DatabaseKey(str);
     }

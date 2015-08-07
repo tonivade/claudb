@@ -6,7 +6,6 @@
 package tonivade.db.command.key;
 
 import static java.util.stream.Collectors.toSet;
-import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Set;
 import java.util.function.Predicate;
@@ -18,6 +17,7 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.command.annotation.ReadOnly;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
 import tonivade.db.redis.SafeString;
 
@@ -29,15 +29,15 @@ public class KeysCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         Pattern pattern = createPattern(request.getParam(0));
-        Predicate<? super String> predicate = (key) -> {
-            return pattern.matcher(key).matches();
+        Predicate<? super DatabaseKey> predicate = (key) -> {
+            return pattern.matcher(key.toString()).matches();
         };
-        Set<SafeString> keys = db.keySet().stream().filter(predicate).map((item) -> safeString(item)).collect(toSet());
+        Set<SafeString> keys = db.keySet().stream().filter(predicate).map(DatabaseKey::getValue).collect(toSet());
         response.addArray(keys);
     }
 
-    private Pattern createPattern(String param) {
-        return Pattern.compile(convertGlobToRegEx(param));
+    private Pattern createPattern(SafeString param) {
+        return Pattern.compile(convertGlobToRegEx(param.toString()));
     }
 
     /*

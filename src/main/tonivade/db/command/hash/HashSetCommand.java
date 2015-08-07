@@ -5,6 +5,7 @@
 
 package tonivade.db.command.hash;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
@@ -30,7 +31,7 @@ public class HashSetCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = hash(entry(request.getParam(1), request.getParam(2)));
 
-        DatabaseValue resultValue = db.merge(request.getParam(0), value,
+        DatabaseValue resultValue = db.merge(safeKey(request.getParam(0)), value,
                 (oldValue, newValue) -> {
                     Map<String, String> merge = new HashMap<>();
                     merge.putAll(oldValue.getValue());
@@ -40,7 +41,7 @@ public class HashSetCommand implements ICommand {
 
         Map<String, String> resultMap = resultValue.getValue();
 
-        response.addInt(resultMap.get(request.getParam(1)) == null);
+        response.addInt(resultMap.get(request.getParam(1).toString()) == null);
     }
 
 }

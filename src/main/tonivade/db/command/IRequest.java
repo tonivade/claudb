@@ -12,7 +12,7 @@ import tonivade.db.redis.SafeString;
 
 public interface IRequest {
 
-    public SafeString getCommand();
+    public String getCommand();
 
     public List<SafeString> getParams();
 

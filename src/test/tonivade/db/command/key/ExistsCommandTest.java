@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.key.ExistsCommand;
 
 @CommandUnderTest(ExistsCommand.class)
 public class ExistsCommandTest {

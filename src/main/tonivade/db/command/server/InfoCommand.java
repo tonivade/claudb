@@ -27,6 +27,7 @@ import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("info")
@@ -49,9 +50,10 @@ public class InfoCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         Map<String, Map<String, String>> sections = new HashMap<String, Map<String,String>>();
-        Optional<String> param = request.getOptionalParam(0);
+        Optional<SafeString> param = request.getOptionalParam(0);
         if (param.isPresent()) {
-            sections.put(param.get(), section(param.get(), request.getServerContext()));
+            String sectionName = param.get().toString();
+            sections.put(sectionName, section(sectionName, request.getServerContext()));
         } else {
             for (String section : allSections()) {
                 sections.put(section, section(section, request.getServerContext()));

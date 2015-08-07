@@ -172,6 +172,10 @@ public class DatabaseValue {
         return new SimpleEntry<String, String>(key, value);
     }
 
+    public static Entry<String, String> entry(SafeString key, SafeString value) {
+        return new SimpleEntry<String, String>(key.toString(), value.toString());
+    }
+
     public static Entry<Double, String> score(double score, String value) {
         return new SimpleEntry<Double, String>(score, value);
     }

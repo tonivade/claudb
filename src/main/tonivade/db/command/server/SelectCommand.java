@@ -22,7 +22,7 @@ public class SelectCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            request.getSession().setCurrentDB(parseInt(request.getParam(0)));
+            request.getSession().setCurrentDB(parseInt(request.getParam(0).toString()));
             response.addSimpleStr(RESULT_OK);
         } catch (NumberFormatException e) {
             response.addError("ERR invalid DB index");

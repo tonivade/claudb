@@ -5,6 +5,7 @@
 
 package tonivade.db.command.key;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -18,7 +19,7 @@ public class RenameCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        if (db.rename(request.getParam(0), request.getParam(1))) {
+        if (db.rename(safeKey(request.getParam(0)), safeKey(request.getParam(1)))) {
             response.addSimpleStr(RESULT_OK);
         } else {
             response.addError("ERR no such key");

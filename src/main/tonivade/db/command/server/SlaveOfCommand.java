@@ -23,8 +23,8 @@ public class SlaveOfCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        String host = request.getParam(0);
-        String port = request.getParam(1);
+        String host = request.getParam(0).toString();
+        String port = request.getParam(1).toString();
 
         boolean stopCurrent = host.equals("NO") && port.equals("ONE");
 
