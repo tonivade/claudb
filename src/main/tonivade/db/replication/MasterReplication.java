@@ -78,12 +78,12 @@ public class MasterReplication implements Runnable {
     public void run() {
         String commands = createCommands();
 
-        for (String slave : getSlaves()) {
-            server.publish(slave, commands);
+        for (SafeString slave : getSlaves()) {
+            server.publish(slave.toString(), commands);
         }
     }
 
-    private Set<String> getSlaves() {
+    private Set<SafeString> getSlaves() {
         return server.getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
     }
 
