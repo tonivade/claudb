@@ -9,6 +9,7 @@ import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.reverse;
 import static java.util.stream.Collectors.toList;
+import static tonivade.db.data.DatabaseKey.safeKey;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -26,6 +27,7 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @ReadOnly
 @Command("zrevrange")
@@ -38,22 +40,22 @@ public class SortedSetReverseRangeCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_ZSET);
+            DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
             NavigableSet<Entry<Float, String>> set = value.getValue();
 
-            int from = Integer.parseInt(request.getParam(2));
+            int from = Integer.parseInt(request.getParam(2).toString());
             if (from < 0) {
                 from = set.size() + from;
             }
-            int to = Integer.parseInt(request.getParam(1));
+            int to = Integer.parseInt(request.getParam(1).toString());
             if (to < 0) {
                 to = set.size() + to;
             }
 
             List<String> result = emptyList();
             if (from <= to) {
-                Optional<String> withScores = request.getOptionalParam(3);
-                if (withScores.isPresent() && withScores.get().equals(PARAM_WITHSCORES)) {
+                Optional<SafeString> withScores = request.getOptionalParam(3);
+                if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
                     result = set.stream().skip(from).limit((to - from) + 1).flatMap(
                             (o) -> Stream.of(o.getValue(), valueOf(o.getKey()))).collect(toList());
                 } else {

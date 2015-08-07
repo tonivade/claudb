@@ -5,6 +5,7 @@
 
 package tonivade.db.command.string;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
 import tonivade.db.command.IResponse;
@@ -23,7 +24,7 @@ public class GetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        response.addValue(db.get(request.getParam(0)));
+        response.addValue(db.get(safeKey(request.getParam(0))));
     }
 
 }

@@ -5,6 +5,7 @@
 
 package tonivade.db.command.set;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.redis.SafeString.safeString;
 
@@ -34,7 +35,7 @@ public class SetRandomMemberCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         List<String> random = new LinkedList<>();
-        db.merge(request.getParam(0), DatabaseValue.EMPTY_SET,
+        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
                 (oldValue, newValue) -> {
                     List<String> merge = new ArrayList<>(oldValue.<Set<String>>getValue());
                     random.add(merge.get(random(merge)));

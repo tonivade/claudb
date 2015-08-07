@@ -9,6 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Matchers.notNull;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
 
 import java.util.Set;
@@ -34,7 +35,7 @@ public class SetPopCommandTest {
             .execute()
             .verify().addBulkStr(notNull(SafeString.class));
 
-        DatabaseValue value = rule.getDatabase().get("key");
+        DatabaseValue value = rule.getDatabase().get(safeKey("key"));
         assertThat(value.<Set<String>>getValue().size(), is(2));
     }
 

@@ -5,6 +5,7 @@
 
 package tonivade.db.command.set;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
 
 import java.util.HashSet;
@@ -27,7 +28,7 @@ public class SetAddCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.merge(request.getParam(0), set(request.getParam(1)), (oldValue, newValue)-> {
+        DatabaseValue value = db.merge(safeKey(request.getParam(0)), set(request.getParam(1).toString()), (oldValue, newValue)-> {
             Set<String> merge = new HashSet<>();
             merge.addAll(oldValue.getValue());
             merge.addAll(newValue.getValue());

@@ -5,6 +5,7 @@
 
 package tonivade.db.command.list;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.List;
@@ -29,10 +30,10 @@ public class ListIndexCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_LIST);
+            DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
             List<String> list = value.getValue();
 
-            int index = Integer.parseInt(request.getParam(1));
+            int index = Integer.parseInt(request.getParam(1).toString());
             if (index < 0) {
                 index = list.size() + index;
             }

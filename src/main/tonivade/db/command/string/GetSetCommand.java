@@ -5,6 +5,7 @@
 
 package tonivade.db.command.string;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -23,7 +24,7 @@ public class GetSetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.put(request.getParam(0), string(request.getParam(1)));
+        DatabaseValue value = db.put(safeKey(request.getParam(0)), string(request.getParam(1)));
         response.addValue(value);
     }
 

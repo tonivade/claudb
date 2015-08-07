@@ -5,6 +5,7 @@
 
 package tonivade.db.command.list;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.list;
 
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("lpush")
 @ParamLength(2)
@@ -28,9 +30,9 @@ public class LeftPushCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<String> values = request.getParams().stream().skip(1).collect(Collectors.toList());
+        List<String> values = request.getParams().stream().skip(1).map(SafeString::toString).collect(Collectors.toList());
 
-        DatabaseValue result = db.merge(request.getParam(0), list(values),
+        DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
                 (oldValue, newValue) -> {
                     List<String> merge = new LinkedList<>();
                     merge.addAll(newValue.getValue());

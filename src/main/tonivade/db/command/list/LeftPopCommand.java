@@ -5,6 +5,7 @@
 
 package tonivade.db.command.list;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.list;
 import static tonivade.db.redis.SafeString.safeString;
 
@@ -29,12 +30,12 @@ public class LeftPopCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         List<String> removed = new LinkedList<>();
-        db.merge(request.getParam(0), DatabaseValue.EMPTY_LIST,
+        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
                 (oldValue, newValue) -> {
                     List<String> merge = new LinkedList<>();
                     merge.addAll(oldValue.getValue());
                     if (!merge.isEmpty()) {
-                        removed.add(merge.remove(0));
+                        removed.add(merge.remove(0).toString());
                     }
                     return list(merge);
                 });

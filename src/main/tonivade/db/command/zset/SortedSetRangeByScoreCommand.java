@@ -9,6 +9,7 @@ import static java.lang.Integer.parseInt;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.score;
 
 import java.util.List;
@@ -44,17 +45,17 @@ public class SortedSetRangeByScoreCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_ZSET);
+            DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
             NavigableSet<Entry<Double, String>> set = value.getValue();
 
-            float from = parseRange(request.getParam(1));
-            float to = parseRange(request.getParam(2));
+            float from = parseRange(request.getParam(1).toString());
+            float to = parseRange(request.getParam(2).toString());
 
             Options options = parseOptions(request);
 
             Set<Entry<Double, String>> range = set.subSet(
-                    score(from, EMPTY_STRING), inclusive(request.getParam(1)),
-                    score(to, EMPTY_STRING), inclusive(request.getParam(2)));
+                    score(from, EMPTY_STRING), inclusive(request.getParam(1).toString()),
+                    score(to, EMPTY_STRING), inclusive(request.getParam(2).toString()));
 
             List<String> result = emptyList();
             if (from <= to) {
@@ -80,11 +81,11 @@ public class SortedSetRangeByScoreCommand implements ICommand {
     private Options parseOptions(IRequest request) {
         Options options = new Options();
         for (int i = 3; i < request.getLength(); i++) {
-            String param = request.getParam(i);
+            String param = request.getParam(i).toString();
             if (param.equalsIgnoreCase(PARAM_LIMIT)) {
                 options.withLimit = true;
-                options.offset = parseInt(request.getParam(++i));
-                options.count = parseInt(request.getParam(++i));
+                options.offset = parseInt(request.getParam(++i).toString());
+                options.count = parseInt(request.getParam(++i).toString());
             } else if (param.equalsIgnoreCase(PARAM_WITHSCORES)) {
                 options.withScores = true;
             }

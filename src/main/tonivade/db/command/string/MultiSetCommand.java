@@ -5,6 +5,7 @@
 
 package tonivade.db.command.string;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -12,6 +13,7 @@ import tonivade.db.command.IResponse;
 import tonivade.db.command.annotation.Command;
 import tonivade.db.command.annotation.ParamLength;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("mset")
 @ParamLength(2)
@@ -19,10 +21,10 @@ public class MultiSetCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        String key = null;
-        for (String value : request.getParams()) {
+        SafeString key = null;
+        for (SafeString value : request.getParams()) {
             if (key != null) {
-                db.put(key, string(value));
+                db.put(safeKey(key), string(value));
                 key = null;
             } else {
                 key = value;

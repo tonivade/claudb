@@ -3,7 +3,7 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.set;
+package tonivade.db.command.string;
 
 import static tonivade.db.data.DatabaseValue.string;
 

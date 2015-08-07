@@ -6,6 +6,7 @@
 package tonivade.db.command.list;
 
 import static java.util.stream.Collectors.toList;
+import static tonivade.db.data.DatabaseKey.safeKey;
 
 import java.util.List;
 
@@ -29,14 +30,14 @@ public class ListRangeCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            DatabaseValue value = db.getOrDefault(request.getParam(0), DatabaseValue.EMPTY_LIST);
+            DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
             List<String> list = value.getValue();
 
-            int from = Integer.parseInt(request.getParam(1));
+            int from = Integer.parseInt(request.getParam(1).toString());
             if (from < 0) {
                 from = list.size() + from;
             }
-            int to = Integer.parseInt(request.getParam(2));
+            int to = Integer.parseInt(request.getParam(2).toString());
             if (to < 0) {
                 to = list.size() + to;
             }

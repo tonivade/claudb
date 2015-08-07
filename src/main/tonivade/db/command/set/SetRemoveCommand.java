@@ -6,6 +6,7 @@
 package tonivade.db.command.set;
 
 import static java.util.stream.Collectors.toList;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
 
 import java.util.HashSet;
@@ -22,6 +23,7 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.redis.SafeString;
 
 @Command("srem")
 @ParamLength(2)
@@ -30,9 +32,9 @@ public class SetRemoveCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<String> items =  request.getParams().stream().skip(1).collect(toList());
+        List<String> items =  request.getParams().stream().skip(1).map(SafeString::toString).collect(toList());
         List<String> removed = new LinkedList<String>();
-        db.merge(request.getParam(0), DatabaseValue.EMPTY_SET,
+        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
                 (oldValue, newValue) -> {
                     Set<String> merge = new HashSet<>();
                     merge.addAll(oldValue.getValue());

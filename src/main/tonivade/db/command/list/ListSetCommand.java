@@ -5,6 +5,7 @@
 
 package tonivade.db.command.list;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.list;
 
 import java.util.ArrayList;
@@ -28,11 +29,11 @@ public class ListSetCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            int index = Integer.parseInt(request.getParam(1));
-            db.merge(request.getParam(0), DatabaseValue.EMPTY_LIST,
+            int index = Integer.parseInt(request.getParam(1).toString());
+            db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
                     (oldValue, newValue) -> {
                         List<String> merge = new ArrayList<>(oldValue.<List<String>>getValue());
-                        merge.set(index > -1 ? index : merge.size() + index, request.getParam(2));
+                        merge.set(index > -1 ? index : merge.size() + index, request.getParam(2).toString());
                         return list(merge);
                     });
             response.addSimpleStr("OK");

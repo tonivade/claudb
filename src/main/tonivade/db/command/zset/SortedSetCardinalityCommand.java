@@ -5,6 +5,8 @@
 
 package tonivade.db.command.zset;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
+
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -27,13 +29,9 @@ public class SortedSetCardinalityCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.get(request.getParam(0));
-        if (value != null) {
-            Set<Entry<Float, String>> set = value.getValue();
-            response.addInt(set.size());
-        } else {
-            response.addInt(0);
-        }
+        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
+        Set<Entry<Float, String>> set = value.getValue();
+        response.addInt(set.size());
     }
 
 }

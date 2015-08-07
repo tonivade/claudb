@@ -6,6 +6,7 @@
 package tonivade.db.command.zset;
 
 import static java.util.stream.Collectors.toList;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.zset;
 
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.data.SortedSet;
+import tonivade.db.redis.SafeString;
 
 
 @Command("zrem")
@@ -32,9 +34,9 @@ public class SortedSetRemoveCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<String> items =  request.getParams().stream().skip(1).collect(toList());
+        List<String> items =  request.getParams().stream().skip(1).map(SafeString::toString).collect(toList());
         List<String> removed = new LinkedList<String>();
-        db.merge(request.getParam(0), DatabaseValue.EMPTY_ZSET,
+        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,
                 (oldValue, newValue) -> {
                     Set<Entry<Double, String>> merge = new SortedSet();
                     merge.addAll(oldValue.getValue());
