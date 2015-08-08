@@ -55,10 +55,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#size()
-     */
     @Override
     public int size() {
         long stamp = lock.readLock();
@@ -69,10 +65,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         long stamp = lock.readLock();
@@ -83,11 +75,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @param key
-     * @return
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
     @Override
     public boolean containsKey(Object key) {
         long stamp = lock.readLock();
@@ -98,11 +85,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @param value
-     * @return
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
     @Override
     public boolean containsValue(Object value) {
         long stamp = lock.readLock();
@@ -113,11 +95,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @param key
-     * @return
-     * @see java.util.Map#get(java.lang.Object)
-     */
     @Override
     public DatabaseValue get(Object key) {
         Entry<DatabaseKey, DatabaseValue> entry = null;
@@ -141,12 +118,6 @@ public class Database implements IDatabase, Runnable {
         return null;
     }
 
-    /**
-     * @param key
-     * @param value
-     * @return
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-     */
     @Override
     public DatabaseValue put(DatabaseKey key, DatabaseValue value) {
         long stamp = lock.writeLock();
@@ -157,11 +128,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @param key
-     * @return
-     * @see java.util.Map#remove(java.lang.Object)
-     */
     @Override
     public DatabaseValue remove(Object key) {
         long stamp = lock.writeLock();
@@ -172,10 +138,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @param m
-     * @see java.util.Map#putAll(java.util.Map)
-     */
     @Override
     public void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m) {
         long stamp = lock.writeLock();
@@ -186,10 +148,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     *
-     * @see java.util.Map#clear()
-     */
     @Override
     public void clear() {
         long stamp = lock.writeLock();
@@ -200,10 +158,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#keySet()
-     */
     @Override
     public Set<DatabaseKey> keySet() {
         long stamp = lock.readLock();
@@ -214,10 +168,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#values()
-     */
     @Override
     public Collection<DatabaseValue> values() {
         long stamp = lock.readLock();
@@ -228,10 +178,6 @@ public class Database implements IDatabase, Runnable {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#entrySet()
-     */
     @Override
     public Set<java.util.Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
         long stamp = lock.readLock();
