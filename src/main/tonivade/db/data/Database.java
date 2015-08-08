@@ -42,7 +42,7 @@ public class Database implements IDatabase, Runnable {
 
     @Override
     public void run() {
-        Set<DatabaseKey> toRemove = keySet().stream().filter((key) -> key.isExpired()).collect(Collectors.toSet());
+        Set<DatabaseKey> toRemove = keySet().stream().filter(DatabaseKey::isExpired).collect(Collectors.toSet());
 
         if (!toRemove.isEmpty()) {
             long stamp = lock.writeLock();
