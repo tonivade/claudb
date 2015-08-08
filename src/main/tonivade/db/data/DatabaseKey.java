@@ -1,18 +1,45 @@
+/*
+ * Copyright (c) 2015, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
+
 package tonivade.db.data;
 
+import static tonivade.db.redis.SafeString.safeString;
 import tonivade.db.redis.SafeString;
 
-public class DatabaseKey {
+public class DatabaseKey implements Comparable<DatabaseKey> {
 
+    private Long expiredAt;
     private SafeString value;
 
     public DatabaseKey(SafeString value) {
+        this(value, 0);
+    }
+
+    public DatabaseKey(SafeString value, long ttl) {
         super();
         this.value = value;
+        if (ttl > 0) {
+            this.expiredAt = System.currentTimeMillis() + ttl;
+        }
     }
 
     public SafeString getValue() {
         return value;
+    }
+
+    public boolean isExpired() {
+        if (expiredAt != null) {
+            long now = System.currentTimeMillis();
+            return now > expiredAt;
+        }
+        return false;
+    }
+
+    @Override
+    public int compareTo(DatabaseKey o) {
+        return value.compareTo(o.getValue());
     }
 
     @Override
@@ -54,8 +81,16 @@ public class DatabaseKey {
         return new DatabaseKey(str);
     }
 
+    public static DatabaseKey ttlKey(SafeString str, long ttl) {
+        return new DatabaseKey(str, ttl);
+    }
+
     public static DatabaseKey safeKey(String str) {
-        return new DatabaseKey(SafeString.safeString(str));
+        return new DatabaseKey(safeString(str));
+    }
+
+    public static DatabaseKey ttlKey(String str, long ttl) {
+        return new DatabaseKey(safeString(str), ttl);
     }
 
 }

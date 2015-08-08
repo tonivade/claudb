@@ -12,24 +12,48 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
-public class Database implements IDatabase {
+public class Database implements IDatabase, Runnable {
 
-    private StampedLock lock = new StampedLock();
+    private final StampedLock lock = new StampedLock();
 
-    private final Map<DatabaseKey, DatabaseValue> cache;
+    private final NavigableMap<DatabaseKey, DatabaseValue> cache;
+
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public Database() {
-        this(new HashMap<>());
+        this(new TreeMap<>());
     }
 
-    public Database(Map<DatabaseKey, DatabaseValue> cache) {
+    public Database(NavigableMap<DatabaseKey, DatabaseValue> cache) {
         this.cache = cache;
+        this.executor.scheduleAtFixedRate(this, 5, 5, TimeUnit.MINUTES);
+    }
+
+    @Override
+    public void run() {
+        Set<DatabaseKey> toRemove = keySet().stream().filter((key) -> key.isExpired()).collect(Collectors.toSet());
+
+        if (!toRemove.isEmpty()) {
+            long stamp = lock.writeLock();
+            try {
+                for (DatabaseKey key : toRemove) {
+                    cache.remove(key);
+                }
+            } finally {
+                lock.unlockWrite(stamp);
+            }
+        }
     }
 
     /**
@@ -97,20 +121,25 @@ public class Database implements IDatabase {
      */
     @Override
     public DatabaseValue get(Object key) {
-        DatabaseValue value = null;
+        Entry<DatabaseKey, DatabaseValue> entry = null;
 
-        long optimistic = lock.tryOptimisticRead();
-        value = cache.get(key);
-        if (!lock.validate(optimistic)) {
-            long stamp = lock.readLock();
-            try {
-                value = cache.get(key);
-            } finally {
-                lock.unlockRead(stamp);
+        if (key instanceof DatabaseKey) {
+            long optimistic = lock.tryOptimisticRead();
+            entry = cache.ceilingEntry((DatabaseKey) key);
+            if (!lock.validate(optimistic)) {
+                long stamp = lock.readLock();
+                try {
+                    entry = cache.ceilingEntry((DatabaseKey) key);
+                } finally {
+                    lock.unlockRead(stamp);
+                }
             }
         }
 
-        return value;
+        if (entry != null && !entry.getKey().isExpired()) {
+            return entry.getValue();
+        }
+        return null;
     }
 
     /**
