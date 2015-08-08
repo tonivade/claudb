@@ -21,7 +21,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public class Database implements IDatabase, Runnable {
 
@@ -42,7 +41,7 @@ public class Database implements IDatabase, Runnable {
 
     @Override
     public void run() {
-        Set<DatabaseKey> toRemove = keySet().stream().filter(DatabaseKey::isExpired).collect(Collectors.toSet());
+        Set<DatabaseKey> toRemove = keySet().stream().filter(DatabaseKey::isExpired).collect(toSet());
 
         if (!toRemove.isEmpty()) {
             long stamp = lock.writeLock();
