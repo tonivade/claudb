@@ -98,7 +98,7 @@ public class PersistenceManager implements Runnable {
     private void importRDB() {
         File file = new File(dumpFile);
         if (file.exists()) {
-            try (FileInputStream rdb = new FileInputStream(file)) {
+            try (InputStream rdb = new FileInputStream(file)) {
                 server.importRDB(rdb);
                 LOGGER.info(() -> "RDB file imported");
             } catch (IOException e) {

@@ -19,6 +19,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(SetDifferenceCommand.class)
 public class SetDifferenceCommandTest {
@@ -27,7 +28,7 @@ public class SetDifferenceCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() throws Exception {
@@ -37,7 +38,7 @@ public class SetDifferenceCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(2));
 
@@ -52,7 +53,7 @@ public class SetDifferenceCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(3));
 

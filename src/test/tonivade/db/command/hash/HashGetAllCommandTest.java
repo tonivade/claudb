@@ -45,7 +45,7 @@ public class HashGetAllCommandTest {
 
         DatabaseValue value = captor.getValue();
 
-        Map<String, String> map = value.getValue();
+        Map<SafeString, SafeString> map = value.getValue();
 
         assertThat(map.get(safeString("key1")), is(safeString("value1")));
         assertThat(map.get(safeString("key2")), is(safeString("value2")));

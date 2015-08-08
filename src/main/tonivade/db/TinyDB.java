@@ -446,12 +446,18 @@ public class TinyDB implements ITinyDB, IServerContext {
         if (options.has(help)) {
             parser.printHelpOn(System.out);
         } else {
-            TinyDB db = new TinyDB(
-                    options.valueOf(host), options.valueOf(port), parseConfig(options.has(persist)));
+            String optionHost = options.valueOf(host);
+            int optionPort = parsePort(options.valueOf(port));
+            TinyDBConfig optionPesistence = parseConfig(options.has(persist));
+            TinyDB db = new TinyDB(optionHost, optionPort, optionPesistence);
             db.start();
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
         }
+    }
+
+    private static int parsePort(Integer optionPort) {
+        return optionPort != null ? optionPort : DEFAULT_PORT;
     }
 
     private static TinyDBConfig parseConfig(boolean persist) {

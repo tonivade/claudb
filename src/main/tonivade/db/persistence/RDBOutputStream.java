@@ -5,7 +5,7 @@
 
 package tonivade.db.persistence;
 
-import static tonivade.db.persistence.Util.toByteArray;
+import static tonivade.db.persistence.ByteUtils.toByteArray;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.io.IOException;

@@ -12,7 +12,7 @@ import static tonivade.db.data.DatabaseValue.score;
 import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
-import static tonivade.db.persistence.Util.byteArrayToInt;
+import static tonivade.db.persistence.ByteUtils.byteArrayToInt;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.io.IOException;
@@ -126,7 +126,7 @@ public class RDBInputStream {
     }
 
     private long parseChecksum() throws IOException {
-        return Util.byteArrayToLong(read(Long.BYTES));
+        return ByteUtils.byteArrayToLong(read(Long.BYTES));
     }
 
     private int version() throws IOException {

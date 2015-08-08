@@ -19,6 +19,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(SetUnionCommand.class)
 public class SetUnionCommandTest {
@@ -27,7 +28,7 @@ public class SetUnionCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() throws Exception {
@@ -37,7 +38,7 @@ public class SetUnionCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(4));
 
@@ -54,7 +55,7 @@ public class SetUnionCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(3));
 

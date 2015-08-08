@@ -20,6 +20,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(HashKeysCommand.class)
 public class HashKeysCommandTest {
@@ -28,7 +29,7 @@ public class HashKeysCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() throws Exception {
@@ -37,7 +38,7 @@ public class HashKeysCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> keys = captor.getValue();
+        Collection<SafeString> keys = captor.getValue();
 
         assertThat(keys.size(), is(2));
         assertThat(keys.contains(safeString("a")), is(true));
