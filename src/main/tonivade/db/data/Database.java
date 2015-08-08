@@ -112,7 +112,7 @@ public class Database implements IDatabase, Runnable {
             }
         }
 
-        if (entry != null && !entry.getKey().isExpired()) {
+        if (entry != null && entry.getKey().equals(key) && !entry.getKey().isExpired()) {
             return entry.getValue();
         }
         return null;
