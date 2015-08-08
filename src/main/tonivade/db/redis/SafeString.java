@@ -93,4 +93,14 @@ public class SafeString implements Comparable<SafeString> {
         return Stream.of(strs).map((item) -> safeString(item)).collect(toList());
     }
 
+    public static SafeString append(SafeString stringA, SafeString stringB) {
+        Objects.nonNull(stringA);
+        Objects.nonNull(stringB);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(stringA.length() + stringB.length());
+        byteBuffer.put(stringA.getBytes());
+        byteBuffer.put(stringB.getBytes());
+        byteBuffer.rewind();
+        return new SafeString(byteBuffer);
+    }
+
 }
