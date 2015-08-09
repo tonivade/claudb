@@ -13,12 +13,12 @@ public class DatabaseKeyMatchers {
         return DatabaseKey.safeKey(safeString(str));
     }
 
-    public static DatabaseKey ttlKey(String str, long milis) {
-        return DatabaseKey.ttlKey(safeString(str), milis);
+    public static DatabaseKey safeKey(String str, long milis) {
+        return DatabaseKey.safeKey(safeString(str), milis);
     }
 
-    public static DatabaseKey ttlKey(String str, int seconds) {
-        return DatabaseKey.ttlKey(safeString(str), seconds);
+    public static DatabaseKey safeKey(String str, int seconds) {
+        return DatabaseKey.safeKey(safeString(str), seconds);
     }
 
     public static Matcher<DatabaseKey> isExpired() {

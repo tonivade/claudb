@@ -1,6 +1,6 @@
 package tonivade.db.command.string;
 
-import static tonivade.db.data.DatabaseKey.ttlKey;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -17,7 +17,7 @@ public class SetExpiredCommand implements ICommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            db.put(ttlKey(request.getParam(0), parseTtl(request.getParam(1))), string(request.getParam(2)));
+            db.put(safeKey(request.getParam(0), parseTtl(request.getParam(1))), string(request.getParam(2)));
             response.addSimpleStr(RESULT_OK);
         } catch (NumberFormatException e) {
             response.addError("ERR value is not an integer or out of range");

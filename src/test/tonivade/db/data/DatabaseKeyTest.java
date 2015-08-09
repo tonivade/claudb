@@ -9,7 +9,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
-import static tonivade.db.DatabaseKeyMatchers.ttlKey;
 
 import org.junit.Test;
 
@@ -21,7 +20,7 @@ public class DatabaseKeyTest {
         assertThat(nonExpiredKey.isExpired(), is(false));
         assertThat(nonExpiredKey.timeToLive(), is(-1L));
 
-        DatabaseKey expiredKey = ttlKey("hola", 1);
+        DatabaseKey expiredKey = safeKey("hola", 1);
         assertThat(expiredKey.isExpired(), is(false));
         assertThat(expiredKey.timeToLive(), is(greaterThan(0L)));
         Thread.sleep(1100);

@@ -14,16 +14,10 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
     private Long expiredAt;
     private SafeString value;
 
-    public DatabaseKey(SafeString value) {
-        this(value, 0);
-    }
-
-    public DatabaseKey(SafeString value, long ttl) {
+    public DatabaseKey(SafeString value, Long expiredAt) {
         super();
         this.value = value;
-        if (ttl > 0) {
-            this.expiredAt = System.currentTimeMillis() + ttl;
-        }
+        this.expiredAt = expiredAt;
     }
 
     public SafeString getValue() {
@@ -44,6 +38,10 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
             return ttl < 0 ? -2 : ttl;
         }
         return -1;
+    }
+
+    public Long expiredAt() {
+        return expiredAt;
     }
 
     @Override
@@ -87,15 +85,15 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
     }
 
     public static DatabaseKey safeKey(SafeString str) {
-        return new DatabaseKey(str);
+        return new DatabaseKey(str, null);
     }
 
-    public static DatabaseKey ttlKey(SafeString str, long milis) {
-        return new DatabaseKey(str, milis);
+    public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
+        return new DatabaseKey(str, System.currentTimeMillis() + ttlMillis);
     }
 
-    public static DatabaseKey ttlKey(SafeString str, int seconds) {
-        return new DatabaseKey(str, TimeUnit.SECONDS.toMillis(seconds));
+    public static DatabaseKey safeKey(SafeString str, int ttlSeconds) {
+        return safeKey(str, TimeUnit.SECONDS.toMillis(ttlSeconds));
     }
 
 }
