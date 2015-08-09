@@ -5,7 +5,8 @@
 
 package tonivade.db.data;
 
-import static tonivade.db.redis.SafeString.safeString;
+import java.util.concurrent.TimeUnit;
+
 import tonivade.db.redis.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
@@ -35,6 +36,14 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
             return now > expiredAt;
         }
         return false;
+    }
+
+    public long timeToLive() {
+        if (expiredAt != null) {
+            long ttl = expiredAt - System.currentTimeMillis();
+            return ttl < 0 ? -2 : ttl;
+        }
+        return -1;
     }
 
     @Override
@@ -81,16 +90,12 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
         return new DatabaseKey(str);
     }
 
-    public static DatabaseKey ttlKey(SafeString str, long ttl) {
-        return new DatabaseKey(str, ttl);
+    public static DatabaseKey ttlKey(SafeString str, long milis) {
+        return new DatabaseKey(str, milis);
     }
 
-    public static DatabaseKey safeKey(String str) {
-        return new DatabaseKey(safeString(str));
-    }
-
-    public static DatabaseKey ttlKey(String str, long ttl) {
-        return new DatabaseKey(safeString(str), ttl);
+    public static DatabaseKey ttlKey(SafeString str, int seconds) {
+        return new DatabaseKey(str, TimeUnit.SECONDS.toMillis(seconds));
     }
 
 }

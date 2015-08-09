@@ -130,10 +130,6 @@ public class DatabaseValue {
                 unmodifiableList(Stream.of(values).collect(toList())));
     }
 
-    public static DatabaseValue listFromString(String ... values) {
-        return list(SafeString.safeAsList(values));
-    }
-
     public static DatabaseValue set(Collection<SafeString> values) {
         return new DatabaseValue(
                 DataType.SET,
@@ -144,10 +140,6 @@ public class DatabaseValue {
         return new DatabaseValue(
                 DataType.SET,
                 unmodifiableSet(Stream.of(values).collect(toSet())));
-    }
-
-    public static DatabaseValue setFromString(String ... values) {
-        return set(SafeString.safeAsList(values));
     }
 
     public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
@@ -180,16 +172,8 @@ public class DatabaseValue {
         return new SimpleEntry<SafeString, SafeString>(key, value);
     }
 
-    public static Entry<SafeString, SafeString> entry(String key, String value) {
-        return new SimpleEntry<SafeString, SafeString>(safeString(key), safeString(value));
-    }
-
     public static Entry<Double, SafeString> score(double score, SafeString value) {
         return new SimpleEntry<Double, SafeString>(score, value);
-    }
-
-    public static Entry<Double, SafeString> score(double score, String value) {
-        return new SimpleEntry<Double, SafeString>(score, safeString(value));
     }
 
     private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {

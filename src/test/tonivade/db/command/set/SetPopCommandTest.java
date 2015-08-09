@@ -9,8 +9,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Matchers.notNull;
-import static tonivade.db.data.DatabaseKey.safeKey;
-import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.DatabaseKeyMatchers.safeKey;
+import static tonivade.db.DatabaseValueMatchers.set;
 
 import java.util.Set;
 
@@ -30,7 +30,7 @@ public class SetPopCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", setFromString("a", "b", "c"))
+        rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
             .verify().addBulkStr(notNull(SafeString.class));

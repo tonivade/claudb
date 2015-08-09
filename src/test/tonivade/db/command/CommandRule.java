@@ -8,7 +8,7 @@ package tonivade.db.command;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static tonivade.db.data.DatabaseKey.safeKey;
+import static tonivade.db.DatabaseKeyMatchers.safeKey;
 import static tonivade.db.redis.SafeString.safeAsList;
 import static tonivade.db.redis.SafeString.safeString;
 
@@ -25,6 +25,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.redis.SafeString;
@@ -128,8 +129,13 @@ public class CommandRule implements TestRule {
         return this;
     }
 
-    public CommandRule assertThat(String key, Matcher<DatabaseValue> matcher) {
+    public CommandRule assertValue(String key, Matcher<DatabaseValue> matcher) {
         Assert.assertThat(database.get(safeKey(key)), matcher);
+        return this;
+    }
+
+    public CommandRule assertKey(String key, Matcher<DatabaseKey> matcher) {
+        Assert.assertThat(database.getKey(safeKey(key)), matcher);
         return this;
     }
 

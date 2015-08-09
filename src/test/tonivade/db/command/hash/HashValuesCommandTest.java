@@ -7,7 +7,7 @@ package tonivade.db.command.hash;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.redis.SafeString.safeString;
 

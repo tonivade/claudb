@@ -6,7 +6,7 @@
 package tonivade.db.command.zset;
 
 import static org.hamcrest.CoreMatchers.is;
-import static tonivade.db.data.DatabaseValue.score;
+import static tonivade.db.DatabaseValueMatchers.score;
 import static tonivade.db.data.DatabaseValue.zset;
 
 import org.junit.Rule;
@@ -25,21 +25,21 @@ public class SortedSetAddCommandTest {
     public void testExecute() {
         rule.withParams("key", "1", "one")
             .execute()
-            .assertThat("key", is(zset(score(1.0F, "one"))))
+            .assertValue("key", is(zset(score(1.0, "one"))))
             .verify().addInt(1);
 
         rule.withParams("key", "2", "two")
             .execute()
-            .assertThat("key", is(zset(
-                    score(1.0F, "one"),
-                    score(2.0F, "two"))))
+            .assertValue("key", is(zset(
+                    score(1.0, "one"),
+                    score(2.0, "two"))))
             .verify().addInt(1);
 
         rule.withParams("key", "2", "one")
             .execute()
-            .assertThat("key", is(zset(
-                    score(1.0F, "one"),
-                    score(2.0F, "two"))))
+            .assertValue("key", is(zset(
+                    score(1.0, "one"),
+                    score(2.0, "two"))))
             .verify().addInt(0);
     }
 

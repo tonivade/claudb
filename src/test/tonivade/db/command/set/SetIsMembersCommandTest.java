@@ -5,7 +5,7 @@
 
 package tonivade.db.command.set;
 
-import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.DatabaseValueMatchers.set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,12 +21,12 @@ public class SetIsMembersCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", setFromString("a", "b", "c"))
+        rule.withData("key", set("a", "b", "c"))
             .withParams("key", "a")
             .execute()
             .verify().addInt(true);
 
-        rule.withData("key", setFromString("a", "b", "c"))
+        rule.withData("key", set("a", "b", "c"))
             .withParams("key", "z")
             .execute()
             .verify().addInt(false);

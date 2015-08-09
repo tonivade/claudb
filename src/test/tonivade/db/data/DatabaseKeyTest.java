@@ -6,7 +6,10 @@
 package tonivade.db.data;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static tonivade.db.DatabaseKeyMatchers.safeKey;
+import static tonivade.db.DatabaseKeyMatchers.ttlKey;
 
 import org.junit.Test;
 
@@ -14,13 +17,16 @@ public class DatabaseKeyTest {
 
     @Test
     public void testExpired() throws Exception {
-        DatabaseKey nonExpiredKey = DatabaseKey.safeKey("hola");
+        DatabaseKey nonExpiredKey = safeKey("hola");
         assertThat(nonExpiredKey.isExpired(), is(false));
+        assertThat(nonExpiredKey.timeToLive(), is(-1L));
 
-        DatabaseKey expiredKey = DatabaseKey.ttlKey("hola", 500);
+        DatabaseKey expiredKey = ttlKey("hola", 1);
         assertThat(expiredKey.isExpired(), is(false));
-        Thread.sleep(1000);
+        assertThat(expiredKey.timeToLive(), is(greaterThan(0L)));
+        Thread.sleep(1100);
         assertThat(expiredKey.isExpired(), is(true));
+        assertThat(expiredKey.timeToLive(), is(-2L));
     }
 
 }

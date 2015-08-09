@@ -8,12 +8,12 @@ package tonivade.db.persistence;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseKey.safeKey;
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseKeyMatchers.safeKey;
+import static tonivade.db.DatabaseValueMatchers.entry;
+import static tonivade.db.DatabaseValueMatchers.list;
+import static tonivade.db.DatabaseValueMatchers.score;
+import static tonivade.db.DatabaseValueMatchers.set;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.db.data.DatabaseValue.listFromString;
-import static tonivade.db.data.DatabaseValue.score;
-import static tonivade.db.data.DatabaseValue.setFromString;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toByteArray;
@@ -46,8 +46,8 @@ public class RDBInputStreamTest {
         assertThat(databases.size(), is(5));
 
         assertDB(databases.get(0), string("test"));
-        assertDB(databases.get(1), listFromString("test"));
-        assertDB(databases.get(2), setFromString("test"));
+        assertDB(databases.get(1), list("test"));
+        assertDB(databases.get(2), set("test"));
         assertDB(databases.get(3), zset(score(1.0, "test")));
         assertDB(databases.get(4), hash(entry("1", "test")));
     }

@@ -7,7 +7,7 @@ package tonivade.db.command.list;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.listFromString;
+import static tonivade.db.DatabaseValueMatchers.list;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class ListRangeCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", listFromString("a", "b", "c"))
+        rule.withData("key", list("a", "b", "c"))
             .withParams("key", "0", "-1")
             .execute()
             .verify().addArray(captor.capture());

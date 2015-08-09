@@ -5,7 +5,7 @@
 
 package tonivade.db.command.zset;
 
-import static tonivade.db.data.DatabaseValue.score;
+import static tonivade.db.DatabaseValueMatchers.score;
 import static tonivade.db.data.DatabaseValue.zset;
 
 import org.junit.Rule;
@@ -22,7 +22,7 @@ public class SortedSetCardinalityCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", zset(score(1.0F, "a"), score(2.0F, "b"), score(3.0F, "c")))
+        rule.withData("key", zset(score(1.0, "a"), score(2.0, "b"), score(3.0, "c")))
             .withParams("key")
             .execute()
             .verify().addInt(3);

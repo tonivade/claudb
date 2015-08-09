@@ -5,7 +5,7 @@
 
 package tonivade.db.command.hash;
 
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.redis.SafeString.safeString;
 

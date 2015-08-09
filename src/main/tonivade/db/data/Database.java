@@ -100,22 +100,27 @@ public class Database implements IDatabase, Runnable {
         Entry<DatabaseKey, DatabaseValue> entry = null;
 
         if (key instanceof DatabaseKey) {
-            long optimistic = lock.tryOptimisticRead();
-            entry = cache.ceilingEntry((DatabaseKey) key);
-            if (!lock.validate(optimistic)) {
-                long stamp = lock.readLock();
-                try {
-                    entry = cache.ceilingEntry((DatabaseKey) key);
-                } finally {
-                    lock.unlockRead(stamp);
-                }
+            entry = getEntry((DatabaseKey) key);
+        }
+
+        return (entry != null && !entry.getKey().isExpired()) ? entry.getValue() : null;
+    }
+
+    private Entry<DatabaseKey, DatabaseValue> getEntry(DatabaseKey key) {
+        Entry<DatabaseKey, DatabaseValue> entry;
+
+        long optimistic = lock.tryOptimisticRead();
+        entry = cache.ceilingEntry(key);
+        if (!lock.validate(optimistic)) {
+            long stamp = lock.readLock();
+            try {
+                entry = cache.ceilingEntry(key);
+            } finally {
+                lock.unlockRead(stamp);
             }
         }
 
-        if (entry != null && entry.getKey().equals(key) && !entry.getKey().isExpired()) {
-            return entry.getValue();
-        }
-        return null;
+        return entry != null && entry.getKey().equals(key) ? entry : null;
     }
 
     @Override
@@ -234,6 +239,28 @@ public class Database implements IDatabase, Runnable {
         } finally {
             lock.unlockWrite(stamp);
         }
+    }
+
+    @Override
+    public DatabaseKey overrideKey(DatabaseKey key) {
+        Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
+
+        if (entry != null) {
+            long stamp = lock.writeLock();
+            try {
+                cache.put(key, entry.getValue());
+            } finally {
+                lock.unlockWrite(stamp);
+            }
+        }
+
+        return entry != null ? entry.getKey() : null;
+    }
+
+    @Override
+    public DatabaseKey getKey(DatabaseKey key) {
+        Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
+        return entry != null ? entry.getKey() : null;
     }
 
 }

@@ -5,7 +5,7 @@
 
 package tonivade.db.command.set;
 
-import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.DatabaseValueMatchers.set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class SetCardinalityCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", setFromString("a", "b", "c"))
+        rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
             .verify().addInt(3);

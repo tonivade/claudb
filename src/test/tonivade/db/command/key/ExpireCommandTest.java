@@ -3,9 +3,10 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.string;
+package tonivade.db.command.key;
 
 import static org.hamcrest.CoreMatchers.is;
+import static tonivade.db.DatabaseKeyMatchers.isNotExpired;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
@@ -14,18 +15,24 @@ import org.junit.Test;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 
-@CommandUnderTest(SetCommand.class)
-public class SetCommandTest {
+@CommandUnderTest(ExpireCommand.class)
+public class ExpireCommandTest {
 
     @Rule
     public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() {
-        rule.withParams("a", "1")
+        rule.withData("test", string("value"))
+            .withParams("test", "10")
             .execute()
-            .assertValue("a", is(string("1")))
-            .verify().addSimpleStr("OK");
+            .assertKey("test", isNotExpired())
+            .assertValue("test", is(string("value")))
+            .verify().addInt(true);
+
+        rule.withParams("notExists", "10")
+            .execute()
+            .verify().addInt(false);
     }
 
 }

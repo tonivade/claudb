@@ -3,10 +3,9 @@
  * Distributed under the terms of the MIT License
  */
 
-package tonivade.db.command.hash;
+package tonivade.db.command.key;
 
-import static tonivade.db.DatabaseValueMatchers.entry;
-import static tonivade.db.data.DatabaseValue.hash;
+import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,16 +13,20 @@ import org.junit.Test;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 
-@CommandUnderTest(HashSetCommand.class)
-public class HashSetCommandTest {
+@CommandUnderTest(PersistCommand.class)
+public class PersistCommandTest {
 
     @Rule
     public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() {
-        rule.withData("a", hash(entry("key", "value")))
-            .withParams("a", "key", "value")
+        rule.withData("test", string("value"))
+            .withParams("test")
+            .execute()
+            .verify().addInt(true);
+
+        rule.withParams("notExists", "10")
             .execute()
             .verify().addInt(false);
     }
