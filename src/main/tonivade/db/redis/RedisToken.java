@@ -7,7 +7,7 @@ package tonivade.db.redis;
 
 import static java.util.Objects.requireNonNull;
 
-public class RedisToken {
+public abstract class RedisToken {
 
     private static final String SEPARATOR = "=>";
 
@@ -17,7 +17,7 @@ public class RedisToken {
 
     private RedisToken(RedisTokenType type, Object value) {
         this.type = requireNonNull(type);
-        this.value = value;
+        this.value = requireNonNull(value);
     }
 
     public RedisTokenType getType() {
@@ -32,6 +32,13 @@ public class RedisToken {
     @Override
     public String toString() {
         return type + SEPARATOR + value;
+    }
+
+    public static class NullRedisToken extends RedisToken {
+
+        public NullRedisToken() {
+            super(RedisTokenType.UNKNOWN, "");
+        }
     }
 
     public static class UnknownRedisToken extends RedisToken {
@@ -66,7 +73,7 @@ public class RedisToken {
 
     public static class ArrayRedisToken extends RedisToken {
         public ArrayRedisToken(RedisArray value) {
-            super(RedisTokenType.ARRAY, requireNonNull(value));
+            super(RedisTokenType.ARRAY, value);
         }
 
         public int size() {

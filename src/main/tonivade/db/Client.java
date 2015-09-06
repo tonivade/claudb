@@ -5,8 +5,7 @@
 
 package tonivade.db;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -20,6 +19,7 @@ public class Client implements ITinyDBCallback {
     private static final String QUIT = "quit";
     private static final String END_OF_LINE = "\r\n";
     private static final String PROMPT = "> ";
+
     private BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
 
      @Override
@@ -61,18 +61,22 @@ public class Client implements ITinyDBCallback {
             TinyDBClient client = new TinyDBClient(optionHost, optionPort, callback);
             client.start();
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-            String line = null;
-            do {
-                System.out.print(PROMPT);
-                line = reader.readLine();
-                client.send(line + END_OF_LINE);
-                System.out.println(callback.response());
-            } while(line != null && !line.equalsIgnoreCase(QUIT));
-
-            client.stop();
+            prompt();
+            try (Scanner scanner = new Scanner(System.in)) {
+                for(boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
+                    String line = scanner.nextLine();
+                    client.send(line + END_OF_LINE);
+                    System.out.println(callback.response());
+                    quit = line.equalsIgnoreCase(QUIT);
+                }
+            } finally {
+                client.stop();
+            }
         }
+    }
+
+    private static void prompt() {
+        System.out.print(PROMPT);
     }
 
     private static int parsePort(Integer optionPort) {
