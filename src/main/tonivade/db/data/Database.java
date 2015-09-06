@@ -248,6 +248,7 @@ public class Database implements IDatabase, Runnable {
         if (entry != null) {
             long stamp = lock.writeLock();
             try {
+                cache.remove(key);
                 cache.put(key, entry.getValue());
             } finally {
                 lock.unlockWrite(stamp);

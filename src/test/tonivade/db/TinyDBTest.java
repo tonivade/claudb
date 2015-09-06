@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,20 +61,20 @@ public class TinyDBTest {
             p.del("a");
             p.get("a");
 
-            List<Object> result = p.syncAndReturnAll();
-            assertThat(result.get(0), is("PONG"));
-            assertThat(result.get(1), is("Hi!"));
-            assertThat(result.get(2), is("OK"));
-            assertThat(result.get(3), is(1L));
-            assertThat(result.get(4), is(0L));
-            assertThat(result.get(5), is(true));
-            assertThat(result.get(6), is(false));
-            assertThat(result.get(7), is("1"));
-            assertThat(result.get(8), is(nullValue()));
-            assertThat(result.get(9), is("1"));
-            assertThat(result.get(10), is("2"));
-            assertThat(result.get(11), is(1L));
-            assertThat(result.get(12), is(nullValue()));
+            Iterator<Object> result = p.syncAndReturnAll().iterator();
+            assertThat(result.next(), is("PONG"));
+            assertThat(result.next(), is("Hi!"));
+            assertThat(result.next(), is("OK"));
+            assertThat(result.next(), is(1L));
+            assertThat(result.next(), is(0L));
+            assertThat(result.next(), is(true));
+            assertThat(result.next(), is(false));
+            assertThat(result.next(), is("1"));
+            assertThat(result.next(), is(nullValue()));
+            assertThat(result.next(), is("1"));
+            assertThat(result.next(), is("2"));
+            assertThat(result.next(), is(1L));
+            assertThat(result.next(), is(nullValue()));
 
             jedis.quit();
         }

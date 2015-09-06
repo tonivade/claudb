@@ -6,6 +6,7 @@
 package tonivade.db.data;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
@@ -49,6 +50,15 @@ public class DatabaseTest {
 
         assertThat(entry.getKey(), is(safeKey("a")));
         assertThat(entry.getValue(), is(string("value")));
+    }
+
+    @Test
+    public void testExpire() throws Exception {
+        database.put(safeKey("a"), string("1"));
+        database.overrideKey(safeKey("a", 10));
+        database.getKey(safeKey(""));
+
+        assertThat(database.getKey(safeKey("a")).expiredAt(), is(greaterThan(0L)));
     }
 
 }
