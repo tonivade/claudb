@@ -6,7 +6,6 @@
 package tonivade.db;
 
 import static java.util.Collections.emptyList;
-import static tonivade.db.TinyDBConfig.withPersistence;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
 import static tonivade.db.redis.SafeString.safeAsList;
 import static tonivade.db.redis.SafeString.safeString;
@@ -40,9 +39,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 import tonivade.db.command.CommandSuite;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -65,12 +61,6 @@ import tonivade.db.redis.RedisTokenType;
 import tonivade.db.redis.RequestDecoder;
 import tonivade.db.redis.SafeString;
 
-/**
- * Java Redis Implementation
- *
- * @author tomby
- *
- */
 public class TinyDB implements ITinyDB, IServerContext {
 
     private static final Charset DEFAULT_CHATSET = Charset.forName("UTF-8");
@@ -175,9 +165,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         LOGGER.info(() -> "server stopped");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void channel(SocketChannel channel) {
         LOGGER.fine(() -> "new channel: " + sourceKey(channel));
@@ -186,9 +173,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         channel.pipeline().addLast(connectionHandler);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void connected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
@@ -198,9 +182,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         getSession(sourceKey, ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void disconnected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
@@ -221,9 +202,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void receive(ChannelHandlerContext ctx, RedisToken message) {
         String sourceKey = sourceKey(ctx.channel());
@@ -366,9 +344,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IDatabase getAdminDatabase() {
         return admin;
@@ -379,17 +354,11 @@ public class TinyDB implements ITinyDB, IServerContext {
         return databases.get(i);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getPort() {
         return port;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getClients() {
         return clients.size();
@@ -438,42 +407,6 @@ public class TinyDB implements ITinyDB, IServerContext {
     @Override
     public void setMaster(boolean master) {
         this.master = master;
-    }
-
-    public static void main(String[] args) throws Exception {
-        OptionParser parser = new OptionParser();
-        OptionSpec<Void> help = parser.accepts("help", "print help");
-        OptionSpec<Void> persist = parser.accepts("P", "with persistence");
-        OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class).defaultsTo(DEFAULT_HOST);
-        OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class).defaultsTo(DEFAULT_PORT);
-
-        OptionSet options = parser.parse(args);
-
-        if (options.has(help)) {
-            parser.printHelpOn(System.out);
-        } else {
-            String optionHost = options.valueOf(host);
-            int optionPort = parsePort(options.valueOf(port));
-            TinyDBConfig optionPesistence = parseConfig(options.has(persist));
-            TinyDB db = new TinyDB(optionHost, optionPort, optionPesistence);
-            db.start();
-
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
-        }
-    }
-
-    private static int parsePort(Integer optionPort) {
-        return optionPort != null ? optionPort : DEFAULT_PORT;
-    }
-
-    private static TinyDBConfig parseConfig(boolean persist) {
-        TinyDBConfig config = null;
-        if (persist) {
-            config = withPersistence();
-        } else {
-            config = withoutPersistence();
-        }
-        return config;
     }
 
 }

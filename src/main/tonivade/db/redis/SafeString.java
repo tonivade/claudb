@@ -5,12 +5,12 @@
 
 package tonivade.db.redis;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class SafeString implements Comparable<SafeString> {
@@ -21,14 +21,16 @@ public class SafeString implements Comparable<SafeString> {
 
     private ByteBuffer buffer;
 
+    public SafeString() {
+        this.buffer = ByteBuffer.allocate(0);
+    }
+
     public SafeString(byte[] bytes) {
-        Objects.nonNull(bytes);
-        this.buffer = ByteBuffer.wrap(bytes);
+        this.buffer = ByteBuffer.wrap(requireNonNull(bytes));
     }
 
     public SafeString(ByteBuffer buffer) {
-        Objects.nonNull(buffer);
-        this.buffer = buffer;
+        this.buffer = requireNonNull(buffer);
     }
 
     public byte[] getBytes() {
@@ -94,19 +96,16 @@ public class SafeString implements Comparable<SafeString> {
     }
 
     public static SafeString safeString(String str) {
-        Objects.nonNull(str);
-        return new SafeString(DEFAULT_CHARSET.encode(str));
+        return new SafeString(DEFAULT_CHARSET.encode(requireNonNull(str)));
     }
 
     public static List<SafeString> safeAsList(String ... strs) {
-        Objects.nonNull(strs);
-        return Stream.of(strs).map((item) -> safeString(item)).collect(toList());
+        return Stream.of(requireNonNull(strs)).map((item) -> safeString(item)).collect(toList());
     }
 
     public static SafeString append(SafeString stringA, SafeString stringB) {
-        Objects.nonNull(stringA);
-        Objects.nonNull(stringB);
-        ByteBuffer byteBuffer = ByteBuffer.allocate(stringA.length() + stringB.length());
+        ByteBuffer byteBuffer = ByteBuffer.allocate(
+                requireNonNull(stringA).length() + requireNonNull(stringB).length());
         byteBuffer.put(stringA.getBytes());
         byteBuffer.put(stringB.getBytes());
         byteBuffer.rewind();
