@@ -14,7 +14,6 @@ import java.nio.charset.Charset;
 import tonivade.db.redis.RedisToken.ArrayRedisToken;
 import tonivade.db.redis.RedisToken.ErrorRedisToken;
 import tonivade.db.redis.RedisToken.IntegerRedisToken;
-import tonivade.db.redis.RedisToken.NullRedisToken;
 import tonivade.db.redis.RedisToken.StatusRedisToken;
 import tonivade.db.redis.RedisToken.StringRedisToken;
 import tonivade.db.redis.RedisToken.UnknownRedisToken;
@@ -58,7 +57,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
     private RedisToken parseResponse(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
         String line = readLine(ctx, buffer);
 
-        RedisToken token = new NullRedisToken();
+        RedisToken token = null;
 
         if (line != null) {
             if (line.startsWith(ARRAY_PREFIX)) {

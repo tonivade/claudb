@@ -8,6 +8,8 @@ package tonivade.db;
 import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -16,6 +18,9 @@ import tonivade.db.redis.RedisToken;
 
 public class Client implements ITinyDBCallback {
 
+    private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+
+    private static final String CHARSET_NAME = "UTF-8";
     private static final String QUIT = "quit";
     private static final String END_OF_LINE = "\r\n";
     private static final String PROMPT = "> ";
@@ -34,7 +39,11 @@ public class Client implements ITinyDBCallback {
 
      @Override
     public void onMessage(RedisToken token) {
-         responses.offer(token);
+        try {
+            responses.put(token);
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.WARNING, "message not processed", e);
+        }
     }
 
     public RedisToken response() throws InterruptedException {
@@ -62,12 +71,14 @@ public class Client implements ITinyDBCallback {
             client.start();
 
             prompt();
-            try (Scanner scanner = new Scanner(System.in)) {
+            try (Scanner scanner = new Scanner(System.in, CHARSET_NAME)) {
                 for(boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
                     String line = scanner.nextLine();
-                    client.send(line + END_OF_LINE);
-                    System.out.println(callback.response());
-                    quit = line.equalsIgnoreCase(QUIT);
+                    if (!line.isEmpty()) {
+                        client.send(line + END_OF_LINE);
+                        System.out.println(callback.response());
+                        quit = line.equalsIgnoreCase(QUIT);
+                    }
                 }
             } finally {
                 client.stop();

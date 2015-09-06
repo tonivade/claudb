@@ -34,13 +34,6 @@ public abstract class RedisToken {
         return type + SEPARATOR + value;
     }
 
-    public static class NullRedisToken extends RedisToken {
-
-        public NullRedisToken() {
-            super(RedisTokenType.UNKNOWN, "");
-        }
-    }
-
     public static class UnknownRedisToken extends RedisToken {
         public UnknownRedisToken(String value) {
             super(RedisTokenType.UNKNOWN, value);

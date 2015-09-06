@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.netty:netty-all:4.0.23.Final'
+    compile 'io.netty:netty-all:4.0.31.Final'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
     testCompile 'junit:junit:4.10'
     testCompile 'redis.clients:jedis:2.6.3'

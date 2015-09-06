@@ -34,9 +34,9 @@ import tonivade.db.redis.SafeString;
 
 public class RDBInputStream {
 
-    private static final int TO_MILLIS = 1000;
-
     private static final SafeString REDIS_PREAMBLE = safeString("REDIS");
+
+    private static final long TO_MILLIS = 1000L;
 
     private static final int TWO_BYTES_LENGTH = 0x4000;
     private static final int ONE_BYTE_LENGTH = 0x40;
