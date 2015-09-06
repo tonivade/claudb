@@ -93,7 +93,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
             token = new StringRedisToken(new SafeString(bulk.nioBuffer()));
             readLine(ctx, buffer);
         } else {
-            token = new StringRedisToken(new SafeString());
+            token = new StringRedisToken(SafeString.EMPTY_STRING);
         }
         return token;
     }

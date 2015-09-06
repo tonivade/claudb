@@ -28,7 +28,6 @@ public class RDBOutputStream {
 
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    // REDIS
     private static final byte[] REDIS = safeString("REDIS").getBytes();
 
     private static final int TTL_MILISECONDS = 0xFC;

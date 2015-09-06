@@ -21,10 +21,6 @@ public class SafeString implements Comparable<SafeString> {
 
     private ByteBuffer buffer;
 
-    public SafeString() {
-        this.buffer = ByteBuffer.allocate(0);
-    }
-
     public SafeString(byte[] bytes) {
         this.buffer = ByteBuffer.wrap(requireNonNull(bytes));
     }

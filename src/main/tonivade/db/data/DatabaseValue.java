@@ -47,24 +47,15 @@ public class DatabaseValue {
         this.value = value;
     }
 
-    /**
-     * @return the type
-     */
     public DataType getType() {
         return type;
     }
 
-    /**
-     * @return the value
-     */
     @SuppressWarnings("unchecked")
     public <T> T getValue() {
         return (T) value;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -74,9 +65,6 @@ public class DatabaseValue {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -102,9 +90,6 @@ public class DatabaseValue {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "DatabaseValue [type=" + type + ", value=" + value + "]";

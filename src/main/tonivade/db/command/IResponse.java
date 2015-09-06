@@ -34,7 +34,6 @@ public interface IResponse {
 
     public void exit();
 
-    boolean isExit();
-
+    public boolean isExit();
 
 }
