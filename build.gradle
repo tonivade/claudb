@@ -44,9 +44,10 @@ repositories {
 dependencies {
     compile 'io.netty:netty-all:4.0.31.Final'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
-    testCompile 'junit:junit:4.10'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    testCompile 'junit:junit:4.12'
     testCompile 'redis.clients:jedis:2.6.3'
-    testCompile 'org.mockito:mockito-all:1.9.5'
+    testCompile 'org.mockito:mockito-all:1.10.19'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
 }
 

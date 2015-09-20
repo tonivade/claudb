@@ -13,13 +13,16 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class SafeString implements Comparable<SafeString> {
 
     public static final SafeString EMPTY_STRING = new SafeString(new byte[] {});
 
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    private ByteBuffer buffer;
+    private final ByteBuffer buffer;
 
     public SafeString(byte[] bytes) {
         this.buffer = ByteBuffer.wrap(requireNonNull(bytes));
@@ -46,10 +49,7 @@ public class SafeString implements Comparable<SafeString> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + buffer.hashCode();
-        return result;
+        return new HashCodeBuilder().append(buffer).toHashCode();
     }
 
     @Override
@@ -64,10 +64,8 @@ public class SafeString implements Comparable<SafeString> {
             return false;
         }
         SafeString other = (SafeString) obj;
-        if (!buffer.equals(other.buffer)) {
-            return false;
-        }
-        return true;
+
+        return new EqualsBuilder().append(this.buffer, other.buffer).isEquals();
     }
 
     @Override

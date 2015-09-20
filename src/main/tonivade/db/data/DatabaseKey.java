@@ -7,12 +7,15 @@ package tonivade.db.data;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import tonivade.db.redis.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
 
-    private Long expiredAt;
-    private SafeString value;
+    private final Long expiredAt;
+    private final SafeString value;
 
     public DatabaseKey(SafeString value, Long expiredAt) {
         super();
@@ -51,10 +54,7 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return new HashCodeBuilder().append(value).toHashCode();
     }
 
     @Override
@@ -69,14 +69,7 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
             return false;
         }
         DatabaseKey other = (DatabaseKey) obj;
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder().append(this.value, other.value).isEquals();
     }
 
     @Override

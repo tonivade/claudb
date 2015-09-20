@@ -23,6 +23,9 @@ import java.util.NavigableSet;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import tonivade.db.redis.SafeString;
 
 
@@ -58,11 +61,10 @@ public class DatabaseValue {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return new HashCodeBuilder()
+            .append(type)
+            .append(value)
+            .toHashCode();
     }
 
     @Override
@@ -77,17 +79,10 @@ public class DatabaseValue {
             return false;
         }
         DatabaseValue other = (DatabaseValue) obj;
-        if (type != other.type) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return new EqualsBuilder()
+            .append(this.type, other.type)
+            .append(this.value, other.value)
+            .isEquals();
     }
 
     @Override
