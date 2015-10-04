@@ -157,15 +157,15 @@ public class DatabaseValue {
     }
 
     private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {
-        return toCollection(() -> new LinkedList<>());
+        return toCollection(LinkedList::new);
     }
 
     private static Collector<SafeString, ?, LinkedHashSet<SafeString>> toSet() {
-        return toCollection(() -> new LinkedHashSet<>());
+        return toCollection(LinkedHashSet::new);
     }
 
     private static Collector<Entry<Double, SafeString>, ?, NavigableSet<Entry<Double, SafeString>>> toSortedSet() {
-        return toCollection(() -> new SortedSet());
+        return toCollection(SortedSet::new);
     }
 
     private static Collector<Entry<SafeString, SafeString>, ?, Map<SafeString, SafeString>> toHash() {
