@@ -11,10 +11,8 @@ import static java.util.stream.Collectors.toList;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class SafeString implements Comparable<SafeString> {
 
@@ -49,7 +47,7 @@ public class SafeString implements Comparable<SafeString> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(buffer).toHashCode();
+        return Objects.hash(buffer);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class SafeString implements Comparable<SafeString> {
         }
         SafeString other = (SafeString) obj;
 
-        return new EqualsBuilder().append(this.buffer, other.buffer).isEquals();
+        return Objects.equals(this.buffer, other.buffer);
     }
 
     @Override

@@ -20,11 +20,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import tonivade.db.redis.SafeString;
 
@@ -61,10 +59,7 @@ public class DatabaseValue {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(type)
-            .append(value)
-            .toHashCode();
+        return Objects.hash(type, value);
     }
 
     @Override
@@ -79,10 +74,7 @@ public class DatabaseValue {
             return false;
         }
         DatabaseValue other = (DatabaseValue) obj;
-        return new EqualsBuilder()
-            .append(this.type, other.type)
-            .append(this.value, other.value)
-            .isEquals();
+        return Objects.equals(this.type, other.type) && Objects.equals(this.value, other.value);
     }
 
     @Override

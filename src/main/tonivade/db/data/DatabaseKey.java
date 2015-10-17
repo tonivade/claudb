@@ -5,10 +5,8 @@
 
 package tonivade.db.data;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import tonivade.db.redis.SafeString;
 
@@ -54,7 +52,7 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(value).toHashCode();
+        return Objects.hash(value);
     }
 
     @Override
@@ -69,7 +67,7 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
             return false;
         }
         DatabaseKey other = (DatabaseKey) obj;
-        return new EqualsBuilder().append(this.value, other.value).isEquals();
+        return Objects.equals(this.value, other.value);
     }
 
     @Override
