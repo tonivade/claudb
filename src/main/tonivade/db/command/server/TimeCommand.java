@@ -5,9 +5,10 @@
 
 package tonivade.db.command.server;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.Clock;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import tonivade.db.command.ICommand;
@@ -27,8 +28,7 @@ public class TimeCommand implements ICommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         long currentTimeMillis = Clock.systemDefaultZone().millis();
         List<String> result = Stream.of(
-                seconds(currentTimeMillis), microseconds(currentTimeMillis)).collect(
-                        Collectors.toList());
+                seconds(currentTimeMillis), microseconds(currentTimeMillis)).collect(toList());
         response.addArray(result);
     }
 

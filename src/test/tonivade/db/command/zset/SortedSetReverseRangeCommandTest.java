@@ -21,6 +21,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(SortedSetReverseRangeCommand.class)
 public class SortedSetReverseRangeCommandTest {
@@ -29,7 +30,7 @@ public class SortedSetReverseRangeCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() throws Exception {
@@ -38,11 +39,11 @@ public class SortedSetReverseRangeCommandTest {
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> array = captor.getValue();
+        Collection<SafeString> array = captor.getValue();
 
         assertThat(array.size(), is(3));
 
-        Iterator<String> iter = array.iterator();
+        Iterator<SafeString> iter = array.iterator();
 
         assertThat(iter.next(), is(safeString("c")));
         assertThat(iter.next(), is(safeString("b")));

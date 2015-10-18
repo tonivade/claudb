@@ -12,6 +12,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.equalizer.Equalizer.equalizer;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -64,17 +65,10 @@ public class DatabaseValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DatabaseValue other = (DatabaseValue) obj;
-        return Objects.equals(this.type, other.type) && Objects.equals(this.value, other.value);
+        return equalizer(this)
+                .append((one, other) -> Objects.equals(one.type, other.type))
+                .append((one, other) -> Objects.equals(one.value, other.value))
+                    .applyTo(obj);
     }
 
     @Override

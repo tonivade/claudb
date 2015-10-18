@@ -7,6 +7,7 @@ package tonivade.db.redis;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static tonivade.equalizer.Equalizer.equalizer;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -52,18 +53,9 @@ public class SafeString implements Comparable<SafeString> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        SafeString other = (SafeString) obj;
-
-        return Objects.equals(this.buffer, other.buffer);
+        return equalizer(this)
+                .append((one, other) -> Objects.equals(one.buffer, other.buffer))
+                    .applyTo(obj);
     }
 
     @Override

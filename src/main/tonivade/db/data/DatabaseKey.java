@@ -5,6 +5,8 @@
 
 package tonivade.db.data;
 
+import static tonivade.equalizer.Equalizer.equalizer;
+
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -57,17 +59,9 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DatabaseKey other = (DatabaseKey) obj;
-        return Objects.equals(this.value, other.value);
+        return equalizer(this)
+                    .append((one, other) -> Objects.equals(one.value, other.value))
+                        .applyTo(obj);
     }
 
     @Override
