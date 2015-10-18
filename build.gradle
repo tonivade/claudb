@@ -2,14 +2,20 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'com.bmuschko.nexus'
+
+group = 'tonivade'
+version = '0.4.2'
 
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
@@ -64,4 +70,47 @@ task fatJar(type: Jar) {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
     }
     with jar
+}
+
+modifyPom {
+    project {
+        name 'TinyDB'
+        description 'TinyDB is a REDIS implementation in Java'
+        url 'https://github.com/tonivade/tiny-db'
+        inceptionYear '2015'
+
+        scm {
+            url 'https://github.com/tonivade/tiny-db'
+            connection 'scm:https://github.com/tonivade/tiny-db.git'
+            developerConnection 'scm:git://github.com/tonivade/tiny-db.git'
+        }
+
+        licenses {
+            license {
+                name 'The MIT License (MIT)'
+                url 'https://github.com/tonivade/tiny-db/blob/master/LICENSE'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'tonivade'
+                name 'Antonio Muñoz'
+                email 'antoniogmc@gmail.com'
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    tests = false
+    javadoc = false
+}
+
+nexus {
+    sign = false
+    repositoryUrl = 'http://garagemarket.com.es/nexus/content/repositories/releases/'
+    snapshotRepositoryUrl = 'http://garagemarket.com.es/nexus/content/repositories/snapshots/'
 }
