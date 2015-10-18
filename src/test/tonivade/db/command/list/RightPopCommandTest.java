@@ -5,8 +5,8 @@
 
 package tonivade.db.command.list;
 
-import static org.hamcrest.CoreMatchers.is;
-import static tonivade.db.data.DatabaseValue.listFromString;
+import static tonivade.db.DatabaseValueMatchers.isList;
+import static tonivade.db.DatabaseValueMatchers.list;
 import static tonivade.db.redis.SafeString.safeString;
 
 import org.junit.Rule;
@@ -23,10 +23,10 @@ public class RightPopCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("key", listFromString("a", "b", "c"))
+        rule.withData("key", list("a", "b", "c"))
             .withParams("key")
             .execute()
-            .assertThat("key", is(listFromString("a", "b")))
+            .assertValue("key", isList("a", "b"))
             .verify().addBulkStr(safeString("c"));
     }
 

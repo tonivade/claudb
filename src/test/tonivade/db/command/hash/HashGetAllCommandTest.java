@@ -8,7 +8,7 @@ package tonivade.db.command.hash;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.redis.SafeString.safeString;
 
@@ -45,7 +45,7 @@ public class HashGetAllCommandTest {
 
         DatabaseValue value = captor.getValue();
 
-        Map<String, String> map = value.getValue();
+        Map<SafeString, SafeString> map = value.getValue();
 
         assertThat(map.get(safeString("key1")), is(safeString("value1")));
         assertThat(map.get(safeString("key2")), is(safeString("value2")));

@@ -7,7 +7,7 @@ package tonivade.db.command.set;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.DatabaseValueMatchers.set;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Collection;
@@ -19,6 +19,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
+import tonivade.db.redis.SafeString;
 
 @CommandUnderTest(SetDifferenceCommand.class)
 public class SetDifferenceCommandTest {
@@ -27,17 +28,17 @@ public class SetDifferenceCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<String>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("a", setFromString("1", "2", "3"))
-            .withData("b", setFromString("3", "4"))
+        rule.withData("a", set("1", "2", "3"))
+            .withData("b", set("3", "4"))
             .withParams("a", "b")
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(2));
 
@@ -47,12 +48,12 @@ public class SetDifferenceCommandTest {
 
     @Test
     public void testExecuteNoExists() throws Exception {
-        rule.withData("a", setFromString("1", "2", "3"))
+        rule.withData("a", set("1", "2", "3"))
             .withParams("a", "b")
             .execute()
             .verify().addArray(captor.capture());
 
-        Collection<String> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
         assertThat(result.size(), is(3));
 

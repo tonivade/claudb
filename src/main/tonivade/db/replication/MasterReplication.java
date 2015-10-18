@@ -34,7 +34,7 @@ public class MasterReplication implements Runnable {
     private static final String SELECT_COMMAND = "SELECT";
     private static final String PING_COMMAND = "PING";
 
-    private static final DatabaseKey SLAVES_KEY = safeKey("slaves");
+    private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
 
     private static final int TASK_DELAY = 2;
 

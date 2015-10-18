@@ -27,6 +27,9 @@ Implemented commands
     - KEYS
     - RENAME
     - TYPE
+    - EXPIRE
+    - PERSIST
+    - TTL
 - String
     - APPEND
     - DECRBY
@@ -38,6 +41,7 @@ Implemented commands
     - MGET
     - MGET
     - SET
+    - SETEX
     - STRLEN
 - Hash
     - HDEL
@@ -132,7 +136,7 @@ TODO
 ----
 
 - ~~Pipelining.~~ **Done!**
-- Key expiration.
+- Key expiration. _(Working on it!)_
 - Transactions (MULTI & EXEC).
 - Persistence to disk. _(Working on it!)_
     - 80% RDB file format implemented (strings, lists, sets, sorted sets and hashes).

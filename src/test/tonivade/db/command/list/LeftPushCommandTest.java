@@ -5,8 +5,7 @@
 
 package tonivade.db.command.list;
 
-import static org.hamcrest.CoreMatchers.is;
-import static tonivade.db.data.DatabaseValue.listFromString;
+import static tonivade.db.DatabaseValueMatchers.isList;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,12 +23,12 @@ public class LeftPushCommandTest {
     public void testExecute() throws Exception {
         rule.withParams("key", "a", "b", "c")
             .execute()
-            .assertThat("key", is(listFromString("a", "b", "c")))
+            .assertValue("key", isList("a", "b", "c"))
             .verify().addInt(3);
 
         rule.withParams("key", "d")
             .execute()
-            .assertThat("key", is(listFromString("d", "a", "b", "c")))
+            .assertValue("key", isList("d", "a", "b", "c"))
             .verify().addInt(4);
     }
 

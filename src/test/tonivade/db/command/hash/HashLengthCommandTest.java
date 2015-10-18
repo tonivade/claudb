@@ -5,7 +5,7 @@
 
 package tonivade.db.command.hash;
 
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 
 import org.junit.Rule;
@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.hash.HashLengthCommand;
 
 @CommandUnderTest(HashLengthCommand.class)
 public class HashLengthCommandTest {

@@ -5,7 +5,7 @@
 
 package tonivade.db.persistence;
 
-import static tonivade.db.persistence.Util.toByteArray;
+import static tonivade.db.persistence.ByteUtils.toByteArray;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.io.IOException;
@@ -28,8 +28,9 @@ public class RDBOutputStream {
 
     private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-    // REDIS
-    private static final byte[] REDIS = new byte[] {0x52, 0x45, 0x44, 0x49, 0x53};
+    private static final byte[] REDIS = safeString("REDIS").getBytes();
+
+    private static final int TTL_MILISECONDS = 0xFC;
     private static final int END_OF_STREAM = 0xFF;
     private static final int SELECT = 0xFE;
 
@@ -65,9 +66,17 @@ public class RDBOutputStream {
     }
 
     private void value(DatabaseKey key, DatabaseValue value) throws IOException {
+        expiredAt(key.expiredAt());
         type(value.getType());
         key(key);
         value(value);
+    }
+
+    private void expiredAt(Long expiredAt) throws IOException {
+        if (expiredAt != null) {
+            out.write(TTL_MILISECONDS);
+            out.write(ByteUtils.toByteArray(expiredAt));
+        }
     }
 
     private void type(DataType type) throws IOException {

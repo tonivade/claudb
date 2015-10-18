@@ -5,16 +5,19 @@
 
 package tonivade.db.command.key;
 
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseValueMatchers.entry;
+import static tonivade.db.DatabaseValueMatchers.list;
+import static tonivade.db.DatabaseValueMatchers.score;
+import static tonivade.db.DatabaseValueMatchers.set;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.data.DatabaseValue.zset;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.key.TypeCommand;
 
 @CommandUnderTest(TypeCommand.class)
 public class TypeCommandTest {
@@ -35,6 +38,30 @@ public class TypeCommandTest {
             .withParams("a")
             .execute()
             .verify().addSimpleStr("hash");
+    }
+
+    @Test
+    public void testExecuteList() {
+        rule.withData("a", list("a", "b", "c"))
+            .withParams("a")
+            .execute()
+            .verify().addSimpleStr("list");
+    }
+
+    @Test
+    public void testExecuteSet() {
+        rule.withData("a", set("a", "b", "c"))
+            .withParams("a")
+            .execute()
+            .verify().addSimpleStr("set");
+    }
+
+    @Test
+    public void testExecuteZSet() {
+        rule.withData("a", zset(score(1.0, "a"), score(2.0, "b"), score(3.0, "c")))
+            .withParams("a")
+            .execute()
+            .verify().addSimpleStr("zset");
     }
 
     @Test

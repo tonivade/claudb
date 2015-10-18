@@ -26,8 +26,13 @@ public class RequestDecoder extends LineBasedFrameDecoder {
     private static final String STATUS_PREFIX = "+";
     private static final String ARRAY_PREFIX = "*";
 
+    private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+    private int maxLength;
+
     public RequestDecoder(int maxLength) {
         super(maxLength);
+        this.maxLength = maxLength;
     }
 
     @Override
@@ -40,7 +45,7 @@ public class RequestDecoder extends LineBasedFrameDecoder {
 
         if (readLine != null) {
             try {
-                return readLine.toString(Charset.forName("UTF-8"));
+                return readLine.toString(DEFAULT_CHARSET);
             } finally {
                 readLine.release();
             }
@@ -63,18 +68,32 @@ public class RequestDecoder extends LineBasedFrameDecoder {
             } else if (line.startsWith(ERROR_PREFIX)) {
                 token = new ErrorRedisToken(line.substring(1));
             } else if (line.startsWith(INTEGER_PREFIX)) {
-                Integer value = Integer.valueOf(line.substring(1));
-                token = new IntegerRedisToken(value);
+                token = parseIntegerToken(line);
             } else if (line.startsWith(STRING_PREFIX)) {
-                int length = Integer.parseInt(line.substring(1));
-                ByteBuf bulk = buffer.readBytes(length);
-                token = new StringRedisToken(new SafeString(bulk.nioBuffer()));
-                readLine(ctx, buffer);
+                token = parseStringToken(ctx, buffer, line);
             } else {
                 token = new UnknownRedisToken(line);
             }
         }
 
+        return token;
+    }
+
+    private RedisToken parseIntegerToken(String line) {
+        Integer value = Integer.valueOf(line.substring(1));
+        return new IntegerRedisToken(value);
+    }
+
+    private RedisToken parseStringToken(ChannelHandlerContext ctx, ByteBuf buffer, String line) throws Exception {
+        RedisToken token;
+        int length = Integer.parseInt(line.substring(1));
+        if (length > 0 && length < maxLength) {
+            ByteBuf bulk = buffer.readBytes(length);
+            token = new StringRedisToken(new SafeString(bulk.nioBuffer()));
+            readLine(ctx, buffer);
+        } else {
+            token = new StringRedisToken(SafeString.EMPTY_STRING);
+        }
         return token;
     }
 
@@ -86,14 +105,9 @@ public class RequestDecoder extends LineBasedFrameDecoder {
 
             if (line != null) {
                 if (line.startsWith(STRING_PREFIX)) {
-                    int length = Integer.parseInt(line.substring(1));
-                    ByteBuf bulk = buffer.readBytes(length);
-                    array.add(new StringRedisToken(new SafeString(bulk.nioBuffer())));
-                    readLine(ctx, buffer);
+                    array.add(parseStringToken(ctx, buffer, line));
                 } else if (line.startsWith(INTEGER_PREFIX)) {
-                    // integer
-                    Integer value = Integer.valueOf(line.substring(1));
-                    array.add(new IntegerRedisToken(value));
+                    array.add(parseIntegerToken(line));
                 }
             }
         }

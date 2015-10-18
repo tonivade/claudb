@@ -21,72 +21,42 @@ public class TinyDBConfig {
 
     private int syncPeriod;
 
-    /**
-     * @return the persistenceActive
-     */
     public boolean isPersistenceActive() {
         return persistenceActive;
     }
 
-    /**
-     * @param persistenceActive the persistenceActive to set
-     */
     public void setPersistenceActive(boolean persistenceActive) {
         this.persistenceActive = persistenceActive;
     }
 
-    /**
-     * @return the rdbFile
-     */
     public String getRdbFile() {
         return rdbFile;
     }
 
-    /**
-     * @param rdbFile the rdbFile to set
-     */
     public void setRdbFile(String rdbFile) {
         this.rdbFile = rdbFile;
     }
 
-    /**
-     * @return the aofFile
-     */
     public String getAofFile() {
         return aofFile;
     }
 
-    /**
-     * @param aofFile the aofFile to set
-     */
     public void setAofFile(String aofFile) {
         this.aofFile = aofFile;
     }
 
-    /**
-     * @return the syncPeriod
-     */
     public int getSyncPeriod() {
         return syncPeriod;
     }
 
-    /**
-     * @param syncPeriod the syncPeriod to set
-     */
     public void setSyncPeriod(int syncPeriod) {
         this.syncPeriod = syncPeriod;
     }
 
-    /**
-     * @return the numDatabases
-     */
     public int getNumDatabases() {
         return numDatabases;
     }
 
-    /**
-     * @param numDatabases the numDatabases to set
-     */
     public void setNumDatabases(int numDatabases) {
         this.numDatabases = numDatabases;
     }

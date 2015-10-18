@@ -7,11 +7,12 @@ package tonivade.db.command;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.data.DatabaseValue.entry;
+import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.db.data.DatabaseValue.listFromString;
-import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.data.DatabaseValue.list;
+import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.db.redis.SafeString.safeAsList;
 import static tonivade.db.redis.SafeString.safeString;
 
 import java.util.Arrays;
@@ -43,12 +44,12 @@ public class ResponseTest {
 
     @Test
     public void testAddValueList() {
-        assertThat(response.addValue(setFromString("a", "b", "c")).toString(), is("*3\r\n$1\r\na\r\n$1\r\nb\r\n$1\r\nc\r\n"));
+        assertThat(response.addValue(set(safeAsList("a", "b", "c"))).toString(), is("*3\r\n$1\r\na\r\n$1\r\nb\r\n$1\r\nc\r\n"));
     }
 
     @Test
     public void testAddValueSet() {
-        assertThat(response.addValue(listFromString("a", "b", "c")).toString(), is("*3\r\n$1\r\na\r\n$1\r\nb\r\n$1\r\nc\r\n"));
+        assertThat(response.addValue(list(safeAsList("a", "b", "c"))).toString(), is("*3\r\n$1\r\na\r\n$1\r\nb\r\n$1\r\nc\r\n"));
     }
 
     @Test
@@ -74,6 +75,11 @@ public class ResponseTest {
     @Test
     public void testAddIntInt() {
         assertThat(response.addInt(1).toString(), is(":1\r\n"));
+    }
+
+    @Test
+    public void testAddIntLong() {
+        assertThat(response.addInt(1L).toString(), is(":1\r\n"));
     }
 
     @Test

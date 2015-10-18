@@ -5,8 +5,7 @@
 
 package tonivade.db.command.set;
 
-import static org.hamcrest.CoreMatchers.is;
-import static tonivade.db.data.DatabaseValue.setFromString;
+import static tonivade.db.DatabaseValueMatchers.isSet;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class SetAddCommandTest {
     public void testExecute() throws Exception {
         rule.withParams("key", "value")
             .execute()
-            .assertThat("key", is(setFromString("value")))
+            .assertValue("key", isSet("value"))
             .verify().addInt(1);
     }
 

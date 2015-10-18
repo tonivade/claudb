@@ -103,6 +103,13 @@ public class Response implements IResponse {
     }
 
     @Override
+    public IResponse addInt(long value) {
+        builder.append(INTEGER).append(value);
+        builder.append(DELIMITER);
+        return this;
+    }
+
+    @Override
     public IResponse addInt(boolean value) {
         builder.append(INTEGER).append(value ? "1" : "0");
         builder.append(DELIMITER);
@@ -181,6 +188,11 @@ public class Response implements IResponse {
 
         public ByteBufferBuilder append(int i) {
             append(String.valueOf(i));
+            return this;
+        }
+
+        public ByteBufferBuilder append(long l) {
+            append(String.valueOf(l));
             return this;
         }
 

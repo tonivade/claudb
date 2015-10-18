@@ -26,9 +26,9 @@ public class MultiSetCommandTest {
     public void testExecute() {
         rule.withParams("a", "1", "b", "2", "c", "3")
             .execute()
-            .assertThat("a", is(string("1")))
-            .assertThat("b", is(string("2")))
-            .assertThat("c", is(string("3")))
+            .assertValue("a", is(string("1")))
+            .assertValue("b", is(string("2")))
+            .assertValue("c", is(string("3")))
             .verify().addSimpleStr("OK");
 
         assertThat(rule.getDatabase().size(), is(3));

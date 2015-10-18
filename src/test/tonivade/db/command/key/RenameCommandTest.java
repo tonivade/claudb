@@ -27,8 +27,8 @@ public class RenameCommandTest {
         rule.withData("a", string("1"))
             .withParams("a", "b")
             .execute()
-            .assertThat("a", is(nullValue()))
-            .assertThat("b", is(string("1")))
+            .assertValue("a", is(nullValue()))
+            .assertValue("b", is(string("1")))
             .verify().addSimpleStr("OK");
     }
 
@@ -36,8 +36,8 @@ public class RenameCommandTest {
     public void testExecuteError() {
         rule.withParams("a", "b")
             .execute()
-            .assertThat("a", is(nullValue()))
-            .assertThat("b", is(nullValue()))
+            .assertValue("a", is(nullValue()))
+            .assertValue("b", is(nullValue()))
             .verify().addError("ERR no such key");
     }
 

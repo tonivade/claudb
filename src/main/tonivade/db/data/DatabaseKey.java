@@ -1,26 +1,58 @@
+/*
+ * Copyright (c) 2015, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
+
 package tonivade.db.data;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import tonivade.db.redis.SafeString;
 
-public class DatabaseKey {
+public class DatabaseKey implements Comparable<DatabaseKey> {
 
-    private SafeString value;
+    private final Long expiredAt;
+    private final SafeString value;
 
-    public DatabaseKey(SafeString value) {
+    public DatabaseKey(SafeString value, Long expiredAt) {
         super();
         this.value = value;
+        this.expiredAt = expiredAt;
     }
 
     public SafeString getValue() {
         return value;
     }
 
+    public boolean isExpired() {
+        if (expiredAt != null) {
+            long now = System.currentTimeMillis();
+            return now > expiredAt;
+        }
+        return false;
+    }
+
+    public long timeToLive() {
+        if (expiredAt != null) {
+            long ttl = expiredAt - System.currentTimeMillis();
+            return ttl < 0 ? -2 : ttl;
+        }
+        return -1;
+    }
+
+    public Long expiredAt() {
+        return expiredAt;
+    }
+
+    @Override
+    public int compareTo(DatabaseKey o) {
+        return value.compareTo(o.getValue());
+    }
+
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(value);
     }
 
     @Override
@@ -35,14 +67,7 @@ public class DatabaseKey {
             return false;
         }
         DatabaseKey other = (DatabaseKey) obj;
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.value, other.value);
     }
 
     @Override
@@ -51,11 +76,15 @@ public class DatabaseKey {
     }
 
     public static DatabaseKey safeKey(SafeString str) {
-        return new DatabaseKey(str);
+        return new DatabaseKey(str, null);
     }
 
-    public static DatabaseKey safeKey(String str) {
-        return new DatabaseKey(SafeString.safeString(str));
+    public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
+        return new DatabaseKey(str, System.currentTimeMillis() + ttlMillis);
+    }
+
+    public static DatabaseKey safeKey(SafeString str, int ttlSeconds) {
+        return safeKey(str, TimeUnit.SECONDS.toMillis(ttlSeconds));
     }
 
 }

@@ -8,7 +8,6 @@ package tonivade.db;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -18,7 +17,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import tonivade.db.redis.RedisToken;
@@ -33,7 +31,6 @@ public class TinyDBClient implements ITinyDB {
 
     private int port;
     private String host;
-    private int reconnectionTime;
 
     private EventLoopGroup workerGroup;
     private Bootstrap bootstrap;
@@ -47,13 +44,12 @@ public class TinyDBClient implements ITinyDB {
     private ITinyDBCallback callback;
 
     public TinyDBClient(ITinyDBCallback callback) {
-        this("localhost", 7081, callback);
+        this(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
     }
 
     public TinyDBClient(String host, int port, ITinyDBCallback callback) {
         this.host = host;
         this.port = port;
-        this.reconnectionTime = 10;
         this.callback = callback;
     }
 
@@ -91,23 +87,9 @@ public class TinyDBClient implements ITinyDB {
     private void connect() {
         LOGGER.info(() -> "trying to connect");
 
-        future = bootstrap.connect(host, port).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if (!future.isSuccess()) {
-                    future.channel().close();
+        future = bootstrap.connect(host, port);
 
-                    workerGroup.schedule(new Runnable() {
-                        @Override
-                        public void run() {
-                            connect();
-                        }
-                    }, reconnectionTime, TimeUnit.SECONDS);
-                } else {
-                    LOGGER.info(() -> "successful connection");
-                }
-            }
-        });
+        future.syncUninterruptibly();
     }
 
     @Override
@@ -136,9 +118,6 @@ public class TinyDBClient implements ITinyDB {
             callback.onDisconnect();
 
             this.ctx = null;
-
-            // reconnect
-            connect();
         }
     }
 

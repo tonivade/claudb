@@ -24,7 +24,7 @@ public class SetCommandTest {
     public void testExecute() {
         rule.withParams("a", "1")
             .execute()
-            .assertThat("a", is(string("1")))
+            .assertValue("a", is(string("1")))
             .verify().addSimpleStr("OK");
     }
 

@@ -22,8 +22,11 @@ import tonivade.db.command.hash.HashSetCommand;
 import tonivade.db.command.hash.HashValuesCommand;
 import tonivade.db.command.key.DeleteCommand;
 import tonivade.db.command.key.ExistsCommand;
+import tonivade.db.command.key.ExpireCommand;
 import tonivade.db.command.key.KeysCommand;
+import tonivade.db.command.key.PersistCommand;
 import tonivade.db.command.key.RenameCommand;
+import tonivade.db.command.key.TimeToLiveCommand;
 import tonivade.db.command.key.TypeCommand;
 import tonivade.db.command.list.LeftPopCommand;
 import tonivade.db.command.list.LeftPushCommand;
@@ -53,6 +56,7 @@ import tonivade.db.command.set.SetIsMemberCommand;
 import tonivade.db.command.set.SetMembersCommand;
 import tonivade.db.command.set.SetRemoveCommand;
 import tonivade.db.command.set.SetUnionCommand;
+import tonivade.db.command.string.DecrementByCommand;
 import tonivade.db.command.string.DecrementCommand;
 import tonivade.db.command.string.GetCommand;
 import tonivade.db.command.string.GetSetCommand;
@@ -61,6 +65,7 @@ import tonivade.db.command.string.IncrementCommand;
 import tonivade.db.command.string.MultiGetCommand;
 import tonivade.db.command.string.MultiSetCommand;
 import tonivade.db.command.string.SetCommand;
+import tonivade.db.command.string.SetExpiredCommand;
 import tonivade.db.command.string.StringLengthCommand;
 import tonivade.db.command.zset.SortedSetAddCommand;
 import tonivade.db.command.zset.SortedSetCardinalityCommand;
@@ -99,8 +104,9 @@ public class CommandSuite {
         addCommand(IncrementCommand.class);
         addCommand(IncrementByCommand.class);
         addCommand(DecrementCommand.class);
-        addCommand(DecrementCommand.class);
+        addCommand(DecrementByCommand.class);
         addCommand(StringLengthCommand.class);
+        addCommand(SetExpiredCommand.class);
 
         // keys
         addCommand(DeleteCommand.class);
@@ -108,6 +114,9 @@ public class CommandSuite {
         addCommand(TypeCommand.class);
         addCommand(RenameCommand.class);
         addCommand(KeysCommand.class);
+        addCommand(ExpireCommand.class);
+        addCommand(PersistCommand.class);
+        addCommand(TimeToLiveCommand.class);
 
         // hash
         addCommand(HashSetCommand.class);

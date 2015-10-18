@@ -26,13 +26,14 @@ public interface IResponse {
 
     public IResponse addInt(int value);
 
+    public IResponse addInt(long value);
+
     public IResponse addInt(boolean value);
 
     public IResponse addError(String str);
 
     public void exit();
 
-    boolean isExit();
-
+    public boolean isExit();
 
 }

@@ -44,8 +44,12 @@ public class ByteBufferOutputStream extends OutputStream {
 
     private void ensureCapacity(int len) {
         if (buffer.remaining() < len) {
-            buffer = ByteBuffer.allocate(buffer.capacity() + Math.max(len, growing)).put(toByteArray());
+            buffer = growBuffer(len).put(toByteArray());
         }
+    }
+
+    private ByteBuffer growBuffer(int len) {
+        return ByteBuffer.allocate(buffer.capacity() + Math.max(len, growing));
     }
 
     public byte[] toByteArray() {

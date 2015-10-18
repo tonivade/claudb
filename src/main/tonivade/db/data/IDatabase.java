@@ -13,4 +13,8 @@ public interface IDatabase extends Map<DatabaseKey, DatabaseValue> {
 
     public boolean isType(DatabaseKey key, DataType type);
 
+    public DatabaseKey overrideKey(DatabaseKey key);
+
+    public DatabaseKey getKey(DatabaseKey key);
+
 }

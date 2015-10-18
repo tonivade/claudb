@@ -9,12 +9,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
-/**
- * Netty initialization handler
- *
- * @author tomby
- *
- */
 public class TinyDBInitializerHandler extends ChannelInitializer<SocketChannel> {
 
     private ITinyDB impl;
@@ -23,17 +17,11 @@ public class TinyDBInitializerHandler extends ChannelInitializer<SocketChannel> 
         this.impl = impl;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected void initChannel(SocketChannel channel) throws Exception {
         impl.channel(channel);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         impl.disconnected(ctx);

@@ -12,30 +12,49 @@ import static java.util.stream.Collectors.toSet;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 import java.util.function.BiFunction;
 
-public class Database implements IDatabase {
+public class Database implements IDatabase, Runnable {
 
-    private StampedLock lock = new StampedLock();
+    private final StampedLock lock = new StampedLock();
 
-    private final Map<DatabaseKey, DatabaseValue> cache;
+    private final NavigableMap<DatabaseKey, DatabaseValue> cache;
+
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public Database() {
-        this(new HashMap<>());
+        this(new TreeMap<>());
     }
 
-    public Database(Map<DatabaseKey, DatabaseValue> cache) {
+    public Database(NavigableMap<DatabaseKey, DatabaseValue> cache) {
         this.cache = cache;
+        this.executor.scheduleAtFixedRate(this, 5, 5, TimeUnit.MINUTES);
     }
 
-    /**
-     * @return
-     * @see java.util.Map#size()
-     */
+    @Override
+    public void run() {
+        Set<DatabaseKey> toRemove = keySet().stream().filter(DatabaseKey::isExpired).collect(toSet());
+
+        if (!toRemove.isEmpty()) {
+            long stamp = lock.writeLock();
+            try {
+                for (DatabaseKey key : toRemove) {
+                    cache.remove(key);
+                }
+            } finally {
+                lock.unlockWrite(stamp);
+            }
+        }
+    }
+
     @Override
     public int size() {
         long stamp = lock.readLock();
@@ -46,10 +65,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#isEmpty()
-     */
     @Override
     public boolean isEmpty() {
         long stamp = lock.readLock();
@@ -60,11 +75,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @param key
-     * @return
-     * @see java.util.Map#containsKey(java.lang.Object)
-     */
     @Override
     public boolean containsKey(Object key) {
         long stamp = lock.readLock();
@@ -75,11 +85,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @param value
-     * @return
-     * @see java.util.Map#containsValue(java.lang.Object)
-     */
     @Override
     public boolean containsValue(Object value) {
         long stamp = lock.readLock();
@@ -90,35 +95,34 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @param key
-     * @return
-     * @see java.util.Map#get(java.lang.Object)
-     */
     @Override
     public DatabaseValue get(Object key) {
-        DatabaseValue value = null;
+        Entry<DatabaseKey, DatabaseValue> entry = null;
+
+        if (key instanceof DatabaseKey) {
+            entry = getEntry((DatabaseKey) key);
+        }
+
+        return (entry != null && !entry.getKey().isExpired()) ? entry.getValue() : null;
+    }
+
+    private Entry<DatabaseKey, DatabaseValue> getEntry(DatabaseKey key) {
+        Entry<DatabaseKey, DatabaseValue> entry;
 
         long optimistic = lock.tryOptimisticRead();
-        value = cache.get(key);
+        entry = cache.ceilingEntry(key);
         if (!lock.validate(optimistic)) {
             long stamp = lock.readLock();
             try {
-                value = cache.get(key);
+                entry = cache.ceilingEntry(key);
             } finally {
                 lock.unlockRead(stamp);
             }
         }
 
-        return value;
+        return entry != null && entry.getKey().equals(key) ? entry : null;
     }
 
-    /**
-     * @param key
-     * @param value
-     * @return
-     * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-     */
     @Override
     public DatabaseValue put(DatabaseKey key, DatabaseValue value) {
         long stamp = lock.writeLock();
@@ -129,11 +133,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @param key
-     * @return
-     * @see java.util.Map#remove(java.lang.Object)
-     */
     @Override
     public DatabaseValue remove(Object key) {
         long stamp = lock.writeLock();
@@ -144,10 +143,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @param m
-     * @see java.util.Map#putAll(java.util.Map)
-     */
     @Override
     public void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m) {
         long stamp = lock.writeLock();
@@ -158,10 +153,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     *
-     * @see java.util.Map#clear()
-     */
     @Override
     public void clear() {
         long stamp = lock.writeLock();
@@ -172,10 +163,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#keySet()
-     */
     @Override
     public Set<DatabaseKey> keySet() {
         long stamp = lock.readLock();
@@ -186,10 +173,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#values()
-     */
     @Override
     public Collection<DatabaseValue> values() {
         long stamp = lock.readLock();
@@ -200,10 +183,6 @@ public class Database implements IDatabase {
         }
     }
 
-    /**
-     * @return
-     * @see java.util.Map#entrySet()
-     */
     @Override
     public Set<java.util.Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
         long stamp = lock.readLock();
@@ -260,6 +239,29 @@ public class Database implements IDatabase {
         } finally {
             lock.unlockWrite(stamp);
         }
+    }
+
+    @Override
+    public DatabaseKey overrideKey(DatabaseKey key) {
+        Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
+
+        if (entry != null) {
+            long stamp = lock.writeLock();
+            try {
+                cache.remove(key);
+                cache.put(key, entry.getValue());
+            } finally {
+                lock.unlockWrite(stamp);
+            }
+        }
+
+        return entry != null ? entry.getKey() : null;
+    }
+
+    @Override
+    public DatabaseKey getKey(DatabaseKey key) {
+        Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
+        return entry != null ? entry.getKey() : null;
     }
 
 }

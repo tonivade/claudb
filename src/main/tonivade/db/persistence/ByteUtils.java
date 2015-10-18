@@ -5,7 +5,7 @@
 
 package tonivade.db.persistence;
 
-public class Util {
+public class ByteUtils {
 
     public static byte[] toByteArray(long value) {
         byte[] b = new byte[Long.BYTES];

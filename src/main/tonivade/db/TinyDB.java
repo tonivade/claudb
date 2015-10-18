@@ -6,7 +6,6 @@
 package tonivade.db;
 
 import static java.util.Collections.emptyList;
-import static tonivade.db.TinyDBConfig.withPersistence;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
 import static tonivade.db.redis.SafeString.safeAsList;
 import static tonivade.db.redis.SafeString.safeString;
@@ -40,9 +39,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
 import tonivade.db.command.CommandSuite;
 import tonivade.db.command.ICommand;
 import tonivade.db.command.IRequest;
@@ -65,12 +61,6 @@ import tonivade.db.redis.RedisTokenType;
 import tonivade.db.redis.RequestDecoder;
 import tonivade.db.redis.SafeString;
 
-/**
- * Java Redis Implementation
- *
- * @author tomby
- *
- */
 public class TinyDB implements ITinyDB, IServerContext {
 
     private static final Charset DEFAULT_CHATSET = Charset.forName("UTF-8");
@@ -175,9 +165,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         LOGGER.info(() -> "server stopped");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void channel(SocketChannel channel) {
         LOGGER.fine(() -> "new channel: " + sourceKey(channel));
@@ -186,21 +173,15 @@ public class TinyDB implements ITinyDB, IServerContext {
         channel.pipeline().addLast(connectionHandler);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void connected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
 
         LOGGER.fine(() -> "client connected: " + sourceKey);
 
-        clients.put(sourceKey, new Session(sourceKey, ctx));
+        getSession(sourceKey, ctx);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void disconnected(ChannelHandlerContext ctx) {
         String sourceKey = sourceKey(ctx.channel());
@@ -221,47 +202,50 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void receive(ChannelHandlerContext ctx, RedisToken message) {
         String sourceKey = sourceKey(ctx.channel());
 
         LOGGER.finest(() -> "message received: " + sourceKey);
 
-        IRequest request = parseMessage(sourceKey, message);
+        IRequest request = parseMessage(sourceKey, message, getSession(sourceKey, ctx));
         if (request != null) {
             processCommand(request);
         }
     }
 
-    private IRequest parseMessage(String sourceKey, RedisToken message) {
+    private ISession getSession(String sourceKey, ChannelHandlerContext ctx) {
+        ISession session = clients.getOrDefault(sourceKey, new Session(sourceKey, ctx));
+        clients.putIfAbsent(sourceKey, session);
+        return session;
+    }
+
+    private IRequest parseMessage(String sourceKey, RedisToken message, ISession session) {
         IRequest request = null;
         if (message.getType() == RedisTokenType.ARRAY) {
-            request = parseArray(sourceKey, message);
+            request = parseArray(sourceKey, message, session);
         } else if (message.getType() == RedisTokenType.UNKNOWN) {
-            request = parseLine(sourceKey, message);
+            request = parseLine(sourceKey, message, session);
         }
         return request;
     }
 
-    private Request parseLine(String sourceKey, RedisToken message) {
+    private Request parseLine(String sourceKey, RedisToken message, ISession session) {
         String command = message.getValue();
         String[] params = command.split(" ");
         String[] array = new String[params.length - 1];
         System.arraycopy(params, 1, array, 0, array.length);
-        return new Request(this, clients.get(sourceKey), safeString(params[0]), safeAsList(array));
+        return new Request(this, session, safeString(params[0]), safeAsList(array));
     }
 
-    private Request parseArray(String sourceKey, RedisToken message) {
+    private Request parseArray(String sourceKey, RedisToken message, ISession session) {
         List<SafeString> params = new LinkedList<SafeString>();
         for (RedisToken token : message.<RedisArray>getValue()) {
             if (token.getType() == RedisTokenType.STRING) {
                 params.add(token.getValue());
             }
         }
-        return new Request(this, clients.get(sourceKey), params.remove(0), params);
+        return new Request(this, session, params.remove(0), params);
     }
 
     private void processCommand(IRequest request) {
@@ -360,9 +344,6 @@ public class TinyDB implements ITinyDB, IServerContext {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public IDatabase getAdminDatabase() {
         return admin;
@@ -373,17 +354,11 @@ public class TinyDB implements ITinyDB, IServerContext {
         return databases.get(i);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getPort() {
         return port;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getClients() {
         return clients.size();
@@ -432,36 +407,6 @@ public class TinyDB implements ITinyDB, IServerContext {
     @Override
     public void setMaster(boolean master) {
         this.master = master;
-    }
-
-    public static void main(String[] args) throws Exception {
-        OptionParser parser = new OptionParser();
-        OptionSpec<Void> help = parser.accepts("help", "print help");
-        OptionSpec<Void> persist = parser.accepts("P", "with persistence");
-        OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class).defaultsTo(DEFAULT_HOST);
-        OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class).defaultsTo(DEFAULT_PORT);
-
-        OptionSet options = parser.parse(args);
-
-        if (options.has(help)) {
-            parser.printHelpOn(System.out);
-        } else {
-            TinyDB db = new TinyDB(
-                    options.valueOf(host), options.valueOf(port), parseConfig(options.has(persist)));
-            db.start();
-
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> db.stop()));
-        }
-    }
-
-    private static TinyDBConfig parseConfig(boolean persist) {
-        TinyDBConfig config = null;
-        if (persist) {
-            config = withPersistence();
-        } else {
-            config = withoutPersistence();
-        }
-        return config;
     }
 
 }

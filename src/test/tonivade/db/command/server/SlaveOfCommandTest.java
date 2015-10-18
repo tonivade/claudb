@@ -8,6 +8,7 @@ package tonivade.db.command.server;
 import org.junit.Rule;
 import org.junit.Test;
 
+import tonivade.db.TinyDBRule;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 
@@ -15,11 +16,14 @@ import tonivade.db.command.CommandUnderTest;
 public class SlaveOfCommandTest {
 
     @Rule
+    public final TinyDBRule server = new TinyDBRule("localhost", 8081);
+
+    @Rule
     public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() throws Exception {
-        rule.withParams("localhost", "7081")
+        rule.withParams("localhost", "8081")
             .execute()
             .verify().addSimpleStr("OK");
     }

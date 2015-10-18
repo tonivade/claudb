@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
@@ -47,36 +48,20 @@ public class DatabaseValue {
         this.value = value;
     }
 
-    /**
-     * @return the type
-     */
     public DataType getType() {
         return type;
     }
 
-    /**
-     * @return the value
-     */
     @SuppressWarnings("unchecked")
     public <T> T getValue() {
         return (T) value;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
-        return result;
+        return Objects.hash(type, value);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -89,22 +74,9 @@ public class DatabaseValue {
             return false;
         }
         DatabaseValue other = (DatabaseValue) obj;
-        if (type != other.type) {
-            return false;
-        }
-        if (value == null) {
-            if (other.value != null) {
-                return false;
-            }
-        } else if (!value.equals(other.value)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.type, other.type) && Objects.equals(this.value, other.value);
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "DatabaseValue [type=" + type + ", value=" + value + "]";
@@ -130,10 +102,6 @@ public class DatabaseValue {
                 unmodifiableList(Stream.of(values).collect(toList())));
     }
 
-    public static DatabaseValue listFromString(String ... values) {
-        return list(SafeString.safeAsList(values));
-    }
-
     public static DatabaseValue set(Collection<SafeString> values) {
         return new DatabaseValue(
                 DataType.SET,
@@ -144,10 +112,6 @@ public class DatabaseValue {
         return new DatabaseValue(
                 DataType.SET,
                 unmodifiableSet(Stream.of(values).collect(toSet())));
-    }
-
-    public static DatabaseValue setFromString(String ... values) {
-        return set(SafeString.safeAsList(values));
     }
 
     public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
@@ -180,28 +144,20 @@ public class DatabaseValue {
         return new SimpleEntry<SafeString, SafeString>(key, value);
     }
 
-    public static Entry<SafeString, SafeString> entry(String key, String value) {
-        return new SimpleEntry<SafeString, SafeString>(safeString(key), safeString(value));
-    }
-
     public static Entry<Double, SafeString> score(double score, SafeString value) {
         return new SimpleEntry<Double, SafeString>(score, value);
     }
 
-    public static Entry<Double, SafeString> score(double score, String value) {
-        return new SimpleEntry<Double, SafeString>(score, safeString(value));
-    }
-
     private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {
-        return toCollection(() -> new LinkedList<>());
+        return toCollection(LinkedList::new);
     }
 
     private static Collector<SafeString, ?, LinkedHashSet<SafeString>> toSet() {
-        return toCollection(() -> new LinkedHashSet<>());
+        return toCollection(LinkedHashSet::new);
     }
 
     private static Collector<Entry<Double, SafeString>, ?, NavigableSet<Entry<Double, SafeString>>> toSortedSet() {
-        return toCollection(() -> new SortedSet());
+        return toCollection(SortedSet::new);
     }
 
     private static Collector<Entry<SafeString, SafeString>, ?, Map<SafeString, SafeString>> toHash() {

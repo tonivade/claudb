@@ -38,12 +38,6 @@ import tonivade.db.redis.RedisSource;
 import tonivade.db.redis.RedisToken;
 import tonivade.db.redis.SafeString;
 
-/**
- * Saves and loads RDB files
- *
- * @author tomby
- *
- */
 public class PersistenceManager implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(PersistenceManager.class.getName());
@@ -98,7 +92,7 @@ public class PersistenceManager implements Runnable {
     private void importRDB() {
         File file = new File(dumpFile);
         if (file.exists()) {
-            try (FileInputStream rdb = new FileInputStream(file)) {
+            try (InputStream rdb = new FileInputStream(file)) {
                 server.importRDB(rdb);
                 LOGGER.info(() -> "RDB file imported");
             } catch (IOException e) {
