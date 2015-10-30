@@ -135,11 +135,11 @@ public class DatabaseValue {
     }
 
     public static Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {
-        return new SimpleEntry<SafeString, SafeString>(key, value);
+        return new SimpleEntry<>(key, value);
     }
 
     public static Entry<Double, SafeString> score(double score, SafeString value) {
-        return new SimpleEntry<Double, SafeString>(score, value);
+        return new SimpleEntry<>(score, value);
     }
 
     private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {

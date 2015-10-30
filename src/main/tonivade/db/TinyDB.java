@@ -85,7 +85,7 @@ public class TinyDB implements ITinyDB, IServerContext {
 
     private final Map<String, ISession> clients = new HashMap<>();
 
-    private final List<IDatabase> databases = new ArrayList<IDatabase>();
+    private final List<IDatabase> databases = new ArrayList<>();
     private final IDatabase admin = new Database();
 
     private final CommandSuite commands = new CommandSuite();
@@ -239,7 +239,7 @@ public class TinyDB implements ITinyDB, IServerContext {
     }
 
     private Request parseArray(String sourceKey, RedisToken message, ISession session) {
-        List<SafeString> params = new LinkedList<SafeString>();
+        List<SafeString> params = new LinkedList<>();
         for (RedisToken token : message.<RedisArray>getValue()) {
             if (token.getType() == RedisTokenType.STRING) {
                 params.add(token.getValue());

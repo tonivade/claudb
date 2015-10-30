@@ -49,7 +49,7 @@ public class InfoCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        Map<String, Map<String, String>> sections = new HashMap<String, Map<String,String>>();
+        Map<String, Map<String, String>> sections = new HashMap<>();
         Optional<SafeString> param = request.getOptionalParam(0);
         if (param.isPresent()) {
             String sectionName = param.get().toString();
@@ -161,6 +161,6 @@ public class InfoCommand implements ICommand {
     }
 
     public static Entry<String, String> entry(String key, String value) {
-        return new SimpleEntry<String, String>(key, value);
+        return new SimpleEntry<>(key, value);
     }
 }
