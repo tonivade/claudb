@@ -42,18 +42,20 @@ public class PersistenceManager implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(PersistenceManager.class.getName());
 
+    private static final int MAX_FRAME_SIZE = 1024 * 1024 * 100;
+
     private OutputStream output;
 
-    private IServerContext server;
+    private final IServerContext server;
 
-    private String dumpFile;
-    private String redoFile;
+    private final String dumpFile;
+    private final String redoFile;
 
-    private int syncPeriod;
+    private final int syncPeriod;
 
-    private ISession session = new Session("dummy", null);
+    private final ISession session = new Session("dummy", null);
 
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
     public PersistenceManager(IServerContext server, TinyDBConfig config) {
         this.server = server;
@@ -105,7 +107,7 @@ public class PersistenceManager implements Runnable {
         File file = new File(redoFile);
         if (file.exists()) {
             try (FileInputStream redo = new FileInputStream(file)) {
-                RedisParser parse = new RedisParser(new InputStreamRedisSource(redo));
+                RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new InputStreamRedisSource(redo));
 
                 while (true) {
                     RedisToken token = parse.parse();
@@ -192,7 +194,7 @@ public class PersistenceManager implements Runnable {
 
     private static class InputStreamRedisSource implements RedisSource {
 
-        private InputStream stream;
+        private final InputStream stream;
 
         public InputStreamRedisSource(InputStream stream) {
             super();

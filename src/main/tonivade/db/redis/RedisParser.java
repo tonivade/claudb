@@ -22,9 +22,11 @@ public class RedisParser {
     private static final String STATUS_PREFIX = "+";
     private static final String ARRAY_PREFIX = "*";
 
-    private RedisSource source;
+    private final int maxLength;
+    private final RedisSource source;
 
-    public RedisParser(RedisSource source) {
+    public RedisParser(int maxLength, RedisSource source) {
+        this.maxLength = maxLength;
         this.source = source;
     }
 
@@ -42,18 +44,32 @@ public class RedisParser {
             } else if (line.startsWith(ERROR_PREFIX)) {
                 token = new ErrorRedisToken(line.substring(1));
             } else if (line.startsWith(INTEGER_PREFIX)) {
-                Integer value = Integer.valueOf(line.substring(1));
-                token = new IntegerRedisToken(value);
+                token = parseIntegerToken(line);
             } else if (line.startsWith(STRING_PREFIX)) {
-                int length = Integer.parseInt(line.substring(1));
-                ByteBuffer bulk = source.readBytes(length);
-                token = new StringRedisToken(new SafeString(bulk));
-                source.readLine();
+                token = parseStringToken(line);
             } else {
                 token = new UnknownRedisToken(line);
             }
         }
 
+        return token;
+    }
+
+    private RedisToken parseIntegerToken(String line) {
+        Integer value = Integer.valueOf(line.substring(1));
+        return new IntegerRedisToken(value);
+    }
+
+    private RedisToken parseStringToken(String line) {
+        RedisToken token;
+        int length = Integer.parseInt(line.substring(1));
+        if (length > 0 && length < maxLength) {
+            ByteBuffer buffer = source.readBytes(length);
+            token = new StringRedisToken(new SafeString(buffer));
+            source.readLine();
+        } else {
+            token = new StringRedisToken(SafeString.EMPTY_STRING);
+        }
         return token;
     }
 
@@ -65,14 +81,9 @@ public class RedisParser {
 
             if (line != null) {
                 if (line.startsWith(STRING_PREFIX)) {
-                    int length = Integer.parseInt(line.substring(1));
-                    ByteBuffer bulk = source.readBytes(length);
-                    array.add(new StringRedisToken(new SafeString(bulk)));
-                    source.readLine();
+                    array.add(parseStringToken(line));
                 } else if (line.startsWith(INTEGER_PREFIX)) {
-                    // integer
-                    Integer value = Integer.valueOf(line.substring(1));
-                    array.add(new IntegerRedisToken(value));
+                    array.add(parseIntegerToken(line));
                 }
             }
         }
