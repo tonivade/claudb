@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.TinyDBConfig.withPersistence;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,9 +37,9 @@ import org.mockito.stubbing.Answer;
 
 import tonivade.db.ITinyDB;
 import tonivade.db.data.IDatabase;
-import tonivade.server.command.ICommand;
-import tonivade.server.protocol.RedisToken;
-import tonivade.server.protocol.RedisToken.StringRedisToken;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {

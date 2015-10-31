@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.server.command.ISession;
+import tonivade.redis.command.ISession;
 
 @CommandUnderTest(SelectCommand.class)
 public class SelectCommandTest {

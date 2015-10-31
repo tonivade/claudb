@@ -6,7 +6,7 @@
 package tonivade.db.persistence;
 
 import static tonivade.db.persistence.ByteUtils.toByteArray;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,7 +22,7 @@ import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 public class RDBOutputStream {
 

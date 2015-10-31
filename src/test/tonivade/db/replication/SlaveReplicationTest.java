@@ -23,7 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBRule;
-import tonivade.server.command.ISession;
+import tonivade.redis.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {

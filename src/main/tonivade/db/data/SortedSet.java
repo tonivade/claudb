@@ -12,11 +12,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import tonivade.redis.protocol.SafeString;
+
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
-
-import tonivade.server.protocol.SafeString;
 
 public class SortedSet implements NavigableSet<Entry<Double, SafeString>> {
 

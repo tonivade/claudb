@@ -16,7 +16,7 @@ import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toHexString;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Before;
 import org.junit.Test;

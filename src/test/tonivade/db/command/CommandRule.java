@@ -9,8 +9,8 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
-import static tonivade.server.protocol.SafeString.safeAsList;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeAsList;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Optional;
 
@@ -30,10 +30,10 @@ import tonivade.db.RedisSessionState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.command.IServerContext;
-import tonivade.server.command.ISession;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.command.ISession;
 
 public class CommandRule implements TestRule {
 

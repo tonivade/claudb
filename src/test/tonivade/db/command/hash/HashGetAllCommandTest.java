@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
 import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import org.mockito.Captor;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 import tonivade.db.data.DatabaseValue;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(HashGetAllCommand.class)
 public class HashGetAllCommandTest {

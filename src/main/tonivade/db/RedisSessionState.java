@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 public class RedisSessionState {
 

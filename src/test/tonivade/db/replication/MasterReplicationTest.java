@@ -10,7 +10,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import tonivade.db.ITinyDB;
 import tonivade.db.data.Database;
 import tonivade.db.data.IDatabase;
-import tonivade.server.protocol.RedisToken;
-import tonivade.server.protocol.RedisToken.StringRedisToken;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {

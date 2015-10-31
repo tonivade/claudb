@@ -8,7 +8,7 @@ package tonivade.db.command.set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.set;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 
@@ -19,7 +19,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(SetUnionCommand.class)
 public class SetUnionCommandTest {

@@ -62,8 +62,8 @@ import tonivade.db.command.zset.SortedSetRangeByScoreCommand;
 import tonivade.db.command.zset.SortedSetRangeCommand;
 import tonivade.db.command.zset.SortedSetRemoveCommand;
 import tonivade.db.command.zset.SortedSetReverseRangeCommand;
-import tonivade.server.command.CommandSuite;
-import tonivade.server.command.ICommand;
+import tonivade.redis.command.CommandSuite;
+import tonivade.redis.command.ICommand;
 
 public class RedisCommandSuite extends CommandSuite {
 

@@ -15,22 +15,22 @@ import java.util.logging.Logger;
 
 import tonivade.db.ITinyDB;
 import tonivade.db.persistence.ByteBufferInputStream;
-import tonivade.server.ITinyCallback;
-import tonivade.server.TinyClient;
-import tonivade.server.command.ICommand;
-import tonivade.server.command.ISession;
-import tonivade.server.command.Request;
-import tonivade.server.command.Response;
-import tonivade.server.protocol.RedisToken;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.IRedisCallback;
+import tonivade.redis.RedisClient;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.command.ISession;
+import tonivade.redis.command.Request;
+import tonivade.redis.command.Response;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
 
-public class SlaveReplication implements ITinyCallback {
+public class SlaveReplication implements IRedisCallback {
 
     private static final String SYNC_COMMAND = "SYNC\r\n";
 
     private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
 
-    private final TinyClient client;
+    private final RedisClient client;
 
     private final ITinyDB server;
 
@@ -39,7 +39,7 @@ public class SlaveReplication implements ITinyCallback {
     public SlaveReplication(ITinyDB server, ISession session, String host, int port) {
         this.server = server;
         this.session = session;
-        this.client = new TinyClient(host, port, this);
+        this.client = new RedisClient(host, port, this);
     }
 
     public void start() {

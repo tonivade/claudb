@@ -15,11 +15,11 @@ import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.annotation.Command;
-import tonivade.server.annotation.ParamLength;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.annotation.ParamLength;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.protocol.SafeString;
 
 @ReadOnly
 @Command("hvals")

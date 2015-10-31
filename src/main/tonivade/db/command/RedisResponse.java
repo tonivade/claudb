@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import tonivade.db.data.DatabaseValue;
-import tonivade.server.command.IResponse;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.protocol.SafeString;
 
 public class RedisResponse {
 

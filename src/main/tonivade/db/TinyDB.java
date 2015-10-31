@@ -7,7 +7,7 @@ package tonivade.db;
 
 import static java.util.Collections.emptyList;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,20 +24,20 @@ import tonivade.db.command.RedisCommandSuite;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.PersistenceManager;
-import tonivade.server.TinyServer;
-import tonivade.server.command.ICommand;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.command.ISession;
-import tonivade.server.command.Request;
-import tonivade.server.protocol.RedisToken;
-import tonivade.server.protocol.RedisToken.IntegerRedisToken;
-import tonivade.server.protocol.RedisToken.StringRedisToken;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.RedisServer;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.ISession;
+import tonivade.redis.command.Request;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
+import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
+import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 import io.netty.buffer.ByteBuf;
 
-public class TinyDB extends TinyServer implements ITinyDB {
+public class TinyDB extends RedisServer implements ITinyDB {
 
     private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 

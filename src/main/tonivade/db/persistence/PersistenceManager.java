@@ -26,15 +26,15 @@ import java.util.logging.Logger;
 
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBConfig;
-import tonivade.server.command.ICommand;
-import tonivade.server.command.ISession;
-import tonivade.server.command.Request;
-import tonivade.server.command.Response;
-import tonivade.server.command.Session;
-import tonivade.server.protocol.RedisParser;
-import tonivade.server.protocol.RedisSource;
-import tonivade.server.protocol.RedisToken;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.command.ISession;
+import tonivade.redis.command.Request;
+import tonivade.redis.command.Response;
+import tonivade.redis.command.Session;
+import tonivade.redis.protocol.RedisParser;
+import tonivade.redis.protocol.RedisSource;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
 
 public class PersistenceManager implements Runnable {
 

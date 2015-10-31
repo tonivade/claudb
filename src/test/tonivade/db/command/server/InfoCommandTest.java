@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(InfoCommand.class)
 public class InfoCommandTest {

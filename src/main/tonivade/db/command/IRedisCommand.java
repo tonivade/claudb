@@ -4,10 +4,10 @@ import tonivade.db.ITinyDB;
 import tonivade.db.RedisServerState;
 import tonivade.db.RedisSessionState;
 import tonivade.db.data.IDatabase;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.command.IServerContext;
-import tonivade.server.command.ISession;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.command.ISession;
 
 public interface IRedisCommand {
 

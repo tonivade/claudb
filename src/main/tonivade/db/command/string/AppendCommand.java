@@ -7,18 +7,18 @@ package tonivade.db.command.string;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.server.protocol.SafeString.append;
+import static tonivade.redis.protocol.SafeString.append;
 
 import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.annotation.Command;
-import tonivade.server.annotation.ParamLength;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.annotation.ParamLength;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.protocol.SafeString;
 
 @Command("append")
 @ParamLength(1)

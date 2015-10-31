@@ -8,7 +8,7 @@ package tonivade.db.command.pubsub;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.isSet;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.server.command.ISession;
+import tonivade.redis.command.ISession;
 
 @CommandUnderTest(SubscribeCommand.class)
 public class SubscribeCommandTest {

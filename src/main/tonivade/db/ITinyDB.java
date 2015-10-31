@@ -11,8 +11,8 @@ import java.io.OutputStream;
 import java.util.List;
 
 import tonivade.db.data.IDatabase;
-import tonivade.server.command.IServerContext;
-import tonivade.server.protocol.RedisToken;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.protocol.RedisToken;
 
 public interface ITinyDB extends IServerContext {
 

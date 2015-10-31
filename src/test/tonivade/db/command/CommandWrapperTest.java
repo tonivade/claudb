@@ -11,8 +11,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.server.command.IResponse.RESULT_OK;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.command.IResponse.RESULT_OK;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,10 +27,10 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
-import tonivade.server.annotation.ParamLength;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.command.ISession;
+import tonivade.redis.annotation.ParamLength;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {

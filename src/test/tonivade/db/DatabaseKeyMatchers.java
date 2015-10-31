@@ -5,7 +5,7 @@
 
 package tonivade.db;
 
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;

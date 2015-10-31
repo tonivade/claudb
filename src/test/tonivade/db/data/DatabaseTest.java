@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Map.Entry;

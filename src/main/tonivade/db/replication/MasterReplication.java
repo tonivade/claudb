@@ -8,8 +8,8 @@ package tonivade.db.replication;
 import static java.lang.String.valueOf;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.server.protocol.SafeString.safeAsList;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeAsList;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,9 +24,9 @@ import tonivade.db.RedisServerState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.command.Response;
-import tonivade.server.protocol.RedisToken;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.command.Response;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
 
 public class MasterReplication implements Runnable {
 

@@ -13,7 +13,7 @@ import org.junit.Test;
 import tonivade.db.ITinyDB;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.server.command.IResponse;
+import tonivade.redis.command.IResponse;
 
 @CommandUnderTest(PublishCommand.class)
 public class PublishCommandTest {

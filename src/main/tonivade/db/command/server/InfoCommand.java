@@ -8,7 +8,7 @@ package tonivade.db.command.server;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
@@ -23,11 +23,11 @@ import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.annotation.Command;
-import tonivade.server.command.IRequest;
-import tonivade.server.command.IResponse;
-import tonivade.server.command.IServerContext;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.protocol.SafeString;
 
 @ReadOnly
 @Command("info")

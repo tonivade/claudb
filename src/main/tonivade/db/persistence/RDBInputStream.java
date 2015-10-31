@@ -13,7 +13,7 @@ import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.ByteUtils.byteArrayToInt;
-import static tonivade.server.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +30,7 @@ import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.server.protocol.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 public class RDBInputStream {
 
