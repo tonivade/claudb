@@ -11,8 +11,8 @@ import static java.util.Collections.unmodifiableNavigableSet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.db.redis.SafeString.safeString;
 import static tonivade.equalizer.Equalizer.equalizer;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import tonivade.db.redis.SafeString;
+import tonivade.server.protocol.SafeString;
 
 
 public class DatabaseValue {

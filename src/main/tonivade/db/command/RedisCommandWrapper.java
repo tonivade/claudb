@@ -6,13 +6,19 @@
 package tonivade.db.command;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
-import tonivade.db.command.annotation.ParamLength;
+
+import tonivade.db.RedisServerState;
+import tonivade.db.RedisSessionState;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.data.DataType;
 import tonivade.db.data.IDatabase;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.ICommand;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
 
-public class CommandWrapper implements ICommand {
+public class RedisCommandWrapper implements ICommand {
 
     private int params;
 
@@ -20,9 +26,9 @@ public class CommandWrapper implements ICommand {
 
     private final boolean pubSubAllowed;
 
-    private final ICommand command;
+    private final IRedisCommand command;
 
-    public CommandWrapper(ICommand command) {
+    public RedisCommandWrapper(IRedisCommand command) {
         this.command = command;
         ParamLength length = command.getClass().getAnnotation(ParamLength.class);
         if (length != null) {
@@ -36,7 +42,8 @@ public class CommandWrapper implements ICommand {
     }
 
     @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
+    public void execute(IRequest request, IResponse response) {
+        IDatabase db = getCurrentDB(request);
         if (request.getLength() < params) {
             response.addError("ERR wrong number of arguments for '" + request.getCommand() + "' command");
         } else if (dataType != null && !db.isType(safeKey(request.getParam(0)), dataType)) {
@@ -48,8 +55,22 @@ public class CommandWrapper implements ICommand {
         }
     }
 
+    private IDatabase getCurrentDB(IRequest request) {
+        RedisServerState serverState = getServerState(request);
+        RedisSessionState sessionState = getSessionState(request);
+        return serverState.getDatabase(sessionState.getCurrentDB());
+    }
+
+    private RedisSessionState getSessionState(IRequest request) {
+        return request.getSession().getValue("state");
+    }
+
+    private RedisServerState getServerState(IRequest request) {
+        return request.getServerContext().getValue("state");
+    }
+
     private boolean isSubscribed(IRequest request) {
-        return !request.getSession().getSubscriptions().isEmpty();
+        return !getSessionState(request).getSubscriptions().isEmpty();
     }
 
 }

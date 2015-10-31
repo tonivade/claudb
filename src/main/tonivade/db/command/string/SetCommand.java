@@ -7,21 +7,22 @@ package tonivade.db.command.string;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.data.IDatabase;
+import tonivade.server.annotation.Command;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
 
 @Command("set")
 @ParamLength(2)
-public class SetCommand implements ICommand {
+public class SetCommand implements IRedisCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         db.put(safeKey(request.getParam(0)), string(request.getParam(1)));
-        response.addSimpleStr(RESULT_OK);
+        response.addSimpleStr(IResponse.RESULT_OK);
     }
 
 }

@@ -7,6 +7,7 @@ package tonivade.db;
 
 import static tonivade.db.TinyDBConfig.withPersistence;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;

@@ -15,13 +15,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.TinyDBConfig.withPersistence;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -33,12 +35,11 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IServerContext;
+import tonivade.db.ITinyDB;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.RedisArray;
-import tonivade.db.redis.RedisToken;
-import tonivade.db.redis.RedisToken.StringRedisToken;
+import tonivade.server.command.ICommand;
+import tonivade.server.protocol.RedisToken;
+import tonivade.server.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
@@ -48,7 +49,7 @@ public class PersistenceManagerTest {
     private static final String DUMP_FILE = "dump.rdb";
 
     @Mock
-    private IServerContext server;
+    private ITinyDB server;
 
     private PersistenceManager manager;
 
@@ -101,7 +102,7 @@ public class PersistenceManagerTest {
         manager.start();
 
         verify(server).importRDB(any());
-        verify(cmd).execute(any(), any(), any());
+        verify(cmd).execute(any(), any());
 
         assertThat(new File(REDO_FILE).exists(), is(true));
     }
@@ -146,8 +147,8 @@ public class PersistenceManagerTest {
         return str;
     }
 
-    private RedisArray array() {
-        RedisArray array = new RedisArray();
+    private List<RedisToken> array() {
+        List<RedisToken> array = new LinkedList<>();
         array.add(token("PING"));
         return array;
     }

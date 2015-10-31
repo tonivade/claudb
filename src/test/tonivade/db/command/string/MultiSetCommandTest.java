@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.string.MultiSetCommand;
 
 @CommandUnderTest(MultiSetCommand.class)
 public class MultiSetCommandTest {

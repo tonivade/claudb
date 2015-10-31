@@ -8,26 +8,26 @@ package tonivade.db.command.pubsub;
 import static java.util.Arrays.asList;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.server.annotation.Command;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.protocol.SafeString;
 
 @ReadOnly
 @Command("subscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class SubscribeCommand implements ICommand {
+public class SubscribeCommand implements IRedisCommand {
 
     private static final SafeString SUBSCRIBE = safeString("subscribe");
 
@@ -35,7 +35,7 @@ public class SubscribeCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        IDatabase admin = request.getServerContext().getAdminDatabase();
+        IDatabase admin = getAdminDatabase(request.getServerContext());
         int i = 1;
         for (SafeString channel : request.getParams()) {
             admin.merge(safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel)), set(safeString(request.getSession().getId())),
@@ -45,7 +45,7 @@ public class SubscribeCommand implements ICommand {
                         merge.add(safeString(request.getSession().getId()));
                         return set(merge);
                     });
-            request.getSession().addSubscription(channel);
+            getSessionState(request.getSession()).addSubscription(channel);
             response.addArray(asList(SUBSCRIBE, channel, i++));
         }
     }

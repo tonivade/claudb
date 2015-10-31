@@ -17,23 +17,23 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.server.annotation.Command;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.protocol.SafeString;
 
 @ReadOnly
 @Command("zrangebyscore")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetRangeByScoreCommand implements ICommand {
+public class SortedSetRangeByScoreCommand implements IRedisCommand {
 
     private static final String EXCLUSIVE = "(";
     private static final String MINUS_INFINITY = "-inf";

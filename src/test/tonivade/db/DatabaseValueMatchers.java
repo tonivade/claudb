@@ -6,7 +6,7 @@
 package tonivade.db;
 
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.Map.Entry;
 
@@ -14,7 +14,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
 
 import tonivade.db.data.DatabaseValue;
-import tonivade.db.redis.SafeString;
+import tonivade.server.protocol.SafeString;
 
 public class DatabaseValueMatchers {
 

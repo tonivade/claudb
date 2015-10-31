@@ -11,20 +11,20 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.server.annotation.Command;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.protocol.SafeString;
 
 @ReadOnly
 @Command("keys")
 @ParamLength(1)
-public class KeysCommand implements ICommand {
+public class KeysCommand implements IRedisCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

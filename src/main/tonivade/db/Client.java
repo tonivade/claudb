@@ -11,12 +11,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tonivade.server.ITinyCallback;
+import tonivade.server.TinyClient;
+import tonivade.server.protocol.RedisToken;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-import tonivade.db.redis.RedisToken;
 
-public class Client implements ITinyDBCallback {
+public class Client implements ITinyCallback {
 
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
@@ -25,7 +28,7 @@ public class Client implements ITinyDBCallback {
     private static final String END_OF_LINE = "\r\n";
     private static final String PROMPT = "> ";
 
-    private BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
+    private final BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
 
      @Override
     public void onConnect() {
@@ -67,7 +70,7 @@ public class Client implements ITinyDBCallback {
 
             String optionHost = options.valueOf(host);
             int optionPort = parsePort(options.valueOf(port));
-            TinyDBClient client = new TinyDBClient(optionHost, optionPort, callback);
+            TinyClient client = new TinyClient(optionHost, optionPort, callback);
             client.start();
 
             prompt();

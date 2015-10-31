@@ -9,8 +9,8 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
-import static tonivade.db.redis.SafeString.safeAsList;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeAsList;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.Optional;
 
@@ -24,10 +24,16 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import tonivade.db.data.Database;
+import tonivade.db.ITinyDB;
+import tonivade.db.RedisServerState;
+import tonivade.db.RedisSessionState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.command.IServerContext;
+import tonivade.server.command.ISession;
 
 public class CommandRule implements TestRule {
 
@@ -37,16 +43,19 @@ public class CommandRule implements TestRule {
 
     private IDatabase database;
 
-    private IServerContext server;
+    private ITinyDB server;
 
     private ISession session;
 
+    private IRedisCommand command;
+
     private final Object target;
 
-    private ICommand command;
+    private final RedisServerState redisServerState = new RedisServerState(1);
+
+    private final RedisSessionState redisSessionState = new RedisSessionState();
 
     public CommandRule(Object target) {
-        super();
         this.target = target;
     }
 
@@ -67,7 +76,7 @@ public class CommandRule implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
-                server = mock(IServerContext.class);
+                server = mock(ITinyDB.class);
                 request = mock(IRequest.class);
                 response = mock(IResponse.class, new Answer<IResponse>() {
                     @Override
@@ -76,13 +85,15 @@ public class CommandRule implements TestRule {
                     }
                 });
                 session = mock(ISession.class);
-                database = new Database();
+                database = redisServerState.getDatabase(0);
 
                 when(request.getServerContext()).thenReturn(server);
                 when(request.getSession()).thenReturn(session);
                 when(session.getId()).thenReturn("localhost:12345");
+                when(session.getValue("state")).thenReturn(redisSessionState);
                 when(server.getAdminDatabase()).thenReturn(database);
                 when(server.isMaster()).thenReturn(true);
+                when(server.getValue("state")).thenReturn(redisServerState);
 
                 MockitoAnnotations.initMocks(target);
 
@@ -102,7 +113,7 @@ public class CommandRule implements TestRule {
 
     public CommandRule execute() {
         Mockito.reset(response);
-        new CommandWrapper(command).execute(database, request, response);
+        new RedisCommandWrapper(command).execute(request, response);
         return this;
     }
 
@@ -143,6 +154,8 @@ public class CommandRule implements TestRule {
     public <T> T verify(Class<T> type) {
         if (type.equals(IServerContext.class)) {
             return (T) Mockito.verify(server);
+        } else if (type.equals(ITinyDB.class)) {
+                return (T) Mockito.verify(server);
         } else if (type.equals(ISession.class)) {
             return (T) Mockito.verify(session);
         }

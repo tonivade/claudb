@@ -9,7 +9,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.Collection;
 
@@ -20,7 +20,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.redis.SafeString;
+import tonivade.server.protocol.SafeString;
 
 @CommandUnderTest(HashKeysCommand.class)
 public class HashKeysCommandTest {

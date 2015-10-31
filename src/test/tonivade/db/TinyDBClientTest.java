@@ -15,8 +15,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import tonivade.db.redis.RedisToken;
-import tonivade.db.redis.RedisTokenType;
+import tonivade.server.ITinyCallback;
+import tonivade.server.TinyClient;
+import tonivade.server.protocol.RedisToken;
+import tonivade.server.protocol.RedisTokenType;
 
 public class TinyDBClientTest {
 
@@ -27,8 +29,8 @@ public class TinyDBClientTest {
     public void testClient() throws Exception {
         ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
-        ITinyDBCallback callback = mock(ITinyDBCallback.class);
-        TinyDBClient client = new TinyDBClient(callback);
+        ITinyCallback callback = mock(ITinyCallback.class);
+        TinyClient client = new TinyClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
 
         client.start();
 

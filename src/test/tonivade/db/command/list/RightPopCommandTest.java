@@ -7,7 +7,7 @@ package tonivade.db.command.list;
 
 import static tonivade.db.DatabaseValueMatchers.isList;
 import static tonivade.db.DatabaseValueMatchers.list;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;

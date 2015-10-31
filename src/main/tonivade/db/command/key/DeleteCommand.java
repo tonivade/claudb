@@ -6,18 +6,19 @@
 package tonivade.db.command.key;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.server.annotation.Command;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.protocol.SafeString;
 
 @Command("del")
 @ParamLength(1)
-public class DeleteCommand implements ICommand {
+public class DeleteCommand implements IRedisCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

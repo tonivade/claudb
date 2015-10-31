@@ -8,7 +8,7 @@ package tonivade.db.command.server;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
@@ -19,19 +19,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.annotation.Command;
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.server.annotation.Command;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.command.IServerContext;
+import tonivade.server.protocol.SafeString;
 
 @ReadOnly
 @Command("info")
-public class InfoCommand implements ICommand {
+public class InfoCommand implements IRedisCommand {
 
     private static final String SHARP = "#";
     private static final String SEPARATOR = ":";
@@ -113,12 +113,12 @@ public class InfoCommand implements ICommand {
     }
 
     private Map<String, String> replication(IServerContext ctx) {
-        return map(entry("role", ctx.isMaster() ? "master" : "slave"),
+        return map(entry("role", getServerState(ctx).isMaster() ? "master" : "slave"),
                 entry("connected_slaves", slaves(ctx)));
     }
 
     private String slaves(IServerContext ctx) {
-        DatabaseValue slaves = ctx.getAdminDatabase().getOrDefault("slaves", DatabaseValue.EMPTY_SET);
+        DatabaseValue slaves = getAdminDatabase(ctx).getOrDefault("slaves", DatabaseValue.EMPTY_SET);
         return String.valueOf(slaves.<Set<String>>getValue().size());
     }
 

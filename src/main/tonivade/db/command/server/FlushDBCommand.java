@@ -5,19 +5,19 @@
 
 package tonivade.db.command.server;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
+import tonivade.db.command.IRedisCommand;
 import tonivade.db.data.IDatabase;
+import tonivade.server.annotation.Command;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
 
 @Command("flushdb")
-public class FlushDBCommand implements ICommand {
+public class FlushDBCommand implements IRedisCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         db.clear();
-        response.addSimpleStr(RESULT_OK);
+        response.addSimpleStr(IResponse.RESULT_OK);
     }
 
 }

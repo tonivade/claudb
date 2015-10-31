@@ -7,23 +7,24 @@ package tonivade.db.command.pubsub;
 
 import static java.util.Arrays.asList;
 import static tonivade.db.data.DatabaseKey.safeKey;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.Set;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.Response;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.IRedisCommand;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.server.annotation.Command;
+import tonivade.server.annotation.ParamLength;
+import tonivade.server.command.IRequest;
+import tonivade.server.command.IResponse;
+import tonivade.server.command.Response;
+import tonivade.server.protocol.SafeString;
 
 @Command("publish")
 @ParamLength(2)
-public class PublishCommand implements ICommand {
+public class PublishCommand implements IRedisCommand {
 
     private static final SafeString MESSAGE = safeString("message");
 
@@ -31,15 +32,24 @@ public class PublishCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        IDatabase admin = request.getServerContext().getAdminDatabase();
-        DatabaseValue value = admin.getOrDefault(safeKey(safeString(SUBSCRIPTIONS_PREFIX + request.getParam(0))), DatabaseValue.EMPTY_SET);
+        IDatabase admin = getAdminDatabase(request.getServerContext());
+        DatabaseValue value = getSubscriptors(admin, request.getParam(0));
 
         Set<SafeString> subscribers = value.<Set<SafeString>>getValue();
         for (SafeString subscriber : subscribers) {
-            request.getServerContext().publish(subscriber.toString(), message(request));
+            publish(request, subscriber);
         }
 
         response.addInt(subscribers.size());
+    }
+
+    private void publish(IRequest request, SafeString subscriber) {
+        getTinyDB(request.getServerContext()).publish(subscriber.toString(), message(request));
+    }
+
+    private DatabaseValue getSubscriptors(IDatabase admin, SafeString channel) {
+        DatabaseKey subscriptorsKey = safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel));
+        return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
     }
 
     private String message(IRequest request) {

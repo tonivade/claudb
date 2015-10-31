@@ -8,7 +8,7 @@ package tonivade.db.command.list;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.list;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.redis.SafeString;
+import tonivade.server.protocol.SafeString;
 
 @CommandUnderTest(ListRangeCommand.class)
 public class ListRangeCommandTest {

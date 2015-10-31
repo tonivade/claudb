@@ -5,7 +5,7 @@
 
 package tonivade.db.command.string;
 
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.server.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;

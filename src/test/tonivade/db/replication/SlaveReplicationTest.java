@@ -21,9 +21,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBRule;
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.ISession;
+import tonivade.server.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
@@ -32,7 +32,7 @@ public class SlaveReplicationTest {
     public final TinyDBRule rule = new TinyDBRule();
 
     @Mock
-    private IServerContext context;
+    private ITinyDB context;
 
     @Mock
     private ISession session;

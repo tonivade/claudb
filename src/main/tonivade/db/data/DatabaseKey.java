@@ -10,7 +10,7 @@ import static tonivade.equalizer.Equalizer.equalizer;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import tonivade.db.redis.SafeString;
+import tonivade.server.protocol.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
 

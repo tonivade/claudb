@@ -16,7 +16,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import tonivade.db.redis.SafeString;
+import tonivade.server.protocol.SafeString;
 
 public class SortedSet implements NavigableSet<Entry<Double, SafeString>> {
 
