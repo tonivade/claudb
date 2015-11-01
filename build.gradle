@@ -48,10 +48,13 @@ repositories {
     maven {
         url = 'http://garagemarket.com.es/nexus/content/repositories/releases/'
     }
+    maven {
+        url = 'http://garagemarket.com.es/nexus/content/repositories/snapshots/'
+    }
 }
 
 dependencies {
-    compile 'io.netty:netty-all:4.0.31.Final'
+    compile 'tonivade:tiny-server:0.1.1-SNAPSHOT'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
     compile 'tonivade:equalizer:0.1.2'
     testCompile 'junit:junit:4.12'
