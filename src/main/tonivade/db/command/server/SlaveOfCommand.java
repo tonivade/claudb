@@ -5,7 +5,6 @@
 
 package tonivade.db.command.server;
 
-import tonivade.db.TinyDB;
 import tonivade.db.command.IRedisCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
@@ -46,7 +45,7 @@ public class SlaveOfCommand implements IRedisCommand {
 
     private void startReplication(IRequest request, String host, String port) {
         slave = new SlaveReplication(
-                (TinyDB) request.getServerContext(), request.getSession(), host, Integer.parseInt(port));
+                getTinyDB(request.getServerContext()), request.getSession(), host, Integer.parseInt(port));
 
         slave.start();
     }

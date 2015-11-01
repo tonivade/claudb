@@ -17,7 +17,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.data.DatabaseValue;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(GetSetCommand.class)
 public class GetSetCommandTest {
@@ -26,18 +26,16 @@ public class GetSetCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<DatabaseValue> captor;
+    private ArgumentCaptor<SafeString> captor;
 
     @Test
     public void testExecute() {
         rule.withData("a", string("1"))
             .withParams("a", "2")
             .execute()
-            .verify().addValue(captor.capture());
+            .verify().addBulkStr(captor.capture());
 
-        DatabaseValue value = captor.getValue();
-
-        assertThat(value.getValue(), is(safeString("1")));
+        assertThat(captor.getValue(), is(safeString("1")));
     }
 
 }

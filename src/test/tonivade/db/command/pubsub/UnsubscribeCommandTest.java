@@ -6,6 +6,8 @@
 package tonivade.db.command.pubsub;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.isSet;
 import static tonivade.db.DatabaseValueMatchers.set;
@@ -21,7 +23,6 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.redis.command.ISession;
 
 @CommandUnderTest(UnsubscribeCommand.class)
 public class UnsubscribeCommandTest {
@@ -39,7 +40,7 @@ public class UnsubscribeCommandTest {
             .execute()
             .assertValue("subscriptions:test", isSet());
 
-        rule.verify(ISession.class).removeSubscription(safeString("test"));
+        assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test"))));
 
         rule.verify().addArray(captor.capture());
 

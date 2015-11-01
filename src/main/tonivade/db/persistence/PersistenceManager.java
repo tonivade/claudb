@@ -122,15 +122,15 @@ public class PersistenceManager implements Runnable {
 
     private void processCommand(RedisToken token) {
         List<RedisToken> array = token.<List<RedisToken>>getValue();
-
-        RedisToken commandToken = array.remove(0);
+        RedisToken commandToken = array.get(0);
+        List<RedisToken> paramTokens = array.stream().skip(1).collect(toList());
 
         LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
 
         ICommand command = server.getCommand(commandToken.getValue().toString());
 
         if (command != null) {
-            command.execute(request(commandToken, array), new Response());
+            command.execute(request(commandToken, paramTokens), new Response());
         }
     }
 

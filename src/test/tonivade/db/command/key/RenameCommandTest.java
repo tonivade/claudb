@@ -6,7 +6,7 @@
 package tonivade.db.command.key;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static tonivade.db.DatabaseValueMatchers.nullValue;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;

@@ -21,7 +21,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.data.DatabaseValue;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(MultiGetCommand.class)
 public class MultiGetCommandTest {
@@ -30,7 +30,7 @@ public class MultiGetCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<Collection<DatabaseValue>> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() {
@@ -38,18 +38,18 @@ public class MultiGetCommandTest {
             .withData("c", string("2"))
             .withParams("a", "b", "c")
             .execute()
-            .verify().addArrayValue(captor.capture());
+            .verify().addArray(captor.capture());
 
-        Collection<DatabaseValue> result = captor.getValue();
+        Collection<SafeString> result = captor.getValue();
 
-        Iterator<DatabaseValue> iterator = result.iterator();
-        DatabaseValue a = iterator.next();
-        DatabaseValue b = iterator.next();
-        DatabaseValue c = iterator.next();
+        Iterator<SafeString> iterator = result.iterator();
+        SafeString a = iterator.next();
+        SafeString b = iterator.next();
+        SafeString c = iterator.next();
 
-        assertThat(a.getValue(), is(safeString("1")));
+        assertThat(a, is(safeString("1")));
         assertThat(b, is(nullValue()));
-        assertThat(c.getValue(), is(safeString("2")));
+        assertThat(c, is(safeString("2")));
     }
 
 }

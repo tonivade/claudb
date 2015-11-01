@@ -51,9 +51,9 @@ public class CommandRule implements TestRule {
 
     private final Object target;
 
-    private final RedisServerState redisServerState = new RedisServerState(1);
+    private final RedisServerState serverState = new RedisServerState(1);
 
-    private final RedisSessionState redisSessionState = new RedisSessionState();
+    private final RedisSessionState sessionState = new RedisSessionState();
 
     public CommandRule(Object target) {
         this.target = target;
@@ -85,15 +85,15 @@ public class CommandRule implements TestRule {
                     }
                 });
                 session = mock(ISession.class);
-                database = redisServerState.getDatabase(0);
+                database = serverState.getDatabase(0);
 
                 when(request.getServerContext()).thenReturn(server);
                 when(request.getSession()).thenReturn(session);
                 when(session.getId()).thenReturn("localhost:12345");
-                when(session.getValue("state")).thenReturn(redisSessionState);
+                when(session.getValue("state")).thenReturn(sessionState);
                 when(server.getAdminDatabase()).thenReturn(database);
                 when(server.isMaster()).thenReturn(true);
-                when(server.getValue("state")).thenReturn(redisServerState);
+                when(server.getValue("state")).thenReturn(serverState);
 
                 MockitoAnnotations.initMocks(target);
 
@@ -160,6 +160,14 @@ public class CommandRule implements TestRule {
             return (T) Mockito.verify(session);
         }
         return (T) verify();
+    }
+
+    public RedisServerState getServerState() {
+        return serverState;
+    }
+
+    public RedisSessionState getSessionState() {
+        return sessionState;
     }
 
 }

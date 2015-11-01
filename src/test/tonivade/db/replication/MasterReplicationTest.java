@@ -22,8 +22,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.ITinyDB;
-import tonivade.db.data.Database;
-import tonivade.db.data.IDatabase;
+import tonivade.db.RedisServerState;
 import tonivade.redis.protocol.RedisToken;
 import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
@@ -36,12 +35,12 @@ public class MasterReplicationTest {
     @InjectMocks
     private MasterReplication master;
 
-    private final IDatabase db = new Database();
+    private final RedisServerState serverState = new RedisServerState(1);
 
     @Test
     public void testReplication() throws Exception {
         when(server.getCommands()).thenReturn(asList(request()));
-        when(server.getAdminDatabase()).thenReturn(db);
+        when(server.getValue("state")).thenReturn(serverState);
 
         master.addSlave("slave:1");
         master.addSlave("slave:2");
