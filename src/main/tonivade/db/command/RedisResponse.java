@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import tonivade.db.data.DatabaseValue;
@@ -55,7 +56,8 @@ public class RedisResponse {
 
     public RedisResponse addArrayValue(Collection<DatabaseValue> array) {
         if (array != null) {
-            response.addArray(array.stream().map(DatabaseValue::getValue).collect(toList()));
+            response.addArray(array.stream().map(Optional::ofNullable)
+                    .map(op -> op.isPresent() ? op.get().getValue(): null).collect(toList()));
         } else {
             response.addArray(null);
         }

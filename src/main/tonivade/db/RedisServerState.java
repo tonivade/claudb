@@ -1,5 +1,8 @@
 package tonivade.db;
 
+import static tonivade.db.data.DatabaseKey.safeKey;
+import static tonivade.redis.protocol.SafeString.safeString;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import tonivade.db.data.Database;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.RDBInputStream;
@@ -16,7 +20,7 @@ import tonivade.db.persistence.RDBOutputStream;
 
 public class RedisServerState {
 
-    private static final String SLAVES_KEY = "slaves";
+    private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
 
     private boolean master;
     private final List<IDatabase> databases = new ArrayList<>();

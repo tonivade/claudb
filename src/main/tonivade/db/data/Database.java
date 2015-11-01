@@ -187,7 +187,7 @@ public class Database implements IDatabase, Runnable {
     public Set<java.util.Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
         long stamp = lock.readLock();
         try {
-            return cache.entrySet().stream().map((entry) -> new SimpleEntry<DatabaseKey, DatabaseValue>(entry.getKey(), entry.getValue())).collect(toSet());
+            return cache.entrySet().stream().map((entry) -> new SimpleEntry<>(entry.getKey(), entry.getValue())).collect(toSet());
         } finally {
             lock.unlockRead(stamp);
         }
