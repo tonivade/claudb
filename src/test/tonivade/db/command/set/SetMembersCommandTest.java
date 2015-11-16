@@ -39,8 +39,6 @@ public class SetMembersCommandTest {
 
         Collection<SafeString> value = captor.getValue();
 
-        assertThat(value, contains(safeString("a")));
-        assertThat(value, contains(safeString("b")));
-        assertThat(value, contains(safeString("c")));
+        assertThat(value, contains(safeString("a"), safeString("b"), safeString("c")));
     }
 }
