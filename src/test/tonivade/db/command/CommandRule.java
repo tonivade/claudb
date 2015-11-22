@@ -41,8 +41,6 @@ public class CommandRule implements TestRule {
 
     private IResponse response;
 
-    private IDatabase database;
-
     private ITinyDB server;
 
     private ISession session;
@@ -68,7 +66,11 @@ public class CommandRule implements TestRule {
     }
 
     public IDatabase getDatabase() {
-        return database;
+        return serverState.getDatabase(0);
+    }
+
+    public IDatabase getAdminDatabase() {
+        return serverState.getAdminDatabase();
     }
 
     @Override
@@ -85,13 +87,12 @@ public class CommandRule implements TestRule {
                     }
                 });
                 session = mock(ISession.class);
-                database = serverState.getDatabase(0);
 
                 when(request.getServerContext()).thenReturn(server);
                 when(request.getSession()).thenReturn(session);
                 when(session.getId()).thenReturn("localhost:12345");
                 when(session.getValue("state")).thenReturn(sessionState);
-                when(server.getAdminDatabase()).thenReturn(database);
+                when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
                 when(server.isMaster()).thenReturn(true);
                 when(server.getValue("state")).thenReturn(serverState);
 
@@ -101,14 +102,23 @@ public class CommandRule implements TestRule {
 
                 base.evaluate();
 
-                database.clear();
+                getDatabase().clear();
             }
         };
     }
 
     public CommandRule withData(String key, DatabaseValue value) {
-        database.put(safeKey(key), value);
+        withData(getDatabase(), safeKey(key), value);
         return this;
+    }
+
+    public CommandRule withAdminData(String key, DatabaseValue value) {
+        withData(getAdminDatabase(), safeKey(key), value);
+        return this;
+    }
+
+    private void withData(IDatabase database, DatabaseKey key, DatabaseValue value) {
+        database.put(key, value);
     }
 
     public CommandRule execute() {
@@ -137,13 +147,31 @@ public class CommandRule implements TestRule {
     }
 
     public CommandRule assertValue(String key, Matcher<DatabaseValue> matcher) {
-        Assert.assertThat(database.get(safeKey(key)), matcher);
+        assertValue(getDatabase(), safeKey(key), matcher);
+        return this;
+    }
+
+    public CommandRule assertAdminValue(String key, Matcher<DatabaseValue> matcher) {
+        assertValue(getAdminDatabase(), safeKey(key), matcher);
         return this;
     }
 
     public CommandRule assertKey(String key, Matcher<DatabaseKey> matcher) {
-        Assert.assertThat(database.getKey(safeKey(key)), matcher);
+        assertKey(getDatabase(), safeKey(key), matcher);
         return this;
+    }
+
+    public CommandRule assertAdminKey(String key, Matcher<DatabaseKey> matcher) {
+        assertKey(getAdminDatabase(), safeKey(key), matcher);
+        return this;
+    }
+
+    private void assertKey(IDatabase database, DatabaseKey key, Matcher<DatabaseKey> matcher) {
+        Assert.assertThat(database.getKey(key), matcher);
+    }
+
+    private void assertValue(IDatabase database, DatabaseKey key, Matcher<DatabaseValue> matcher) {
+        Assert.assertThat(database.get(key), matcher);
     }
 
     public IResponse verify() {

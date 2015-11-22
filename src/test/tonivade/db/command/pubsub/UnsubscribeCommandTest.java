@@ -35,10 +35,10 @@ public class UnsubscribeCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("subscriptions:test", set("localhost:12345"))
+        rule.withAdminData("subscriptions:test", set("localhost:12345"))
             .withParams("test")
             .execute()
-            .assertValue("subscriptions:test", isSet());
+            .assertAdminValue("subscriptions:test", isSet());
 
         assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test"))));
 

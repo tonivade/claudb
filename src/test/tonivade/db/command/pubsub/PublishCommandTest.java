@@ -23,7 +23,7 @@ public class PublishCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("subscriptions:test", set("localhost:12345"))
+        rule.withAdminData("subscriptions:test", set("localhost:12345"))
             .withParams("test", "Hello World!")
             .execute();
         rule.verify(ITinyDB.class).publish("localhost:12345", "*3\r\n$7\r\nmessage\r\n$4\r\ntest\r\n$12\r\nHello World!\r\n");

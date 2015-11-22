@@ -39,4 +39,8 @@ public class RedisSessionState {
         executor.submit(task);
     }
 
+    public boolean isSubscribed() {
+        return !subscriptions.isEmpty();
+    }
+
 }

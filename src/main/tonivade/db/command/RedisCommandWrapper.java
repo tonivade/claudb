@@ -17,6 +17,8 @@ import tonivade.redis.annotation.ParamLength;
 import tonivade.redis.command.ICommand;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.command.ISession;
 
 public class RedisCommandWrapper implements ICommand {
 
@@ -56,21 +58,21 @@ public class RedisCommandWrapper implements ICommand {
     }
 
     private IDatabase getCurrentDB(IRequest request) {
-        RedisServerState serverState = getServerState(request);
-        RedisSessionState sessionState = getSessionState(request);
+        RedisServerState serverState = getServerState(request.getServerContext());
+        RedisSessionState sessionState = getSessionState(request.getSession());
         return serverState.getDatabase(sessionState.getCurrentDB());
     }
 
-    private RedisSessionState getSessionState(IRequest request) {
-        return request.getSession().getValue("state");
+    private RedisSessionState getSessionState(ISession session) {
+        return session.getValue("state");
     }
 
-    private RedisServerState getServerState(IRequest request) {
-        return request.getServerContext().getValue("state");
+    private RedisServerState getServerState(IServerContext server) {
+        return server.getValue("state");
     }
 
     private boolean isSubscribed(IRequest request) {
-        return !getSessionState(request).getSubscriptions().isEmpty();
+        return getSessionState(request.getSession()).isSubscribed();
     }
 
 }
