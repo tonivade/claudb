@@ -36,11 +36,15 @@ public class RedisSessionState {
     }
 
     public void enqueue(Runnable task) {
-        executor.submit(task);
+        executor.execute(task);
     }
 
     public boolean isSubscribed() {
         return !subscriptions.isEmpty();
+    }
+
+    public void destroy() {
+        executor.shutdown();
     }
 
 }

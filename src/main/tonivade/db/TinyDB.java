@@ -5,9 +5,9 @@
 
 package tonivade.db;
 
-import static java.util.Collections.emptyList;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
 import static tonivade.redis.protocol.SafeString.safeString;
+import io.netty.buffer.ByteBuf;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,13 +29,10 @@ import tonivade.redis.command.ICommand;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.command.ISession;
-import tonivade.redis.command.Request;
 import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.SafeString;
 import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
 import tonivade.redis.protocol.RedisToken.StringRedisToken;
-
-import io.netty.buffer.ByteBuf;
+import tonivade.redis.protocol.SafeString;
 
 public class TinyDB extends RedisServer implements ITinyDB {
 
@@ -85,7 +82,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
     @Override
     protected void cleanSession(ISession session) {
         try {
-            processCommand(new Request(this, session, safeString("unsubscribe"), emptyList()));
+            getSessionState(session).destroy();
         } finally {
             session.destroy();
         }
