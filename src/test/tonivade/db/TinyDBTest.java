@@ -12,7 +12,6 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -45,7 +44,6 @@ public class TinyDBTest {
     }
 
     @Test
-    @Ignore
     public void testPipeline() throws Exception {
         try (Jedis jedis = createClientConnection()) {
             Pipeline p = jedis.pipelined();
@@ -83,7 +81,6 @@ public class TinyDBTest {
     }
 
     @Test
-    @Ignore
     public void testLoad1000() throws Exception {
         loadTest(1000);
     }
@@ -94,7 +91,6 @@ public class TinyDBTest {
     }
 
     @Test
-    @Ignore
     public void testLoad100000() throws Exception {
         loadTest(100000);
     }
