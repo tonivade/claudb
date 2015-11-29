@@ -25,8 +25,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import tonivade.db.ITinyDB;
-import tonivade.db.RedisServerState;
-import tonivade.db.RedisSessionState;
+import tonivade.db.TinyDBServerState;
+import tonivade.db.TinyDBSessionState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
@@ -49,9 +49,9 @@ public class CommandRule implements TestRule {
 
     private final Object target;
 
-    private final RedisServerState serverState = new RedisServerState(1);
+    private final TinyDBServerState serverState = new TinyDBServerState(1);
 
-    private final RedisSessionState sessionState = new RedisSessionState();
+    private final TinyDBSessionState sessionState = new TinyDBSessionState();
 
     public CommandRule(Object target) {
         this.target = target;
@@ -190,11 +190,11 @@ public class CommandRule implements TestRule {
         return (T) verify();
     }
 
-    public RedisServerState getServerState() {
+    public TinyDBServerState getServerState() {
         return serverState;
     }
 
-    public RedisSessionState getSessionState() {
+    public TinyDBSessionState getSessionState() {
         return sessionState;
     }
 

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import tonivade.db.ITinyDB;
-import tonivade.db.RedisServerState;
+import tonivade.db.TinyDBServerState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
@@ -111,7 +111,7 @@ public class MasterReplication implements Runnable {
         return cmd;
     }
 
-    private RedisServerState getServerState() {
+    private TinyDBServerState getServerState() {
         return server.getValue("state");
     }
 

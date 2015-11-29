@@ -21,8 +21,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.ITinyDB;
-import tonivade.db.RedisServerState;
-import tonivade.db.RedisSessionState;
+import tonivade.db.TinyDBServerState;
+import tonivade.db.TinyDBSessionState;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseKey;
@@ -51,10 +51,10 @@ public class CommandWrapperTest {
     private ITinyDB server;
 
     @Mock
-    private RedisSessionState sessionState;
+    private TinyDBSessionState sessionState;
 
     @Mock
-    private RedisServerState serverState;
+    private TinyDBServerState serverState;
 
     @Before
     public void setUp() {

@@ -1,8 +1,8 @@
 package tonivade.db.command;
 
 import tonivade.db.ITinyDB;
-import tonivade.db.RedisServerState;
-import tonivade.db.RedisSessionState;
+import tonivade.db.TinyDBServerState;
+import tonivade.db.TinyDBSessionState;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
@@ -21,11 +21,11 @@ public interface IRedisCommand {
         return getServerState(server).getAdminDatabase();
     }
 
-    default RedisServerState getServerState(IServerContext server) {
+    default TinyDBServerState getServerState(IServerContext server) {
         return server.getValue("state");
     }
 
-    default RedisSessionState getSessionState(ISession session) {
+    default TinyDBSessionState getSessionState(ISession session) {
         return session.getValue("state");
     }
 

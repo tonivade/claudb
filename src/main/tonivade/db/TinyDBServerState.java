@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import tonivade.db.data.Database;
@@ -18,7 +17,9 @@ import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.RDBInputStream;
 import tonivade.db.persistence.RDBOutputStream;
 
-public class RedisServerState {
+public class TinyDBServerState {
+
+    private static final int RDB_VERSION = 6;
 
     private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
 
@@ -26,7 +27,7 @@ public class RedisServerState {
     private final List<IDatabase> databases = new ArrayList<>();
     private final IDatabase admin = new Database();
 
-    public RedisServerState(int numDatabases) {
+    public TinyDBServerState(int numDatabases) {
         this.master = true;
         for (int i = 0; i < numDatabases; i++) {
             this.databases.add(new Database());
@@ -54,12 +55,13 @@ public class RedisServerState {
     }
 
     public boolean hasSlaves() {
-        return !admin.getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).<Set<String>>getValue().isEmpty();
+        DatabaseValue slaves = admin.getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET);
+        return !slaves.<Set<String>>getValue().isEmpty();
     }
 
     public void exportRDB(OutputStream output) throws IOException {
         RDBOutputStream rdb = new RDBOutputStream(output);
-        rdb.preamble(6);
+        rdb.preamble(RDB_VERSION);
         for (int i = 0; i < databases.size(); i++) {
             IDatabase db = databases.get(i);
             if (!db.isEmpty()) {
@@ -73,9 +75,6 @@ public class RedisServerState {
     public void importRDB(InputStream input) throws IOException {
         RDBInputStream rdb = new RDBInputStream(input);
 
-        for (Entry<Integer, IDatabase> entry : rdb.parse().entrySet()) {
-            this.databases.set(entry.getKey(), entry.getValue());
-        }
+        rdb.parse().forEach((i, db) -> this.databases.set(i, db));
     }
-
 }

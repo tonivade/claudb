@@ -7,8 +7,8 @@ package tonivade.db.command;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
-import tonivade.db.RedisServerState;
-import tonivade.db.RedisSessionState;
+import tonivade.db.TinyDBServerState;
+import tonivade.db.TinyDBSessionState;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.data.DataType;
@@ -58,16 +58,16 @@ public class RedisCommandWrapper implements ICommand {
     }
 
     private IDatabase getCurrentDB(IRequest request) {
-        RedisServerState serverState = getServerState(request.getServerContext());
-        RedisSessionState sessionState = getSessionState(request.getSession());
+        TinyDBServerState serverState = getServerState(request.getServerContext());
+        TinyDBSessionState sessionState = getSessionState(request.getSession());
         return serverState.getDatabase(sessionState.getCurrentDB());
     }
 
-    private RedisSessionState getSessionState(ISession session) {
+    private TinyDBSessionState getSessionState(ISession session) {
         return session.getValue("state");
     }
 
-    private RedisServerState getServerState(IServerContext server) {
+    private TinyDBServerState getServerState(IServerContext server) {
         return server.getValue("state");
     }
 

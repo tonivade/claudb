@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 import tonivade.redis.protocol.SafeString;
 
-public class RedisSessionState {
+public class TinyDBSessionState {
 
     private int db;
 

@@ -57,7 +57,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
         } else {
             this.persistence = Optional.empty();
         }
-        state.put("state", new RedisServerState(config.getNumDatabases()));
+        putValue("state", new TinyDBServerState(config.getNumDatabases()));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
 
     @Override
     protected void createSession(ISession session) {
-        session.putValue("state", new RedisSessionState());
+        session.putValue("state", new TinyDBSessionState());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
     @Override
     protected void executeCommand(ICommand command, IRequest request, IResponse response) {
         ISession session = request.getSession();
-        RedisSessionState sessionState = getSessionState(session);
+        TinyDBSessionState sessionState = getSessionState(session);
         if (!isReadOnly(command)) {
             sessionState.enqueue(() -> {
                 try {
@@ -143,13 +143,13 @@ public class TinyDB extends RedisServer implements ITinyDB {
         return array;
     }
 
-    private RedisSessionState getSessionState(ISession session) {
-        return session.<RedisSessionState>getValue("state");
+    private TinyDBSessionState getSessionState(ISession session) {
+        return session.<TinyDBSessionState>getValue("state");
     }
 
     @Override
     public void publish(String sourceKey, String message) {
-        ISession session = clients.get(sourceKey);
+        ISession session = getSession(sourceKey);
         if (session != null) {
             SafeString safeString = safeString(message);
             ByteBuf buffer = session.getContext().alloc().buffer(safeString.length());
@@ -188,7 +188,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
         getState().setMaster(master);
     }
 
-    private RedisServerState getState() {
+    private TinyDBServerState getState() {
         return getValue("state");
     }
 
