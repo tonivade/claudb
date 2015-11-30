@@ -11,7 +11,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 import java.util.HashSet;
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -28,7 +28,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("sdiff")
 @ParamLength(2)
 @ParamType(DataType.SET)
-public class SetDifferenceCommand implements IRedisCommand {
+public class SetDifferenceCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

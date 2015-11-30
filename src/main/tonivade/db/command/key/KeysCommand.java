@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
@@ -24,7 +24,7 @@ import tonivade.redis.protocol.SafeString;
 @ReadOnly
 @Command("keys")
 @ParamLength(1)
-public class KeysCommand implements IRedisCommand {
+public class KeysCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

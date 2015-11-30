@@ -8,7 +8,7 @@ package tonivade.db.command.server;
 import java.io.IOException;
 
 import tonivade.db.ITinyDB;
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.ByteBufferOutputStream;
@@ -20,7 +20,7 @@ import tonivade.redis.protocol.SafeString;
 
 @ReadOnly
 @Command("sync")
-public class SyncCommand implements IRedisCommand {
+public class SyncCommand implements ITinyDBCommand {
 
     private MasterReplication master;
 

@@ -45,7 +45,7 @@ public class CommandRule implements TestRule {
 
     private ISession session;
 
-    private IRedisCommand command;
+    private ITinyDBCommand command;
 
     private final Object target;
 
@@ -67,6 +67,14 @@ public class CommandRule implements TestRule {
 
     public IDatabase getDatabase() {
         return serverState.getDatabase(0);
+    }
+
+    public ISession getSession() {
+        return session;
+    }
+
+    public ITinyDB getServer() {
+        return server;
     }
 
     public IDatabase getAdminDatabase() {
@@ -123,7 +131,7 @@ public class CommandRule implements TestRule {
 
     public CommandRule execute() {
         Mockito.reset(response);
-        new RedisCommandWrapper(command).execute(request, response);
+        new TinyDBCommandWrapper(command).execute(request, response);
         return this;
     }
 

@@ -10,7 +10,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -24,7 +24,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("lset")
 @ParamLength(3)
 @ParamType(DataType.LIST)
-public class ListSetCommand implements IRedisCommand {
+public class ListSetCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

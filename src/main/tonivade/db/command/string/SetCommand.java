@@ -8,7 +8,7 @@ package tonivade.db.command.string;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
@@ -17,7 +17,7 @@ import tonivade.redis.command.IResponse;
 
 @Command("set")
 @ParamLength(2)
-public class SetCommand implements IRedisCommand {
+public class SetCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

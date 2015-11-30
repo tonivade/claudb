@@ -56,6 +56,8 @@ import tonivade.db.command.string.MultiSetCommand;
 import tonivade.db.command.string.SetCommand;
 import tonivade.db.command.string.SetExpiredCommand;
 import tonivade.db.command.string.StringLengthCommand;
+import tonivade.db.command.transaction.ExecCommand;
+import tonivade.db.command.transaction.MultiCommand;
 import tonivade.db.command.zset.SortedSetAddCommand;
 import tonivade.db.command.zset.SortedSetCardinalityCommand;
 import tonivade.db.command.zset.SortedSetRangeByScoreCommand;
@@ -65,9 +67,9 @@ import tonivade.db.command.zset.SortedSetReverseRangeCommand;
 import tonivade.redis.command.CommandSuite;
 import tonivade.redis.command.ICommand;
 
-public class RedisCommandSuite extends CommandSuite {
+public class TinyDBCommandSuite extends CommandSuite {
 
-    public RedisCommandSuite() {
+    public TinyDBCommandSuite() {
         // connection
         addCommand(SelectCommand.class);
         addCommand(SyncCommand.class);
@@ -142,13 +144,14 @@ public class RedisCommandSuite extends CommandSuite {
         addCommand(PublishCommand.class);
         addCommand(SubscribeCommand.class);
         addCommand(UnsubscribeCommand.class);
+
+        // transactions
+        addCommand(MultiCommand.class);
+        addCommand(ExecCommand.class);
     }
 
     @Override
     protected ICommand wrap(Object command) {
-        if (command instanceof IRedisCommand) {
-            return new RedisCommandWrapper((IRedisCommand) command);
-        }
-        return super.wrap(command);
+        return new TinyDBCommandWrapper(command);
     }
 }

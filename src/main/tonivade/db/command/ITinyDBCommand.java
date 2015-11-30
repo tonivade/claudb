@@ -9,7 +9,7 @@ import tonivade.redis.command.IResponse;
 import tonivade.redis.command.IServerContext;
 import tonivade.redis.command.ISession;
 
-public interface IRedisCommand {
+public interface ITinyDBCommand {
 
     void execute(IDatabase db, IRequest request, IResponse response);
 

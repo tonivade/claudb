@@ -7,7 +7,7 @@ package tonivade.db.command.key;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -20,7 +20,7 @@ import tonivade.redis.command.IResponse;
 @ReadOnly
 @Command("type")
 @ParamLength(1)
-public class TypeCommand implements IRedisCommand {
+public class TypeCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

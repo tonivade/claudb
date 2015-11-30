@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tonivade.db.command.IRedisCommand;
-import tonivade.db.command.RedisResponse;
+import tonivade.db.command.ITinyDBCommand;
+import tonivade.db.command.TinyDBResponse;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
@@ -23,7 +23,7 @@ import tonivade.redis.command.IResponse;
 @ReadOnly
 @Command("mget")
 @ParamLength(1)
-public class MultiGetCommand implements IRedisCommand {
+public class MultiGetCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
@@ -31,7 +31,7 @@ public class MultiGetCommand implements IRedisCommand {
         for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
             result.add(db.get(key));
         }
-        new RedisResponse(response).addArrayValue(result);
+        new TinyDBResponse(response).addArrayValue(result);
     }
 
 }

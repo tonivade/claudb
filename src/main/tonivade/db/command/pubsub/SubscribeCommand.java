@@ -13,7 +13,7 @@ import static tonivade.redis.protocol.SafeString.safeString;
 import java.util.HashSet;
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
@@ -27,7 +27,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("subscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class SubscribeCommand implements IRedisCommand {
+public class SubscribeCommand implements ITinyDBCommand {
 
     private static final SafeString SUBSCRIBE = safeString("subscribe");
 

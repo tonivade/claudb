@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tonivade.db.command.RedisCommandSuite;
+import tonivade.db.command.TinyDBCommandSuite;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.PersistenceManager;
@@ -51,7 +51,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     public TinyDB(String host, int port, TinyDBConfig config) {
-        super(host, port, new RedisCommandSuite());
+        super(host, port, new TinyDBCommandSuite());
         if (config.isPersistenceActive()) {
             this.persistence = Optional.of(new PersistenceManager(this, config));
         } else {

@@ -9,7 +9,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.redis.protocol.SafeString.append;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -23,7 +23,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("append")
 @ParamLength(1)
 @ParamType(DataType.STRING)
-public class AppendCommand implements IRedisCommand {
+public class AppendCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

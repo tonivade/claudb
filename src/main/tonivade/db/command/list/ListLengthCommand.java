@@ -9,7 +9,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 
 import java.util.List;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -24,7 +24,7 @@ import tonivade.redis.command.IResponse;
 @Command("llen")
 @ParamLength(1)
 @ParamType(DataType.LIST)
-public class ListLengthCommand implements IRedisCommand {
+public class ListLengthCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

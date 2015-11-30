@@ -8,7 +8,7 @@ package tonivade.db.command.string;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -21,7 +21,7 @@ import tonivade.redis.command.IResponse;
 @Command("decrby")
 @ParamLength(2)
 @ParamType(DataType.STRING)
-public class DecrementByCommand implements IRedisCommand {
+public class DecrementByCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

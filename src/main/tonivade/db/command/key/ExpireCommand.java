@@ -2,7 +2,7 @@ package tonivade.db.command.key;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.annotation.Command;
@@ -13,7 +13,7 @@ import tonivade.redis.protocol.SafeString;
 
 @Command("expire")
 @ParamLength(2)
-public class ExpireCommand implements IRedisCommand {
+public class ExpireCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

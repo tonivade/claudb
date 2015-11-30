@@ -5,7 +5,7 @@
 
 package tonivade.db.command.server;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.replication.SlaveReplication;
@@ -17,7 +17,7 @@ import tonivade.redis.command.IResponse;
 @ReadOnly
 @Command("slaveof")
 @ParamLength(2)
-public class SlaveOfCommand implements IRedisCommand {
+public class SlaveOfCommand implements ITinyDBCommand {
 
     private SlaveReplication slave;
 

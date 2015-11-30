@@ -7,8 +7,8 @@ package tonivade.db.command.string;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
-import tonivade.db.command.IRedisCommand;
-import tonivade.db.command.RedisResponse;
+import tonivade.db.command.ITinyDBCommand;
+import tonivade.db.command.TinyDBResponse;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -22,11 +22,11 @@ import tonivade.redis.command.IResponse;
 @Command("get")
 @ParamLength(1)
 @ParamType(DataType.STRING)
-public class GetCommand implements IRedisCommand {
+public class GetCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        new RedisResponse(response).addValue(db.get(safeKey(request.getParam(0))));
+        new TinyDBResponse(response).addValue(db.get(safeKey(request.getParam(0))));
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -28,7 +28,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("srem")
 @ParamLength(2)
 @ParamType(DataType.SET)
-public class SetRemoveCommand implements IRedisCommand {
+public class SetRemoveCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

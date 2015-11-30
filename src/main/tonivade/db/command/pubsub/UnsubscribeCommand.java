@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.PubSubAllowed;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
@@ -28,7 +28,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("unsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class UnsubscribeCommand implements IRedisCommand {
+public class UnsubscribeCommand implements ITinyDBCommand {
 
     private static final SafeString UNSUBSCRIBE = safeString("unsubscribe");
     private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";

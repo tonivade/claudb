@@ -9,7 +9,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 
 import java.util.Map;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -25,7 +25,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("hget")
 @ParamLength(2)
 @ParamType(DataType.HASH)
-public class HashGetCommand implements IRedisCommand {
+public class HashGetCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

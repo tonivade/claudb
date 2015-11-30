@@ -7,7 +7,7 @@ package tonivade.db.command.server;
 
 import static java.lang.Integer.parseInt;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.annotation.Command;
@@ -18,7 +18,7 @@ import tonivade.redis.command.IResponse;
 @ReadOnly
 @Command("select")
 @ParamLength(1)
-public class SelectCommand implements IRedisCommand {
+public class SelectCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

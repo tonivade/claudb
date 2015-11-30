@@ -17,7 +17,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -33,7 +33,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("zrangebyscore")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetRangeByScoreCommand implements IRedisCommand {
+public class SortedSetRangeByScoreCommand implements ITinyDBCommand {
 
     private static final String EXCLUSIVE = "(";
     private static final String MINUS_INFINITY = "-inf";

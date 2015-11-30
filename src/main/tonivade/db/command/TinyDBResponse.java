@@ -17,15 +17,15 @@ import tonivade.db.data.DatabaseValue;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.protocol.SafeString;
 
-public class RedisResponse {
+public class TinyDBResponse {
 
     private final IResponse response;
 
-    public RedisResponse(IResponse response) {
+    public TinyDBResponse(IResponse response) {
         this.response = response;
     }
 
-    public RedisResponse addValue(DatabaseValue value) {
+    public TinyDBResponse addValue(DatabaseValue value) {
         if (value != null) {
             switch (value.getType()) {
             case STRING:
@@ -54,7 +54,7 @@ public class RedisResponse {
                 (entry) -> Stream.of(entry.getKey(), entry.getValue())).collect(toList());
     }
 
-    public RedisResponse addArrayValue(Collection<DatabaseValue> array) {
+    public TinyDBResponse addArrayValue(Collection<DatabaseValue> array) {
         if (array != null) {
             response.addArray(array.stream().map(Optional::ofNullable)
                     .map(op -> op.isPresent() ? op.get().getValue(): null).collect(toList()));

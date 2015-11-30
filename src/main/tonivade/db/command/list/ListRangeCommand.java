@@ -10,7 +10,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 
 import java.util.List;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -25,7 +25,7 @@ import tonivade.redis.command.IResponse;
 @Command("lrange")
 @ParamLength(3)
 @ParamType(DataType.LIST)
-public class ListRangeCommand implements IRedisCommand {
+public class ListRangeCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

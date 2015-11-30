@@ -5,14 +5,14 @@
 
 package tonivade.db.command.server;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.annotation.Command;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 
 @Command("flushdb")
-public class FlushDBCommand implements IRedisCommand {
+public class FlushDBCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

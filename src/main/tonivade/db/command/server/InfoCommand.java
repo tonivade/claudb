@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
@@ -31,7 +31,7 @@ import tonivade.redis.protocol.SafeString;
 
 @ReadOnly
 @Command("info")
-public class InfoCommand implements IRedisCommand {
+public class InfoCommand implements ITinyDBCommand {
 
     private static final String SHARP = "#";
     private static final String SEPARATOR = ":";

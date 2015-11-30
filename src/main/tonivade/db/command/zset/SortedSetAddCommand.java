@@ -14,7 +14,7 @@ import static tonivade.db.data.DatabaseValue.zset;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -29,7 +29,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("zadd")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetAddCommand implements IRedisCommand {
+public class SortedSetAddCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

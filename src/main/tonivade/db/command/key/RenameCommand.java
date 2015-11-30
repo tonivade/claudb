@@ -7,7 +7,7 @@ package tonivade.db.command.key;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
@@ -16,7 +16,7 @@ import tonivade.redis.command.IResponse;
 
 @Command("rename")
 @ParamLength(2)
-public class RenameCommand implements IRedisCommand {
+public class RenameCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

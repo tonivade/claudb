@@ -11,7 +11,7 @@ import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
@@ -24,7 +24,7 @@ import tonivade.redis.protocol.SafeString;
 
 @Command("publish")
 @ParamLength(2)
-public class PublishCommand implements IRedisCommand {
+public class PublishCommand implements ITinyDBCommand {
 
     private static final SafeString MESSAGE = safeString("message");
 

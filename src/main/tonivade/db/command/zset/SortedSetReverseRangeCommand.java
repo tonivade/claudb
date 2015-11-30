@@ -16,7 +16,7 @@ import java.util.NavigableSet;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -32,7 +32,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("zrevrange")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetReverseRangeCommand implements IRedisCommand {
+public class SortedSetReverseRangeCommand implements ITinyDBCommand {
 
     private static final String PARAM_WITHSCORES = "WITHSCORES";
 

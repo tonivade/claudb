@@ -12,7 +12,7 @@ import static tonivade.db.data.DatabaseValue.list;
 import java.util.LinkedList;
 import java.util.List;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -26,7 +26,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("lpush")
 @ParamLength(2)
 @ParamType(DataType.LIST)
-public class LeftPushCommand implements IRedisCommand {
+public class LeftPushCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {

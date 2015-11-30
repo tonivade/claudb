@@ -7,8 +7,8 @@ package tonivade.db.command.set;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
-import tonivade.db.command.IRedisCommand;
-import tonivade.db.command.RedisResponse;
+import tonivade.db.command.ITinyDBCommand;
+import tonivade.db.command.TinyDBResponse;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DataType;
@@ -23,12 +23,12 @@ import tonivade.redis.command.IResponse;
 @Command("smembers")
 @ParamLength(1)
 @ParamType(DataType.SET)
-public class SetMembersCommand implements IRedisCommand {
+public class SetMembersCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
-        new RedisResponse(response).addValue(value);
+        new TinyDBResponse(response).addValue(value);
     }
 
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import tonivade.db.command.IRedisCommand;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
@@ -28,7 +28,7 @@ import tonivade.redis.protocol.SafeString;
 @Command("spop")
 @ParamLength(1)
 @ParamType(DataType.SET)
-public class SetPopCommand implements IRedisCommand {
+public class SetPopCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
