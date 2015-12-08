@@ -1,5 +1,7 @@
 package tonivade.db.command.transaction;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -7,8 +9,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.redis.protocol.SafeString.safeString;
 
+import java.util.Collection;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 
 import tonivade.db.TransactionState;
 import tonivade.db.command.CommandRule;
@@ -22,6 +28,9 @@ public class ExecCommandTest {
     @Rule
     public final CommandRule rule = new CommandRule(this);
 
+    @Captor
+    private ArgumentCaptor<Collection<?>> captor;
+
     private final ICommand command = mock(ICommand.class);
 
     @Test
@@ -29,9 +38,13 @@ public class ExecCommandTest {
         givenPingCommand();
         givenExistingTransaction();
 
-        rule.execute();
+        rule.execute().verify().addArray(captor.capture());
 
         verify(command, times(3)).execute(any(), any());
+
+        Collection<?> value = captor.getValue();
+
+        assertThat(value, hasSize(3));
     }
 
     @Test

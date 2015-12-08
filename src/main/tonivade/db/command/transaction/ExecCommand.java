@@ -10,6 +10,7 @@ import tonivade.redis.command.ICommand;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.command.ISession;
+import tonivade.redis.command.Response;
 
 @Command("exec")
 @TxIgnore
@@ -19,14 +20,22 @@ public class ExecCommand implements ITinyDBCommand {
     public void execute(IDatabase db, IRequest request, IResponse response) {
         TransactionState transaction = getTransactionIfExists(request.getSession());
         if (transaction !=  null) {
+            ITinyDB server = getTinyDB(request.getServerContext());
+            MetaResponse metaResponse = new MetaResponse(response);
             for (IRequest queuedRequest : transaction) {
-                ITinyDB server = getTinyDB(request.getServerContext());
-                ICommand command = server.getCommand(queuedRequest.getCommand());
-                command.execute(queuedRequest, response);
+                metaResponse.addResponse(executeCommand(server, queuedRequest));
             }
+            metaResponse.build();
         } else {
             response.addError("ERR EXEC without MULTI");
         }
+    }
+
+    private Response executeCommand(ITinyDB server, IRequest queuedRequest) {
+        Response response = new Response();
+        ICommand command = server.getCommand(queuedRequest.getCommand());
+        command.execute(queuedRequest, response);
+        return response;
     }
 
     private TransactionState getTransactionIfExists(ISession session) {
