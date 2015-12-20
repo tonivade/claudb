@@ -16,14 +16,14 @@ import tonivade.db.command.CommandUnderTest;
 public class SlaveOfCommandTest {
 
     @Rule
-    public final TinyDBRule server = new TinyDBRule("localhost", 8081);
+    public final TinyDBRule server = new TinyDBRule("localhost", 34241);
 
     @Rule
     public final CommandRule rule = new CommandRule(this);
 
     @Test
     public void testExecute() throws Exception {
-        rule.withParams("localhost", "8081")
+        rule.withParams("localhost", "34241")
             .execute()
             .verify().addSimpleStr("OK");
     }
