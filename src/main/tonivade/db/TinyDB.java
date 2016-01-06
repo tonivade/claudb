@@ -41,7 +41,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
 
     private final BlockingQueue<List<RedisToken>> queue = new LinkedBlockingQueue<>();
 
-    private Optional<PersistenceManager> persistence;
+    private final Optional<PersistenceManager> persistence;
 
     public TinyDB() {
         this(DEFAULT_HOST, DEFAULT_PORT);
@@ -93,7 +93,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
     protected void executeCommand(ICommand command, IRequest request, IResponse response) {
         ISession session = request.getSession();
         TinyDBSessionState sessionState = getSessionState(session);
-        if (!isReadOnly(command)) {
+        if (!isReadOnly(request.getCommand())) {
             sessionState.enqueue(() -> {
                 try {
                     command.execute(request, response);
@@ -113,12 +113,12 @@ public class TinyDB extends RedisServer implements ITinyDB {
         }
     }
 
-    private boolean isReadOnly(ICommand command) {
-        return !isMaster() && isReadOnlyCommand(command);
+    private boolean isReadOnly(String command) {
+        return !isMaster() && !isReadOnlyCommand(command);
     }
 
     private void replication(IRequest request, ICommand command) {
-        if (isReadOnlyCommand(command)) {
+        if (!isReadOnlyCommand(request.getCommand())) {
             List<RedisToken> array = requestToArray(request);
             if (hasSlaves()) {
                 queue.add(array);
@@ -127,8 +127,8 @@ public class TinyDB extends RedisServer implements ITinyDB {
         }
     }
 
-    private boolean isReadOnlyCommand(ICommand command) {
-        return !command.getClass().isAnnotationPresent(ReadOnly.class);
+    private boolean isReadOnlyCommand(String command) {
+        return getCommands().isPresent(command, ReadOnly.class);
     }
 
     private List<RedisToken> requestToArray(IRequest request) {
@@ -205,7 +205,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     @Override
-    public List<List<RedisToken>> getCommands() {
+    public List<List<RedisToken>> getCommandsToReplicate() {
         List<List<RedisToken>> current = new LinkedList<>();
         queue.drainTo(current);
         return current;

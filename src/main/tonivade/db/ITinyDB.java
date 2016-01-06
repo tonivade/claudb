@@ -33,5 +33,5 @@ public interface ITinyDB extends IServerContext {
 
     void publish(String sourceKey, String message);
 
-    List<List<RedisToken>> getCommands();
+    List<List<RedisToken>> getCommandsToReplicate();
 }

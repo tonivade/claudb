@@ -95,7 +95,7 @@ public class MasterReplication implements Runnable {
     private String createCommands() {
         Response response = new Response();
         response.addArray(safeAsList(PING_COMMAND));
-        for (List<RedisToken> array : server.getCommands()) {
+        for (List<RedisToken> array : server.getCommandsToReplicate()) {
             RedisToken currentDB = array.remove(0);
             response.addArray(safeAsList(SELECT_COMMAND, valueOf(currentDB.<Integer>getValue())));
             response.addArray(toList(array));

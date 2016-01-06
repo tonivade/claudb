@@ -6,11 +6,13 @@
 package tonivade.db.command;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
+
 import tonivade.db.TinyDBServerState;
 import tonivade.db.TinyDBSessionState;
 import tonivade.db.TransactionState;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.command.annotation.PubSubAllowed;
+import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.command.annotation.TxIgnore;
 import tonivade.db.data.DataType;
 import tonivade.db.data.IDatabase;
@@ -31,6 +33,8 @@ public class TinyDBCommandWrapper implements ICommand {
 
     private final boolean txIgnore;
 
+    private final boolean readOnly;
+
     private final Object command;
 
     public TinyDBCommandWrapper(Object command) {
@@ -43,8 +47,21 @@ public class TinyDBCommandWrapper implements ICommand {
         if (type != null) {
             this.dataType = type.value();
         }
+        this.readOnly = command.getClass().isAnnotationPresent(ReadOnly.class);
         this.txIgnore = command.getClass().isAnnotationPresent(TxIgnore.class);
         this.pubSubAllowed = command.getClass().isAnnotationPresent(PubSubAllowed.class);
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public boolean isTxIgnore() {
+        return txIgnore;
+    }
+
+    public boolean isPubSubAllowed() {
+        return pubSubAllowed;
     }
 
     @Override

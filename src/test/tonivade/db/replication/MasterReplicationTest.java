@@ -39,7 +39,7 @@ public class MasterReplicationTest {
 
     @Test
     public void testReplication() throws Exception {
-        when(server.getCommands()).thenReturn(asList(request()));
+        when(server.getCommandsToReplicate()).thenReturn(asList(request()));
         when(server.getValue("state")).thenReturn(serverState);
 
         master.addSlave("slave:1");
