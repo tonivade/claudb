@@ -16,7 +16,7 @@ import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toHexString;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -114,7 +114,7 @@ public class RDBOutputStreamTest {
 
     private static class DatabaseBuiler {
 
-        private IDatabase db = new Database();
+        private final IDatabase db = new Database();
 
         public DatabaseBuiler add(DatabaseKey key, DatabaseValue value) {
             db.put(key, value);

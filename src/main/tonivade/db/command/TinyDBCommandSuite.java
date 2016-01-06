@@ -5,13 +5,6 @@
 
 package tonivade.db.command;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.command.hash.HashDeleteCommand;
 import tonivade.db.command.hash.HashExistsCommand;
 import tonivade.db.command.hash.HashGetAllCommand;
@@ -39,15 +32,11 @@ import tonivade.db.command.list.RightPushCommand;
 import tonivade.db.command.pubsub.PublishCommand;
 import tonivade.db.command.pubsub.SubscribeCommand;
 import tonivade.db.command.pubsub.UnsubscribeCommand;
-import tonivade.db.command.server.EchoCommand;
 import tonivade.db.command.server.FlushDBCommand;
 import tonivade.db.command.server.InfoCommand;
-import tonivade.db.command.server.PingCommand;
-import tonivade.db.command.server.QuitCommand;
 import tonivade.db.command.server.SelectCommand;
 import tonivade.db.command.server.SlaveOfCommand;
 import tonivade.db.command.server.SyncCommand;
-import tonivade.db.command.server.TimeCommand;
 import tonivade.db.command.set.SetAddCommand;
 import tonivade.db.command.set.SetCardinalityCommand;
 import tonivade.db.command.set.SetDifferenceCommand;
@@ -67,32 +56,27 @@ import tonivade.db.command.string.MultiSetCommand;
 import tonivade.db.command.string.SetCommand;
 import tonivade.db.command.string.SetExpiredCommand;
 import tonivade.db.command.string.StringLengthCommand;
+import tonivade.db.command.transaction.ExecCommand;
+import tonivade.db.command.transaction.MultiCommand;
 import tonivade.db.command.zset.SortedSetAddCommand;
 import tonivade.db.command.zset.SortedSetCardinalityCommand;
 import tonivade.db.command.zset.SortedSetRangeByScoreCommand;
 import tonivade.db.command.zset.SortedSetRangeCommand;
 import tonivade.db.command.zset.SortedSetRemoveCommand;
 import tonivade.db.command.zset.SortedSetReverseRangeCommand;
+import tonivade.redis.command.CommandSuite;
+import tonivade.redis.command.ICommand;
 
-public class CommandSuite {
+public class TinyDBCommandSuite extends CommandSuite {
 
-    private static final Logger LOGGER = Logger.getLogger(CommandSuite.class.getName());
-
-    private final Map<String, Class<? extends ICommand>> metadata = new HashMap<>();
-    private final Map<String, ICommand> commands = new HashMap<>();
-
-    public CommandSuite() {
+    public TinyDBCommandSuite() {
         // connection
-        addCommand(PingCommand.class);
-        addCommand(EchoCommand.class);
         addCommand(SelectCommand.class);
-        addCommand(QuitCommand.class);
         addCommand(SyncCommand.class);
         addCommand(SlaveOfCommand.class);
 
         // server
         addCommand(FlushDBCommand.class);
-        addCommand(TimeCommand.class);
         addCommand(InfoCommand.class);
 
         // strings
@@ -160,38 +144,14 @@ public class CommandSuite {
         addCommand(PublishCommand.class);
         addCommand(SubscribeCommand.class);
         addCommand(UnsubscribeCommand.class);
+
+        // transactions
+        addCommand(MultiCommand.class);
+        addCommand(ExecCommand.class);
     }
 
-    private void addCommand(Class<? extends ICommand> clazz) {
-        try {
-            ICommand command = clazz.newInstance();
-
-            Command annotation = clazz.getAnnotation(Command.class);
-            if (annotation != null) {
-                commands.put(annotation.value(), wrap(command));
-                metadata.put(annotation.value(), clazz);
-            } else {
-                LOGGER.warning(() -> "annotation not present at " + clazz.getName());
-            }
-        } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.log(Level.SEVERE, "error loading command: " + clazz.getName(), e);
-        }
+    @Override
+    protected ICommand wrap(Object command) {
+        return new TinyDBCommandWrapper(command);
     }
-
-    private ICommand wrap(ICommand command) {
-        return new CommandWrapper(command);
-    }
-
-    public ICommand getCommand(String name) {
-        return commands.get(name.toLowerCase());
-    }
-
-    public boolean isReadOnlyCommand(String command) {
-        Class<? extends ICommand> clazz = metadata.get(command);
-        if (clazz != null) {
-            return clazz.isAnnotationPresent(ReadOnly.class);
-        }
-        return true;
-    }
-
 }

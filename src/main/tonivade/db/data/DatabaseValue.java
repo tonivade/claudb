@@ -11,7 +11,8 @@ import static java.util.Collections.unmodifiableNavigableSet;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.equalizer.Equalizer.equalizer;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import tonivade.db.redis.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 
 public class DatabaseValue {
@@ -64,17 +65,10 @@ public class DatabaseValue {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DatabaseValue other = (DatabaseValue) obj;
-        return Objects.equals(this.type, other.type) && Objects.equals(this.value, other.value);
+        return equalizer(this)
+                .append((one, other) -> Objects.equals(one.type, other.type))
+                .append((one, other) -> Objects.equals(one.value, other.value))
+                    .applyTo(obj);
     }
 
     @Override
@@ -141,11 +135,11 @@ public class DatabaseValue {
     }
 
     public static Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {
-        return new SimpleEntry<SafeString, SafeString>(key, value);
+        return new SimpleEntry<>(key, value);
     }
 
     public static Entry<Double, SafeString> score(double score, SafeString value) {
-        return new SimpleEntry<Double, SafeString>(score, value);
+        return new SimpleEntry<>(score, value);
     }
 
     private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {

@@ -6,15 +6,16 @@
 package tonivade.db;
 
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Map.Entry;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
+import org.hamcrest.core.IsNull;
 
 import tonivade.db.data.DatabaseValue;
-import tonivade.db.redis.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 public class DatabaseValueMatchers {
 
@@ -35,14 +36,22 @@ public class DatabaseValueMatchers {
     }
 
     public static Matcher<DatabaseValue> isString(String expected) {
-        return new IsEqual<>(string(expected));
+        return IsEqual.equalTo(string(expected));
     }
 
     public static Matcher<DatabaseValue> isList(String ... expected) {
-        return new IsEqual<>(list(expected));
+        return IsEqual.equalTo(list(expected));
     }
 
     public static Matcher<DatabaseValue> isSet(String ... expected) {
-        return new IsEqual<>(set(expected));
+        return IsEqual.equalTo(set(expected));
+    }
+
+    public static Matcher<DatabaseValue> notNullValue() {
+        return IsNull.notNullValue(DatabaseValue.class);
+    }
+
+    public static Matcher<DatabaseValue> nullValue() {
+        return IsNull.nullValue(DatabaseValue.class);
     }
 }

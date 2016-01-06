@@ -5,21 +5,33 @@
 
 package tonivade.db;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.socket.SocketChannel;
-import tonivade.db.redis.RedisToken;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.List;
 
-public interface ITinyDB {
+import tonivade.db.data.IDatabase;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.protocol.RedisToken;
 
-    public static final int DEFAULT_PORT = 7081;
-    public static final String DEFAULT_HOST = "localhost";
+public interface ITinyDB extends IServerContext {
 
-    public void channel(SocketChannel channel);
+    int DEFAULT_PORT = 7081;
+    String DEFAULT_HOST = "localhost";
 
-    public void connected(ChannelHandlerContext ctx);
+    boolean isMaster();
 
-    public void disconnected(ChannelHandlerContext ctx);
+    void setMaster(boolean master);
 
-    public void receive(ChannelHandlerContext ctx, RedisToken message);
+    void importRDB(InputStream input) throws IOException;
 
+    void exportRDB(OutputStream output) throws IOException;
+
+    IDatabase getDatabase(int i);
+
+    IDatabase getAdminDatabase();
+
+    void publish(String sourceKey, String message);
+
+    List<List<RedisToken>> getCommands();
 }

@@ -5,14 +5,14 @@
 
 package tonivade.db.command;
 
-import static java.util.Collections.emptySet;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.command.IResponse.RESULT_OK;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +20,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.ITinyDB;
+import tonivade.db.TinyDBServerState;
+import tonivade.db.TinyDBSessionState;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
+import tonivade.redis.annotation.ParamLength;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {
@@ -41,41 +47,54 @@ public class CommandWrapperTest {
     @Mock
     private ISession session;
 
+    @Mock
+    private ITinyDB server;
+
+    @Mock
+    private TinyDBSessionState sessionState;
+
+    @Mock
+    private TinyDBServerState serverState;
+
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         when(request.getSession()).thenReturn(session);
-        when(session.getSubscriptions()).thenReturn(emptySet());
+        when(request.getServerContext()).thenReturn(server);
+        when(session.getValue("state")).thenReturn(sessionState);
+        when(server.getValue("state")).thenReturn(serverState);
+        when(sessionState.getCurrentDB()).thenReturn(1);
+        when(serverState.getDatabase(1)).thenReturn(db);
     }
 
     @Test
     public void testExecute() {
-        CommandWrapper wrapper = new CommandWrapper(new SomeCommand());
+        TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new SomeCommand());
 
-        wrapper.execute(db, request, response);
+        wrapper.execute(request, response);
 
-        verify(response).addSimpleStr(ICommand.RESULT_OK);
+        verify(response).addSimpleStr(RESULT_OK);
     }
 
     @Test
     public void testLengthOK() {
         when(request.getLength()).thenReturn(3);
 
-        CommandWrapper wrapper = new CommandWrapper(new LengthCommand());
+        TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new LengthCommand());
 
-        wrapper.execute(db, request, response);
+        wrapper.execute(request, response);
 
-        verify(response).addSimpleStr(ICommand.RESULT_OK);
+        verify(response).addSimpleStr(RESULT_OK);
     }
 
     @Test
     public void testLengthKO() {
         when(request.getLength()).thenReturn(1);
 
-        CommandWrapper wrapper = new CommandWrapper(new LengthCommand());
+        TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new LengthCommand());
 
-        wrapper.execute(db, request, response);
+        wrapper.execute(request, response);
 
-        verify(response, times(0)).addSimpleStr(ICommand.RESULT_OK);
+        verify(response, times(0)).addSimpleStr(RESULT_OK);
 
         verify(response).addError(anyString());
     }
@@ -85,11 +104,11 @@ public class CommandWrapperTest {
         when(db.isType(any(DatabaseKey.class), eq(DataType.STRING))).thenReturn(true);
         when(request.getParam(0)).thenReturn(safeString("test"));
 
-        CommandWrapper wrapper = new CommandWrapper(new TypeCommand());
+        TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new TypeCommand());
 
-        wrapper.execute(db, request, response);
+        wrapper.execute(request, response);
 
-        verify(response).addSimpleStr(ICommand.RESULT_OK);
+        verify(response).addSimpleStr(RESULT_OK);
     }
 
     @Test
@@ -97,16 +116,16 @@ public class CommandWrapperTest {
         when(db.isType(any(DatabaseKey.class), eq(DataType.STRING))).thenReturn(false);
         when(request.getParam(0)).thenReturn(safeString("test"));
 
-        CommandWrapper wrapper = new CommandWrapper(new TypeCommand());
+        TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new TypeCommand());
 
-        wrapper.execute(db, request, response);
+        wrapper.execute(request, response);
 
-        verify(response, times(0)).addSimpleStr(ICommand.RESULT_OK);
+        verify(response, times(0)).addSimpleStr(RESULT_OK);
 
         verify(response).addError(anyString());
     }
 
-    private static class SomeCommand implements ICommand {
+    private static class SomeCommand implements ITinyDBCommand {
         @Override
         public void execute(IDatabase db, IRequest request, IResponse response) {
             response.addSimpleStr(RESULT_OK);
@@ -114,7 +133,7 @@ public class CommandWrapperTest {
     }
 
     @ParamLength(2)
-    private static class LengthCommand implements ICommand {
+    private static class LengthCommand implements ITinyDBCommand {
         @Override
         public void execute(IDatabase db, IRequest request, IResponse response) {
             response.addSimpleStr(RESULT_OK);
@@ -122,7 +141,7 @@ public class CommandWrapperTest {
     }
 
     @ParamType(DataType.STRING)
-    private static class TypeCommand implements ICommand {
+    private static class TypeCommand implements ITinyDBCommand {
         @Override
         public void execute(IDatabase db, IRequest request, IResponse response) {
             response.addSimpleStr(RESULT_OK);

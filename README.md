@@ -83,6 +83,9 @@ Implemented commands
     - SUBSCRIBE
     - UNSUBSCRIBE
     - PUBLISH
+- Transactions
+    - MULTI
+    - EXEC
 
 Design
 ------
@@ -137,7 +140,7 @@ TODO
 
 - ~~Pipelining.~~ **Done!**
 - Key expiration. _(Working on it!)_
-- Transactions (MULTI & EXEC).
+- Transactions (MULTI & EXEC) _(Done!)_.
 - Persistence to disk. _(Working on it!)_
     - 80% RDB file format implemented (strings, lists, sets, sorted sets and hashes).
     - Ziplist and Maplist encoding not implemented yet.

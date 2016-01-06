@@ -13,7 +13,7 @@ import org.junit.runners.model.Statement;
 
 public class TinyDBRule  implements TestRule {
 
-    private TinyDB server;
+    private final TinyDB server;
 
     public TinyDBRule() {
         this(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT);

@@ -10,10 +10,10 @@ import static tonivade.db.DatabaseValueMatchers.set;
 import org.junit.Rule;
 import org.junit.Test;
 
+import tonivade.db.ITinyDB;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.IServerContext;
+import tonivade.redis.command.IResponse;
 
 @CommandUnderTest(PublishCommand.class)
 public class PublishCommandTest {
@@ -23,12 +23,11 @@ public class PublishCommandTest {
 
     @Test
     public void testExecute() throws Exception {
-        rule.withData("subscriptions:test", set("localhost:12345"))
+        rule.withAdminData("subscriptions:test", set("localhost:12345"))
             .withParams("test", "Hello World!")
             .execute();
-        rule.verify(IServerContext.class).publish("localhost:12345", "*3\r\n$7\r\nmessage\r\n$4\r\ntest\r\n$12\r\nHello World!\r\n");
+        rule.verify(ITinyDB.class).publish("localhost:12345", "*3\r\n$7\r\nmessage\r\n$4\r\ntest\r\n$12\r\nHello World!\r\n");
         rule.verify(IResponse.class).addInt(1);
-
     }
 
 }

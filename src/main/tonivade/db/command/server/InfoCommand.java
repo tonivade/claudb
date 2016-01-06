@@ -8,7 +8,7 @@ package tonivade.db.command.server;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
@@ -19,19 +19,19 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.annotation.Command;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.db.redis.SafeString;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.command.IServerContext;
+import tonivade.redis.protocol.SafeString;
 
 @ReadOnly
 @Command("info")
-public class InfoCommand implements ICommand {
+public class InfoCommand implements ITinyDBCommand {
 
     private static final String SHARP = "#";
     private static final String SEPARATOR = ":";
@@ -49,7 +49,7 @@ public class InfoCommand implements ICommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        Map<String, Map<String, String>> sections = new HashMap<String, Map<String,String>>();
+        Map<String, Map<String, String>> sections = new HashMap<>();
         Optional<SafeString> param = request.getOptionalParam(0);
         if (param.isPresent()) {
             String sectionName = param.get().toString();
@@ -113,12 +113,12 @@ public class InfoCommand implements ICommand {
     }
 
     private Map<String, String> replication(IServerContext ctx) {
-        return map(entry("role", ctx.isMaster() ? "master" : "slave"),
+        return map(entry("role", getServerState(ctx).isMaster() ? "master" : "slave"),
                 entry("connected_slaves", slaves(ctx)));
     }
 
     private String slaves(IServerContext ctx) {
-        DatabaseValue slaves = ctx.getAdminDatabase().getOrDefault("slaves", DatabaseValue.EMPTY_SET);
+        DatabaseValue slaves = getAdminDatabase(ctx).getOrDefault("slaves", DatabaseValue.EMPTY_SET);
         return String.valueOf(slaves.<Set<String>>getValue().size());
     }
 
@@ -161,6 +161,6 @@ public class InfoCommand implements ICommand {
     }
 
     public static Entry<String, String> entry(String key, String value) {
-        return new SimpleEntry<String, String>(key, value);
+        return new SimpleEntry<>(key, value);
     }
 }

@@ -8,8 +8,8 @@ package tonivade.db.replication;
 import static java.lang.String.valueOf;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.db.redis.SafeString.safeAsList;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeAsList;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,13 +19,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.Response;
+import tonivade.db.ITinyDB;
+import tonivade.db.TinyDBServerState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
-import tonivade.db.redis.RedisArray;
-import tonivade.db.redis.RedisToken;
-import tonivade.db.redis.SafeString;
+import tonivade.db.data.IDatabase;
+import tonivade.redis.command.Response;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
 
 public class MasterReplication implements Runnable {
 
@@ -38,11 +39,11 @@ public class MasterReplication implements Runnable {
 
     private static final int TASK_DELAY = 2;
 
-    private IServerContext server;
+    private final ITinyDB server;
 
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    public MasterReplication(IServerContext server) {
+    public MasterReplication(ITinyDB server) {
         this.server = server;
     }
 
@@ -55,7 +56,7 @@ public class MasterReplication implements Runnable {
     }
 
     public void addSlave(String id) {
-        server.getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
+        getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
             List<SafeString> merge = new LinkedList<>();
             merge.addAll(oldValue.getValue());
             merge.addAll(newValue.getValue());
@@ -64,8 +65,12 @@ public class MasterReplication implements Runnable {
         LOGGER.info(() -> "new slave: " + id);
     }
 
+    private IDatabase getAdminDatabase() {
+        return getServerState().getAdminDatabase();
+    }
+
     public void removeSlave(String id) {
-        server.getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
+        getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
             List<SafeString> merge = new LinkedList<>();
             merge.addAll(oldValue.getValue());
             merge.removeAll(newValue.getValue());
@@ -84,13 +89,13 @@ public class MasterReplication implements Runnable {
     }
 
     private Set<SafeString> getSlaves() {
-        return server.getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
+        return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
     }
 
     private String createCommands() {
         Response response = new Response();
         response.addArray(safeAsList(PING_COMMAND));
-        for (RedisArray array : server.getCommands()) {
+        for (List<RedisToken> array : server.getCommands()) {
             RedisToken currentDB = array.remove(0);
             response.addArray(safeAsList(SELECT_COMMAND, valueOf(currentDB.<Integer>getValue())));
             response.addArray(toList(array));
@@ -98,12 +103,16 @@ public class MasterReplication implements Runnable {
         return response.toString();
     }
 
-    private List<SafeString> toList(RedisArray request) {
+    private List<SafeString> toList(List<RedisToken> request) {
         List<SafeString> cmd = new LinkedList<>();
         for (RedisToken token : request) {
             cmd.add(token.<SafeString>getValue());
         }
         return cmd;
+    }
+
+    private TinyDBServerState getServerState() {
+        return server.getValue("state");
     }
 
 }

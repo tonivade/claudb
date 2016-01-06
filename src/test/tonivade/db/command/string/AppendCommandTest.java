@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.string.AppendCommand;
 
 @CommandUnderTest(AppendCommand.class)
 public class AppendCommandTest {

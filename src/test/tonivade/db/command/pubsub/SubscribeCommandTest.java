@@ -6,9 +6,10 @@
 package tonivade.db.command.pubsub;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.isSet;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,7 +21,6 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.ISession;
 
 @CommandUnderTest(SubscribeCommand.class)
 public class SubscribeCommandTest {
@@ -35,9 +35,9 @@ public class SubscribeCommandTest {
     public void testExecute() throws Exception {
         rule.withParams("test")
             .execute()
-            .assertValue("subscriptions:test", isSet("localhost:12345"));
+            .assertAdminValue("subscriptions:test", isSet("localhost:12345"));
 
-        rule.verify(ISession.class).addSubscription(safeString("test"));
+        assertThat(rule.getSessionState().getSubscriptions(), contains(safeString("test")));
 
         rule.verify().addArray(captor.capture());
 

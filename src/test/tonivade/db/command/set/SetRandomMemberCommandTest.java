@@ -20,7 +20,7 @@ import org.junit.Test;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 import tonivade.db.data.DatabaseValue;
-import tonivade.db.redis.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(SetRandomMemberCommand.class)
 public class SetRandomMemberCommandTest {

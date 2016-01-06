@@ -10,9 +10,9 @@ import static org.mockito.Matchers.any;
 import org.junit.Rule;
 import org.junit.Test;
 
+import tonivade.db.ITinyDB;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.IServerContext;
 
 @CommandUnderTest(SyncCommand.class)
 public class SyncCommandTest {
@@ -23,7 +23,7 @@ public class SyncCommandTest {
     @Test
     public void testExecute() throws Exception {
         rule.execute()
-            .verify(IServerContext.class).exportRDB(any());
+            .verify(ITinyDB.class).exportRDB(any());
     }
 
 }

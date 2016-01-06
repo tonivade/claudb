@@ -5,19 +5,19 @@
 
 package tonivade.db.command.server;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.replication.SlaveReplication;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.annotation.ParamLength;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
 
 @ReadOnly
 @Command("slaveof")
 @ParamLength(2)
-public class SlaveOfCommand implements ICommand {
+public class SlaveOfCommand implements ITinyDBCommand {
 
     private SlaveReplication slave;
 
@@ -40,12 +40,12 @@ public class SlaveOfCommand implements ICommand {
             }
         }
 
-        response.addSimpleStr(RESULT_OK);
+        response.addSimpleStr(IResponse.RESULT_OK);
     }
 
     private void startReplication(IRequest request, String host, String port) {
         slave = new SlaveReplication(
-                request.getServerContext(), request.getSession(), host, Integer.parseInt(port));
+                getTinyDB(request.getServerContext()), request.getSession(), host, Integer.parseInt(port));
 
         slave.start();
     }

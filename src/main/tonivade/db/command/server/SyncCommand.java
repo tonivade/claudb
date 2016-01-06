@@ -7,27 +7,27 @@ package tonivade.db.command.server;
 
 import java.io.IOException;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.annotation.Command;
+import tonivade.db.ITinyDB;
+import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
 import tonivade.db.persistence.ByteBufferOutputStream;
-import tonivade.db.redis.SafeString;
 import tonivade.db.replication.MasterReplication;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
+import tonivade.redis.protocol.SafeString;
 
 @ReadOnly
 @Command("sync")
-public class SyncCommand implements ICommand {
+public class SyncCommand implements ITinyDBCommand {
 
     private MasterReplication master;
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         try {
-            IServerContext server = request.getServerContext();
+            ITinyDB server = getTinyDB(request.getServerContext());
 
             ByteBufferOutputStream output = new ByteBufferOutputStream();
             server.exportRDB(output);

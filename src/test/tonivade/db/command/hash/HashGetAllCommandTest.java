@@ -10,9 +10,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
 import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.db.redis.SafeString.safeString;
+import static tonivade.redis.protocol.SafeString.safeString;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,8 +22,7 @@ import org.mockito.Captor;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.data.DatabaseValue;
-import tonivade.db.redis.SafeString;
+import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(HashGetAllCommand.class)
 public class HashGetAllCommandTest {
@@ -31,7 +31,7 @@ public class HashGetAllCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Captor
-    private ArgumentCaptor<DatabaseValue> captor;
+    private ArgumentCaptor<Collection<SafeString>> captor;
 
     @Test
     public void testExecute() {
@@ -41,15 +41,18 @@ public class HashGetAllCommandTest {
                      entry("key3", "value3")))
             .withParams("a")
             .execute()
-            .verify().addValue(captor.capture());
+            .verify().addArray(captor.capture());
 
-        DatabaseValue value = captor.getValue();
+        Collection<SafeString> value = captor.getValue();
 
-        Map<SafeString, SafeString> map = value.getValue();
+        Iterator<SafeString> i = value.iterator();
 
-        assertThat(map.get(safeString("key1")), is(safeString("value1")));
-        assertThat(map.get(safeString("key2")), is(safeString("value2")));
-        assertThat(map.get(safeString("key3")), is(safeString("value3")));
+        assertThat(i.next(), is(safeString("key1")));
+        assertThat(i.next(), is(safeString("value1")));
+        assertThat(i.next(), is(safeString("key3")));
+        assertThat(i.next(), is(safeString("value3")));
+        assertThat(i.next(), is(safeString("key2")));
+        assertThat(i.next(), is(safeString("value2")));
     }
 
     @Test

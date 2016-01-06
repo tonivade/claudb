@@ -5,12 +5,14 @@
 
 package tonivade.db.command.server;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.db.command.ISession;
 
 @CommandUnderTest(SelectCommand.class)
 public class SelectCommandTest {
@@ -19,11 +21,15 @@ public class SelectCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute() {
         rule.withParams("10")
-            .execute()
-            .verify(ISession.class).setCurrentDB(10);
+            .execute();
 
+        assertThat(rule.getSessionState().getCurrentDB(), is(10));
+    }
+
+    @Test
+    public void testExecuteWithInvalidParam() {
         rule.withParams("asdfsdf")
             .execute()
             .verify().addError("ERR invalid DB index");

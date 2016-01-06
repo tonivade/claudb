@@ -7,8 +7,8 @@ package tonivade.db.persistence;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.persistence.HexUtil.toHexString;
 import static tonivade.db.persistence.ByteUtils.toByteArray;
+import static tonivade.db.persistence.HexUtil.toHexString;
 
 import org.junit.Test;
 

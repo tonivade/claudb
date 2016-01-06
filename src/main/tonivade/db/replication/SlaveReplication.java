@@ -13,35 +13,33 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tonivade.db.ITinyDBCallback;
-import tonivade.db.TinyDBClient;
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.ISession;
-import tonivade.db.command.Request;
-import tonivade.db.command.Response;
-import tonivade.db.data.IDatabase;
+import tonivade.db.ITinyDB;
 import tonivade.db.persistence.ByteBufferInputStream;
-import tonivade.db.redis.RedisArray;
-import tonivade.db.redis.RedisToken;
-import tonivade.db.redis.SafeString;
+import tonivade.redis.IRedisCallback;
+import tonivade.redis.RedisClient;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.command.ISession;
+import tonivade.redis.command.Request;
+import tonivade.redis.command.Response;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
 
-public class SlaveReplication implements ITinyDBCallback {
+public class SlaveReplication implements IRedisCallback {
 
     private static final String SYNC_COMMAND = "SYNC\r\n";
 
     private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
 
-    private TinyDBClient client;
+    private final RedisClient client;
 
-    private IServerContext server;
+    private final ITinyDB server;
 
-    private ISession session;
+    private final ISession session;
 
-    public SlaveReplication(IServerContext server, ISession session, String host, int port) {
+    public SlaveReplication(ITinyDB server, ISession session, String host, int port) {
         this.server = server;
         this.session = session;
-        this.client = new TinyDBClient(host, port, this);
+        this.client = new RedisClient(host, port, this);
     }
 
     public void start() {
@@ -81,7 +79,7 @@ public class SlaveReplication implements ITinyDBCallback {
     }
 
     private void processCommand(RedisToken token) {
-        RedisArray array = token.<RedisArray>getValue();
+        List<RedisToken> array = token.<List<RedisToken>>getValue();
 
         RedisToken commandToken = array.remove(0);
 
@@ -90,16 +88,15 @@ public class SlaveReplication implements ITinyDBCallback {
         ICommand command = server.getCommand(commandToken.getValue().toString());
 
         if (command != null) {
-            IDatabase current = server.getDatabase(session.getCurrentDB());
-            command.execute(current, request(commandToken, array), new Response());
+            command.execute(request(commandToken, array), new Response());
         }
     }
 
-    private Request request(RedisToken commandToken, RedisArray array) {
+    private Request request(RedisToken commandToken, List<RedisToken> array) {
         return new Request(server, session, commandToken.getValue(), arrayToList(array));
     }
 
-    private List<SafeString> arrayToList(RedisArray request) {
+    private List<SafeString> arrayToList(List<RedisToken> request) {
         List<SafeString> cmd = new LinkedList<>();
         for (RedisToken token : request) {
             cmd.add(token.<SafeString>getValue());

@@ -1,10 +1,10 @@
 package tonivade.db.command.string;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static tonivade.db.DatabaseKeyMatchers.isExpired;
 import static tonivade.db.DatabaseKeyMatchers.isNotExpired;
+import static tonivade.db.DatabaseValueMatchers.notNullValue;
+import static tonivade.db.DatabaseValueMatchers.nullValue;
 import static tonivade.db.data.DatabaseValue.string;
 
 import org.junit.Rule;

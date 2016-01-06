@@ -9,20 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IRequest;
-import tonivade.db.command.IResponse;
-import tonivade.db.command.annotation.Command;
-import tonivade.db.command.annotation.ParamLength;
+import tonivade.db.command.ITinyDBCommand;
+import tonivade.db.command.TinyDBResponse;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.redis.annotation.Command;
+import tonivade.redis.annotation.ParamLength;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
 
 @ReadOnly
 @Command("mget")
 @ParamLength(1)
-public class MultiGetCommand implements ICommand {
+public class MultiGetCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
@@ -30,7 +31,7 @@ public class MultiGetCommand implements ICommand {
         for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
             result.add(db.get(key));
         }
-        response.addArrayValue(result);
+        new TinyDBResponse(response).addArrayValue(result);
     }
 
 }

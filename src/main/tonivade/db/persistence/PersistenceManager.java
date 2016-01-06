@@ -24,38 +24,38 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBConfig;
-import tonivade.db.command.ICommand;
-import tonivade.db.command.IServerContext;
-import tonivade.db.command.ISession;
-import tonivade.db.command.Request;
-import tonivade.db.command.Response;
-import tonivade.db.command.Session;
-import tonivade.db.data.IDatabase;
-import tonivade.db.redis.RedisArray;
-import tonivade.db.redis.RedisParser;
-import tonivade.db.redis.RedisSource;
-import tonivade.db.redis.RedisToken;
-import tonivade.db.redis.SafeString;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.command.ISession;
+import tonivade.redis.command.Request;
+import tonivade.redis.command.Response;
+import tonivade.redis.command.Session;
+import tonivade.redis.protocol.RedisParser;
+import tonivade.redis.protocol.RedisSource;
+import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.SafeString;
 
 public class PersistenceManager implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(PersistenceManager.class.getName());
 
+    private static final int MAX_FRAME_SIZE = 1024 * 1024 * 100;
+
     private OutputStream output;
 
-    private IServerContext server;
+    private final ITinyDB server;
 
-    private String dumpFile;
-    private String redoFile;
+    private final String dumpFile;
+    private final String redoFile;
 
-    private int syncPeriod;
+    private final int syncPeriod;
 
-    private ISession session = new Session("dummy", null);
+    private final ISession session = new Session("dummy", null);
 
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    public PersistenceManager(IServerContext server, TinyDBConfig config) {
+    public PersistenceManager(ITinyDB server, TinyDBConfig config) {
         this.server = server;
         this.dumpFile = config.getRdbFile();
         this.redoFile = config.getAofFile();
@@ -83,7 +83,7 @@ public class PersistenceManager implements Runnable {
         createRedo();
     }
 
-    public void append(RedisArray command) {
+    public void append(List<RedisToken> command) {
         if (output != null) {
             executor.submit(() -> appendRedo(command));
         }
@@ -105,7 +105,7 @@ public class PersistenceManager implements Runnable {
         File file = new File(redoFile);
         if (file.exists()) {
             try (FileInputStream redo = new FileInputStream(file)) {
-                RedisParser parse = new RedisParser(new InputStreamRedisSource(redo));
+                RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new InputStreamRedisSource(redo));
 
                 while (true) {
                     RedisToken token = parse.parse();
@@ -121,25 +121,24 @@ public class PersistenceManager implements Runnable {
     }
 
     private void processCommand(RedisToken token) {
-        RedisArray array = token.<RedisArray>getValue();
-
-        RedisToken commandToken = array.remove(0);
+        List<RedisToken> array = token.<List<RedisToken>>getValue();
+        RedisToken commandToken = array.get(0);
+        List<RedisToken> paramTokens = array.stream().skip(1).collect(toList());
 
         LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
 
         ICommand command = server.getCommand(commandToken.getValue().toString());
 
         if (command != null) {
-            IDatabase current = server.getDatabase(session.getCurrentDB());
-            command.execute(current, request(commandToken, array), new Response());
+            command.execute(request(commandToken, paramTokens), new Response());
         }
     }
 
-    private Request request(RedisToken commandToken, RedisArray array) {
+    private Request request(RedisToken commandToken, List<RedisToken> array) {
         return new Request(server, session, commandToken.getValue(), arrayToList(array));
     }
 
-    private List<SafeString> arrayToList(RedisArray request) {
+    private List<SafeString> arrayToList(List<RedisToken> request) {
         List<SafeString> cmd = new LinkedList<>();
         for (RedisToken token : request) {
             cmd.add(token.<SafeString>getValue());
@@ -178,7 +177,7 @@ public class PersistenceManager implements Runnable {
         }
     }
 
-    private void appendRedo(RedisArray command) {
+    private void appendRedo(List<RedisToken> command) {
         try {
             Response response = new Response();
             response.addArray(command.stream().map(RedisToken::getValue).collect(toList()));
@@ -192,7 +191,7 @@ public class PersistenceManager implements Runnable {
 
     private static class InputStreamRedisSource implements RedisSource {
 
-        private InputStream stream;
+        private final InputStream stream;
 
         public InputStreamRedisSource(InputStream stream) {
             super();
