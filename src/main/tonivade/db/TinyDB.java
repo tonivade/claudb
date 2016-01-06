@@ -82,34 +82,21 @@ public class TinyDB extends RedisServer implements ITinyDB {
 
     @Override
     protected void cleanSession(ISession session) {
-        try {
-            getSessionState(session).destroy();
-        } finally {
-            session.destroy();
-        }
+        session.destroy();
     }
 
     @Override
     protected void executeCommand(ICommand command, IRequest request, IResponse response) {
-        ISession session = request.getSession();
-        TinyDBSessionState sessionState = getSessionState(session);
         if (!isReadOnly(request.getCommand())) {
-            sessionState.enqueue(() -> {
-                try {
-                    command.execute(request, response);
-                    writeResponse(session, response);
+            try {
+                command.execute(request, response);
 
-                    replication(request, command);
-
-                    if (response.isExit()) {
-                        session.getContext().close();
-                    }
-                } catch (RuntimeException e) {
-                    LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
-                }
-            });
+                replication(request, command);
+            } catch (RuntimeException e) {
+                LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
+            }
         } else {
-            writeResponse(session, response.addError("READONLY You can't write against a read only slave"));
+            response.addError("READONLY You can't write against a read only slave");
         }
     }
 

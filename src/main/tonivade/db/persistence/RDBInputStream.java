@@ -26,10 +26,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.CheckedInputStream;
 
-import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.data.SimpleDatabase;
 import tonivade.redis.protocol.SafeString;
 
 public class RDBInputStream {
@@ -78,7 +78,7 @@ public class RDBInputStream {
             int read = in.read();
             switch (read) {
             case SELECT:
-                db = new Database();
+                db = new SimpleDatabase();
                 databases.put(readLength(), db);
                 break;
             case TTL_SECONDS:

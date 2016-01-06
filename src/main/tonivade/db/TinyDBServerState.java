@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.data.SimpleDatabase;
 import tonivade.db.persistence.RDBInputStream;
 import tonivade.db.persistence.RDBOutputStream;
 
@@ -25,12 +25,12 @@ public class TinyDBServerState {
 
     private boolean master;
     private final List<IDatabase> databases = new ArrayList<>();
-    private final IDatabase admin = new Database();
+    private final IDatabase admin = new SimpleDatabase();
 
     public TinyDBServerState(int numDatabases) {
         this.master = true;
         for (int i = 0; i < numDatabases; i++) {
-            this.databases.add(new Database());
+            this.databases.add(new SimpleDatabase());
         }
     }
 

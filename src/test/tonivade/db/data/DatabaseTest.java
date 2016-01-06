@@ -21,7 +21,7 @@ import org.junit.Test;
 
 public class DatabaseTest {
 
-    private final Database database = new Database();
+    private final SimpleDatabase database = new SimpleDatabase();
 
     @Test
     public void testDatabase() throws Exception {

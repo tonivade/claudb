@@ -2,8 +2,6 @@ package tonivade.db;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import tonivade.redis.protocol.SafeString;
 
@@ -12,8 +10,6 @@ public class TinyDBSessionState {
     private int db;
 
     private final Set<SafeString> subscriptions = new HashSet<>();
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public int getCurrentDB() {
         return db;
@@ -35,16 +31,8 @@ public class TinyDBSessionState {
         subscriptions.remove(channel);
     }
 
-    public void enqueue(Runnable task) {
-        executor.execute(task);
-    }
-
     public boolean isSubscribed() {
         return !subscriptions.isEmpty();
-    }
-
-    public void destroy() {
-        executor.shutdown();
     }
 
 }
