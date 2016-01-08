@@ -19,7 +19,8 @@ import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
-import tonivade.redis.command.Response;
+import tonivade.redis.protocol.RedisToken.ArrayRedisToken;
+import tonivade.redis.protocol.RedisToken.StringRedisToken;
 import tonivade.redis.protocol.SafeString;
 
 @Command("publish")
@@ -52,10 +53,10 @@ public class PublishCommand implements ITinyDBCommand {
         return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
     }
 
-    private String message(IRequest request) {
-        Response stream = new Response();
-        stream.addArray(asList(MESSAGE, request.getParam(0), request.getParam(1)));
-        return stream.toString();
+    private ArrayRedisToken message(IRequest request) {
+        return new ArrayRedisToken(asList(new StringRedisToken(MESSAGE),
+                new StringRedisToken(request.getParam(0)),
+                new StringRedisToken(request.getParam(1))));
     }
 
 }

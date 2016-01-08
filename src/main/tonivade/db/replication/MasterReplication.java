@@ -5,10 +5,10 @@
 
 package tonivade.db.replication;
 
-import static java.lang.String.valueOf;
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.redis.protocol.SafeString.safeAsList;
 import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.LinkedList;
@@ -24,8 +24,9 @@ import tonivade.db.TinyDBServerState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.command.Response;
 import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.RedisToken.ArrayRedisToken;
+import tonivade.redis.protocol.RedisToken.StringRedisToken;
 import tonivade.redis.protocol.SafeString;
 
 public class MasterReplication implements Runnable {
@@ -65,10 +66,6 @@ public class MasterReplication implements Runnable {
         LOGGER.info(() -> "new slave: " + id);
     }
 
-    private IDatabase getAdminDatabase() {
-        return getServerState().getAdminDatabase();
-    }
-
     public void removeSlave(String id) {
         getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
             List<SafeString> merge = new LinkedList<>();
@@ -81,34 +78,46 @@ public class MasterReplication implements Runnable {
 
     @Override
     public void run() {
-        String commands = createCommands();
+        List<ArrayRedisToken> commands = createCommands();
 
         for (SafeString slave : getSlaves()) {
-            server.publish(slave.toString(), commands);
+            for (ArrayRedisToken command : commands) {
+                server.publish(slave.toString(), command);
+            }
         }
+    }
+
+    private IDatabase getAdminDatabase() {
+        return getServerState().getAdminDatabase();
     }
 
     private Set<SafeString> getSlaves() {
         return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
     }
 
-    private String createCommands() {
-        Response response = new Response();
-        response.addArray(safeAsList(PING_COMMAND));
-        for (List<RedisToken> array : server.getCommandsToReplicate()) {
-            RedisToken currentDB = array.remove(0);
-            response.addArray(safeAsList(SELECT_COMMAND, valueOf(currentDB.<Integer>getValue())));
-            response.addArray(toList(array));
-        }
-        return response.toString();
+    private List<ArrayRedisToken> createCommands() {
+        List<ArrayRedisToken> commands = new LinkedList<>();
+        commands.add(pingCommand());
+        commands.addAll(commandsToReplicate());
+        return commands;
     }
 
-    private List<SafeString> toList(List<RedisToken> request) {
-        List<SafeString> cmd = new LinkedList<>();
-        for (RedisToken token : request) {
-            cmd.add(token.<SafeString>getValue());
+    private List<ArrayRedisToken> commandsToReplicate() {
+        List<ArrayRedisToken> commands = new LinkedList<>();
+
+        for (List<RedisToken> command : server.getCommandsToReplicate()) {
+            commands.add(selectCommand(command.get(0)));
+            commands.add(new ArrayRedisToken(command.stream().skip(1).collect(toList())));
         }
-        return cmd;
+        return commands;
+    }
+
+    private ArrayRedisToken selectCommand(RedisToken database) {
+        return new ArrayRedisToken(asList(new StringRedisToken(safeString(SELECT_COMMAND)), database));
+    }
+
+    private ArrayRedisToken pingCommand() {
+        return new ArrayRedisToken(asList(new StringRedisToken(safeString(PING_COMMAND))));
     }
 
     private TinyDBServerState getServerState() {

@@ -20,7 +20,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.netty.buffer.ByteBuf;
 import tonivade.db.command.TinyDBCommandSuite;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
@@ -33,7 +32,6 @@ import tonivade.redis.command.ISession;
 import tonivade.redis.protocol.RedisToken;
 import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
 import tonivade.redis.protocol.RedisToken.StringRedisToken;
-import tonivade.redis.protocol.SafeString;
 
 public class TinyDB extends RedisServer implements ITinyDB {
 
@@ -143,13 +141,10 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     @Override
-    public void publish(String sourceKey, String message) {
+    public void publish(String sourceKey, RedisToken message) {
         ISession session = getSession(sourceKey);
         if (session != null) {
-            SafeString safeString = safeString(message);
-            ByteBuf buffer = session.getContext().alloc().buffer(safeString.length());
-            buffer.writeBytes(safeString.getBuffer());
-            session.getContext().writeAndFlush(buffer);
+            session.getContext().writeAndFlush(message);
         }
     }
 

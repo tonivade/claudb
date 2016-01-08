@@ -6,7 +6,8 @@
 package tonivade.db.replication;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -24,6 +25,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
 import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.RedisToken.ArrayRedisToken;
+import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
 import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,11 +50,13 @@ public class MasterReplicationTest {
 
         master.start();
 
-        verify(server, timeout(10000).times(2)).publish(anyString(), anyString());
+        verify(server, timeout(3000).times(3)).publish(eq("slave:1"), any(ArrayRedisToken.class));
+        verify(server, timeout(3000).times(3)).publish(eq("slave:2"), any(ArrayRedisToken.class));
     }
 
     private List<RedisToken> request() {
         List<RedisToken> array = new ArrayList<>();
+        array.add(new IntegerRedisToken(0));
         array.add(new StringRedisToken(safeString("set")));
         array.add(new StringRedisToken(safeString("a")));
         array.add(new StringRedisToken(safeString("b")));
