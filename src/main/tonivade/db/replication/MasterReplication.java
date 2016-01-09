@@ -106,7 +106,7 @@ public class MasterReplication implements Runnable {
 
         for (List<RedisToken> command : server.getCommandsToReplicate()) {
             commands.add(selectCommand(command.get(0)));
-            commands.add(RedisToken.array(command.stream().skip(1).collect(toList())));
+            commands.add(array(command.stream().skip(1).collect(toList())));
         }
         return commands;
     }

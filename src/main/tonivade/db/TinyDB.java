@@ -126,7 +126,11 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     private RedisToken currentDbToken(IRequest request) {
-        return RedisToken.integer(getSessionState(request.getSession()).getCurrentDB());
+        return RedisToken.string(String.valueOf(getCurrentDB(request)));
+    }
+
+    private int getCurrentDB(IRequest request) {
+        return getSessionState(request.getSession()).getCurrentDB();
     }
 
     private List<RedisToken> paramTokens(IRequest request) {
