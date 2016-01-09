@@ -5,7 +5,6 @@
 
 package tonivade.db.replication;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -13,7 +12,8 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.persistence.HexUtil.toHexString;
-import static tonivade.redis.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.RedisToken.array;
+import static tonivade.redis.protocol.RedisToken.string;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,8 +32,6 @@ import tonivade.redis.command.ICommand;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.command.ISession;
-import tonivade.redis.protocol.RedisToken.ArrayRedisToken;
-import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
@@ -71,7 +69,7 @@ public class SlaveReplicationTest {
 
         SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
 
-        slave.onMessage(new ArrayRedisToken(asList(new StringRedisToken(safeString("PING")))));
+        slave.onMessage(array(string("PING")));
 
         verifyCommandExecuted();
     }

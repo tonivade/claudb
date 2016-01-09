@@ -11,9 +11,9 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.redis.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.RedisToken.integer;
+import static tonivade.redis.protocol.RedisToken.string;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -25,9 +25,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
 import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.RedisToken.ArrayRedisToken;
-import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
-import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
@@ -50,17 +47,12 @@ public class MasterReplicationTest {
 
         master.start();
 
-        verify(server, timeout(3000).times(3)).publish(eq("slave:1"), any(ArrayRedisToken.class));
-        verify(server, timeout(3000).times(3)).publish(eq("slave:2"), any(ArrayRedisToken.class));
+        verify(server, timeout(3000).times(3)).publish(eq("slave:1"), any(RedisToken.class));
+        verify(server, timeout(3000).times(3)).publish(eq("slave:2"), any(RedisToken.class));
     }
 
     private List<RedisToken> request() {
-        List<RedisToken> array = new ArrayList<>();
-        array.add(new IntegerRedisToken(0));
-        array.add(new StringRedisToken(safeString("set")));
-        array.add(new StringRedisToken(safeString("a")));
-        array.add(new StringRedisToken(safeString("b")));
-        return array;
+        return asList(integer(0), string("set"), string("a"), string("b"));
     }
 
 }

@@ -7,7 +7,6 @@ package tonivade.db;
 
 import static java.util.stream.Collectors.toList;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +29,6 @@ import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.command.ISession;
 import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
-import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 public class TinyDB extends RedisServer implements ITinyDB {
 
@@ -124,16 +121,16 @@ public class TinyDB extends RedisServer implements ITinyDB {
         return array;
     }
 
-    private StringRedisToken commandToken(IRequest request) {
-        return new StringRedisToken(safeString(request.getCommand()));
+    private RedisToken commandToken(IRequest request) {
+        return RedisToken.string(request.getCommand());
     }
 
-    private IntegerRedisToken currentDbToken(IRequest request) {
-        return new IntegerRedisToken(getSessionState(request.getSession()).getCurrentDB());
+    private RedisToken currentDbToken(IRequest request) {
+        return RedisToken.integer(getSessionState(request.getSession()).getCurrentDB());
     }
 
-    private List<StringRedisToken> paramTokens(IRequest request) {
-        return request.getParams().stream().map(StringRedisToken::new).collect(toList());
+    private List<RedisToken> paramTokens(IRequest request) {
+        return request.getParams().stream().map(RedisToken::string).collect(toList());
     }
 
     private TinyDBSessionState getSessionState(ISession session) {

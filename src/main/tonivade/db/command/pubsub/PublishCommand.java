@@ -5,8 +5,9 @@
 
 package tonivade.db.command.pubsub;
 
-import static java.util.Arrays.asList;
 import static tonivade.db.data.DatabaseKey.safeKey;
+import static tonivade.redis.protocol.RedisToken.array;
+import static tonivade.redis.protocol.RedisToken.string;
 import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Set;
@@ -19,8 +20,7 @@ import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
-import tonivade.redis.protocol.RedisToken.ArrayRedisToken;
-import tonivade.redis.protocol.RedisToken.StringRedisToken;
+import tonivade.redis.protocol.RedisToken;
 import tonivade.redis.protocol.SafeString;
 
 @Command("publish")
@@ -53,10 +53,8 @@ public class PublishCommand implements ITinyDBCommand {
         return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
     }
 
-    private ArrayRedisToken message(IRequest request) {
-        return new ArrayRedisToken(asList(new StringRedisToken(MESSAGE),
-                new StringRedisToken(request.getParam(0)),
-                new StringRedisToken(request.getParam(1))));
+    private RedisToken message(IRequest request) {
+        return array(string(MESSAGE), string(request.getParam(0)), string(request.getParam(1)));
     }
 
 }
