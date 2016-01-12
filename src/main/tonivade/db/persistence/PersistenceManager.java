@@ -6,6 +6,7 @@
 package tonivade.db.persistence;
 
 import static java.util.stream.Collectors.toList;
+import static tonivade.redis.protocol.RedisToken.array;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,6 +33,7 @@ import tonivade.redis.command.Request;
 import tonivade.redis.command.Response;
 import tonivade.redis.command.Session;
 import tonivade.redis.protocol.RedisParser;
+import tonivade.redis.protocol.RedisSerializer;
 import tonivade.redis.protocol.RedisSource;
 import tonivade.redis.protocol.RedisToken;
 import tonivade.redis.protocol.SafeString;
@@ -179,9 +181,9 @@ public class PersistenceManager implements Runnable {
 
     private void appendRedo(List<RedisToken> command) {
         try {
-            Response response = new Response();
-            response.addArray(command.stream().map(RedisToken::getValue).collect(toList()));
-            output.write(response.getBytes());
+            RedisSerializer serializer = new RedisSerializer();
+            byte[] buffer = serializer.encodeToken(array(command));
+            output.write(buffer);
             output.flush();
             LOGGER.fine(() -> "new command: " + command);
         } catch (IOException e) {
