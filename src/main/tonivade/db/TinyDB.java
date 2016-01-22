@@ -71,6 +71,51 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     @Override
+    public List<List<RedisToken>> getCommandsToReplicate() {
+        List<List<RedisToken>> current = new LinkedList<>();
+        queue.drainTo(current);
+        return current;
+    }
+
+    @Override
+    public void publish(String sourceKey, RedisToken message) {
+        ISession session = getSession(sourceKey);
+        if (session != null) {
+            session.publish(message);
+        }
+    }
+
+    @Override
+    public IDatabase getAdminDatabase() {
+        return getState().getAdminDatabase();
+    }
+
+    @Override
+    public IDatabase getDatabase(int i) {
+        return getState().getDatabase(i);
+    }
+
+    @Override
+    public void exportRDB(OutputStream output) throws IOException {
+        getState().exportRDB(output);
+    }
+
+    @Override
+    public void importRDB(InputStream input) throws IOException {
+        getState().importRDB(input);
+    }
+
+    @Override
+    public boolean isMaster() {
+        return getState().isMaster();
+    }
+
+    @Override
+    public void setMaster(boolean master) {
+        getState().setMaster(master);
+    }
+
+    @Override
     protected void createSession(ISession session) {
         session.putValue("state", new TinyDBSessionState());
     }
@@ -141,57 +186,12 @@ public class TinyDB extends RedisServer implements ITinyDB {
         return session.<TinyDBSessionState>getValue("state");
     }
 
-    @Override
-    public void publish(String sourceKey, RedisToken message) {
-        ISession session = getSession(sourceKey);
-        if (session != null) {
-            session.getContext().writeAndFlush(message);
-        }
-    }
-
-    @Override
-    public IDatabase getAdminDatabase() {
-        return getState().getAdminDatabase();
-    }
-
-    @Override
-    public IDatabase getDatabase(int i) {
-        return getState().getDatabase(i);
-    }
-
-    @Override
-    public void exportRDB(OutputStream output) throws IOException {
-        getState().exportRDB(output);
-    }
-
-    @Override
-    public void importRDB(InputStream input) throws IOException {
-        getState().importRDB(input);
-    }
-
-    @Override
-    public boolean isMaster() {
-        return getState().isMaster();
-    }
-
-    @Override
-    public void setMaster(boolean master) {
-        getState().setMaster(master);
-    }
-
     private TinyDBServerState getState() {
         return getValue("state");
     }
 
     private boolean hasSlaves() {
         return getState().hasSlaves();
-    }
-
-    @Override
-    public List<List<RedisToken>> getCommandsToReplicate() {
-        List<List<RedisToken>> current = new LinkedList<>();
-        queue.drainTo(current);
-        return current;
     }
 
 }
