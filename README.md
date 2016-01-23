@@ -115,14 +115,14 @@ Performance is quite good, not as good as REDIS, but it's good enough for Java.
 This is TinyDB
 
     $ redis-benchmark -t set,get -h localhost -p 7081 -n 100000 -q
-    SET: 67704.80 requests per second
-    GET: 70821.53 requests per second
+    SET: 47664.44 requests per second
+    GET: 50226.02 requests per second
     
 And this is REDIS
 
     $ redis-benchmark -t set,get -h localhost -p 6379 -n 100000 -q
-    SET: 97751.71 requests per second
-    GET: 100000.00 requests per second
+    SET: 97656.24 requests per second
+    GET: 98716.68 requests per second
     
 In my laptop (intel core i5, with 4G of RAM)
 
@@ -146,6 +146,21 @@ Or if you have Gradle installed, just type
 
 - Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-0.6.0-SNAPSHOT.jar)
 - With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-all-0.6.0-SNAPSHOT.jar)
+
+## USAGE
+
+You can start a new server listening in default port 7081.
+
+    $ java -jar tiny-db-all.jar
+    
+Parameters:
+
+    Option        Description
+    ------        -----------
+    --help        print help
+    -P            enable with persistence
+    -h            host (default: localhost)
+    -p <Integer>  port (default: 7081) 
 
 ## TODO
 
