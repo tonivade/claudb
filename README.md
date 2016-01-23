@@ -124,7 +124,7 @@ And this is REDIS
     SET: 97751.71 requests per second
     GET: 100000.00 requests per second
     
-In my laptop (intel i3, with 4G of RAM)
+In my laptop (intel core i5, with 4G of RAM)
 
 ## BUILD
 
