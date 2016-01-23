@@ -1,14 +1,12 @@
-TinyDB
-======
+# TinyDB
 
-TinyDB is a REDIS implementation in Java. At this moment is in the first stage of development
-and only implements a small subset of commands. The objetive is implement a full functional
-one-to-one replacement for REDIS.
+TinyDB is a REDIS implementation in Java. At the moment is in development and only implements a small 
+subset of commands and features.  The objetive is implement a full functional one-to-one replacement 
+for REDIS (2.8 branch).
 
-You probably will wonder why I do this, the answer is Just For Fun.
+You will probably wonder why I do this, the answer is I do it Just For Fun.
 
-Implemented commands
---------------------
+## Implemented commands
 
 - Server
     - FLUSHDB
@@ -87,16 +85,30 @@ Implemented commands
     - MULTI
     - EXEC
 
-Design
-------
+## Design
 
-TinyDB is implemented using asynchronous IO with netty, and at this moment 
-with no persistence, only works like an on-memory cache.
+TinyDB is implemented using Java8. Is single thread, like REDIS. It uses asynchronous IO 
+(netty) and reactive programing paradigm (rxjava).
 
-Concurrency is managed with StampedLocks and optimistic reads.
+Requests come from IO threads and enqueues to rxjava single thread scheduler. Then IO thread is free
+to process another request. When request is done, the response is sended to client asyncronously. Then,
+every request is managed one by one, in a single thread, so there's no concurrency issues to care
+about.
 
-Performance
------------
+## Features
+
+Now only implements a subset of REDIS commands, but is usable.
+
+TinyDB also supports persistence compatible with REDIS, RDB dumps and AOF journal. It can create
+compatible RDB files you can load in a REDIS server.
+
+Now TinyDB support master/slave replication, a master can have multiple slaves, but at the moment
+slaves can have slaves.
+
+Also implements partially the Pub/Sub subsystem.
+
+
+## Performance
 
 Performance is quite good, not as good as REDIS, but it's good enough for Java.
 
@@ -111,9 +123,10 @@ And this is REDIS
     $ redis-benchmark -t set,get -h localhost -p 6379 -n 100000 -q
     SET: 97751.71 requests per second
     GET: 100000.00 requests per second
+    
+In my laptop (intel i3, with 4G of RAM)
 
-BUILD
------
+## BUILD
 
 You need to clon the repo:
 
@@ -129,39 +142,29 @@ Or if you have Gradle installed, just type
 
     $ gradle build
 
-DOWNLOADS
----------
+## DOWNLOADS
 
-- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db.jar)
-- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-all.jar)
+- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-0.6.0-SNAPSHOT.jar)
+- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-all-0.6.0-SNAPSHOT.jar)
 
-TODO
-----
+## TODO
 
-- ~~Pipelining.~~ **Done!**
-- Key expiration. _(Working on it!)_
-- Transactions (MULTI & EXEC) _(Done!)_.
-- Persistence to disk. _(Working on it!)_
-    - 80% RDB file format implemented (strings, lists, sets, sorted sets and hashes).
-    - Ziplist and Maplist encoding not implemented yet.
-- Publish/Subscribe. _(Partially implemented)_
-    - PSUBSCRIBE and PUNSUBSCRIBE commands not implemented yet.
-- Master - Slave Replication. _(Working on it!)_
-    - Initial implementation finished, with only one slave per master
+- Namespace notifications.
+- Ziplist and Maplist encoding not implemented yet.
+- PSUBSCRIBE and PUNSUBSCRIBE commands not implemented yet.
+- Master/Slave replication improvements. Slave with Slaves
 - Scripting with Javascript/Lua.
 - Partitioning?
 - Clustering?
 
-CI
---
+## Continuous Integration
 
 [![Build Status](https://drone.io/github.com/tonivade/tiny-db/status.png)](https://drone.io/github.com/tonivade/tiny-db/latest)
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5353/badge.svg)](https://scan.coverity.com/projects/5353)
 
-[![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg?branch=master)](https://coveralls.io/r/tonivade/tiny-db?branch=master)
+[![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg?branch=master)](https://coveralls.io/r/tonivade/tiny-db?branch=develop)
 
-LICENSE
--------
+## LICENSE
 
 TinyDB is released under MIT License
