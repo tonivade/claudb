@@ -103,7 +103,7 @@ TinyDB also supports persistence compatible with REDIS, RDB dumps and AOF journa
 compatible RDB files you can load in a REDIS server.
 
 Now TinyDB support master/slave replication, a master can have multiple slaves, but at the moment
-slaves can have slaves.
+slaves can't have slaves.
 
 Also implements partially the Pub/Sub subsystem.
 
