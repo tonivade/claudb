@@ -98,7 +98,7 @@ public class SimpleDatabase implements IDatabase {
 
     @Override
     public Set<java.util.Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
-        return cache.entrySet().stream().map((entry) -> new SimpleEntry<>(entry.getKey(), entry.getValue())).collect(toSet());
+        return cache.entrySet().stream().map(entry -> new SimpleEntry<>(entry.getKey(), entry.getValue())).collect(toSet());
     }
 
     @Override

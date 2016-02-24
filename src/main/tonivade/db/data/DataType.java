@@ -12,9 +12,10 @@ public enum DataType {
     SET("set"),
     ZSET("zset"),
     HASH("hash"),
-    NONE("none");
+    NONE("none"),
+    BITSET("bitset");
 
-    private String text;
+    private final String text;
 
     private DataType(String text) {
         this.text = text;
