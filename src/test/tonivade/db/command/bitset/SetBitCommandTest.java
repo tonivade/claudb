@@ -28,4 +28,20 @@ public class SetBitCommandTest {
             .execute()
             .verify().addInt(true);
     }
+
+    @Test
+    public void testExecuteBitFormat() throws Exception {
+        rule.withData("test", DatabaseValue.bitset())
+            .withParams("test", "1", "a")
+            .execute()
+            .verify().addError("bit or offset is not an integer");
+    }
+
+    @Test
+    public void testExecuteOffsetFormat() throws Exception {
+        rule.withData("test", DatabaseValue.bitset())
+            .withParams("test", "a", "0")
+            .execute()
+            .verify().addError("bit or offset is not an integer");
+    }
 }
