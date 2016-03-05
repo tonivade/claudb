@@ -12,8 +12,7 @@ public enum DataType {
     SET("set"),
     ZSET("zset"),
     HASH("hash"),
-    NONE("none"),
-    BITSET("bitset");
+    NONE("none");
 
     private final String text;
 

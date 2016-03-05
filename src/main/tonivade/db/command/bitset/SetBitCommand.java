@@ -15,10 +15,11 @@ import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
+import tonivade.redis.protocol.SafeString;
 
 @Command("setbit")
 @ParamLength(3)
-@ParamType(DataType.BITSET)
+@ParamType(DataType.STRING)
 public class SetBitCommand implements ITinyDBCommand {
 
     @Override
@@ -28,7 +29,7 @@ public class SetBitCommand implements ITinyDBCommand {
             int bit = Integer.parseInt(request.getParam(2).toString());
             Queue<Boolean> queue = new LinkedList<>();
             db.merge(safeKey(request.getParam(0)), bitset(), (oldValue, newValue) -> {
-                BitSet bitSet = oldValue.<BitSet> getValue();
+                BitSet bitSet = BitSet.valueOf(oldValue.<SafeString>getValue().getBuffer());
                 queue.add(bitSet.get(offset));
                 bitSet.set(offset, bit != 0);
                 return oldValue;

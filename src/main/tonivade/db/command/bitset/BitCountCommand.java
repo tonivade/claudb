@@ -14,17 +14,18 @@ import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
+import tonivade.redis.protocol.SafeString;
 
 @Command("bitcount")
 @ParamLength(1)
-@ParamType(DataType.BITSET)
+@ParamType(DataType.STRING)
 public class BitCountCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue bitSet = db.getOrDefault(safeKey(request.getParam(0)), bitset());
-        int count = bitSet.<BitSet>getValue().cardinality();
-        response.addInt(count);
+        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), bitset());
+        BitSet bitSet = BitSet.valueOf(value.<SafeString>getValue().getBuffer());
+        response.addInt(bitSet.cardinality());
     }
 
 }

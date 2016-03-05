@@ -140,7 +140,7 @@ public class DatabaseValue {
         for (int position : ones) {
             bitSet.set(position);
         }
-        return new DatabaseValue(DataType.BITSET, bitSet);
+        return new DatabaseValue(DataType.STRING, new SafeString(bitSet.toByteArray()));
     }
 
     public static Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {
