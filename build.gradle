@@ -5,7 +5,7 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'tonivade'
-archivesBaseName = 'tiny-db'
+archivesBaseName = 'tinydb'
 version = '0.6.0-SNAPSHOT'
 
 buildscript {
