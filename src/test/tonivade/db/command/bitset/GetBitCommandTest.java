@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
+
 package tonivade.db.command.bitset;
 
 import org.junit.Rule;
