@@ -11,13 +11,12 @@ import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import tonivade.redis.IRedisCallback;
-import tonivade.redis.RedisClient;
-import tonivade.redis.protocol.RedisToken;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import tonivade.redis.IRedisCallback;
+import tonivade.redis.RedisClient;
+import tonivade.redis.protocol.RedisToken;
 
 public class Client implements IRedisCallback {
 
@@ -30,17 +29,17 @@ public class Client implements IRedisCallback {
 
     private final BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
 
-     @Override
+    @Override
     public void onConnect() {
         System.out.println("connected!");
     }
 
-     @Override
+    @Override
     public void onDisconnect() {
-         System.out.println("disconnected!");
+        System.out.println("disconnected!");
     }
 
-     @Override
+    @Override
     public void onMessage(RedisToken token) {
         try {
             responses.put(token);
@@ -56,10 +55,10 @@ public class Client implements IRedisCallback {
     public static void main(String[] args) throws Exception {
         OptionParser parser = new OptionParser();
         OptionSpec<Void> help = parser.accepts("help", "print help");
-        OptionSpec<String> host = parser.accepts("h", "host")
-                .withRequiredArg().ofType(String.class).defaultsTo(TinyDB.DEFAULT_HOST);
-        OptionSpec<Integer> port = parser.accepts("p", "port")
-                .withRequiredArg().ofType(Integer.class).defaultsTo(TinyDB.DEFAULT_PORT);
+        OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
+                .defaultsTo(TinyDB.DEFAULT_HOST);
+        OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
+                .defaultsTo(TinyDB.DEFAULT_PORT);
 
         OptionSet options = parser.parse(args);
 
@@ -75,7 +74,7 @@ public class Client implements IRedisCallback {
 
             prompt();
             try (Scanner scanner = new Scanner(System.in, CHARSET_NAME)) {
-                for(boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
+                for (boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
                     String line = scanner.nextLine();
                     if (!line.isEmpty()) {
                         client.send(line + END_OF_LINE);
