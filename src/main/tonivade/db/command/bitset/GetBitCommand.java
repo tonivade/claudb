@@ -21,7 +21,7 @@ import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.protocol.SafeString;
 
-@Command("setbit")
+@Command("getbit")
 @ParamLength(2)
 @ParamType(DataType.STRING)
 public class GetBitCommand implements ITinyDBCommand {
