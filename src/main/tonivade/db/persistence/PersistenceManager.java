@@ -5,6 +5,7 @@
 
 package tonivade.db.persistence;
 
+import static java.nio.ByteBuffer.wrap;
 import static java.util.stream.Collectors.toList;
 import static tonivade.redis.protocol.RedisToken.array;
 
@@ -16,7 +17,6 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -201,7 +201,7 @@ public class PersistenceManager implements Runnable {
         }
 
         @Override
-        public String readLine() {
+        public SafeString readLine() {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 boolean cr = false;
@@ -223,19 +223,19 @@ public class PersistenceManager implements Runnable {
                         baos.write(read);
                     }
                 }
-                return baos.toString("UTF-8");
+                return new SafeString(baos.toByteArray());
             } catch (IOException e) {
                 throw new IOError(e);
             }
         }
 
         @Override
-        public ByteBuffer readBytes(int size) {
+        public SafeString readString(int size) {
             try {
                 byte[] buffer = new byte[size];
                 int readed = stream.read(buffer);
                 if (readed > -1) {
-                    return ByteBuffer.wrap(buffer, 0, readed);
+                    return new SafeString(wrap(buffer, 0, readed));
                 }
                 return null;
             } catch (IOException e) {
