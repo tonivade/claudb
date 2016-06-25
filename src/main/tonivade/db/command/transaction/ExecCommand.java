@@ -21,11 +21,11 @@ public class ExecCommand implements ITinyDBCommand {
         TransactionState transaction = getTransactionIfExists(request.getSession());
         if (transaction !=  null) {
             ITinyDB server = getTinyDB(request.getServerContext());
-            MetaResponse metaResponse = new MetaResponse(response);
+            MetaResponse metaResponse = new MetaResponse();
             for (IRequest queuedRequest : transaction) {
                 metaResponse.addResponse(executeCommand(server, queuedRequest));
             }
-            metaResponse.build();
+            response.addArray(metaResponse.build());
         } else {
             response.addError("ERR EXEC without MULTI");
         }

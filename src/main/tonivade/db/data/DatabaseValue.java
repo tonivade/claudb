@@ -15,6 +15,7 @@ import static tonivade.equalizer.Equalizer.equalizer;
 import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -132,6 +133,14 @@ public class DatabaseValue {
         return new DatabaseValue(
                 DataType.HASH,
                 unmodifiableMap(Stream.of(values).collect(toHash())));
+    }
+
+    public static DatabaseValue bitset(int ... ones) {
+        BitSet bitSet = new BitSet();
+        for (int position : ones) {
+            bitSet.set(position);
+        }
+        return new DatabaseValue(DataType.STRING, new SafeString(bitSet.toByteArray()));
     }
 
     public static Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {

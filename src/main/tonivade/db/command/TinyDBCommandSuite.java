@@ -5,6 +5,9 @@
 
 package tonivade.db.command;
 
+import tonivade.db.command.bitset.BitCountCommand;
+import tonivade.db.command.bitset.GetBitCommand;
+import tonivade.db.command.bitset.SetBitCommand;
 import tonivade.db.command.hash.HashDeleteCommand;
 import tonivade.db.command.hash.HashExistsCommand;
 import tonivade.db.command.hash.HashGetAllCommand;
@@ -91,6 +94,9 @@ public class TinyDBCommandSuite extends CommandSuite {
         addCommand(DecrementByCommand.class);
         addCommand(StringLengthCommand.class);
         addCommand(SetExpiredCommand.class);
+        addCommand(BitCountCommand.class);
+        addCommand(SetBitCommand.class);
+        addCommand(GetBitCommand.class);
 
         // keys
         addCommand(DeleteCommand.class);

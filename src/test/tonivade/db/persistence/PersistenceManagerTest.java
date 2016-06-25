@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.TinyDBConfig.withPersistence;
-import static tonivade.redis.protocol.SafeString.safeString;
+import static tonivade.redis.protocol.RedisToken.string;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +39,6 @@ import tonivade.db.ITinyDB;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.command.ICommand;
 import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.RedisToken.StringRedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
@@ -64,20 +63,6 @@ public class PersistenceManagerTest {
         deleteFiles();
     }
 
-    private void deleteFiles() {
-        deleteFile(DUMP_FILE);
-        deleteFile(REDO_FILE);
-    }
-
-    private void deleteFile(String name) {
-        File file = new File(name);
-        if (file.exists()) {
-            if (file.delete()) {
-                System.out.println(file + " deleted");
-            }
-        }
-    }
-
     @Test
     public void testRun() throws Exception {
         doAnswer(new ExportRDB()).when(server).exportRDB(any());
@@ -89,6 +74,15 @@ public class PersistenceManagerTest {
         Map<Integer, IDatabase> databases = input.parse();
 
         assertThat(databases, notNullValue());
+    }
+
+    @Test
+    public void testStop() throws Exception {
+        manager.stop();
+
+        verify(server).exportRDB(any());
+
+        assertThat(new File(DUMP_FILE).exists(), is(true));
     }
 
     @Test
@@ -107,6 +101,30 @@ public class PersistenceManagerTest {
         assertThat(new File(REDO_FILE).exists(), is(true));
     }
 
+    @Test
+    public void testAppend() throws Exception {
+        manager.start();
+        manager.append(array());
+
+        Thread.sleep(1000);
+
+        assertThat(readAOF(), is("*1\r\n$4\r\nPING\r\n"));
+    }
+
+    private void deleteFiles() {
+        deleteFile(DUMP_FILE);
+        deleteFile(REDO_FILE);
+    }
+
+    private void deleteFile(String name) {
+        File file = new File(name);
+        if (file.exists()) {
+            if (file.delete()) {
+                System.out.println(file + " deleted");
+            }
+        }
+    }
+
     private void writeRDB() {
         try (FileOutputStream out = new FileOutputStream(DUMP_FILE)) {
             out.write("Test".getBytes(DEFAULT_CHARSET));
@@ -121,16 +139,6 @@ public class PersistenceManagerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    @Test
-    public void testAppend() throws Exception {
-        manager.start();
-        manager.append(array());
-
-        Thread.sleep(1000);
-
-        assertThat(readAOF(), is("*1\r\n$4\r\nPING\r\n"));
     }
 
     private String readAOF() {
@@ -149,21 +157,8 @@ public class PersistenceManagerTest {
 
     private List<RedisToken> array() {
         List<RedisToken> array = new LinkedList<>();
-        array.add(token("PING"));
+        array.add(string("PING"));
         return array;
-    }
-
-    private RedisToken token(String string) {
-        return new StringRedisToken(safeString(string));
-    }
-
-    @Test
-    public void testStop() throws Exception {
-        manager.stop();
-
-        verify(server).exportRDB(any());
-
-        assertThat(new File(DUMP_FILE).exists(), is(true));
     }
 
     private static class ExportRDB implements Answer<Void> {

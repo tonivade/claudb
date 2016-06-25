@@ -5,7 +5,8 @@ apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'tonivade'
-version = '0.5.0'
+archivesBaseName = 'tinydb'
+version = '0.6.0'
 
 buildscript {
     repositories {
@@ -54,7 +55,7 @@ repositories {
 }
 
 dependencies {
-    compile 'tonivade:resp-server:0.1.1'
+    compile 'tonivade:resp-server:0.3.2'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
     compile 'tonivade:equalizer:0.1.2'
     testCompile 'junit:junit:4.12'
@@ -64,8 +65,8 @@ dependencies {
 }
 
 compileJava {  
-    options.fork = true  
-    options.forkOptions.executable = "javac"  
+    options.fork = true
+    options.forkOptions.executable = "javac"
 }
 
 task fatJar(type: Jar) {

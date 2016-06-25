@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,14 +37,14 @@ public class TinyDBClientTest {
 
         verify(callback, timeout(1000)).onConnect();
 
-        client.send("ping\r\n");
+        client.send("ping");
 
         verify(callback, timeout(1000)).onMessage(captor.capture());
 
         RedisToken message = captor.getValue();
 
         assertThat(message.getType(), is(RedisTokenType.STATUS));
-        assertThat(message.getValue(), is("PONG"));
+        assertThat(message.getValue(), is(safeString("PONG")));
 
         client.stop();
 

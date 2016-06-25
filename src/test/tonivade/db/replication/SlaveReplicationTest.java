@@ -7,10 +7,15 @@ package tonivade.db.replication;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static tonivade.db.persistence.HexUtil.toHexString;
+import static tonivade.redis.protocol.RedisToken.array;
+import static tonivade.redis.protocol.RedisToken.string;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Rule;
@@ -23,6 +28,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBRule;
+import tonivade.redis.command.ICommand;
+import tonivade.redis.command.IRequest;
+import tonivade.redis.command.IResponse;
 import tonivade.redis.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,6 +45,12 @@ public class SlaveReplicationTest {
     @Mock
     private ISession session;
 
+    @Mock
+    private ICommand command;
+
+    @Captor
+    private ArgumentCaptor<IRequest> requestCaptor;
+
     @Captor
     private ArgumentCaptor<InputStream> captor;
 
@@ -46,6 +60,28 @@ public class SlaveReplicationTest {
 
         slave.start();
 
+        verifyConectionAndRDBDumpImported();
+    }
+
+    @Test
+    public void testProcessCommand() throws Exception {
+        when(context.getCommand("PING")).thenReturn(command);
+
+        SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
+
+        slave.onMessage(array(string("PING")));
+
+        verifyCommandExecuted();
+    }
+
+    private void verifyCommandExecuted() {
+        verify(command).execute(requestCaptor.capture(), any(IResponse.class));
+
+        IRequest request = requestCaptor.getValue();
+        assertThat(request.getCommand(), is("PING"));
+    }
+
+    private void verifyConectionAndRDBDumpImported() throws IOException {
         verify(context, timeout(2000)).importRDB(captor.capture());
 
         InputStream stream = captor.getValue();

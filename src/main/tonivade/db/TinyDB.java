@@ -7,7 +7,6 @@ package tonivade.db;
 
 import static java.util.stream.Collectors.toList;
 import static tonivade.db.TinyDBConfig.withoutPersistence;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,7 +19,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.netty.buffer.ByteBuf;
 import tonivade.db.command.TinyDBCommandSuite;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.IDatabase;
@@ -31,9 +29,6 @@ import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 import tonivade.redis.command.ISession;
 import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.RedisToken.IntegerRedisToken;
-import tonivade.redis.protocol.RedisToken.StringRedisToken;
-import tonivade.redis.protocol.SafeString;
 
 public class TinyDB extends RedisServer implements ITinyDB {
 
@@ -41,7 +36,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
 
     private final BlockingQueue<List<RedisToken>> queue = new LinkedBlockingQueue<>();
 
-    private Optional<PersistenceManager> persistence;
+    private final Optional<PersistenceManager> persistence;
 
     public TinyDB() {
         this(DEFAULT_HOST, DEFAULT_PORT);
@@ -76,93 +71,17 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     @Override
-    protected void createSession(ISession session) {
-        session.putValue("state", new TinyDBSessionState());
+    public List<List<RedisToken>> getCommandsToReplicate() {
+        List<List<RedisToken>> current = new LinkedList<>();
+        queue.drainTo(current);
+        return current;
     }
 
     @Override
-    protected void cleanSession(ISession session) {
-        try {
-            getSessionState(session).destroy();
-        } finally {
-            session.destroy();
-        }
-    }
-
-    @Override
-    protected void executeCommand(ICommand command, IRequest request, IResponse response) {
-        ISession session = request.getSession();
-        TinyDBSessionState sessionState = getSessionState(session);
-        if (!isReadOnly(command)) {
-            sessionState.enqueue(() -> {
-                try {
-                    command.execute(request, response);
-                    writeResponse(session, response);
-
-                    replication(request, command);
-
-                    if (response.isExit()) {
-                        session.getContext().close();
-                    }
-                } catch (RuntimeException e) {
-                    LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
-                }
-            });
-        } else {
-            writeResponse(session, response.addError("READONLY You can't write against a read only slave"));
-        }
-    }
-
-    private boolean isReadOnly(ICommand command) {
-        return !isMaster() && isReadOnlyCommand(command);
-    }
-
-    private void replication(IRequest request, ICommand command) {
-        if (isReadOnlyCommand(command)) {
-            List<RedisToken> array = requestToArray(request);
-            if (hasSlaves()) {
-                queue.add(array);
-            }
-            persistence.ifPresent((p) -> p.append(array));
-        }
-    }
-
-    private boolean isReadOnlyCommand(ICommand command) {
-        return !command.getClass().isAnnotationPresent(ReadOnly.class);
-    }
-
-    private List<RedisToken> requestToArray(IRequest request) {
-        List<RedisToken> array = new LinkedList<>();
-        array.add(currentDbToken(request));
-        array.add(commandToken(request));
-        array.addAll(paramTokens(request));
-        return array;
-    }
-
-    private StringRedisToken commandToken(IRequest request) {
-        return new StringRedisToken(safeString(request.getCommand()));
-    }
-
-    private IntegerRedisToken currentDbToken(IRequest request) {
-        return new IntegerRedisToken(getSessionState(request.getSession()).getCurrentDB());
-    }
-
-    private List<StringRedisToken> paramTokens(IRequest request) {
-        return request.getParams().stream().map(StringRedisToken::new).collect(toList());
-    }
-
-    private TinyDBSessionState getSessionState(ISession session) {
-        return session.<TinyDBSessionState>getValue("state");
-    }
-
-    @Override
-    public void publish(String sourceKey, String message) {
+    public void publish(String sourceKey, RedisToken message) {
         ISession session = getSession(sourceKey);
         if (session != null) {
-            SafeString safeString = safeString(message);
-            ByteBuf buffer = session.getContext().alloc().buffer(safeString.length());
-            buffer.writeBytes(safeString.getBuffer());
-            session.getContext().writeAndFlush(buffer);
+            session.publish(message);
         }
     }
 
@@ -196,19 +115,83 @@ public class TinyDB extends RedisServer implements ITinyDB {
         getState().setMaster(master);
     }
 
+    @Override
+    protected void createSession(ISession session) {
+        session.putValue("state", new TinyDBSessionState());
+    }
+
+    @Override
+    protected void cleanSession(ISession session) {
+        session.destroy();
+    }
+
+    @Override
+    protected void executeCommand(ICommand command, IRequest request, IResponse response) {
+        if (!isReadOnly(request.getCommand())) {
+            try {
+                command.execute(request, response);
+
+                replication(request, command);
+            } catch (RuntimeException e) {
+                LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
+            }
+        } else {
+            response.addError("READONLY You can't write against a read only slave");
+        }
+    }
+
+    private boolean isReadOnly(String command) {
+        return !isMaster() && !isReadOnlyCommand(command);
+    }
+
+    private void replication(IRequest request, ICommand command) {
+        if (!isReadOnlyCommand(request.getCommand())) {
+            List<RedisToken> array = requestToArray(request);
+            if (hasSlaves()) {
+                queue.add(array);
+            }
+            persistence.ifPresent((p) -> p.append(array));
+        }
+    }
+
+    private boolean isReadOnlyCommand(String command) {
+        return getCommands().isPresent(command, ReadOnly.class);
+    }
+
+    private List<RedisToken> requestToArray(IRequest request) {
+        List<RedisToken> array = new LinkedList<>();
+        array.add(currentDbToken(request));
+        array.add(commandToken(request));
+        array.addAll(paramTokens(request));
+        return array;
+    }
+
+    private RedisToken commandToken(IRequest request) {
+        return RedisToken.string(request.getCommand());
+    }
+
+    private RedisToken currentDbToken(IRequest request) {
+        return RedisToken.string(String.valueOf(getCurrentDB(request)));
+    }
+
+    private int getCurrentDB(IRequest request) {
+        return getSessionState(request.getSession()).getCurrentDB();
+    }
+
+    private List<RedisToken> paramTokens(IRequest request) {
+        return request.getParams().stream().map(RedisToken::string).collect(toList());
+    }
+
+    private TinyDBSessionState getSessionState(ISession session) {
+        return session.<TinyDBSessionState>getValue("state");
+    }
+
     private TinyDBServerState getState() {
         return getValue("state");
     }
 
     private boolean hasSlaves() {
         return getState().hasSlaves();
-    }
-
-    @Override
-    public List<List<RedisToken>> getCommands() {
-        List<List<RedisToken>> current = new LinkedList<>();
-        queue.drainTo(current);
-        return current;
     }
 
 }

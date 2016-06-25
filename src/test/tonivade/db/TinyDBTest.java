@@ -24,7 +24,7 @@ public class TinyDBTest {
     public final TinyDBRule rule = new TinyDBRule();
 
     @Test
-    public void testCommands() throws Exception {
+    public void testCommands() {
         try (Jedis jedis = createClientConnection()) {
             assertThat(jedis.ping(), equalTo("PONG"));
             assertThat(jedis.echo("Hi!"), equalTo("Hi!"));
@@ -44,7 +44,7 @@ public class TinyDBTest {
     }
 
     @Test
-    public void testPipeline() throws Exception {
+    public void testPipeline() {
         try (Jedis jedis = createClientConnection()) {
             Pipeline p = jedis.pipelined();
             p.ping();
@@ -81,21 +81,8 @@ public class TinyDBTest {
     }
 
     @Test
-    public void testLoad1000() throws Exception {
-        loadTest(1000);
-    }
-
-    @Test
-    public void testLoad10000() throws Exception {
-        loadTest(10000);
-    }
-
-    @Test
-    public void testLoad100000() throws Exception {
-        loadTest(100000);
-    }
-
-    private void loadTest(int times) {
+    public void testLoad100000() {
+        int times = 100000;
         try (Jedis jedis = createClientConnection()) {
             long start = System.nanoTime();
             for (int i = 0; i < times; i++) {

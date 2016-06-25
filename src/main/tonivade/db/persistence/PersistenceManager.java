@@ -5,7 +5,9 @@
 
 package tonivade.db.persistence;
 
+import static java.nio.ByteBuffer.wrap;
 import static java.util.stream.Collectors.toList;
+import static tonivade.redis.protocol.RedisToken.array;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -15,7 +17,6 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -32,8 +33,10 @@ import tonivade.redis.command.Request;
 import tonivade.redis.command.Response;
 import tonivade.redis.command.Session;
 import tonivade.redis.protocol.RedisParser;
+import tonivade.redis.protocol.RedisSerializer;
 import tonivade.redis.protocol.RedisSource;
 import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.RedisTokenType;
 import tonivade.redis.protocol.SafeString;
 
 public class PersistenceManager implements Runnable {
@@ -109,7 +112,7 @@ public class PersistenceManager implements Runnable {
 
                 while (true) {
                     RedisToken token = parse.parse();
-                    if (token == null) {
+                    if (token.getType() == RedisTokenType.UNKNOWN) {
                         break;
                     }
                     processCommand(token);
@@ -179,9 +182,9 @@ public class PersistenceManager implements Runnable {
 
     private void appendRedo(List<RedisToken> command) {
         try {
-            Response response = new Response();
-            response.addArray(command.stream().map(RedisToken::getValue).collect(toList()));
-            output.write(response.getBytes());
+            RedisSerializer serializer = new RedisSerializer();
+            byte[] buffer = serializer.encodeToken(array(command));
+            output.write(buffer);
             output.flush();
             LOGGER.fine(() -> "new command: " + command);
         } catch (IOException e) {
@@ -199,7 +202,7 @@ public class PersistenceManager implements Runnable {
         }
 
         @Override
-        public String readLine() {
+        public SafeString readLine() {
             try {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 boolean cr = false;
@@ -221,19 +224,19 @@ public class PersistenceManager implements Runnable {
                         baos.write(read);
                     }
                 }
-                return baos.toString("UTF-8");
+                return new SafeString(baos.toByteArray());
             } catch (IOException e) {
                 throw new IOError(e);
             }
         }
 
         @Override
-        public ByteBuffer readBytes(int size) {
+        public SafeString readString(int size) {
             try {
                 byte[] buffer = new byte[size];
                 int readed = stream.read(buffer);
                 if (readed > -1) {
-                    return ByteBuffer.wrap(buffer, 0, readed);
+                    return new SafeString(wrap(buffer, 0, readed));
                 }
                 return null;
             } catch (IOException e) {

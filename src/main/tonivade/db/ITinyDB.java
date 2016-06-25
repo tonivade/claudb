@@ -31,7 +31,7 @@ public interface ITinyDB extends IServerContext {
 
     IDatabase getAdminDatabase();
 
-    void publish(String sourceKey, String message);
+    void publish(String sourceKey, RedisToken message);
 
-    List<List<RedisToken>> getCommands();
+    List<List<RedisToken>> getCommandsToReplicate();
 }

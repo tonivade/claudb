@@ -7,27 +7,18 @@ import java.util.List;
 
 import tonivade.redis.command.IResponse;
 import tonivade.redis.command.Response;
+import tonivade.redis.protocol.RedisToken;
 
 public class MetaResponse {
 
-    private IResponse parent;
-
     private List<Response> responses = new LinkedList<>();
-
-    public MetaResponse(IResponse response) {
-        this.parent = response;
-    }
 
     public void addResponse(Response response) {
         responses.add(response);
     }
 
-    public void build() {
-        parent.addArray(responsesToArray());
-    }
-
-    private List<byte[]> responsesToArray() {
-        return responses.stream().map(r -> r.getBytes()).collect(toList());
+    public List<RedisToken> build() {
+        return responses.stream().map(IResponse::build).collect(toList());
     }
 
 }

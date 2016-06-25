@@ -21,10 +21,10 @@ import static tonivade.redis.protocol.SafeString.safeString;
 import org.junit.Before;
 import org.junit.Test;
 
-import tonivade.db.data.Database;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
+import tonivade.db.data.SimpleDatabase;
 
 public class RDBOutputStreamTest {
 
@@ -114,7 +114,7 @@ public class RDBOutputStreamTest {
 
     private static class DatabaseBuiler {
 
-        private final IDatabase db = new Database();
+        private final IDatabase db = new SimpleDatabase();
 
         public DatabaseBuiler add(DatabaseKey key, DatabaseValue value) {
             db.put(key, value);

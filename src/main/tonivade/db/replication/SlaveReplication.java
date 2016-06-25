@@ -5,10 +5,11 @@
 
 package tonivade.db.replication;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -81,7 +82,7 @@ public class SlaveReplication implements IRedisCallback {
     private void processCommand(RedisToken token) {
         List<RedisToken> array = token.<List<RedisToken>>getValue();
 
-        RedisToken commandToken = array.remove(0);
+        RedisToken commandToken = array.get(0);
 
         LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
 
@@ -97,11 +98,7 @@ public class SlaveReplication implements IRedisCallback {
     }
 
     private List<SafeString> arrayToList(List<RedisToken> request) {
-        List<SafeString> cmd = new LinkedList<>();
-        for (RedisToken token : request) {
-            cmd.add(token.<SafeString>getValue());
-        }
-        return cmd;
+        return request.stream().skip(1).map(t -> t.<SafeString>getValue()).collect(toList());
     }
 
     private void processRDB(RedisToken token) {

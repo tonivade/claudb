@@ -31,7 +31,7 @@ public class DecrementCommand implements ITinyDBCommand {
                         int current = Integer.parseInt(oldValue.getValue().toString());
                         return string(String.valueOf(current - 1));
                     });
-            response.addInt(value.getValue());
+            response.addInt(Integer.parseInt(value.getValue().toString()));
         } catch (NumberFormatException e) {
             response.addError("ERR value is not an integer or out of range");
         }

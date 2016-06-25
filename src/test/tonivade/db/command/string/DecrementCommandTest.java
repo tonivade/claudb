@@ -5,8 +5,6 @@
 
 package tonivade.db.command.string;
 
-import static tonivade.redis.protocol.SafeString.safeString;
-
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,15 +21,15 @@ public class DecrementCommandTest {
     public void testExecute() {
         rule.withParams("a")
             .execute()
-            .verify().addInt(safeString("-1"));
+            .verify().addInt(-1);
 
         rule.withParams("a")
             .execute()
-            .verify().addInt(safeString("-2"));
+            .verify().addInt(-2);
 
         rule.withParams("a")
             .execute()
-            .verify().addInt(safeString("-3"));
+            .verify().addInt(-3);
     }
 
 }

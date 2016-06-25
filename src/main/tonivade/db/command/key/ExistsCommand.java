@@ -9,6 +9,7 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
+import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
 import tonivade.redis.annotation.Command;
 import tonivade.redis.annotation.ParamLength;
@@ -22,7 +23,8 @@ public class ExistsCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        response.addInt(db.containsKey(safeKey(request.getParam(0))));
+        DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
+        response.addInt(key != null ? !key.isExpired() : false);
     }
 
 }

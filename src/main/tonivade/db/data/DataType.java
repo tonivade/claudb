@@ -14,7 +14,7 @@ public enum DataType {
     HASH("hash"),
     NONE("none");
 
-    private String text;
+    private final String text;
 
     private DataType(String text) {
         this.text = text;
