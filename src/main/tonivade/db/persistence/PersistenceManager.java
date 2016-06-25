@@ -36,6 +36,7 @@ import tonivade.redis.protocol.RedisParser;
 import tonivade.redis.protocol.RedisSerializer;
 import tonivade.redis.protocol.RedisSource;
 import tonivade.redis.protocol.RedisToken;
+import tonivade.redis.protocol.RedisTokenType;
 import tonivade.redis.protocol.SafeString;
 
 public class PersistenceManager implements Runnable {
@@ -111,7 +112,7 @@ public class PersistenceManager implements Runnable {
 
                 while (true) {
                     RedisToken token = parse.parse();
-                    if (token == null) {
+                    if (token.getType() == RedisTokenType.UNKNOWN) {
                         break;
                     }
                     processCommand(token);
