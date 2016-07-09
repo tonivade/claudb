@@ -4,7 +4,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.bmuschko.nexus'
 
-group = 'tonivade'
+group = 'com.github.tonivade'
 archivesBaseName = 'tinydb'
 version = '0.7.0-SNAPSHOT'
 
