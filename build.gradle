@@ -6,7 +6,7 @@ apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'tinydb'
-version = '0.7.0-SNAPSHOT'
+version = '0.7.0'
 
 buildscript {
     repositories {
@@ -26,7 +26,6 @@ jacocoTestReport {
         html.enabled = true
     }
 }
-
 
 sourceSets {
     main {
@@ -53,7 +52,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tonivade:resp-server:0.4.0-SNAPSHOT'
+    compile 'com.github.tonivade:resp-server:0.4.0'
     compile 'com.github.tonivade:equalizer:0.2.0'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
     testCompile 'junit:junit:4.12'
