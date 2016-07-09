@@ -4,9 +4,9 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.bmuschko.nexus'
 
-group = 'tonivade'
+group = 'com.github.tonivade'
 archivesBaseName = 'tinydb'
-version = '0.6.0'
+version = '0.7.0'
 
 buildscript {
     repositories {
@@ -27,7 +27,6 @@ jacocoTestReport {
     }
 }
 
-
 sourceSets {
     main {
         java {
@@ -45,19 +44,17 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
-        url = 'http://garagemarket.com.es/nexus/content/repositories/releases/'
-    }
-    maven {
-        url = 'http://garagemarket.com.es/nexus/content/repositories/snapshots/'
+        url = 'https://oss.sonatype.org/content/repositories/snapshots'
     }
 }
 
 dependencies {
-    compile 'tonivade:resp-server:0.3.2'
+    compile 'com.github.tonivade:resp-server:0.4.0'
+    compile 'com.github.tonivade:equalizer:0.2.0'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
-    compile 'tonivade:equalizer:0.1.2'
     testCompile 'junit:junit:4.12'
     testCompile 'redis.clients:jedis:2.6.3'
     testCompile 'org.mockito:mockito-core:1.10.19'
@@ -114,11 +111,11 @@ modifyPom {
 extraArchive {
     sources = true
     tests = false
-    javadoc = false
+    javadoc = true
 }
 
 nexus {
-    sign = false
-    repositoryUrl = 'http://garagemarket.com.es/nexus/content/repositories/releases/'
-    snapshotRepositoryUrl = 'http://garagemarket.com.es/nexus/content/repositories/snapshots/'
+    sign = true
+    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
 }
