@@ -144,8 +144,8 @@ Or if you have Gradle installed, just type
 
 ## DOWNLOADS
 
-- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-0.6.0-SNAPSHOT.jar)
-- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-all-0.6.0-SNAPSHOT.jar)
+- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tinydb-0.8.0-SNAPSHOT.jar)
+- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tinydb-all-0.8.0-SNAPSHOT.jar)
 
 ## USAGE
 
@@ -161,6 +161,18 @@ Parameters:
     -P            enable with persistence
     -h            host (default: localhost)
     -p <Integer>  port (default: 7081) 
+    
+Also you can use inside your project using Maven
+
+    <dependency>
+        <groupId>com.github.tonivade</groupId>
+        <artifactId>tinydb</artifactId>
+        <version>0.7.0</version>
+    </dependency>
+    
+Or gradle
+
+    compile 'com.github.tonivade:tinydb:0.7.0'
 
 ## TODO
 
@@ -179,6 +191,8 @@ Parameters:
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/5353/badge.svg)](https://scan.coverity.com/projects/5353)
 
 [![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg?branch=master)](https://coveralls.io/r/tonivade/tiny-db?branch=develop)
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb)
 
 ## LICENSE
 
