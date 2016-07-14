@@ -5,7 +5,12 @@
 
 package tonivade.db.command.key;
 
+import static org.mockito.AdditionalMatchers.and;
+import static org.mockito.AdditionalMatchers.gt;
+import static org.mockito.AdditionalMatchers.lt;
+import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
+import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,7 +18,7 @@ import org.junit.Test;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 
-@CommandUnderTest(ExistsCommand.class)
+@CommandUnderTest(TimeToLiveCommand.class)
 public class TimeToLiveCommandTest {
 
     @Rule
@@ -21,10 +26,18 @@ public class TimeToLiveCommandTest {
 
     @Test
     public void testExecute() {
-        rule.withData("test", string("value"))
+        rule.withData(safeKey(safeString("test"), 10), string("value"))
             .withParams("test")
             .execute()
-            .verify().addInt(true);
+            .verify().addInt(and(gt(0), lt(10)));
+    }
+
+    @Test
+    public void testExecuteExpired() {
+        rule.withData(safeKey(safeString("test"), 0), string("value"))
+            .withParams("test")
+            .execute()
+            .verify().addInt(-2);
     }
 
 }

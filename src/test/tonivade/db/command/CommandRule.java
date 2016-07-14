@@ -120,6 +120,11 @@ public class CommandRule implements TestRule {
         return this;
     }
 
+    public CommandRule withData(DatabaseKey key, DatabaseValue value) {
+        withData(getDatabase(), key, value);
+        return this;
+    }
+
     public CommandRule withAdminData(String key, DatabaseValue value) {
         withData(getAdminDatabase(), safeKey(key), value);
         return this;

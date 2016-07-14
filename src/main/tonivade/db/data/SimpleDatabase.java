@@ -58,7 +58,15 @@ public class SimpleDatabase implements IDatabase {
             entry = getEntry((DatabaseKey) key);
         }
 
-        return (entry != null && !entry.getKey().isExpired()) ? entry.getValue() : null;
+        if (entry != null) {
+            if (!entry.getKey().isExpired()) {
+                return entry.getValue();
+            }
+
+            cache.remove(key);
+        }
+
+        return null;
     }
 
     private Entry<DatabaseKey, DatabaseValue> getEntry(DatabaseKey key) {
@@ -68,7 +76,9 @@ public class SimpleDatabase implements IDatabase {
 
     @Override
     public DatabaseValue put(DatabaseKey key, DatabaseValue value) {
-        return cache.put(key, value);
+        DatabaseValue oldValue = cache.remove(key);
+        cache.put(key, value);
+        return oldValue;
     }
 
     @Override
@@ -134,8 +144,7 @@ public class SimpleDatabase implements IDatabase {
         Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
 
         if (entry != null) {
-            cache.remove(key);
-            cache.put(key, entry.getValue());
+            cache.put(key, cache.remove(key));
         }
 
         return entry != null ? entry.getKey() : null;
