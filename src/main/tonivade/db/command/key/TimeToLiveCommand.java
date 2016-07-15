@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
+
 package tonivade.db.command.key;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
@@ -7,14 +12,10 @@ import java.time.Instant;
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.annotation.Command;
-import tonivade.redis.annotation.ParamLength;
 import tonivade.redis.command.IRequest;
 import tonivade.redis.command.IResponse;
 
-@Command("ttl")
-@ParamLength(1)
-public class TimeToLiveCommand implements ITinyDBCommand {
+public abstract class TimeToLiveCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
@@ -25,6 +26,8 @@ public class TimeToLiveCommand implements ITinyDBCommand {
             notExists(response);
         }
     }
+
+    protected abstract int timeToLive(DatabaseKey key, Instant now);
 
     private void keyExists(IResponse response, DatabaseKey key) {
         if (key.expiredAt() != null) {
@@ -37,7 +40,7 @@ public class TimeToLiveCommand implements ITinyDBCommand {
     private void hasExpiredAt(IResponse response, DatabaseKey key) {
         Instant now = Instant.now();
         if (!key.isExpired(now)) {
-            response.addInt(key.timeToLiveSeconds(now));
+            response.addInt(timeToLive(key, now));
         } else {
             notExists(response);
         }

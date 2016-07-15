@@ -28,6 +28,7 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
     - EXPIRE
     - PERSIST
     - TTL
+    - PTTL
 - String
     - APPEND
     - DECRBY

@@ -22,7 +22,8 @@ import tonivade.db.command.key.ExpireCommand;
 import tonivade.db.command.key.KeysCommand;
 import tonivade.db.command.key.PersistCommand;
 import tonivade.db.command.key.RenameCommand;
-import tonivade.db.command.key.TimeToLiveCommand;
+import tonivade.db.command.key.TimeToLiveMillisCommand;
+import tonivade.db.command.key.TimeToLiveSecondsCommand;
 import tonivade.db.command.key.TypeCommand;
 import tonivade.db.command.list.LeftPopCommand;
 import tonivade.db.command.list.LeftPushCommand;
@@ -106,7 +107,8 @@ public class TinyDBCommandSuite extends CommandSuite {
         addCommand(KeysCommand.class);
         addCommand(ExpireCommand.class);
         addCommand(PersistCommand.class);
-        addCommand(TimeToLiveCommand.class);
+        addCommand(TimeToLiveMillisCommand.class);
+        addCommand(TimeToLiveSecondsCommand.class);
 
         // hash
         addCommand(HashSetCommand.class);
