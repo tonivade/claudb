@@ -5,6 +5,7 @@
 
 package tonivade.db.persistence;
 
+import static java.time.Instant.ofEpochMilli;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
 import static tonivade.db.data.DatabaseValue.list;
@@ -17,6 +18,7 @@ import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -207,7 +209,7 @@ public class RDBInputStream {
 
     private void ensure(IDatabase db, DatabaseKey key, DatabaseValue value) throws IOException {
         if (db != null) {
-            if (!key.isExpired()) {
+            if (!key.isExpired(Instant.now())) {
                 db.put(key, value);
             }
         } else {
@@ -240,7 +242,7 @@ public class RDBInputStream {
     }
 
     private DatabaseKey readKey(Long expireTime) throws IOException {
-        return new DatabaseKey(readSafeString(), expireTime);
+        return new DatabaseKey(readSafeString(), expireTime != null ? ofEpochMilli(expireTime) : null);
     }
 
     private Double readDouble() throws IOException {

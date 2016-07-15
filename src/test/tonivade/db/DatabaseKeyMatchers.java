@@ -7,6 +7,8 @@ package tonivade.db;
 
 import static tonivade.redis.protocol.SafeString.safeString;
 
+import java.time.Instant;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -43,7 +45,7 @@ public class DatabaseKeyMatchers {
 
         @Override
         protected boolean matchesSafely(DatabaseKey item) {
-            return item.isExpired();
+            return item.isExpired(Instant.now());
         }
 
     }
@@ -57,7 +59,7 @@ public class DatabaseKeyMatchers {
 
         @Override
         protected boolean matchesSafely(DatabaseKey item) {
-            return !item.isExpired();
+            return !item.isExpired(Instant.now());
         }
 
     }

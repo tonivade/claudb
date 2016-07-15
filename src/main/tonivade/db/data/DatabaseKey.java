@@ -5,8 +5,11 @@
 
 package tonivade.db.data;
 
+import static java.time.Instant.now;
 import static tonivade.equalizer.Equalizer.equalizer;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -14,10 +17,10 @@ import tonivade.redis.protocol.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
 
-    private final Long expiredAt;
+    private final Instant expiredAt;
     private final SafeString value;
 
-    public DatabaseKey(SafeString value, Long expiredAt) {
+    public DatabaseKey(SafeString value, Instant expiredAt) {
         super();
         this.value = value;
         this.expiredAt = expiredAt;
@@ -27,23 +30,28 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
         return value;
     }
 
-    public boolean isExpired() {
+    public boolean isExpired(Instant now) {
         if (expiredAt != null) {
-            long now = System.currentTimeMillis();
-            return now > expiredAt;
+            return now.isAfter(expiredAt);
         }
         return false;
     }
 
-    public long timeToLive() {
+    public long timeToLiveMillis(Instant now) {
         if (expiredAt != null) {
-            long ttl = expiredAt - System.currentTimeMillis();
-            return ttl < 0 ? -2 : ttl;
+            return timeToLive(now);
         }
         return -1;
     }
 
-    public Long expiredAt() {
+    public int timeToLiveSeconds(Instant now) {
+        if (expiredAt != null) {
+            return (int) Math.floorDiv(timeToLive(now), 1000L);
+        }
+        return -1;
+    }
+
+    public Instant expiredAt() {
         return expiredAt;
     }
 
@@ -73,12 +81,15 @@ public class DatabaseKey implements Comparable<DatabaseKey> {
         return new DatabaseKey(str, null);
     }
 
-    public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
-        return new DatabaseKey(str, System.currentTimeMillis() + ttlMillis);
-    }
-
     public static DatabaseKey safeKey(SafeString str, int ttlSeconds) {
         return safeKey(str, TimeUnit.SECONDS.toMillis(ttlSeconds));
     }
 
+    public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
+        return new DatabaseKey(str, now().plusMillis(ttlMillis));
+    }
+
+    private long timeToLive(Instant now) {
+        return Duration.between(now, expiredAt).toMillis();
+    }
 }
