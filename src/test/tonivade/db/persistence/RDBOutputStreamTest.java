@@ -18,6 +18,8 @@ import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.HexUtil.toHexString;
 import static tonivade.redis.protocol.SafeString.safeString;
 
+import java.time.Instant;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +57,7 @@ public class RDBOutputStreamTest {
 
     @Test
     public void testStringTtl() throws Exception {
-        out.dabatase(database().add(new DatabaseKey(safeString("a"), 1L), string("test")).build());
+        out.dabatase(database().add(new DatabaseKey(safeString("a"), Instant.ofEpochMilli(1L)), string("test")).build());
 
         assertThat(toHexString(baos.toByteArray()), is("FC00000000000000010001610474657374"));
     }
@@ -102,7 +104,7 @@ public class RDBOutputStreamTest {
         out.select(4);
         out.dabatase(database().add(safeKey("a"), hash(entry("1", "test"))).build());
         out.select(5);
-        out.dabatase(database().add(new DatabaseKey(safeString("a"), 1L), string("test")).build());
+        out.dabatase(database().add(new DatabaseKey(safeString("a"), Instant.ofEpochMilli(1L)), string("test")).build());
         out.end();
 
         assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));

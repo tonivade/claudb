@@ -6,7 +6,7 @@ apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'tinydb'
-version = '0.7.0'
+version = '0.7.1'
 
 buildscript {
     repositories {

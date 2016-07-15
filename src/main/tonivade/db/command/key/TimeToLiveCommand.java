@@ -1,6 +1,8 @@
 package tonivade.db.command.key;
 
-import java.util.concurrent.TimeUnit;
+import static tonivade.db.data.DatabaseKey.safeKey;
+
+import java.time.Instant;
 
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.DatabaseKey;
@@ -16,15 +18,32 @@ public class TimeToLiveCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseKey key = db.getKey(DatabaseKey.safeKey(request.getParam(0)));
+        DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
         if (key != null) {
-            response.addInt(seconds(key));
+            keyExists(response, key);
         } else {
-            response.addInt(-2);
+            notExists(response);
         }
     }
 
-    private int seconds(DatabaseKey key) {
-        return (int) TimeUnit.MILLISECONDS.toSeconds(key.timeToLive());
+    private void keyExists(IResponse response, DatabaseKey key) {
+        if (key.expiredAt() != null) {
+            hasExpiredAt(response, key);
+        } else {
+            response.addInt(-1);
+        }
+    }
+
+    private void hasExpiredAt(IResponse response, DatabaseKey key) {
+        Instant now = Instant.now();
+        if (!key.isExpired(now)) {
+            response.addInt(key.timeToLiveSeconds(now));
+        } else {
+            notExists(response);
+        }
+    }
+
+    private void notExists(IResponse response) {
+        response.addInt(-2);
     }
 }

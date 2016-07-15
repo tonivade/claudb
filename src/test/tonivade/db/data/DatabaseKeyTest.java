@@ -6,26 +6,41 @@
 package tonivade.db.data;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
-import static tonivade.db.DatabaseKeyMatchers.safeKey;
+import static tonivade.redis.protocol.SafeString.safeString;
+
+import java.time.Instant;
 
 import org.junit.Test;
 
 public class DatabaseKeyTest {
 
     @Test
-    public void testExpired() throws Exception {
-        DatabaseKey nonExpiredKey = safeKey("hola");
-        assertThat(nonExpiredKey.isExpired(), is(false));
-        assertThat(nonExpiredKey.timeToLive(), is(-1L));
+    public void testNoExpirationKey() {
+        Instant now = Instant.now();
 
-        DatabaseKey expiredKey = safeKey("hola", 1);
-        assertThat(expiredKey.isExpired(), is(false));
-        assertThat(expiredKey.timeToLive(), is(greaterThan(0L)));
-        Thread.sleep(1100);
-        assertThat(expiredKey.isExpired(), is(true));
-        assertThat(expiredKey.timeToLive(), is(-2L));
+        DatabaseKey nonExpiredKey = new DatabaseKey(safeString("hola"), null);
+
+        assertThat(nonExpiredKey.isExpired(now), is(false));
+        assertThat(nonExpiredKey.timeToLiveMillis(now), is(-1L));
+        assertThat(nonExpiredKey.timeToLiveSeconds(now), is(-1));
     }
 
+    @Test
+    public void testExpiredKey() throws InterruptedException {
+        Instant now = Instant.now();
+
+        DatabaseKey expiredKey = new DatabaseKey(safeString("hola"), now.plusSeconds(10));
+
+        assertThat(expiredKey.isExpired(now), is(false));
+        assertThat(expiredKey.timeToLiveSeconds(now), is(10));
+        assertThat(expiredKey.timeToLiveMillis(now), is(10000L));
+
+
+        Instant expired = now.plusSeconds(11);
+
+        assertThat(expiredKey.isExpired(expired), is(true));
+        assertThat(expiredKey.timeToLiveMillis(expired), is(-1000L));
+        assertThat(expiredKey.timeToLiveSeconds(expired), is(-1));
+    }
 }

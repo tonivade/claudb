@@ -11,6 +11,7 @@ import static tonivade.redis.protocol.SafeString.safeString;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -72,10 +73,10 @@ public class RDBOutputStream {
         value(value);
     }
 
-    private void expiredAt(Long expiredAt) throws IOException {
+    private void expiredAt(Instant expiredAt) throws IOException {
         if (expiredAt != null) {
             out.write(TTL_MILISECONDS);
-            out.write(ByteUtils.toByteArray(expiredAt));
+            out.write(ByteUtils.toByteArray(expiredAt.toEpochMilli()));
         }
     }
 

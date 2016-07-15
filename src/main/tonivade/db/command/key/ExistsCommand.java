@@ -7,6 +7,8 @@ package tonivade.db.command.key;
 
 import static tonivade.db.data.DatabaseKey.safeKey;
 
+import java.time.Instant;
+
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ReadOnly;
 import tonivade.db.data.DatabaseKey;
@@ -24,7 +26,7 @@ public class ExistsCommand implements ITinyDBCommand {
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
         DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
-        response.addInt(key != null ? !key.isExpired() : false);
+        response.addInt(key != null ? !key.isExpired(Instant.now()) : false);
     }
 
 }
