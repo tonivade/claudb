@@ -10,6 +10,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
+import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class SimpleDatabase implements IDatabase {
         }
 
         if (entry != null) {
-            if (!entry.getKey().isExpired()) {
+            if (!entry.getKey().isExpired(Instant.now())) {
                 return entry.getValue();
             }
 

@@ -13,6 +13,7 @@ import static tonivade.db.DatabaseKeyMatchers.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.redis.protocol.SafeString.safeString;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class DatabaseTest {
 
         DatabaseKey key = database.getKey(safeKey("a"));
         assertThat(key, is(notNullValue()));
-        assertThat(key.expiredAt(), is(greaterThan(0L)));
+        assertThat(key.expiredAt(), is(greaterThan(Instant.now())));
     }
 
 }
