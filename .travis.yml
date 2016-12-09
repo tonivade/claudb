@@ -1,0 +1,9 @@
+sudo: required
+language: java
+jdk:
+  - oraclejdk8
+branches:
+ only:
+  - develop
+install: ./gradlew clean build
+script: ./gradlew test
