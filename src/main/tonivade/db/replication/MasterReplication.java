@@ -5,12 +5,12 @@
 
 package tonivade.db.replication;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.stream.Collectors.toList;
 import static tonivade.db.data.DatabaseKey.safeKey;
 import static tonivade.db.data.DatabaseValue.set;
-import static tonivade.redis.protocol.RedisToken.array;
-import static tonivade.redis.protocol.RedisToken.string;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,13 +20,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.SafeString;
 
 public class MasterReplication implements Runnable {
 

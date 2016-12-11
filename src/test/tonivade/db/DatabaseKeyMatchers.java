@@ -5,7 +5,7 @@
 
 package tonivade.db;
 
-import static tonivade.redis.protocol.SafeString.safeString;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.time.Instant;
 

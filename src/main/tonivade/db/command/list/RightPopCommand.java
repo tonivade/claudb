@@ -11,16 +11,17 @@ import static tonivade.db.data.DatabaseValue.list;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.annotation.Command;
-import tonivade.redis.annotation.ParamLength;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
-import tonivade.redis.protocol.SafeString;
 
 @Command("rpop")
 @ParamLength(1)

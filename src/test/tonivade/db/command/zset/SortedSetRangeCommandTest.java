@@ -5,11 +5,11 @@
 
 package tonivade.db.command.zset;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseValueMatchers.score;
 import static tonivade.db.data.DatabaseValue.zset;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;

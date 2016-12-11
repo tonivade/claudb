@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import tonivade.redis.protocol.SafeString;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
 

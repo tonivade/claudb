@@ -5,8 +5,8 @@
 
 package tonivade.db.persistence;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static tonivade.db.persistence.ByteUtils.toByteArray;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,11 +19,12 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.zip.CheckedOutputStream;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.protocol.SafeString;
 
 public class RDBOutputStream {
 

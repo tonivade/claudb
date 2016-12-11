@@ -5,9 +5,9 @@
 
 package tonivade.db.command.hash;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;

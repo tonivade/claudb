@@ -5,9 +5,9 @@
 
 package tonivade.db.data;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.time.Instant;
 

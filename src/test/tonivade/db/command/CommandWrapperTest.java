@@ -5,20 +5,25 @@
 
 package tonivade.db.command;
 
+import static com.github.tonivade.resp.command.IResponse.RESULT_OK;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.redis.command.IResponse.RESULT_OK;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.command.ISession;
 
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
@@ -27,10 +32,6 @@ import tonivade.db.command.annotation.ParamType;
 import tonivade.db.data.DataType;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.annotation.ParamLength;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
-import tonivade.redis.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {

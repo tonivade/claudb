@@ -10,9 +10,10 @@ import static org.mockito.Matchers.any;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(InfoCommand.class)
 public class InfoCommandTest {

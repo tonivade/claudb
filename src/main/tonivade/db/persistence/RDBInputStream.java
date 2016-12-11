@@ -5,6 +5,7 @@
 
 package tonivade.db.persistence;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.time.Instant.ofEpochMilli;
 import static tonivade.db.data.DatabaseValue.entry;
 import static tonivade.db.data.DatabaseValue.hash;
@@ -14,7 +15,6 @@ import static tonivade.db.data.DatabaseValue.set;
 import static tonivade.db.data.DatabaseValue.string;
 import static tonivade.db.data.DatabaseValue.zset;
 import static tonivade.db.persistence.ByteUtils.byteArrayToInt;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,11 +28,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.CheckedInputStream;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
 import tonivade.db.data.SimpleDatabase;
-import tonivade.redis.protocol.SafeString;
 
 public class RDBInputStream {
 

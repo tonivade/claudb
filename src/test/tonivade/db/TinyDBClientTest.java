@@ -5,21 +5,21 @@
 
 package tonivade.db;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import tonivade.redis.IRedisCallback;
-import tonivade.redis.RedisClient;
-import tonivade.redis.protocol.RedisToken;
-import tonivade.redis.protocol.RedisTokenType;
+import com.github.tonivade.resp.IRedisCallback;
+import com.github.tonivade.resp.RedisClient;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisTokenType;
 
 public class TinyDBClientTest {
 

@@ -5,12 +5,12 @@
 
 package tonivade.db.data;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Collections.unmodifiableSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.score;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Test;
 

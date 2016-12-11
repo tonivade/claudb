@@ -5,12 +5,12 @@
 
 package tonivade.db.command.hash;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyCollectionOf;
 import static tonivade.db.DatabaseValueMatchers.entry;
 import static tonivade.db.data.DatabaseValue.hash;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -20,9 +20,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(HashGetAllCommand.class)
 public class HashGetAllCommandTest {

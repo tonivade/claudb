@@ -5,11 +5,11 @@
 
 package tonivade.db.command.string;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,9 +19,10 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(MultiGetCommand.class)
 public class MultiGetCommandTest {

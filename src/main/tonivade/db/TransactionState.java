@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import tonivade.redis.command.IRequest;
+import com.github.tonivade.resp.command.IRequest;
 
 public class TransactionState implements Iterable<IRequest> {
 

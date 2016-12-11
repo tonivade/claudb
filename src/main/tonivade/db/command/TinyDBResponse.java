@@ -13,9 +13,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.data.DatabaseValue;
-import tonivade.redis.command.IResponse;
-import tonivade.redis.protocol.SafeString;
 
 public class TinyDBResponse {
 

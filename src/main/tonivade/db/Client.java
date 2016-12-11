@@ -11,12 +11,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.github.tonivade.resp.IRedisCallback;
+import com.github.tonivade.resp.RedisClient;
+import com.github.tonivade.resp.protocol.RedisToken;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-import tonivade.redis.IRedisCallback;
-import tonivade.redis.RedisClient;
-import tonivade.redis.protocol.RedisToken;
 
 public class Client implements IRedisCallback {
 

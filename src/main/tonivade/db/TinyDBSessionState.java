@@ -3,7 +3,7 @@ package tonivade.db;
 import java.util.HashSet;
 import java.util.Set;
 
-import tonivade.redis.protocol.SafeString;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class TinyDBSessionState {
 

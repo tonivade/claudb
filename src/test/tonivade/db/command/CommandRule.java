@@ -5,12 +5,12 @@
 
 package tonivade.db.command;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
-import static tonivade.redis.protocol.SafeString.safeAsList;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Optional;
 
@@ -24,16 +24,17 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.command.IServerContext;
+import com.github.tonivade.resp.command.ISession;
+
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
 import tonivade.db.TinyDBSessionState;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.DatabaseValue;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
-import tonivade.redis.command.IServerContext;
-import tonivade.redis.command.ISession;
 
 public class CommandRule implements TestRule {
 

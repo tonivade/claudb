@@ -5,6 +5,7 @@
 
 package tonivade.db.data;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableNavigableSet;
@@ -12,7 +13,6 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static tonivade.equalizer.Equalizer.equalizer;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import tonivade.redis.protocol.SafeString;
+import com.github.tonivade.resp.protocol.SafeString;
 
 
 public class DatabaseValue {

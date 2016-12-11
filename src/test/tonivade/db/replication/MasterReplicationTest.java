@@ -5,14 +5,14 @@
 
 package tonivade.db.replication;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.Arrays.asList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.redis.protocol.RedisToken.integer;
-import static tonivade.redis.protocol.RedisToken.string;
 
 import java.util.List;
 
@@ -22,9 +22,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.github.tonivade.resp.protocol.RedisToken;
+
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
-import tonivade.redis.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {

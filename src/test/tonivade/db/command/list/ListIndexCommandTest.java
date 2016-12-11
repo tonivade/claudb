@@ -5,9 +5,9 @@
 
 package tonivade.db.command.list;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.mockito.Matchers.startsWith;
 import static tonivade.db.DatabaseValueMatchers.list;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;

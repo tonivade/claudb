@@ -5,6 +5,8 @@
 
 package tonivade.db.command;
 
+import com.github.tonivade.resp.command.CommandSuite;
+
 import tonivade.db.command.bitset.BitCountCommand;
 import tonivade.db.command.bitset.GetBitCommand;
 import tonivade.db.command.bitset.SetBitCommand;
@@ -68,12 +70,11 @@ import tonivade.db.command.zset.SortedSetRangeByScoreCommand;
 import tonivade.db.command.zset.SortedSetRangeCommand;
 import tonivade.db.command.zset.SortedSetRemoveCommand;
 import tonivade.db.command.zset.SortedSetReverseRangeCommand;
-import tonivade.redis.command.CommandSuite;
-import tonivade.redis.command.ICommand;
 
 public class TinyDBCommandSuite extends CommandSuite {
 
     public TinyDBCommandSuite() {
+        super(new TinyDBCommandWrapperFactory());
         // connection
         addCommand(SelectCommand.class);
         addCommand(SyncCommand.class);
@@ -156,10 +157,5 @@ public class TinyDBCommandSuite extends CommandSuite {
         // transactions
         addCommand(MultiCommand.class);
         addCommand(ExecCommand.class);
-    }
-
-    @Override
-    protected ICommand wrap(Object command) {
-        return new TinyDBCommandWrapper(command);
     }
 }

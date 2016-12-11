@@ -1,7 +1,7 @@
 package tonivade.db;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static tonivade.db.data.DatabaseKey.safeKey;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.InputStream;

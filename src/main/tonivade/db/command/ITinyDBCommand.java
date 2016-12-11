@@ -1,13 +1,14 @@
 package tonivade.db.command;
 
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.command.IServerContext;
+import com.github.tonivade.resp.command.ISession;
+
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBServerState;
 import tonivade.db.TinyDBSessionState;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
-import tonivade.redis.command.IServerContext;
-import tonivade.redis.command.ISession;
 
 public interface ITinyDBCommand {
 

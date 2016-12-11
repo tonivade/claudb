@@ -9,11 +9,12 @@ import static tonivade.db.data.DatabaseKey.safeKey;
 
 import java.time.Instant;
 
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.DatabaseKey;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
 
 public abstract class TimeToLiveCommand implements ITinyDBCommand {
 

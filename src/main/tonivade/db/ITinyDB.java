@@ -10,9 +10,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import com.github.tonivade.resp.command.IServerContext;
+import com.github.tonivade.resp.protocol.RedisToken;
+
 import tonivade.db.data.IDatabase;
-import tonivade.redis.command.IServerContext;
-import tonivade.redis.protocol.RedisToken;
 
 public interface ITinyDB extends IServerContext {
 

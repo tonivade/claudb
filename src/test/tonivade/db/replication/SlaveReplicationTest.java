@@ -5,6 +5,8 @@
 
 package tonivade.db.replication;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -12,8 +14,6 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.persistence.HexUtil.toHexString;
-import static tonivade.redis.protocol.RedisToken.array;
-import static tonivade.redis.protocol.RedisToken.string;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,12 +26,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.command.ISession;
+
 import tonivade.db.ITinyDB;
 import tonivade.db.TinyDBRule;
-import tonivade.redis.command.ICommand;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
-import tonivade.redis.command.ISession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {

@@ -5,11 +5,12 @@
 
 package tonivade.db.command.server;
 
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+
 import tonivade.db.command.ITinyDBCommand;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.annotation.Command;
-import tonivade.redis.command.IRequest;
-import tonivade.redis.command.IResponse;
 
 @Command("flushdb")
 public class FlushDBCommand implements ITinyDBCommand {

@@ -5,11 +5,11 @@
 
 package tonivade.db.command.key;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.mockito.AdditionalMatchers.and;
 import static org.mockito.AdditionalMatchers.gt;
 import static org.mockito.AdditionalMatchers.lt;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.time.Instant;
 

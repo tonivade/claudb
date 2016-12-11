@@ -5,6 +5,7 @@
 
 package tonivade.db.persistence;
 
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -15,7 +16,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static tonivade.db.TinyDBConfig.withPersistence;
-import static tonivade.redis.protocol.RedisToken.string;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -35,10 +35,11 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.protocol.RedisToken;
+
 import tonivade.db.ITinyDB;
 import tonivade.db.data.IDatabase;
-import tonivade.redis.command.ICommand;
-import tonivade.redis.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {

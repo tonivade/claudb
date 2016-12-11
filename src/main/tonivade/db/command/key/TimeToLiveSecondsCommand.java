@@ -7,9 +7,10 @@ package tonivade.db.command.key;
 
 import java.time.Instant;
 
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+
 import tonivade.db.data.DatabaseKey;
-import tonivade.redis.annotation.Command;
-import tonivade.redis.annotation.ParamLength;
 
 @Command("ttl")
 @ParamLength(1)

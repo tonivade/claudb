@@ -5,13 +5,13 @@
 
 package tonivade.db.data;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 import static tonivade.db.DatabaseKeyMatchers.safeKey;
 import static tonivade.db.data.DatabaseValue.string;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.time.Instant;
 import java.util.Collection;

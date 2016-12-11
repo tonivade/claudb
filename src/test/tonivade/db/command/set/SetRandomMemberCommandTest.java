@@ -17,10 +17,11 @@ import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
 import tonivade.db.data.DatabaseValue;
-import tonivade.redis.protocol.SafeString;
 
 @CommandUnderTest(SetRandomMemberCommand.class)
 public class SetRandomMemberCommandTest {

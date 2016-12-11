@@ -5,9 +5,9 @@ import static java.util.stream.Collectors.toList;
 import java.util.LinkedList;
 import java.util.List;
 
-import tonivade.redis.command.IResponse;
-import tonivade.redis.command.Response;
-import tonivade.redis.protocol.RedisToken;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.command.Response;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 public class MetaResponse {
 

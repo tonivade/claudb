@@ -1,5 +1,6 @@
 package tonivade.db.command.transaction;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -7,7 +8,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static tonivade.redis.protocol.SafeString.safeString;
 
 import java.util.Collection;
 
@@ -16,11 +16,12 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
+import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.command.Request;
+
 import tonivade.db.TransactionState;
 import tonivade.db.command.CommandRule;
 import tonivade.db.command.CommandUnderTest;
-import tonivade.redis.command.ICommand;
-import tonivade.redis.command.Request;
 
 @CommandUnderTest(ExecCommand.class)
 public class ExecCommandTest {
