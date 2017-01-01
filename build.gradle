@@ -119,3 +119,8 @@ nexus {
     repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
     snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
 }
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
+}
