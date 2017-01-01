@@ -10,7 +10,6 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyCollectionOf;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -37,8 +36,8 @@ public class HashGetAllCommandTest {
     public void testExecute() {
         rule.withData("a",
                 hash(entry("key1", "value1"),
-                     entry("key2", "value2"),
-                     entry("key3", "value3")))
+                        entry("key2", "value2"),
+                        entry("key3", "value3")))
             .withParams("a")
             .execute()
             .verify().addArray(captor.capture());
@@ -59,7 +58,7 @@ public class HashGetAllCommandTest {
     public void testExecuteNotExists() {
         rule.withParams("a")
             .execute()
-            .verify().addArray(anyCollectionOf(SafeString.class));
+            .verify().addArray(null);
     }
 
 }

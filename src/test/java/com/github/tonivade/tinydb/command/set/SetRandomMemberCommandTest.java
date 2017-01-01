@@ -9,18 +9,16 @@ import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Matchers.notNull;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.notNull;
 
 import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.set.SetRandomMemberCommand;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @CommandUnderTest(SetRandomMemberCommand.class)
@@ -34,7 +32,7 @@ public class SetRandomMemberCommandTest {
         rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
-            .verify().addBulkStr(notNull(SafeString.class));
+            .verify().addBulkStr(notNull());
 
         DatabaseValue value = rule.getDatabase().get(safeKey("key"));
         assertThat(value.<Set<String>>getValue().size(), is(3));
@@ -44,7 +42,7 @@ public class SetRandomMemberCommandTest {
     public void testExecuteNotExists() throws Exception {
         rule.withParams("key")
             .execute()
-            .verify().addBulkStr(isNull(SafeString.class));
+            .verify().addBulkStr(isNull());
     }
 
 }
