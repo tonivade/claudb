@@ -68,7 +68,7 @@ compileJava {
 
 task fatJar(type: Jar) {
     manifest { 
-        attributes "Main-Class": "tonivade.db.Server"
+        attributes "Main-Class": "com.github.tonivade.tinydb.Server"
     }
     baseName = project.name + '-all'
     from { 
