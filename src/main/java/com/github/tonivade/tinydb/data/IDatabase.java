@@ -8,13 +8,8 @@ package com.github.tonivade.tinydb.data;
 import java.util.Map;
 
 public interface IDatabase extends Map<DatabaseKey, DatabaseValue> {
-
-    public boolean rename(DatabaseKey from, DatabaseKey to);
-
-    public boolean isType(DatabaseKey key, DataType type);
-
-    public DatabaseKey overrideKey(DatabaseKey key);
-
-    public DatabaseKey getKey(DatabaseKey key);
-
+  boolean rename(DatabaseKey from, DatabaseKey to);
+  boolean isType(DatabaseKey key, DataType type);
+  DatabaseKey overrideKey(DatabaseKey key);
+  DatabaseKey getKey(DatabaseKey key);
 }

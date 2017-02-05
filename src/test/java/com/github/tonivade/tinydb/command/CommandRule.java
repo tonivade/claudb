@@ -8,7 +8,7 @@ package com.github.tonivade.tinydb.command;
 import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,8 +31,6 @@ import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.command.TinyDBCommandWrapper;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -101,10 +99,10 @@ public class CommandRule implements TestRule {
                 when(request.getServerContext()).thenReturn(server);
                 when(request.getSession()).thenReturn(session);
                 when(session.getId()).thenReturn("localhost:12345");
-                when(session.getValue("state")).thenReturn(sessionState);
+                when(session.getValue("state")).thenReturn(Optional.of(sessionState));
                 when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
                 when(server.isMaster()).thenReturn(true);
-                when(server.getValue("state")).thenReturn(serverState);
+                when(server.getValue("state")).thenReturn(Optional.of(serverState));
 
                 MockitoAnnotations.initMocks(target);
 

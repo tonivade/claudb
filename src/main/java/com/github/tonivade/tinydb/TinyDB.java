@@ -183,10 +183,18 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     private TinyDBSessionState getSessionState(ISession session) {
-        return session.<TinyDBSessionState>getValue("state");
+        return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
+    }
+
+    private Optional<TinyDBSessionState> sessionState(ISession session) {
+        return session.getValue("state");
     }
 
     private TinyDBServerState getState() {
+        return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
+    }
+
+    private Optional<TinyDBServerState> serverState() {
         return getValue("state");
     }
 

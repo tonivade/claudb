@@ -30,7 +30,7 @@ public class MultiCommand implements ITinyDBCommand {
     }
 
     private boolean isTxActive(ISession session) {
-        return session.getValue(TRASACTION_KEY) != null;
+        return session.getValue(TRASACTION_KEY).isPresent();
     }
 
 }

@@ -6,22 +6,20 @@
 package com.github.tonivade.tinydb.data;
 
 public enum DataType {
+  STRING("string"),
+  LIST("list"),
+  SET("set"),
+  ZSET("zset"),
+  HASH("hash"),
+  NONE("none");
 
-    STRING("string"),
-    LIST("list"),
-    SET("set"),
-    ZSET("zset"),
-    HASH("hash"),
-    NONE("none");
+  private final String text;
 
-    private final String text;
+  private DataType(String text) {
+    this.text = text;
+  }
 
-    private DataType(String text) {
-        this.text = text;
-    }
-
-    public String text() {
-        return text;
-    }
-
+  public String text() {
+    return text;
+  }
 }

@@ -1,5 +1,7 @@
 package com.github.tonivade.tinydb.command.transaction;
 
+import java.util.Optional;
+
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
@@ -18,11 +20,11 @@ public class ExecCommand implements ITinyDBCommand {
 
     @Override
     public void execute(IDatabase db, IRequest request, IResponse response) {
-        TransactionState transaction = getTransactionIfExists(request.getSession());
-        if (transaction !=  null) {
+        Optional<TransactionState> transaction = getTransactionIfExists(request.getSession());
+        if (transaction.isPresent()) {
             ITinyDB server = getTinyDB(request.getServerContext());
             MetaResponse metaResponse = new MetaResponse();
-            for (IRequest queuedRequest : transaction) {
+            for (IRequest queuedRequest : transaction.get()) {
                 metaResponse.addResponse(executeCommand(server, queuedRequest));
             }
             response.addArray(metaResponse.build());
@@ -38,8 +40,7 @@ public class ExecCommand implements ITinyDBCommand {
         return response;
     }
 
-    private TransactionState getTransactionIfExists(ISession session) {
+    private Optional<TransactionState> getTransactionIfExists(ISession session) {
         return session.removeValue("tx");
     }
-
 }

@@ -14,6 +14,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,8 +62,8 @@ public class CommandWrapperTest {
     public void setUp() {
         when(request.getSession()).thenReturn(session);
         when(request.getServerContext()).thenReturn(server);
-        when(session.getValue("state")).thenReturn(sessionState);
-        when(server.getValue("state")).thenReturn(serverState);
+        when(session.getValue("state")).thenReturn(Optional.of(sessionState));
+        when(server.getValue("state")).thenReturn(Optional.of(serverState));
         when(sessionState.getCurrentDB()).thenReturn(1);
         when(serverState.getDatabase(1)).thenReturn(db);
     }

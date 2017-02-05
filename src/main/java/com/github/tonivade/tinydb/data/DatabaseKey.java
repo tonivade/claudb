@@ -17,79 +17,79 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
 
-    private final Instant expiredAt;
-    private final SafeString value;
+  private final Instant expiredAt;
+  private final SafeString value;
 
-    public DatabaseKey(SafeString value, Instant expiredAt) {
-        super();
-        this.value = value;
-        this.expiredAt = expiredAt;
-    }
+  public DatabaseKey(SafeString value, Instant expiredAt) {
+    super();
+    this.value = value;
+    this.expiredAt = expiredAt;
+  }
 
-    public SafeString getValue() {
-        return value;
-    }
+  public SafeString getValue() {
+    return value;
+  }
 
-    public boolean isExpired(Instant now) {
-        if (expiredAt != null) {
-            return now.isAfter(expiredAt);
-        }
-        return false;
+  public boolean isExpired(Instant now) {
+    if (expiredAt != null) {
+      return now.isAfter(expiredAt);
     }
+    return false;
+  }
 
-    public long timeToLiveMillis(Instant now) {
-        if (expiredAt != null) {
-            return timeToLive(now);
-        }
-        return -1;
+  public long timeToLiveMillis(Instant now) {
+    if (expiredAt != null) {
+      return timeToLive(now);
     }
+    return -1;
+  }
 
-    public int timeToLiveSeconds(Instant now) {
-        if (expiredAt != null) {
-            return (int) Math.floorDiv(timeToLive(now), 1000L);
-        }
-        return -1;
+  public int timeToLiveSeconds(Instant now) {
+    if (expiredAt != null) {
+      return (int) Math.floorDiv(timeToLive(now), 1000L);
     }
+    return -1;
+  }
 
-    public Instant expiredAt() {
-        return expiredAt;
-    }
+  public Instant expiredAt() {
+    return expiredAt;
+  }
 
-    @Override
-    public int compareTo(DatabaseKey o) {
-        return value.compareTo(o.getValue());
-    }
+  @Override
+  public int compareTo(DatabaseKey o) {
+    return value.compareTo(o.getValue());
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(value);
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(value);
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        return equalizer(this)
-                    .append((one, other) -> Objects.equals(one.value, other.value))
-                        .applyTo(obj);
-    }
+  @Override
+  public boolean equals(Object obj) {
+    return equalizer(this)
+        .append((one, other) -> Objects.equals(one.value, other.value))
+        .applyTo(obj);
+  }
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
+  @Override
+  public String toString() {
+    return value.toString();
+  }
 
-    public static DatabaseKey safeKey(SafeString str) {
-        return new DatabaseKey(str, null);
-    }
+  public static DatabaseKey safeKey(SafeString str) {
+    return new DatabaseKey(str, null);
+  }
 
-    public static DatabaseKey safeKey(SafeString str, int ttlSeconds) {
-        return safeKey(str, TimeUnit.SECONDS.toMillis(ttlSeconds));
-    }
+  public static DatabaseKey safeKey(SafeString str, int ttlSeconds) {
+    return safeKey(str, TimeUnit.SECONDS.toMillis(ttlSeconds));
+  }
 
-    public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
-        return new DatabaseKey(str, now().plusMillis(ttlMillis));
-    }
+  public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
+    return new DatabaseKey(str, now().plusMillis(ttlMillis));
+  }
 
-    private long timeToLive(Instant now) {
-        return Duration.between(now, expiredAt).toMillis();
-    }
+  private long timeToLive(Instant now) {
+    return Duration.between(now, expiredAt).toMillis();
+  }
 }

@@ -3,13 +3,14 @@ package com.github.tonivade.tinydb.command.transaction;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +22,6 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.tinydb.TransactionState;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.transaction.ExecCommand;
 
 @CommandUnderTest(ExecCommand.class)
 public class ExecCommandTest {
@@ -60,10 +60,9 @@ public class ExecCommandTest {
 
     private void givenExistingTransaction() {
         TransactionState transaction = createTransaction();
-        TransactionState noTransaction = null;
 
-        when(rule.getSession().getValue("tx")).thenReturn(transaction, noTransaction);
-        when(rule.getSession().removeValue("tx")).thenReturn(transaction);
+        when(rule.getSession().getValue("tx")).thenReturn(Optional.of(transaction), Optional.empty());
+        when(rule.getSession().removeValue("tx")).thenReturn(Optional.of(transaction));
     }
 
     private TransactionState createTransaction() {

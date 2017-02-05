@@ -16,22 +16,15 @@ import com.github.tonivade.tinydb.data.IDatabase;
 
 public interface ITinyDB extends IServerContext {
 
-    int DEFAULT_PORT = 7081;
-    String DEFAULT_HOST = "localhost";
+  int DEFAULT_PORT = 7081;
+  String DEFAULT_HOST = "localhost";
 
-    boolean isMaster();
-
-    void setMaster(boolean master);
-
-    void importRDB(InputStream input) throws IOException;
-
-    void exportRDB(OutputStream output) throws IOException;
-
-    IDatabase getDatabase(int i);
-
-    IDatabase getAdminDatabase();
-
-    void publish(String sourceKey, RedisToken message);
-
-    List<List<RedisToken>> getCommandsToReplicate();
+  boolean isMaster();
+  void setMaster(boolean master);
+  void importRDB(InputStream input) throws IOException;
+  void exportRDB(OutputStream output) throws IOException;
+  IDatabase getDatabase(int i);
+  IDatabase getAdminDatabase();
+  void publish(String sourceKey, RedisToken message);
+  List<List<RedisToken>> getCommandsToReplicate();
 }

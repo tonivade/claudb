@@ -9,8 +9,8 @@ import com.github.tonivade.resp.command.CommandWrapperFactory;
 import com.github.tonivade.resp.command.ICommand;
 
 public class TinyDBCommandWrapperFactory implements CommandWrapperFactory {
-    @Override
-    public ICommand wrap(Object command) {
-        return new TinyDBCommandWrapper(command);
-    }
+  @Override
+  public ICommand wrap(Object command) {
+    return new TinyDBCommandWrapper(command);
+  }
 }

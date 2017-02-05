@@ -15,6 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +41,7 @@ public class MasterReplicationTest {
     @Test
     public void testReplication() throws Exception {
         when(server.getCommandsToReplicate()).thenReturn(asList(request()));
-        when(server.getValue("state")).thenReturn(serverState);
+        when(server.getValue("state")).thenReturn(Optional.of(serverState));
 
         master.addSlave("slave:1");
         master.addSlave("slave:2");

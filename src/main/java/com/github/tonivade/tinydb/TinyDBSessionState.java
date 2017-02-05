@@ -7,32 +7,31 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class TinyDBSessionState {
 
-    private int db;
+  private int db;
 
-    private final Set<SafeString> subscriptions = new HashSet<>();
+  private final Set<SafeString> subscriptions = new HashSet<>();
 
-    public int getCurrentDB() {
-        return db;
-    }
+  public int getCurrentDB() {
+    return db;
+  }
 
-    public void setCurrentDB(int db) {
-        this.db = db;
-    }
+  public void setCurrentDB(int db) {
+    this.db = db;
+  }
 
-    public Set<SafeString> getSubscriptions() {
-        return subscriptions;
-    }
+  public Set<SafeString> getSubscriptions() {
+    return subscriptions;
+  }
 
-    public void addSubscription(SafeString channel) {
-        subscriptions.add(channel);
-    }
+  public void addSubscription(SafeString channel) {
+    subscriptions.add(channel);
+  }
 
-    public void removeSubscription(SafeString channel) {
-        subscriptions.remove(channel);
-    }
+  public void removeSubscription(SafeString channel) {
+    subscriptions.remove(channel);
+  }
 
-    public boolean isSubscribed() {
-        return !subscriptions.isEmpty();
-    }
-
+  public boolean isSubscribed() {
+    return !subscriptions.isEmpty();
+  }
 }

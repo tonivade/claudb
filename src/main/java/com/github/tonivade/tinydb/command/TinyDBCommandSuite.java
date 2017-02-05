@@ -72,89 +72,89 @@ import com.github.tonivade.tinydb.command.zset.SortedSetReverseRangeCommand;
 
 public class TinyDBCommandSuite extends CommandSuite {
 
-    public TinyDBCommandSuite() {
-        super(new TinyDBCommandWrapperFactory());
-        // connection
-        addCommand(SelectCommand.class);
-        addCommand(SyncCommand.class);
-        addCommand(SlaveOfCommand.class);
+  public TinyDBCommandSuite() {
+    super(new TinyDBCommandWrapperFactory());
+    // connection
+    addCommand(SelectCommand.class);
+    addCommand(SyncCommand.class);
+    addCommand(SlaveOfCommand.class);
 
-        // server
-        addCommand(FlushDBCommand.class);
-        addCommand(InfoCommand.class);
+    // server
+    addCommand(FlushDBCommand.class);
+    addCommand(InfoCommand.class);
 
-        // strings
-        addCommand(GetCommand.class);
-        addCommand(MultiGetCommand.class);
-        addCommand(SetCommand.class);
-        addCommand(MultiSetCommand.class);
-        addCommand(GetSetCommand.class);
-        addCommand(IncrementCommand.class);
-        addCommand(IncrementByCommand.class);
-        addCommand(DecrementCommand.class);
-        addCommand(DecrementByCommand.class);
-        addCommand(StringLengthCommand.class);
-        addCommand(SetExpiredCommand.class);
-        addCommand(BitCountCommand.class);
-        addCommand(SetBitCommand.class);
-        addCommand(GetBitCommand.class);
+    // strings
+    addCommand(GetCommand.class);
+    addCommand(MultiGetCommand.class);
+    addCommand(SetCommand.class);
+    addCommand(MultiSetCommand.class);
+    addCommand(GetSetCommand.class);
+    addCommand(IncrementCommand.class);
+    addCommand(IncrementByCommand.class);
+    addCommand(DecrementCommand.class);
+    addCommand(DecrementByCommand.class);
+    addCommand(StringLengthCommand.class);
+    addCommand(SetExpiredCommand.class);
+    addCommand(BitCountCommand.class);
+    addCommand(SetBitCommand.class);
+    addCommand(GetBitCommand.class);
 
-        // keys
-        addCommand(DeleteCommand.class);
-        addCommand(ExistsCommand.class);
-        addCommand(TypeCommand.class);
-        addCommand(RenameCommand.class);
-        addCommand(KeysCommand.class);
-        addCommand(ExpireCommand.class);
-        addCommand(PersistCommand.class);
-        addCommand(TimeToLiveMillisCommand.class);
-        addCommand(TimeToLiveSecondsCommand.class);
+    // keys
+    addCommand(DeleteCommand.class);
+    addCommand(ExistsCommand.class);
+    addCommand(TypeCommand.class);
+    addCommand(RenameCommand.class);
+    addCommand(KeysCommand.class);
+    addCommand(ExpireCommand.class);
+    addCommand(PersistCommand.class);
+    addCommand(TimeToLiveMillisCommand.class);
+    addCommand(TimeToLiveSecondsCommand.class);
 
-        // hash
-        addCommand(HashSetCommand.class);
-        addCommand(HashGetCommand.class);
-        addCommand(HashGetAllCommand.class);
-        addCommand(HashExistsCommand.class);
-        addCommand(HashDeleteCommand.class);
-        addCommand(HashKeysCommand.class);
-        addCommand(HashLengthCommand.class);
-        addCommand(HashValuesCommand.class);
+    // hash
+    addCommand(HashSetCommand.class);
+    addCommand(HashGetCommand.class);
+    addCommand(HashGetAllCommand.class);
+    addCommand(HashExistsCommand.class);
+    addCommand(HashDeleteCommand.class);
+    addCommand(HashKeysCommand.class);
+    addCommand(HashLengthCommand.class);
+    addCommand(HashValuesCommand.class);
 
-        // list
-        addCommand(LeftPushCommand.class);
-        addCommand(LeftPopCommand.class);
-        addCommand(RightPushCommand.class);
-        addCommand(RightPopCommand.class);
-        addCommand(ListLengthCommand.class);
-        addCommand(ListRangeCommand.class);
-        addCommand(ListIndexCommand.class);
-        addCommand(ListSetCommand.class);
+    // list
+    addCommand(LeftPushCommand.class);
+    addCommand(LeftPopCommand.class);
+    addCommand(RightPushCommand.class);
+    addCommand(RightPopCommand.class);
+    addCommand(ListLengthCommand.class);
+    addCommand(ListRangeCommand.class);
+    addCommand(ListIndexCommand.class);
+    addCommand(ListSetCommand.class);
 
-        // set
-        addCommand(SetAddCommand.class);
-        addCommand(SetMembersCommand.class);
-        addCommand(SetCardinalityCommand.class);
-        addCommand(SetIsMemberCommand.class);
-        addCommand(SetRemoveCommand.class);
-        addCommand(SetUnionCommand.class);
-        addCommand(SetIntersectionCommand.class);
-        addCommand(SetDifferenceCommand.class);
+    // set
+    addCommand(SetAddCommand.class);
+    addCommand(SetMembersCommand.class);
+    addCommand(SetCardinalityCommand.class);
+    addCommand(SetIsMemberCommand.class);
+    addCommand(SetRemoveCommand.class);
+    addCommand(SetUnionCommand.class);
+    addCommand(SetIntersectionCommand.class);
+    addCommand(SetDifferenceCommand.class);
 
-        // sorted set
-        addCommand(SortedSetAddCommand.class);
-        addCommand(SortedSetCardinalityCommand.class);
-        addCommand(SortedSetRemoveCommand.class);
-        addCommand(SortedSetRangeCommand.class);
-        addCommand(SortedSetRangeByScoreCommand.class);
-        addCommand(SortedSetReverseRangeCommand.class);
+    // sorted set
+    addCommand(SortedSetAddCommand.class);
+    addCommand(SortedSetCardinalityCommand.class);
+    addCommand(SortedSetRemoveCommand.class);
+    addCommand(SortedSetRangeCommand.class);
+    addCommand(SortedSetRangeByScoreCommand.class);
+    addCommand(SortedSetReverseRangeCommand.class);
 
-        // pub & sub
-        addCommand(PublishCommand.class);
-        addCommand(SubscribeCommand.class);
-        addCommand(UnsubscribeCommand.class);
+    // pub & sub
+    addCommand(PublishCommand.class);
+    addCommand(SubscribeCommand.class);
+    addCommand(UnsubscribeCommand.class);
 
-        // transactions
-        addCommand(MultiCommand.class);
-        addCommand(ExecCommand.class);
-    }
+    // transactions
+    addCommand(MultiCommand.class);
+    addCommand(ExecCommand.class);
+  }
 }

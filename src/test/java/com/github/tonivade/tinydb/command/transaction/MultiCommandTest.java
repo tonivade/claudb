@@ -2,13 +2,14 @@ package com.github.tonivade.tinydb.command.transaction;
 
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.tinydb.TransactionState;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.transaction.MultiCommand;
 
 @CommandUnderTest(MultiCommand.class)
 public class MultiCommandTest {
@@ -24,7 +25,7 @@ public class MultiCommandTest {
 
     @Test
     public void executeWithActiveTransaction() throws Exception {
-        when(rule.getSession().getValue("tx")).thenReturn(new TransactionState());
+        when(rule.getSession().getValue("tx")).thenReturn(Optional.of(new TransactionState()));
 
         rule.execute()
             .verify().addError("ERR MULTI calls can not be nested");

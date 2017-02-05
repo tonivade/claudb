@@ -13,43 +13,41 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 public class Server {
+  public static void main(String[] args) throws Exception {
+    OptionParser parser = new OptionParser();
+    OptionSpec<Void> help = parser.accepts("help", "print help");
+    OptionSpec<Void> persist = parser.accepts("P", "with persistence");
+    OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
+        .defaultsTo(TinyDB.DEFAULT_HOST);
+    OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
+        .defaultsTo(TinyDB.DEFAULT_PORT);
 
-    public static void main(String[] args) throws Exception {
-        OptionParser parser = new OptionParser();
-        OptionSpec<Void> help = parser.accepts("help", "print help");
-        OptionSpec<Void> persist = parser.accepts("P", "with persistence");
-        OptionSpec<String> host = parser.accepts("h", "host")
-                .withRequiredArg().ofType(String.class).defaultsTo(TinyDB.DEFAULT_HOST);
-        OptionSpec<Integer> port = parser.accepts("p", "port")
-                .withRequiredArg().ofType(Integer.class).defaultsTo(TinyDB.DEFAULT_PORT);
+    OptionSet options = parser.parse(args);
 
-        OptionSet options = parser.parse(args);
+    if (options.has(help)) {
+      parser.printHelpOn(System.out);
+    } else {
+      String optionHost = options.valueOf(host);
+      int optionPort = parsePort(options.valueOf(port));
+      TinyDBConfig optionPesistence = parseConfig(options.has(persist));
+      TinyDB server = new TinyDB(optionHost, optionPort, optionPesistence);
+      server.start();
 
-        if (options.has(help)) {
-            parser.printHelpOn(System.out);
-        } else {
-            String optionHost = options.valueOf(host);
-            int optionPort = parsePort(options.valueOf(port));
-            TinyDBConfig optionPesistence = parseConfig(options.has(persist));
-            TinyDB server = new TinyDB(optionHost, optionPort, optionPesistence);
-            server.start();
-
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));
-        }
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));
     }
+  }
 
-    private static int parsePort(Integer optionPort) {
-        return optionPort != null ? optionPort : ITinyDB.DEFAULT_PORT;
+  private static int parsePort(Integer optionPort) {
+    return optionPort != null ? optionPort : ITinyDB.DEFAULT_PORT;
+  }
+
+  private static TinyDBConfig parseConfig(boolean persist) {
+    TinyDBConfig config = null;
+    if (persist) {
+      config = withPersistence();
+    } else {
+      config = withoutPersistence();
     }
-
-    private static TinyDBConfig parseConfig(boolean persist) {
-        TinyDBConfig config = null;
-        if (persist) {
-            config = withPersistence();
-        } else {
-            config = withoutPersistence();
-        }
-        return config;
-    }
-
+    return config;
+  }
 }
