@@ -52,7 +52,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tonivade:resp-server:0.5.0-SNAPSHOT'
+    compile 'com.github.tonivade:resp-server:0.5.0'
     compile 'com.github.tonivade:equalizer:0.2.0'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
     testCompile 'junit:junit:4.12'
