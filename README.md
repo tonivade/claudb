@@ -191,6 +191,8 @@ Or gradle
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/tinydb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/tinydb&amp;utm_campaign=Badge_Grade)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/tinydb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/tinydb&utm_campaign=Badge_Coverage)
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb)
 
 ## LICENSE
