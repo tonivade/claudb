@@ -6,7 +6,7 @@ apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'tinydb'
-version = '0.7.1'
+version = '0.8.0'
 
 buildscript {
     repositories {
@@ -30,12 +30,12 @@ jacocoTestReport {
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main']
+            srcDirs = ['src/main/java']
         }
     }
     test {
         java {
-            srcDirs = ['src/test']
+            srcDirs = ['src/test/java']
         }
     }
 }
@@ -52,12 +52,12 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tonivade:resp-server:0.4.0'
+    compile 'com.github.tonivade:resp-server:0.5.0'
     compile 'com.github.tonivade:equalizer:0.2.0'
     compile 'net.sf.jopt-simple:jopt-simple:4.9'
     testCompile 'junit:junit:4.12'
     testCompile 'redis.clients:jedis:2.6.3'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.mockito:mockito-core:2.2.29'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
 }
 
@@ -68,7 +68,7 @@ compileJava {
 
 task fatJar(type: Jar) {
     manifest { 
-        attributes "Main-Class": "tonivade.db.Server"
+        attributes "Main-Class": "com.github.tonivade.tinydb.Server"
     }
     baseName = project.name + '-all'
     from { 
@@ -81,19 +81,19 @@ modifyPom {
     project {
         name 'TinyDB'
         description 'TinyDB is a REDIS implementation in Java'
-        url 'https://github.com/tonivade/tiny-db'
+        url 'https://github.com/tonivade/tinydb'
         inceptionYear '2015'
 
         scm {
-            url 'https://github.com/tonivade/tiny-db'
-            connection 'scm:https://github.com/tonivade/tiny-db.git'
-            developerConnection 'scm:git://github.com/tonivade/tiny-db.git'
+            url 'https://github.com/tonivade/tinydb'
+            connection 'scm:https://github.com/tonivade/tinydb.git'
+            developerConnection 'scm:git://github.com/tonivade/tinydb.git'
         }
 
         licenses {
             license {
                 name 'The MIT License (MIT)'
-                url 'https://github.com/tonivade/tiny-db/blob/master/LICENSE'
+                url 'https://github.com/tonivade/tinydb/blob/master/LICENSE'
                 distribution 'repo'
             }
         }
@@ -118,4 +118,9 @@ nexus {
     sign = true
     repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
     snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+}
+
+task copyToLib(type: Copy) {
+    into "$buildDir/output/lib"
+    from configurations.runtime
 }

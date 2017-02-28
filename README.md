@@ -28,6 +28,7 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
     - EXPIRE
     - PERSIST
     - TTL
+    - PTTL
 - String
     - APPEND
     - DECRBY
@@ -144,8 +145,8 @@ Or if you have Gradle installed, just type
 
 ## DOWNLOADS
 
-- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-0.6.0-SNAPSHOT.jar)
-- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tiny-db-all-0.6.0-SNAPSHOT.jar)
+- Without deps [tiny-db.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tinydb-0.8.0-SNAPSHOT.jar)
+- With all deps included [tiny-db-all.jar](https://drone.io/github.com/tonivade/tiny-db/files/build/libs/tinydb-all-0.8.0-SNAPSHOT.jar)
 
 ## USAGE
 
@@ -161,6 +162,18 @@ Parameters:
     -P            enable with persistence
     -h            host (default: localhost)
     -p <Integer>  port (default: 7081) 
+    
+Also you can use inside your project using Maven
+
+    <dependency>
+        <groupId>com.github.tonivade</groupId>
+        <artifactId>tinydb</artifactId>
+        <version>0.8.0</version>
+    </dependency>
+    
+Or gradle
+
+    compile 'com.github.tonivade:tinydb:0.8.0'
 
 ## TODO
 
@@ -174,11 +187,13 @@ Parameters:
 
 ## Continuous Integration
 
-[![Build Status](https://drone.io/github.com/tonivade/tiny-db/status.png)](https://drone.io/github.com/tonivade/tiny-db/latest)
+[![Build Status](https://travis-ci.org/tonivade/tinydb.svg?branch=develop)](https://travis-ci.org/tonivade/tinydb) 
 
-[![Coverity Scan Build Status](https://scan.coverity.com/projects/5353/badge.svg)](https://scan.coverity.com/projects/5353)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/tinydb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/tinydb&amp;utm_campaign=Badge_Grade)
 
-[![Coverage Status](https://coveralls.io/repos/tonivade/tiny-db/badge.svg?branch=master)](https://coveralls.io/r/tonivade/tiny-db?branch=develop)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/tinydb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/tinydb&utm_campaign=Badge_Coverage)
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb)
 
 ## LICENSE
 
