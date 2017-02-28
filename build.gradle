@@ -81,19 +81,19 @@ modifyPom {
     project {
         name 'TinyDB'
         description 'TinyDB is a REDIS implementation in Java'
-        url 'https://github.com/tonivade/tiny-db'
+        url 'https://github.com/tonivade/tinydb'
         inceptionYear '2015'
 
         scm {
-            url 'https://github.com/tonivade/tiny-db'
-            connection 'scm:https://github.com/tonivade/tiny-db.git'
-            developerConnection 'scm:git://github.com/tonivade/tiny-db.git'
+            url 'https://github.com/tonivade/tinydb'
+            connection 'scm:https://github.com/tonivade/tinydb.git'
+            developerConnection 'scm:git://github.com/tonivade/tinydb.git'
         }
 
         licenses {
             license {
                 name 'The MIT License (MIT)'
-                url 'https://github.com/tonivade/tiny-db/blob/master/LICENSE'
+                url 'https://github.com/tonivade/tinydb/blob/master/LICENSE'
                 distribution 'repo'
             }
         }
