@@ -1,7 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.github.tonivade'
@@ -15,14 +14,13 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
         classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
+        xml.enabled = true
         html.enabled = true
     }
 }
@@ -54,10 +52,10 @@ repositories {
 dependencies {
     compile 'com.github.tonivade:resp-server:0.6.0-SNAPSHOT'
     compile 'com.github.tonivade:equalizer:0.2.0'
-    compile 'net.sf.jopt-simple:jopt-simple:4.9'
+    compile 'net.sf.jopt-simple:jopt-simple:5.0.3'
     testCompile 'junit:junit:4.12'
     testCompile 'redis.clients:jedis:2.9.0'
-    testCompile 'org.mockito:mockito-core:2.7.14'
+    testCompile 'org.mockito:mockito-core:2.7.18'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
 }
 
