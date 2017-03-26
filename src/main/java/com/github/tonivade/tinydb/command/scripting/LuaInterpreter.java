@@ -13,14 +13,13 @@ import com.github.tonivade.resp.protocol.SafeString;
 public class LuaInterpreter implements Interpreter {
 
   @Override
-  public RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
+  public Object execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
     try {
-      ScriptEngineManager mgr = new ScriptEngineManager();
-      ScriptEngine engine = mgr.getEngineByName("luaj");
+      ScriptEngineManager manager = new ScriptEngineManager();
+      ScriptEngine engine = manager.getEngineByName("luaj");
       engine.put("KEYS", toArray(keys));
       engine.put("ARGV", toArray(params));
-      Object result = engine.eval(script.toString());
-      System.out.println(result);
+      return engine.eval(script.toString());
     } catch (ScriptException e) {
       e.printStackTrace();
     }
