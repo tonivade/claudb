@@ -10,11 +10,14 @@ import static javaslang.API.$;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.OneArgFunction;
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.VarArgFunction;
 
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IServerContext;
@@ -25,7 +28,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class RedisBinding extends OneArgFunction {
+public class RedisBinding extends VarArgFunction {
 
   private IServerContext context;
   private ISession session;
@@ -36,8 +39,15 @@ public class RedisBinding extends OneArgFunction {
   }
 
   @Override
-  public LuaValue call(LuaValue arg) {
-    return convert(call(safeString(arg.tojstring())));
+  public Varargs invoke(Varargs args)
+  {
+    List<SafeString> params = new ArrayList<>();
+    if (args.narg() > 1) {
+      for(int i = 1; i < args.narg(); i++) {
+        params.add(safeString(args.tojstring(i + 1)));
+      }
+    }
+    return convert(call(safeString(args.checkjstring(1)), params.stream().toArray(SafeString[]::new)));
   }
 
   public RedisToken call(SafeString commandName, SafeString ... params) {

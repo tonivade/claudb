@@ -35,12 +35,21 @@ public class LuaInterpreterTest {
   @Mock
   private ISession session;
 
-  private ICommand command = new ICommand()
+  private ICommand ping = new ICommand()
   {
     @Override
     public void execute(IRequest request, IResponse response)
     {
       response.addSimpleStr("PONG");
+    }
+  };
+
+  private ICommand echo = new ICommand()
+  {
+    @Override
+    public void execute(IRequest request, IResponse response)
+    {
+      response.addBulkStr(request.getParam(0));
     }
   };
 
@@ -107,13 +116,24 @@ public class LuaInterpreterTest {
 
   @Test
   public void ping() {
-    when(context.getCommand("ping")).thenReturn(command);
+    when(context.getCommand("ping")).thenReturn(ping);
 
     RedisToken token = interpreter.execute(safeString("return redis.call('ping')"),
                                            emptyList(),
                                            emptyList());
 
     assertThat(token, equalTo(string("PONG")));
+  }
+
+  @Test
+  public void echo() {
+    when(context.getCommand("echo")).thenReturn(echo);
+
+    RedisToken token = interpreter.execute(safeString("return redis.call('echo', 'hello')"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(string("hello")));
   }
 
 }
