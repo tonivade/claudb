@@ -14,7 +14,6 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.IResponse;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -43,15 +42,12 @@ public class EvalCommand implements ITinyDBCommand {
         argv.add(request.getParam(i));
       }
 
-      RedisToken result = execute(script, keys, params);
-
-      response.addObject(result);
+      response.addObject(createInterperterFor(request).execute(script, keys, argv));
     }
   }
 
-  private RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
-    // TODO Auto-generated method stub
-    return RedisToken.status(IResponse.RESULT_OK);
+  private LuaInterpreter createInterperterFor(IRequest request) {
+    return new LuaInterpreter(new RedisBinding(request.getServerContext(), request.getSession()));
   }
 
 }

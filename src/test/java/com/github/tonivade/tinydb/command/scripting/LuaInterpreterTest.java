@@ -5,21 +5,32 @@
 package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.luaj.vm2.LuaString;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LuaInterpreterTest {
+  @Mock
+  private RedisBinding redis;
 
-  private LuaInterpreter interpreter = new LuaInterpreter();
+  @InjectMocks
+  private LuaInterpreter interpreter;
 
   @Test
   public void keys() {
@@ -54,7 +65,7 @@ public class LuaInterpreterTest {
                                            emptyList(),
                                            emptyList());
 
-    assertThat(token, equalTo(RedisToken.integer(1)));
+    assertThat(token, equalTo(integer(1)));
   }
 
   @Test
@@ -63,7 +74,7 @@ public class LuaInterpreterTest {
                                            emptyList(),
                                            emptyList());
 
-    assertThat(token, equalTo(RedisToken.integer(1)));
+    assertThat(token, equalTo(integer(1)));
   }
 
   @Test
@@ -72,7 +83,18 @@ public class LuaInterpreterTest {
                                            emptyList(),
                                            emptyList());
 
-    assertThat(token, equalTo(RedisToken.string(SafeString.EMPTY_STRING)));
+    assertThat(token, equalTo(string(SafeString.EMPTY_STRING)));
+  }
+
+  @Test
+  public void ping() {
+    when(redis.call(safeString("ping"))).thenReturn(LuaString.valueOf("PONG"));
+
+    RedisToken token = interpreter.execute(safeString("return redis.call('ping')"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(string("PONG")));
   }
 
 }

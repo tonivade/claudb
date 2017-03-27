@@ -25,6 +25,7 @@ import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.protocol.RedisToken;
@@ -34,16 +35,29 @@ import javaslang.control.Try;
 
 public class LuaInterpreter {
 
+  private RedisBinding redis;
+
+  public LuaInterpreter(RedisBinding binding) {
+    this.redis = binding;
+  }
+
   public RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
     return Try.of(() -> run(script, keys, params)).getOrElse(error(IResponse.RESULT_ERROR));
   }
 
   private RedisToken run(SafeString script, List<SafeString> keys, List<SafeString> params) throws ScriptException {
-    ScriptEngineManager manager = new ScriptEngineManager();
-    ScriptEngine engine = manager.getEngineByName("luaj");
-    engine.put("KEYS", toArray(keys));
-    engine.put("ARGV", toArray(params));
-    return convert(engine.eval(script.toString()));
+    try {
+      ScriptEngineManager manager = new ScriptEngineManager();
+      ScriptEngine engine = manager.getEngineByName("luaj");
+      engine.put("redis", CoerceJavaToLua.coerce(redis));
+      engine.put("KEYS", toArray(keys));
+      engine.put("ARGV", toArray(params));
+      return convert(engine.eval(script.toString()));
+    } catch (ScriptException e) {
+      throw e;
+    } catch (RuntimeException e) {
+      throw new ScriptException(e);
+    }
   }
 
   private RedisToken convert(Object result) {
