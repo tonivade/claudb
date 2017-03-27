@@ -14,23 +14,42 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.luaj.vm2.LuaString;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.command.IServerContext;
+import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LuaInterpreterTest {
   @Mock
-  private RedisBinding redis;
+  private IServerContext context;
+  @Mock
+  private ISession session;
 
-  @InjectMocks
+  private ICommand command = new ICommand()
+  {
+    @Override
+    public void execute(IRequest request, IResponse response)
+    {
+      response.addSimpleStr("PONG");
+    }
+  };
+
   private LuaInterpreter interpreter;
+
+  @Before
+  public void setUp() {
+    interpreter = new LuaInterpreter(new RedisBinding(context, session));
+  }
 
   @Test
   public void keys() {
@@ -88,7 +107,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void ping() {
-    when(redis.call(safeString("ping"))).thenReturn(LuaString.valueOf("PONG"));
+    when(context.getCommand("ping")).thenReturn(command);
 
     RedisToken token = interpreter.execute(safeString("return redis.call('ping')"),
                                            emptyList(),

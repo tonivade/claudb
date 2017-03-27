@@ -25,7 +25,6 @@ import org.luaj.vm2.LuaNumber;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.protocol.RedisToken;
@@ -49,7 +48,7 @@ public class LuaInterpreter {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("luaj");
-      engine.put("redis", CoerceJavaToLua.coerce(redis));
+      engine.put("redis", createBinding(redis));
       engine.put("KEYS", toArray(keys));
       engine.put("ARGV", toArray(params));
       return convert(engine.eval(script.toString()));
@@ -58,6 +57,14 @@ public class LuaInterpreter {
     } catch (RuntimeException e) {
       throw new ScriptException(e);
     }
+  }
+
+  private LuaValue createBinding(RedisBinding redis)
+  {
+    LuaTable binding = LuaTable.tableOf();
+    binding.set("call", redis);
+    binding.set("__index", binding);
+    return binding;
   }
 
   private RedisToken convert(Object result) {
