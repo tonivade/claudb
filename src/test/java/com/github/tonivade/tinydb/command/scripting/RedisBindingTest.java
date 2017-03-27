@@ -2,11 +2,13 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -41,6 +43,12 @@ public class RedisBindingTest
 
     redis.call(safeString("command"), safeString("param1"), safeString("param2"));
 
-    verify(command).execute(any(IRequest.class), any(IResponse.class));
+    verify(command).execute(argThat(new ArgumentMatcher<IRequest>() {
+      @Override
+      public boolean matches(IRequest argument) {
+        return argument.getParam(0).equals(safeString("param1"))
+            && argument.getParam(1).equals(safeString("param2"));
+      }
+    }), any(IResponse.class));
   }
 }

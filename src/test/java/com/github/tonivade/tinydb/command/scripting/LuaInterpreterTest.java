@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class LuaInterpreterTest {
 
@@ -45,6 +46,33 @@ public class LuaInterpreterTest {
                                            asList(safeString("value1")));
 
     assertThat(token, equalTo(array(string("key1"), string("value1"))));
+  }
+
+  @Test
+  public void number() {
+    RedisToken token = interpreter.execute(safeString("return 1"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(RedisToken.integer(1)));
+  }
+
+  @Test
+  public void boolTrue() {
+    RedisToken token = interpreter.execute(safeString("return true"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(RedisToken.integer(1)));
+  }
+
+  @Test
+  public void boolFalse() {
+    RedisToken token = interpreter.execute(safeString("return false"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(RedisToken.string(SafeString.EMPTY_STRING)));
   }
 
 }
