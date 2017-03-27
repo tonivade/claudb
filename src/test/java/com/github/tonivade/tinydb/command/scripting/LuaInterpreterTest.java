@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.tinydb.command.scripting;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -11,8 +13,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.luaj.vm2.LuaString;
-import org.luaj.vm2.LuaTable;
+
+import com.github.tonivade.resp.protocol.RedisToken;
 
 public class LuaInterpreterTest {
 
@@ -20,30 +22,29 @@ public class LuaInterpreterTest {
 
   @Test
   public void keys() {
-    Object token = interpreter.execute(safeString("return KEYS[1]"),
-                                       asList(safeString("key1")),
-                                       emptyList());
+    RedisToken token = interpreter.execute(safeString("return KEYS[1]"),
+                                           asList(safeString("key1")),
+                                           emptyList());
 
-    assertThat(token, equalTo("key1"));
+    assertThat(token, equalTo(string("key1")));
   }
 
   @Test
   public void argv() {
-    Object token = interpreter.execute(safeString("return ARGV[1]"),
-                                       asList(safeString("key1")),
-                                       asList(safeString("value1")));
+    RedisToken token = interpreter.execute(safeString("return ARGV[1]"),
+                                           asList(safeString("key1")),
+                                           asList(safeString("value1")));
 
-    assertThat(token, equalTo("value1"));
+    assertThat(token, equalTo(string("value1")));
   }
 
   @Test
   public void keysAndArgv() {
-    LuaTable token = (LuaTable) interpreter.execute(safeString("return {KEYS[1], ARGV[1]}"),
-                                       asList(safeString("key1")),
-                                       asList(safeString("value1")));
+    RedisToken token = interpreter.execute(safeString("return {KEYS[1], ARGV[1]}"),
+                                           asList(safeString("key1")),
+                                           asList(safeString("value1")));
 
-    assertThat(token.get(1), equalTo(LuaString.valueOf("key1")));
-    assertThat(token.get(2), equalTo(LuaString.valueOf("value1")));
+    assertThat(token, equalTo(array(string("key1"), string("value1"))));
   }
 
 }
