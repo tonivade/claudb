@@ -47,7 +47,15 @@ public class EvalCommand implements ITinyDBCommand {
   }
 
   private LuaInterpreter createInterperterFor(IRequest request) {
-    return new LuaInterpreter(new RedisBinding(request.getServerContext(), request.getSession()));
+    return new LuaInterpreter(createBinding(request));
+  }
+
+  private RedisBinding createBinding(IRequest request) {
+    return new RedisBinding(createLibrary(request));
+  }
+
+  private RedisLibrary createLibrary(IRequest request) {
+    return new RedisLibrary(request.getServerContext(), request.getSession());
   }
 
 }

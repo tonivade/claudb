@@ -6,6 +6,7 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Arrays.asList;
@@ -20,44 +21,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
-import com.github.tonivade.resp.command.IServerContext;
-import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LuaInterpreterTest {
   @Mock
-  private IServerContext context;
-  @Mock
-  private ISession session;
-
-  private ICommand ping = new ICommand()
-  {
-    @Override
-    public void execute(IRequest request, IResponse response)
-    {
-      response.addSimpleStr("PONG");
-    }
-  };
-
-  private ICommand echo = new ICommand()
-  {
-    @Override
-    public void execute(IRequest request, IResponse response)
-    {
-      response.addBulkStr(request.getParam(0));
-    }
-  };
+  private RedisLibrary redis;
 
   private LuaInterpreter interpreter;
 
   @Before
   public void setUp() {
-    interpreter = new LuaInterpreter(new RedisBinding(context, session));
+    interpreter = new LuaInterpreter(new RedisBinding(redis));
   }
 
   @Test
@@ -116,7 +92,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void ping() {
-    when(context.getCommand("ping")).thenReturn(ping);
+    when(redis.call(safeString("ping"))).thenReturn(status("PONG"));
 
     RedisToken token = interpreter.execute(safeString("return redis.call('ping')"),
                                            emptyList(),
@@ -127,7 +103,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void echo() {
-    when(context.getCommand("echo")).thenReturn(echo);
+    when(redis.call(safeString("echo"), safeString("hello"))).thenReturn(string("hello"));
 
     RedisToken token = interpreter.execute(safeString("return redis.call('echo', 'hello')"),
                                            emptyList(),

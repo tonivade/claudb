@@ -59,11 +59,9 @@ public class LuaInterpreter {
     }
   }
 
-  private LuaValue createBinding(RedisBinding redis)
-  {
+  private LuaValue createBinding(RedisBinding redis) {
     LuaTable binding = LuaTable.tableOf();
     binding.set("call", redis);
-    binding.set("__index", binding);
     return binding;
   }
 
@@ -75,7 +73,7 @@ public class LuaInterpreter {
                             Case(instanceOf(Number.class), this::convertNumber),
                             Case(instanceOf(String.class), this::convertString),
                             Case(instanceOf(Boolean.class), this::convertBoolean),
-                            Case($(), this::convert));
+                            Case($(), this::convertUnknown));
   }
 
   private RedisToken convertLuaTable(LuaTable value) {
@@ -109,6 +107,10 @@ public class LuaInterpreter {
 
   private RedisToken convertBoolean(Boolean value) {
     return value.booleanValue() ? integer(1) : string(SafeString.EMPTY_STRING);
+  }
+  
+  private RedisToken convertUnknown(Object value) {
+    return string(String.valueOf(value));
   }
 
   private Object[] toArray(List<SafeString> keys) {
