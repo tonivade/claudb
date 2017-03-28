@@ -18,6 +18,6 @@ public class EvalCommandTest {
   public void testExecute() throws Exception {
     rule.withParams("return 1", "0")
         .execute()
-        .verify().addObject(integer(1));
+        .verify().add(integer(1));
   }
 }

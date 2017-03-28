@@ -28,13 +28,13 @@ public class EvalCommand implements ITinyDBCommand {
 
     int numParams = parseInt(request.getParam(1).toString());
 
-    if (numParams + 2 != request.getLength()) {
+    if (numParams + 2 > request.getLength()) {
       response.addError("invalid number of arguments");
     } else {
       List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
       List<SafeString> keys = readParams(numParams, params);
       List<SafeString> argv = readArguments(numParams, params);
-      response.addObject(createInterperterFor(request).execute(script, keys, argv));
+      response.add(createInterperterFor(request).execute(script, keys, argv));
     }
   }
 
