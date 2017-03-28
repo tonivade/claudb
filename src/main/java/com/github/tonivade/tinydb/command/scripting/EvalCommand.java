@@ -32,18 +32,26 @@ public class EvalCommand implements ITinyDBCommand {
       response.addError("invalid number of arguments");
     } else {
       List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
-      List<SafeString> keys = new LinkedList<>();
-      for (int i = 0; i < numParams; i++) {
-        keys.add(params.get(i));
-      }
-
-      List<SafeString> argv = new LinkedList<>();
-      for (int i = numParams; i < request.getLength(); i++) {
-        argv.add(request.getParam(i));
-      }
-
+      List<SafeString> keys = readParams(numParams, params);
+      List<SafeString> argv = readArguments(numParams, params);
       response.addObject(createInterperterFor(request).execute(script, keys, argv));
     }
+  }
+
+  private List<SafeString> readParams(int numParams, List<SafeString> params) {
+    List<SafeString> keys = new LinkedList<>();
+    for (int i = 0; i < numParams; i++) {
+      keys.add(params.get(i));
+    }
+    return keys;
+  }
+
+  private List<SafeString> readArguments(int numParams, List<SafeString> params) {
+    List<SafeString> argv = new LinkedList<>();
+    for (int i = numParams; i < params.size(); i++) {
+      argv.add(params.get(i));
+    }
+    return argv;
   }
 
   private LuaInterpreter createInterperterFor(IRequest request) {
