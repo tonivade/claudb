@@ -5,7 +5,6 @@
 package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
-import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static javaslang.API.$;
@@ -26,11 +25,8 @@ import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-
-import javaslang.control.Try;
 
 public class LuaInterpreter {
 
@@ -41,10 +37,6 @@ public class LuaInterpreter {
   }
 
   public RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
-    return Try.of(() -> run(script, keys, params)).getOrElse(error(IResponse.RESULT_ERROR));
-  }
-
-  private RedisToken run(SafeString script, List<SafeString> keys, List<SafeString> params) throws ScriptException {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("luaj");
@@ -53,9 +45,7 @@ public class LuaInterpreter {
       engine.put("ARGV", toArray(params));
       return convert(engine.eval(script.toString()));
     } catch (ScriptException e) {
-      throw e;
-    } catch (RuntimeException e) {
-      throw new ScriptException(e);
+      return RedisToken.error(e.getMessage());
     }
   }
 

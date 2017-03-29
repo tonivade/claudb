@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
@@ -24,10 +25,12 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
@@ -113,6 +116,16 @@ public class CommandRule implements TestRule {
                 getDatabase().clear();
             }
         };
+    }
+    
+    public CommandRule withCommand(String name, Function<IRequest, RedisToken> command) {
+      Mockito.when(server.getCommand(name)).thenReturn(new ICommand() {
+        @Override
+        public void execute(IRequest request, IResponse response) {
+          response.add(command.apply(request));
+        }
+      });
+      return this;
     }
 
     public CommandRule withData(String key, DatabaseValue value) {
