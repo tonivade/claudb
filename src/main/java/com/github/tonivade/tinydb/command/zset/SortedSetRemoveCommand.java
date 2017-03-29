@@ -26,14 +26,13 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.IDatabase;
 import com.github.tonivade.tinydb.data.SortedSet;
 
-
 @Command("zrem")
 @ParamLength(2)
 @ParamType(DataType.ZSET)
 public class SortedSetRemoveCommand implements ITinyDBCommand {
 
     @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
+    public RedisToken execute(IDatabase db, IRequest request) {
         List<SafeString> items =  request.getParams().stream().skip(1).collect(toList());
         List<SafeString> removed = new LinkedList<>();
         db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,
@@ -48,7 +47,7 @@ public class SortedSetRemoveCommand implements ITinyDBCommand {
                     return zset(merge);
                 });
 
-        response.addInt(removed.size());
+        return RedisToken.integer(removed.size());
     }
 
 }

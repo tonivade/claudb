@@ -16,7 +16,7 @@ import java.util.Set;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
@@ -29,25 +29,25 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @PubSubAllowed
 public class SubscribeCommand implements ITinyDBCommand {
 
-    private static final SafeString SUBSCRIBE = safeString("subscribe");
+  private static final SafeString SUBSCRIBE = safeString("subscribe");
 
-    private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
+  private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        IDatabase admin = getAdminDatabase(request.getServerContext());
-        int i = 1;
-        for (SafeString channel : request.getParams()) {
-            admin.merge(safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel)), set(safeString(request.getSession().getId())),
-                    (oldValue, newValue) -> {
-                        Set<SafeString> merge = new HashSet<>();
-                        merge.addAll(oldValue.getValue());
-                        merge.add(safeString(request.getSession().getId()));
-                        return set(merge);
-                    });
-            getSessionState(request.getSession()).addSubscription(channel);
-            response.addArray(asList(SUBSCRIBE, channel, i++));
-        }
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    IDatabase admin = getAdminDatabase(request.getServerContext());
+    int i = 1;
+    for (SafeString channel : request.getParams()) {
+      admin.merge(safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel)), set(safeString(request.getSession().getId())),
+          (oldValue, newValue) -> {
+            Set<SafeString> merge = new HashSet<>();
+            merge.addAll(oldValue.getValue());
+            merge.add(safeString(request.getSession().getId()));
+            return set(merge);
+          });
+      getSessionState(request.getSession()).addSubscription(channel);
+      return RedisToken.array(asList(SUBSCRIBE, channel, i++));
     }
+  }
 
 }

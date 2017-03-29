@@ -28,22 +28,22 @@ public class TinyDBResponse {
     if (value != null) {
       switch (value.getType()) {
       case STRING:
-        response.addBulkStr(value.getValue());
+        return RedisToken.string(value.getValue());
         break;
       case HASH:
         Map<SafeString, SafeString> map = value.getValue();
-        response.addArray(keyValueList(map));
+        return RedisToken.array(keyValueList(map));
         break;
       case LIST:
       case SET:
       case ZSET:
-        response.addArray(value.getValue());
+        return RedisToken.array(value.getValue());
         break;
       default:
         break;
       }
     } else {
-      response.addBulkStr(null);
+      return RedisToken.string(null);
     }
     return this;
   }
@@ -54,10 +54,10 @@ public class TinyDBResponse {
 
   public TinyDBResponse addArrayValue(Collection<DatabaseValue> array) {
     if (array != null) {
-      response.addArray(array.stream().map(Optional::ofNullable).map(op -> op.isPresent() ? op.get().getValue() : null)
+      return RedisToken.array(array.stream().map(Optional::ofNullable).map(op -> op.isPresent() ? op.get().getValue() : null)
           .collect(toList()));
     } else {
-      response.addArray(null);
+      return RedisToken.array(null);
     }
     return this;
   }

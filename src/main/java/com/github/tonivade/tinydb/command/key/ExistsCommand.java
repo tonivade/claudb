@@ -12,7 +12,7 @@ import java.time.Instant;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DatabaseKey;
@@ -23,10 +23,10 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamLength(1)
 public class ExistsCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
-        response.addInt(key != null ? !key.isExpired(Instant.now()) : false);
-    }
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
+    return RedisToken.integer(key != null ? !key.isExpired(Instant.now()) : false);
+  }
 
 }

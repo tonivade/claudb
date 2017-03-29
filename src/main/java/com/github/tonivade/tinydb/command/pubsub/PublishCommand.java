@@ -15,7 +15,6 @@ import java.util.Set;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
@@ -27,34 +26,34 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamLength(2)
 public class PublishCommand implements ITinyDBCommand {
 
-    private static final SafeString MESSAGE = safeString("message");
+  private static final SafeString MESSAGE = safeString("message");
 
-    private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
+  private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        IDatabase admin = getAdminDatabase(request.getServerContext());
-        DatabaseValue value = getSubscriptors(admin, request.getParam(0));
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    IDatabase admin = getAdminDatabase(request.getServerContext());
+    DatabaseValue value = getSubscriptors(admin, request.getParam(0));
 
-        Set<SafeString> subscribers = value.<Set<SafeString>>getValue();
-        for (SafeString subscriber : subscribers) {
-            publish(request, subscriber);
-        }
-
-        response.addInt(subscribers.size());
+    Set<SafeString> subscribers = value.<Set<SafeString>>getValue();
+    for (SafeString subscriber : subscribers) {
+      publish(request, subscriber);
     }
 
-    private void publish(IRequest request, SafeString subscriber) {
-        getTinyDB(request.getServerContext()).publish(subscriber.toString(), message(request));
-    }
+    return RedisToken.integer(subscribers.size());
+  }
 
-    private DatabaseValue getSubscriptors(IDatabase admin, SafeString channel) {
-        DatabaseKey subscriptorsKey = safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel));
-        return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
-    }
+  private void publish(IRequest request, SafeString subscriber) {
+    getTinyDB(request.getServerContext()).publish(subscriber.toString(), message(request));
+  }
 
-    private RedisToken message(IRequest request) {
-        return array(string(MESSAGE), string(request.getParam(0)), string(request.getParam(1)));
-    }
+  private DatabaseValue getSubscriptors(IDatabase admin, SafeString channel) {
+    DatabaseKey subscriptorsKey = safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel));
+    return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
+  }
+
+  private RedisToken message(IRequest request) {
+    return array(string(MESSAGE), string(request.getParam(0)), string(request.getParam(1)));
+  }
 
 }

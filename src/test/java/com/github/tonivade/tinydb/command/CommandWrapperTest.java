@@ -129,24 +129,24 @@ public class CommandWrapperTest {
 
     private static class SomeCommand implements ITinyDBCommand {
         @Override
-        public void execute(IDatabase db, IRequest request, IResponse response) {
-            response.addSimpleStr(RESULT_OK);
+        public RedisToken execute(IDatabase db, IRequest request) {
+            return RedisToken.status(RESULT_OK);
         }
     }
 
     @ParamLength(2)
     private static class LengthCommand implements ITinyDBCommand {
         @Override
-        public void execute(IDatabase db, IRequest request, IResponse response) {
-            response.addSimpleStr(RESULT_OK);
+        public RedisToken execute(IDatabase db, IRequest request) {
+            return RedisToken.status(RESULT_OK);
         }
     }
 
     @ParamType(DataType.STRING)
     private static class TypeCommand implements ITinyDBCommand {
         @Override
-        public void execute(IDatabase db, IRequest request, IResponse response) {
-            response.addSimpleStr(RESULT_OK);
+        public RedisToken execute(IDatabase db, IRequest request) {
+            return RedisToken.status(RESULT_OK);
         }
     }
 }

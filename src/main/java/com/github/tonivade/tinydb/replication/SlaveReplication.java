@@ -19,7 +19,6 @@ import com.github.tonivade.resp.RedisClient;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.Response;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.ITinyDB;
@@ -87,7 +86,7 @@ public class SlaveReplication implements IRedisCallback {
     ICommand command = server.getCommand(commandToken.getValue().toString());
 
     if (command != null) {
-      command.execute(request(commandToken, array), new Response());
+      command.execute(request(commandToken, array));
     }
   }
 

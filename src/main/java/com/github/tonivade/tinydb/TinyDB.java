@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.tinydb.TinyDBConfig.withoutPersistence;
 import static java.util.stream.Collectors.toList;
 
@@ -129,14 +130,14 @@ public class TinyDB extends RedisServer implements ITinyDB {
     protected void executeCommand(ICommand command, IRequest request, IResponse response) {
         if (!isReadOnly(request.getCommand())) {
             try {
-                command.execute(request, response);
+                response.add(command.execute(request));
 
                 replication(request, command);
             } catch (RuntimeException e) {
                 LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
             }
         } else {
-            response.addError("READONLY You can't write against a read only slave");
+            response.add(error("READONLY You can't write against a read only slave"));
         }
     }
 

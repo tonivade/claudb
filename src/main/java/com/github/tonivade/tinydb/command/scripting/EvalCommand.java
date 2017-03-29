@@ -13,7 +13,7 @@ import java.util.List;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -23,19 +23,18 @@ import com.github.tonivade.tinydb.data.IDatabase;
 public class EvalCommand implements ITinyDBCommand {
 
   @Override
-  public void execute(IDatabase db, IRequest request, IResponse response) {
+  public RedisToken execute(IDatabase db, IRequest request) {
     SafeString script = request.getParam(0);
 
     int numParams = parseInt(request.getParam(1).toString());
 
     if (numParams + 2 > request.getLength()) {
-      response.addError("invalid number of arguments");
-    } else {
-      List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
-      List<SafeString> keys = readParams(numParams, params);
-      List<SafeString> argv = readArguments(numParams, params);
-      response.add(createInterperterFor(request).execute(script, keys, argv));
+      return RedisToken.error("invalid number of arguments");
     }
+    List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
+    List<SafeString> keys = readParams(numParams, params);
+    List<SafeString> argv = readArguments(numParams, params);
+    return createInterperterFor(request).execute(script, keys, argv);
   }
 
   private List<SafeString> readParams(int numParams, List<SafeString> params) {

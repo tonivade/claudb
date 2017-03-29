@@ -17,7 +17,7 @@ import java.util.Set;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
@@ -30,24 +30,24 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamType(DataType.SET)
 public class SetPopCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<SafeString> removed = new LinkedList<>();
-        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
-                (oldValue, newValue) -> {
-                    List<SafeString> merge = new ArrayList<>(oldValue.<Set<SafeString>>getValue());
-                    removed.add(merge.remove(random(merge)));
-                    return set(merge);
-                });
-        if (removed.isEmpty()) {
-            response.addBulkStr(null);
-        } else {
-            response.addBulkStr(removed.get(0));
-        }
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    List<SafeString> removed = new LinkedList<>();
+    db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
+        (oldValue, newValue) -> {
+          List<SafeString> merge = new ArrayList<>(oldValue.<Set<SafeString>>getValue());
+          removed.add(merge.remove(random(merge)));
+          return set(merge);
+        });
+    if (removed.isEmpty()) {
+      return RedisToken.string(null);
+    } else {
+      return RedisToken.string(removed.get(0));
     }
+  }
 
-    private int random(List<?> merge) {
-        return new Random().nextInt(merge.size());
-    }
+  private int random(List<?> merge) {
+    return new Random().nextInt(merge.size());
+  }
 
 }

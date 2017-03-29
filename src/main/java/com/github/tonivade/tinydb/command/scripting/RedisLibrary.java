@@ -10,7 +10,6 @@ import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.Response;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
@@ -25,9 +24,7 @@ public class RedisLibrary {
   }
 
   public RedisToken call(SafeString commandName, SafeString... params) {
-    Response response = new Response();
-    getCommand(commandName).execute(createRequest(commandName, params), response);
-    return response.build();
+    return getCommand(commandName).execute(createRequest(commandName, params));
   }
 
   private ICommand getCommand(SafeString commandName) {
