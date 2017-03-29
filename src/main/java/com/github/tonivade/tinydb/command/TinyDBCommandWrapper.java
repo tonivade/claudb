@@ -66,6 +66,7 @@ public class TinyDBCommandWrapper implements ICommand {
 
   @Override
   public void execute(IRequest request, IResponse response) {
+    // FIXME: ugly piece of code, please refactor
     IDatabase db = getCurrentDB(request);
     if (request.getLength() < params) {
       response.addError("ERR wrong number of arguments for '" + request.getCommand() + "' command");
