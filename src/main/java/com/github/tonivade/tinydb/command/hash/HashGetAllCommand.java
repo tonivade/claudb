@@ -31,7 +31,7 @@ public class HashGetAllCommand implements ITinyDBCommand {
     if (value != null) {
       return new TinyDBResponse().addValue(value);
     } else {
-      return RedisToken.array(null);
+      return RedisToken.array();
     }
   }
 

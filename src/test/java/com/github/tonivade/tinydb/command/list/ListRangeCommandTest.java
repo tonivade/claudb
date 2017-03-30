@@ -37,7 +37,7 @@ public class ListRangeCommandTest {
         rule.withData("key", list("a", "b", "c"))
             .withParams("key", "0", "-1")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> result = captor.getValue();
 

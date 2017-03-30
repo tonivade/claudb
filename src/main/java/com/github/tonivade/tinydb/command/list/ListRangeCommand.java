@@ -15,6 +15,7 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBResponse;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
@@ -47,7 +48,7 @@ public class ListRangeCommand implements ITinyDBCommand {
 
       List<String> result = list.stream().skip(min).limit((max - min) + 1).collect(toList());
 
-      return RedisToken.array(result);
+      return new TinyDBResponse().addStringArray(result);
     } catch (NumberFormatException e) {
       return RedisToken.error("ERR value is not an integer or out of range");
     }

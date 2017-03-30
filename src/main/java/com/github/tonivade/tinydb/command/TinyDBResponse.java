@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
@@ -17,20 +18,23 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
+// FIXME: refactor this ugly class
 public class TinyDBResponse {
 
   public RedisToken addValue(DatabaseValue value) {
     if (value != null) {
       switch (value.getType()) {
       case STRING:
-        return RedisToken.string(value.<SafeString>getValue());
+          SafeString string = value.getValue();
+          return RedisToken.string(string);
       case HASH:
-        Map<SafeString, SafeString> map = value.getValue();
-        return RedisToken.array(keyValueList(map));
+      case ZSET:
+          Map<SafeString, SafeString> map = value.getValue();
+          return RedisToken.array(keyValueList(map));
       case LIST:
       case SET:
-      case ZSET:
-        return RedisToken.array(value.getValue());
+          Collection<SafeString> list = value.getValue();
+          return RedisToken.array(safeArrayList(list));
       default:
         break;
       }
@@ -38,15 +42,46 @@ public class TinyDBResponse {
     return RedisToken.string(SafeString.EMPTY_STRING);
   }
 
-  private List<SafeString> keyValueList(Map<SafeString, SafeString> map) {
-    return map.entrySet().stream().flatMap((entry) -> Stream.of(entry.getKey(), entry.getValue())).collect(toList());
-  }
-
   public RedisToken addArrayValue(Collection<DatabaseValue> array) {
     if (array != null) {
-      return RedisToken.array(array.stream().map(Optional::ofNullable).map(op -> op.isPresent() ? op.get().getValue() : null)
-          .collect(toList()));
+      return RedisToken.array(arrayValueList(array));
     }
     return RedisToken.array();
+  }
+
+  public RedisToken addSafeArray(Collection<SafeString> array) {
+    if (array != null) {
+      return RedisToken.array(safeArrayList(array));
+    }
+    return RedisToken.array();
+  }
+
+  public RedisToken addStringArray(Collection<String> array) {
+    if (array != null) {
+      return RedisToken.array(stringArrayList(array));
+    }
+    return RedisToken.array();
+  }
+
+  private List<RedisToken> arrayValueList(Collection<DatabaseValue> array) {
+    return array.stream().map(Optional::ofNullable)
+        .map(op -> op.map(identity()).orElse(null))
+        .map(this::addValue)
+        .collect(toList());
+  }
+
+  private List<RedisToken> keyValueList(Map<SafeString, SafeString> map) {
+    return map.entrySet().stream()
+        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
+        .map(RedisToken::string)
+        .collect(toList());
+  }
+
+  private List<RedisToken> safeArrayList(Collection<SafeString> list) {
+    return list.stream().map(RedisToken::string).collect(toList());
+  }
+
+  private List<RedisToken> stringArrayList(Collection<String> list) {
+    return list.stream().map(RedisToken::string).collect(toList());
   }
 }

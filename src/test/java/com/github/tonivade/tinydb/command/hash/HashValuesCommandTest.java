@@ -39,7 +39,7 @@ public class HashValuesCommandTest {
                      entry("key3", "value3")))
             .withParams("test")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> values = captor.getValue();
 
@@ -53,7 +53,7 @@ public class HashValuesCommandTest {
     public void testExecuteNotExists() {
         rule.withParams("test")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> values = captor.getValue();
 

@@ -39,7 +39,7 @@ public class ExecCommandTest {
         givenPingCommand();
         givenExistingTransaction();
 
-        rule.execute().verify().addArray(captor.capture());
+        rule.execute().verify().addSafeArray(captor.capture());
 
         verify(command, times(3)).execute(any(), any());
 

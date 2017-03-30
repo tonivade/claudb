@@ -37,7 +37,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "0", "-1")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -55,7 +55,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "0", "-1", "WITHSCORES")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -76,7 +76,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "0", "1")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -93,7 +93,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "-2", "-1")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -110,7 +110,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "1", "4")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -127,7 +127,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "4", "6")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -139,7 +139,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "-1", "0")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -151,7 +151,7 @@ public class SortedSetRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "0", "0")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -166,7 +166,7 @@ public class SortedSetRangeCommandTest {
     public void testExecuteNoExists() throws Exception {
         rule.withParams("key", "0", "-1")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 

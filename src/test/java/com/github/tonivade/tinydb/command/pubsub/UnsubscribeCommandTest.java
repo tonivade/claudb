@@ -43,7 +43,7 @@ public class UnsubscribeCommandTest {
 
         assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test"))));
 
-        rule.verify().addArray(captor.capture());
+        rule.verify().addSafeArray(captor.capture());
 
         Collection<?> response = captor.getValue();
 

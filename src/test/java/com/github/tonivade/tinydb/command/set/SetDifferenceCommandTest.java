@@ -37,7 +37,7 @@ public class SetDifferenceCommandTest {
             .withData("b", set("3", "4"))
             .withParams("a", "b")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> result = captor.getValue();
 
@@ -52,7 +52,7 @@ public class SetDifferenceCommandTest {
         rule.withData("a", set("1", "2", "3"))
             .withParams("a", "b")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> result = captor.getValue();
 

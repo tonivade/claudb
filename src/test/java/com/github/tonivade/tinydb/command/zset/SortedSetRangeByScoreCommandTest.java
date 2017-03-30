@@ -37,7 +37,7 @@ public class SortedSetRangeByScoreCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "1", "3")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -55,7 +55,7 @@ public class SortedSetRangeByScoreCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "1", "3", "WITHSCORES")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -76,7 +76,7 @@ public class SortedSetRangeByScoreCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "1", "3", "LIMIT", "1", "2")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -93,7 +93,7 @@ public class SortedSetRangeByScoreCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "(1", "3")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 
@@ -110,7 +110,7 @@ public class SortedSetRangeByScoreCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "-inf", "+inf")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> array = captor.getValue();
 

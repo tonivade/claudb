@@ -40,7 +40,7 @@ public class HashGetAllCommandTest {
                         entry("key3", "value3")))
             .withParams("a")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> value = captor.getValue();
 
@@ -58,7 +58,7 @@ public class HashGetAllCommandTest {
     public void testExecuteNotExists() {
         rule.withParams("a")
             .execute()
-            .verify().addArray(null);
+            .verify().addSafeArray(null);
     }
 
 }

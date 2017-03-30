@@ -38,7 +38,7 @@ public class SortedSetReverseRangeCommandTest {
         rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
             .withParams("key", "-1", "0")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> array = captor.getValue();
 

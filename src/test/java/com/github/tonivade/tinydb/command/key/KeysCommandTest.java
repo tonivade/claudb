@@ -36,7 +36,7 @@ public class KeysCommandTest {
             .withData("c", string("3"))
             .withParams("*")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> value = captor.getValue();
 
@@ -53,7 +53,7 @@ public class KeysCommandTest {
             .withData("c", string("3"))
             .withParams("a??")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> value = captor.getValue();
 
@@ -70,7 +70,7 @@ public class KeysCommandTest {
             .withData("c", string("3"))
             .withParams("a*")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<?> value = captor.getValue();
 

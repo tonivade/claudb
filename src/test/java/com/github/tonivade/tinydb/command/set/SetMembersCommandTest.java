@@ -36,7 +36,7 @@ public class SetMembersCommandTest {
         rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> value = captor.getValue();
 

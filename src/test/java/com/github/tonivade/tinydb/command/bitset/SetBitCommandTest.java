@@ -5,6 +5,9 @@
 
 package com.github.tonivade.tinydb.command.bitset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
+
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -23,7 +26,7 @@ public class SetBitCommandTest {
         rule.withData("test", DatabaseValue.bitset())
             .withParams("test", "10", "1")
             .execute()
-            .verify().addInt(false);
+            .then(integer(false));
     }
 
     @Test
@@ -31,7 +34,7 @@ public class SetBitCommandTest {
         rule.withData("test", DatabaseValue.bitset(10))
             .withParams("test", "10", "0")
             .execute()
-            .verify().addInt(true);
+            .then(integer(true));
     }
 
     @Test
@@ -39,7 +42,7 @@ public class SetBitCommandTest {
         rule.withData("test", DatabaseValue.bitset())
             .withParams("test", "1", "a")
             .execute()
-            .verify().addError("bit or offset is not an integer");
+            .then(error("bit or offset is not an integer"));
     }
 
     @Test
@@ -47,6 +50,6 @@ public class SetBitCommandTest {
         rule.withData("test", DatabaseValue.bitset())
             .withParams("test", "a", "0")
             .execute()
-            .verify().addError("bit or offset is not an integer");
+            .then(error("bit or offset is not an integer"));
     }
 }

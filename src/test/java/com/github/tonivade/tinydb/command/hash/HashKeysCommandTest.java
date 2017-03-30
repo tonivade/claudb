@@ -36,7 +36,7 @@ public class HashKeysCommandTest {
         rule.withData("key", hash(entry("a", "1"), entry("b", "2")))
             .withParams("key", "a")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> keys = captor.getValue();
 

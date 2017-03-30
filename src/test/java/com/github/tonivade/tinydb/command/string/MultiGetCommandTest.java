@@ -39,7 +39,7 @@ public class MultiGetCommandTest {
             .withData("c", string("2"))
             .withParams("a", "b", "c")
             .execute()
-            .verify().addArray(captor.capture());
+            .verify().addSafeArray(captor.capture());
 
         Collection<SafeString> result = captor.getValue();
 

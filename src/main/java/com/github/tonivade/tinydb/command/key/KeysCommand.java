@@ -17,6 +17,7 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBResponse;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -33,7 +34,7 @@ public class KeysCommand implements ITinyDBCommand {
       return pattern.matcher(key.toString()).matches();
     };
     Set<SafeString> keys = db.keySet().stream().filter(predicate).map(DatabaseKey::getValue).collect(toSet());
-    return RedisToken.array(keys);
+    return new TinyDBResponse().addSafeArray(keys);
   }
 
   private Pattern createPattern(SafeString param) {

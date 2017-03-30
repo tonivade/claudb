@@ -40,7 +40,7 @@ public class SubscribeCommandTest {
 
         assertThat(rule.getSessionState().getSubscriptions(), contains(safeString("test")));
 
-        rule.verify().addArray(captor.capture());
+        rule.verify().addSafeArray(captor.capture());
 
         Collection<?> response = captor.getValue();
 
