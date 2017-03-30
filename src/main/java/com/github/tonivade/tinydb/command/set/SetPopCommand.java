@@ -40,7 +40,7 @@ public class SetPopCommand implements ITinyDBCommand {
           return set(merge);
         });
     if (removed.isEmpty()) {
-      return RedisToken.string(null);
+      return RedisToken.string(SafeString.EMPTY_STRING);
     } else {
       return RedisToken.string(removed.get(0));
     }

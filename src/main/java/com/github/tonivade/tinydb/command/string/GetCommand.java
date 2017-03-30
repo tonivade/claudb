@@ -26,7 +26,7 @@ public class GetCommand implements ITinyDBCommand {
 
   @Override
   public RedisToken execute(IDatabase db, IRequest request) {
-    new TinyDBResponse(response).addValue(db.get(safeKey(request.getParam(0))));
+    return new TinyDBResponse().addValue(db.get(safeKey(request.getParam(0))));
   }
 
 }

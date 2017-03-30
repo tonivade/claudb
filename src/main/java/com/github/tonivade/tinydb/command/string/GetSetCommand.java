@@ -27,7 +27,7 @@ public class GetSetCommand implements ITinyDBCommand {
   @Override
   public RedisToken execute(IDatabase db, IRequest request) {
     DatabaseValue value = db.put(safeKey(request.getParam(0)), string(request.getParam(1)));
-    new TinyDBResponse(response).addValue(value);
+    return new TinyDBResponse().addValue(value);
   }
 
 }

@@ -42,7 +42,7 @@ public class SetRandomMemberCommand implements ITinyDBCommand {
           return set(merge);
         });
     if (random.isEmpty()) {
-      return RedisToken.string(null);
+      return RedisToken.string(SafeString.EMPTY_STRING);
     } else {
       return RedisToken.string(random.get(0));
     }

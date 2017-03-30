@@ -41,7 +41,7 @@ public class LeftPopCommand implements ITinyDBCommand {
         });
 
     if (removed.isEmpty()) {
-      return RedisToken.string(null);
+      return RedisToken.string(SafeString.EMPTY_STRING);
     } else {
       return RedisToken.string(removed.remove(0));
     }

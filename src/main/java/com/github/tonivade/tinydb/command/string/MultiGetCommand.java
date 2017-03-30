@@ -31,7 +31,7 @@ public class MultiGetCommand implements ITinyDBCommand {
     for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
       result.add(db.get(key));
     }
-    new TinyDBResponse(response).addArrayValue(result);
+    return new TinyDBResponse().addArrayValue(result);
   }
 
 }

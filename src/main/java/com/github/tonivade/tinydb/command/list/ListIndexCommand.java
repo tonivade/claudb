@@ -42,7 +42,7 @@ public class ListIndexCommand implements ITinyDBCommand {
     } catch (NumberFormatException e) {
       return RedisToken.error("ERR value is not an integer or out of range");
     } catch (IndexOutOfBoundsException e) {
-      return RedisToken.string(null);
+      return RedisToken.string(SafeString.EMPTY_STRING);
     }
   }
 

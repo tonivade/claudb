@@ -28,7 +28,7 @@ public class SetMembersCommand implements ITinyDBCommand {
   @Override
   public RedisToken execute(IDatabase db, IRequest request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
-    new TinyDBResponse(response).addValue(value);
+    return new TinyDBResponse().addValue(value);
   }
 
 }

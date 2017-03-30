@@ -29,7 +29,7 @@ public class HashGetAllCommand implements ITinyDBCommand {
   public RedisToken execute(IDatabase db, IRequest request) {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
     if (value != null) {
-      new TinyDBResponse(response).addValue(value);
+      return new TinyDBResponse().addValue(value);
     } else {
       return RedisToken.array(null);
     }
