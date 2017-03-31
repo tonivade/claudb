@@ -119,7 +119,7 @@ public class TinyDBCommandWrapper implements ICommand {
   }
 
   private TinyDBSessionState getSessionState(ISession session) {
-    return sessionState(session).orElseThrow(() -> new IllegalStateException("missiong session state"));
+    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
   private Optional<TinyDBServerState> serverState(IServerContext server) {

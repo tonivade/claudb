@@ -22,83 +22,83 @@ public class EvalCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
-  
+
   @Test
   public void testExecuteInteger() {
     rule.withParams("return 1", "0")
         .execute()
-        .verify().add(integer(1));
+        .then(integer(1));
   }
-  
+
   @Test
   public void testExecuteBoolean() {
     rule.withParams("return true", "0")
         .execute()
-        .verify().add(integer(1));
+        .then(integer(1));
   }
-  
+
   @Test
   public void testExecuteString() {
     rule.withParams("return 'hello'", "0")
         .execute()
-        .verify().add(RedisToken.string("hello"));
+        .then(RedisToken.string("hello"));
   }
-  
+
   @Test
   public void testExecuteArray() {
     rule.withParams("return {'hello', 'world'}", "0")
         .execute()
-        .verify().add(array(string("hello"), string("world")));
+        .then(array(string("hello"), string("world")));
   }
-  
+
   @Test
   public void testExecuteKeys() {
     rule.withParams("return {KEYS[1], KEYS[2]}", "2", "hello", "world")
         .execute()
-        .verify().add(array(string("hello"), string("world")));
+        .then(array(string("hello"), string("world")));
   }
-  
+
   @Test
   public void testExecuteArguments() {
     rule.withParams("return {ARGV[1], ARGV[2]}", "0", "hello", "world")
         .execute()
-        .verify().add(array(string("hello"), string("world")));
+        .then(array(string("hello"), string("world")));
   }
-  
+
   @Test
   public void testExecuteKeysAndArguments() {
     rule.withParams("return {KEYS[1], KEYS[2], ARGV[1], ARGV[2]}", "2", "hello", "world", "or", "not")
         .execute()
-        .verify().add(array(string("hello"), string("world"), string("or"), string("not")));
+        .then(array(string("hello"), string("world"), string("or"), string("not")));
   }
-  
+
   @Test
   public void testExecuteKeysError() {
     rule.withParams("return {KEYS[1], KEYS[2]}", "2", "hello")
         .execute()
-        .verify().addError("invalid number of arguments");
+        .then(error("invalid number of arguments"));
   }
-  
+
   @Test
   public void testExecuteCommand() {
     rule.withCommand("ping", request -> status("PONG"))
         .withParams("return redis.call('ping')", "0")
         .execute()
-        .verify().add(string("PONG"));
+        .then(string("PONG"));
   }
-  
+
   @Test
   public void testExecuteCommandWithParam() {
     rule.withCommand("echo", request -> string(request.getParam(0)))
         .withParams("return redis.call('echo', 'hello world!')", "0")
         .execute()
-        .verify().add(string("hello world!"));
+        .then(string("hello world!"));
   }
-  
+
   @Test
   public void testExecuteScriptError() {
     rule.withParams("return '1", "0")
         .execute()
-        .verify().add(error("eval threw javax.script.ScriptException: [string \"script\"]:1: unfinished string"));
+        .then(error("eval threw javax.script.ScriptException: [string \"script\"]:1: unfinished string"));
   }
 }

@@ -11,28 +11,28 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.set.SetRemoveCommand;
 
 @CommandUnderTest(SetRemoveCommand.class)
 public class SetRemoveCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withData("key", set("a", "b", "c"))
-            .withParams("key", "a")
-            .execute()
-            .assertValue("key", isSet("b", "c"))
-            .verify().addInt(1);
+  @Test
+  public void testExecute() throws Exception {
+    rule.withData("key", set("a", "b", "c"))
+    .withParams("key", "a")
+    .execute()
+    .assertValue("key", isSet("b", "c"))
+    .then(RedisToken.integer(1));
 
-        rule.withParams("key", "a")
-            .execute()
-            .assertValue("key", isSet("b", "c"))
-            .verify().addInt(0);
-    }
+    rule.withParams("key", "a")
+    .execute()
+    .assertValue("key", isSet("b", "c"))
+    .then(RedisToken.integer(0));
+  }
 
 }

@@ -5,49 +5,48 @@
 
 package com.github.tonivade.tinydb.command.list;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
-import static org.mockito.Matchers.startsWith;
 
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.list.ListIndexCommand;
 
 @CommandUnderTest(ListIndexCommand.class)
 public class ListIndexCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withData("key", list("a", "b", "c"))
-            .withParams("key", "0")
-            .execute()
-            .verify().addBulkStr(safeString("a"));
+  @Test
+  public void testExecute() throws Exception {
+    rule.withData("key", list("a", "b", "c"))
+    .withParams("key", "0")
+    .execute()
+    .then(RedisToken.string("a"));
 
-        rule.withData("key", list("a", "b", "c"))
-            .withParams("key", "-1")
-            .execute()
-            .verify().addBulkStr(safeString("c"));
+    rule.withData("key", list("a", "b", "c"))
+    .withParams("key", "-1")
+    .execute()
+    .then(RedisToken.string("c"));
 
-        rule.withData("key", list("a", "b", "c"))
-            .withParams("key", "-4")
-            .execute()
-            .verify().addBulkStr(null);
+    rule.withData("key", list("a", "b", "c"))
+    .withParams("key", "-4")
+    .execute()
+    .then(RedisToken.string(SafeString.EMPTY_STRING));
 
-        rule.withData("key", list("a", "b", "c"))
-            .withParams("key", "4")
-            .execute()
-            .verify().addBulkStr(null);
+    rule.withData("key", list("a", "b", "c"))
+    .withParams("key", "4")
+    .execute()
+    .then(RedisToken.string(SafeString.EMPTY_STRING));
 
-        rule.withData("key", list("a", "b", "c"))
-            .withParams("key", "a")
-            .execute()
-            .verify().addError(startsWith("ERR"));
-    }
+    rule.withData("key", list("a", "b", "c"))
+    .withParams("key", "a")
+    .execute()
+    .then(RedisToken.error("ERR value is not an integer or out of range"));
+  }
 
 }

@@ -7,11 +7,15 @@ package com.github.tonivade.tinydb.command;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static javaslang.API.Case;
+import static javaslang.API.Match;
+import static javaslang.Predicates.instanceOf;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.RedisToken;
@@ -40,6 +44,22 @@ public class TinyDBResponse {
       }
     }
     return RedisToken.string(SafeString.EMPTY_STRING);
+  }
+
+  public RedisToken addArray(Collection<?> array) {
+    if (array == null) {
+      return RedisToken.array();
+    }
+    return RedisToken.array(array.stream().map(this::parseToken).collect(toList()));
+  }
+
+  private RedisToken parseToken(Object value) {
+    return Match(value).of(
+        Case(instanceOf(Integer.class), RedisToken::integer),
+        Case(instanceOf(Boolean.class), RedisToken::integer),
+        Case(instanceOf(String.class), RedisToken::string),
+        Case(instanceOf(SafeString.class), RedisToken::string),
+        Case(instanceOf(RedisToken.class), Function.identity()));
   }
 
   public RedisToken addArrayValue(Collection<DatabaseValue> array) {
