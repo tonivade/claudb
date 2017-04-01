@@ -27,6 +27,7 @@ public class SetUnionCommandTest {
     .withData("b", set("3", "4"))
     .withParams("a", "b")
     .execute()
+    // FIXME: order
     .then(array(string("1"), string("2"), string("3"), string("4")));
   }
 
@@ -35,6 +36,7 @@ public class SetUnionCommandTest {
     rule.withData("a", set("1", "2", "3"))
     .withParams("a", "b")
     .execute()
+    // FIXME: order
     .then(array(string("1"), string("2"), string("3")));
   }
 

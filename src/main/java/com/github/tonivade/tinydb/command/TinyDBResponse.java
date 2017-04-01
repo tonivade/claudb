@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command;
 
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static javaslang.API.Case;
@@ -58,6 +59,7 @@ public class TinyDBResponse {
         Case(instanceOf(Integer.class), RedisToken::integer),
         Case(instanceOf(Boolean.class), RedisToken::integer),
         Case(instanceOf(String.class), RedisToken::string),
+        Case(instanceOf(Double.class), x -> string(x.toString())),
         Case(instanceOf(SafeString.class), RedisToken::string),
         Case(instanceOf(RedisToken.class), Function.identity()));
   }

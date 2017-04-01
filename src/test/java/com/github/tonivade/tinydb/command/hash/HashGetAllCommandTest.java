@@ -30,6 +30,7 @@ public class HashGetAllCommandTest {
                        entry("key3", "value3")))
     .withParams("a")
     .execute()
+    // FIXME: order
     .then(array(string("key1"), string("value1"),
                 string("key2"), string("value2"),
                 string("key3"), string("value3")));

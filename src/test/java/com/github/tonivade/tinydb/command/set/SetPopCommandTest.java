@@ -9,7 +9,6 @@ import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Set;
@@ -17,6 +16,8 @@ import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 import com.github.tonivade.tinydb.data.DatabaseValue;
@@ -42,7 +43,7 @@ public class SetPopCommandTest {
   public void testExecuteNotExists() throws Exception {
     rule.withParams("key")
     .execute()
-    .then(nullValue());
+    .then(RedisToken.string(SafeString.EMPTY_STRING));
   }
 
 }
