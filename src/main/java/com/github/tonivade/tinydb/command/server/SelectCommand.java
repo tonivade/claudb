@@ -10,7 +10,6 @@ import static java.lang.Integer.parseInt;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
@@ -25,7 +24,7 @@ public class SelectCommand implements ITinyDBCommand {
   public RedisToken execute(IDatabase db, IRequest request) {
     try {
       getSessionState(request.getSession()).setCurrentDB(parseCurrentDB(request));
-      return RedisToken.status(IResponse.RESULT_OK);
+      return RedisToken.responseOk();
     } catch (NumberFormatException e) {
       return RedisToken.error("ERR invalid DB index");
     }

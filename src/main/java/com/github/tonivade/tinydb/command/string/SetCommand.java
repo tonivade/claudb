@@ -11,7 +11,6 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -23,7 +22,7 @@ public class SetCommand implements ITinyDBCommand {
   @Override
   public RedisToken execute(IDatabase db, IRequest request) {
     db.put(safeKey(request.getParam(0)), string(request.getParam(1)));
-    return RedisToken.status(IResponse.RESULT_OK);
+    return RedisToken.responseOk();
   }
 
 }

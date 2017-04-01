@@ -3,8 +3,7 @@ package com.github.tonivade.tinydb.command.transaction;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -68,9 +67,9 @@ public class ExecCommandTest {
 
   private TransactionState createTransaction() {
     TransactionState transaction = new TransactionState();
-    transaction.enqueue(new Request(null, null, safeString("ping"), null));
-    transaction.enqueue(new Request(null, null, safeString("ping"), null));
-    transaction.enqueue(new Request(null, null, safeString("ping"), null));
+    transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
+    transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
+    transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
     return transaction;
   }
 }

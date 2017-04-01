@@ -5,9 +5,8 @@
 
 package com.github.tonivade.tinydb.command;
 
-import static com.github.tonivade.resp.command.IResponse.RESULT_OK;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
-import static com.github.tonivade.resp.protocol.RedisToken.status;
+import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -68,7 +67,7 @@ public class CommandWrapperTest {
 
     RedisToken response = wrapper.execute(request);
 
-    assertThat(response, equalTo(status(RESULT_OK)));
+    assertThat(response, equalTo(responseOk()));
   }
 
   @Test
@@ -79,7 +78,7 @@ public class CommandWrapperTest {
 
     RedisToken response = wrapper.execute(request);
 
-    assertThat(response, equalTo(status(RESULT_OK)));
+    assertThat(response, equalTo(responseOk()));
   }
 
   @Test
@@ -102,7 +101,7 @@ public class CommandWrapperTest {
 
     RedisToken response = wrapper.execute(request);
 
-    assertThat(response, equalTo(status(RESULT_OK)));
+    assertThat(response, equalTo(responseOk()));
   }
 
   @Test
@@ -121,7 +120,7 @@ public class CommandWrapperTest {
   private static class SomeCommand implements ITinyDBCommand {
     @Override
     public RedisToken execute(IDatabase db, IRequest request) {
-      return RedisToken.status(RESULT_OK);
+      return responseOk();
     }
   }
 
@@ -130,7 +129,7 @@ public class CommandWrapperTest {
   private static class LengthCommand implements ITinyDBCommand {
     @Override
     public RedisToken execute(IDatabase db, IRequest request) {
-      return RedisToken.status(RESULT_OK);
+      return responseOk();
     }
   }
 
@@ -139,7 +138,7 @@ public class CommandWrapperTest {
   private static class TypeCommand implements ITinyDBCommand {
     @Override
     public RedisToken execute(IDatabase db, IRequest request) {
-      return RedisToken.status(RESULT_OK);
+      return responseOk();
     }
   }
 }

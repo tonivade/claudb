@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import com.github.tonivade.resp.RedisServer;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
@@ -127,17 +126,18 @@ public class TinyDB extends RedisServer implements ITinyDB {
     }
 
     @Override
-    protected void executeCommand(ICommand command, IRequest request, IResponse response) {
+    protected RedisToken executeCommand(ICommand command, IRequest request) {
         if (!isReadOnly(request.getCommand())) {
             try {
-                response.add(command.execute(request));
-
+                RedisToken response = command.execute(request);
                 replication(request, command);
+                return response;
             } catch (RuntimeException e) {
                 LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
+                return error("error executing command: " + request);
             }
         } else {
-            response.add(error("READONLY You can't write against a read only slave"));
+            return error("READONLY You can't write against a read only slave");
         }
     }
 

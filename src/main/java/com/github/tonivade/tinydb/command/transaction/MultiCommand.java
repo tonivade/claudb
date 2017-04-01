@@ -2,7 +2,6 @@ package com.github.tonivade.tinydb.command.transaction;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TransactionState;
@@ -20,7 +19,7 @@ public class MultiCommand implements ITinyDBCommand {
   public RedisToken execute(IDatabase db, IRequest request) {
     if (!isTxActive(request.getSession())) {
       createTransaction(request.getSession());
-      return RedisToken.status(IResponse.RESULT_OK);
+      return RedisToken.responseOk();
     } else {
       return RedisToken.error("ERR MULTI calls can not be nested");
     }
