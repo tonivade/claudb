@@ -11,29 +11,30 @@ import static org.junit.Assert.assertThat;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.server.SelectCommand;
 
 @CommandUnderTest(SelectCommand.class)
 public class SelectCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() {
-        rule.withParams("10")
-            .execute();
+  @Test
+  public void testExecute() {
+    rule.withParams("10")
+    .execute()
+    .then(RedisToken.status("OK"));
 
-        assertThat(rule.getSessionState().getCurrentDB(), is(10));
-    }
+    assertThat(rule.getSessionState().getCurrentDB(), is(10));
+  }
 
-    @Test
-    public void testExecuteWithInvalidParam() {
-        rule.withParams("asdfsdf")
-            .execute()
-            .verify().addError("ERR invalid DB index");
-    }
+  @Test
+  public void testExecuteWithInvalidParam() {
+    rule.withParams("asdfsdf")
+    .execute()
+    .then(RedisToken.error("ERR invalid DB index"));
+  }
 
 }

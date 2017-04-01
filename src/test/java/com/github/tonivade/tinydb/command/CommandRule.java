@@ -185,8 +185,14 @@ public class CommandRule implements TestRule {
         Assert.assertThat(database.get(key), matcher);
     }
 
-    public void then(RedisToken token) {
-      Assert.assertThat(this.response, equalTo(token));
+    public CommandRule then(RedisToken token) {
+      then(equalTo(token));
+      return this;
+    }
+    
+    public CommandRule then(Matcher<? super RedisToken> matcher) {
+      Assert.assertThat(this.response, matcher);
+      return this;
     }
 
     @SuppressWarnings("unchecked")

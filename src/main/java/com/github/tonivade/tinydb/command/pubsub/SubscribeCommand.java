@@ -11,6 +11,8 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static java.util.Arrays.asList;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -19,6 +21,7 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBResponse;
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -37,6 +40,7 @@ public class SubscribeCommand implements ITinyDBCommand {
   public RedisToken execute(IDatabase db, IRequest request) {
     IDatabase admin = getAdminDatabase(request.getServerContext());
     int i = 1;
+    List<Object> result = new LinkedList<>();
     for (SafeString channel : request.getParams()) {
       admin.merge(safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel)), set(safeString(request.getSession().getId())),
           (oldValue, newValue) -> {
@@ -46,8 +50,9 @@ public class SubscribeCommand implements ITinyDBCommand {
             return set(merge);
           });
       getSessionState(request.getSession()).addSubscription(channel);
-      return RedisToken.array(asList(SUBSCRIBE, channel, i++));
+      result.addAll(asList(SUBSCRIBE, channel, i++));
     }
+    return new TinyDBResponse().addArray(result);
   }
 
 }
