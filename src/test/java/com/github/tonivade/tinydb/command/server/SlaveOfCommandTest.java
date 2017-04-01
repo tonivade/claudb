@@ -8,25 +8,25 @@ package com.github.tonivade.tinydb.command.server;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TinyDBRule;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.server.SlaveOfCommand;
 
 @CommandUnderTest(SlaveOfCommand.class)
 public class SlaveOfCommandTest {
 
-    @Rule
-    public final TinyDBRule server = new TinyDBRule("localhost", 34241);
+  @Rule
+  public final TinyDBRule server = new TinyDBRule("localhost", 34241);
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withParams("localhost", "34241")
-            .execute()
-            .verify().addSimpleStr("OK");
-    }
+  @Test
+  public void testExecute() throws Exception {
+    rule.withParams("localhost", "34241")
+    .execute()
+    .then(RedisToken.status("OK"));
+  }
 
 }

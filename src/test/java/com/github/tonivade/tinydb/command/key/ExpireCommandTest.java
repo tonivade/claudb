@@ -12,27 +12,28 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
 @CommandUnderTest(ExpireCommand.class)
 public class ExpireCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() {
-        rule.withData("test", string("value"))
-            .withParams("test", "10")
-            .execute()
-            .assertKey("test", isNotExpired())
-            .assertValue("test", is(string("value")))
-            .verify().addInt(true);
+  @Test
+  public void testExecute() {
+    rule.withData("test", string("value"))
+    .withParams("test", "10")
+    .execute()
+    .assertKey("test", isNotExpired())
+    .assertValue("test", is(string("value")))
+    .then(RedisToken.integer(true));
 
-        rule.withParams("notExists", "10")
-            .execute()
-            .verify().addInt(false);
-    }
+    rule.withParams("notExists", "10")
+    .execute()
+    .then(RedisToken.integer(false));
+  }
 
 }

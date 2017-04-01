@@ -11,22 +11,22 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.string.SetCommand;
 
 @CommandUnderTest(SetCommand.class)
 public class SetCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() {
-        rule.withParams("a", "1")
-            .execute()
-            .assertValue("a", is(string("1")))
-            .verify().addSimpleStr("OK");
-    }
+  @Test
+  public void testExecute() {
+    rule.withParams("a", "1")
+    .execute()
+    .assertValue("a", is(string("1")))
+    .then(RedisToken.status("OK"));
+  }
 
 }

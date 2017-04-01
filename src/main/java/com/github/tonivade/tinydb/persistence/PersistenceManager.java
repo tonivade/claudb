@@ -28,7 +28,6 @@ import java.util.logging.Logger;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.Response;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisParser;
 import com.github.tonivade.resp.protocol.RedisSerializer;
@@ -131,7 +130,7 @@ public class PersistenceManager implements Runnable {
     ICommand command = server.getCommand(commandToken.getValue().toString());
 
     if (command != null) {
-      command.execute(request(commandToken, paramTokens), new Response());
+      command.execute(request(commandToken, paramTokens));
     }
   }
 

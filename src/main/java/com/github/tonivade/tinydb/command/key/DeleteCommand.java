@@ -10,7 +10,7 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.data.DatabaseValue;
@@ -20,16 +20,16 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamLength(1)
 public class DeleteCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        int removed = 0;
-        for (SafeString key : request.getParams()) {
-            DatabaseValue value = db.remove(safeKey(key));
-            if (value != null) {
-                removed += 1;
-            }
-        }
-        response.addInt(removed);
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    int removed = 0;
+    for (SafeString key : request.getParams()) {
+      DatabaseValue value = db.remove(safeKey(key));
+      if (value != null) {
+        removed += 1;
+      }
     }
+    return RedisToken.integer(removed);
+  }
 
 }

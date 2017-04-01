@@ -10,30 +10,30 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.string.SetExpiredCommand;
 
 @CommandUnderTest(SetExpiredCommand.class)
 public class SetExpiredCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withParams("a", "1", "1")
-            .execute()
-            .assertValue("a", is(string("1")))
-            .verify().addSimpleStr("OK");
+  @Test
+  public void testExecute() throws Exception {
+    rule.withParams("a", "1", "1")
+    .execute()
+    .assertValue("a", is(string("1")))
+    .then(RedisToken.status("OK"));
 
-        Thread.sleep(500);
-        rule.assertKey("a", isNotExpired())
-            .assertValue("a", notNullValue());
+    Thread.sleep(500);
+    rule.assertKey("a", isNotExpired())
+    .assertValue("a", notNullValue());
 
-        Thread.sleep(500);
-        rule.assertKey("a", isExpired())
-            .assertValue("a", nullValue());
-    }
+    Thread.sleep(500);
+    rule.assertKey("a", isExpired())
+    .assertValue("a", nullValue());
+  }
 
 }

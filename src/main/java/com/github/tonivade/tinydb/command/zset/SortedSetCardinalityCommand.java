@@ -5,16 +5,15 @@
 
 package com.github.tonivade.tinydb.command.zset;
 
-import java.util.Map.Entry;
-
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
@@ -29,11 +28,11 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamType(DataType.ZSET)
 public class SortedSetCardinalityCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-        Set<Entry<Float, SafeString>> set = value.getValue();
-        response.addInt(set.size());
-    }
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
+    Set<Entry<Float, SafeString>> set = value.getValue();
+    return RedisToken.integer(set.size());
+  }
 
 }

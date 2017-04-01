@@ -12,7 +12,7 @@ import java.util.List;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
@@ -26,11 +26,11 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamType(DataType.LIST)
 public class ListLengthCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
-        List<String> list = value.getValue();
-        response.addInt(list.size());
-    }
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
+    List<String> list = value.getValue();
+    return RedisToken.integer(list.size());
+  }
 
 }

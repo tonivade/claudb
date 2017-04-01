@@ -5,6 +5,8 @@
 
 package com.github.tonivade.tinydb.command;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import java.util.Optional;
@@ -12,9 +14,9 @@ import java.util.Optional;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.TransactionState;
@@ -65,33 +67,33 @@ public class TinyDBCommandWrapper implements ICommand {
   }
 
   @Override
-  public void execute(IRequest request, IResponse response) {
+  public RedisToken execute(IRequest request) {
     // FIXME: ugly piece of code, please refactor
     IDatabase db = getCurrentDB(request);
     if (request.getLength() < params) {
-      response.addError("ERR wrong number of arguments for '" + request.getCommand() + "' command");
+      return error("ERR wrong number of arguments for '" + request.getCommand() + "' command");
     } else if (dataType != null && !db.isType(safeKey(request.getParam(0)), dataType)) {
-      response.addError("WRONGTYPE Operation against a key holding the wrong kind of value");
+      return error("WRONGTYPE Operation against a key holding the wrong kind of value");
     } else if (isSubscribed(request) && !pubSubAllowed) {
-      response.addError("ERR only (P)SUBSCRIBE / (P)UNSUBSCRIBE / QUIT allowed in this context");
+      return error("ERR only (P)SUBSCRIBE / (P)UNSUBSCRIBE / QUIT allowed in this context");
     } else if (isTxActive(request) && !txIgnore) {
       enqueueRequest(request);
-      response.addSimpleStr("QUEUED");
-    } else {
-      if (command instanceof ITinyDBCommand) {
-        executeTinyDBCommand(db, request, response);
-      } else if (command instanceof ICommand) {
-        executeCommand(request, response);
-      }
+      return status("QUEUED");
     }
+    if (command instanceof ITinyDBCommand) {
+      return executeTinyDBCommand(db, request);
+    } else if (command instanceof ICommand) {
+      return executeCommand(request);
+    }
+    return error("invalid command type: " + command.getClass());
   }
 
-  private void executeCommand(IRequest request, IResponse response) {
-    ((ICommand) command).execute(request, response);
+  private RedisToken executeCommand(IRequest request) {
+    return ((ICommand) command).execute(request);
   }
 
-  private void executeTinyDBCommand(IDatabase db, IRequest request, IResponse response) {
-    ((ITinyDBCommand) command).execute(db, request, response);
+  private RedisToken executeTinyDBCommand(IDatabase db, IRequest request) {
+    return ((ITinyDBCommand) command).execute(db, request);
   }
 
   private void enqueueRequest(IRequest request) {
@@ -117,7 +119,7 @@ public class TinyDBCommandWrapper implements ICommand {
   }
 
   private TinyDBSessionState getSessionState(ISession session) {
-    return sessionState(session).orElseThrow(() -> new IllegalStateException("missiong session state"));
+    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
   private Optional<TinyDBServerState> serverState(IServerContext server) {

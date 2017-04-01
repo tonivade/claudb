@@ -14,9 +14,10 @@ import java.util.Set;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBResponse;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
@@ -30,14 +31,14 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamType(DataType.SET)
 public class SetDifferenceCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue first = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
-        Set<SafeString> result = new HashSet<>(first.<Set<SafeString>>getValue());
-        for (DatabaseKey param : request.getParams().stream().skip(1).map((item) -> safeKey(item)).collect(toList())) {
-            result.removeAll(db.getOrDefault(param, DatabaseValue.EMPTY_SET).<Set<String>>getValue());
-        }
-        response.addArray(result);
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    DatabaseValue first = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
+    Set<SafeString> result = new HashSet<>(first.<Set<SafeString>>getValue());
+    for (DatabaseKey param : request.getParams().stream().skip(1).map((item) -> safeKey(item)).collect(toList())) {
+      result.removeAll(db.getOrDefault(param, DatabaseValue.EMPTY_SET).<Set<String>>getValue());
     }
+    return new TinyDBResponse().addSafeArray(result);
+  }
 
 }

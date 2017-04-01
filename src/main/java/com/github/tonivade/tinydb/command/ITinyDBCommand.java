@@ -3,9 +3,9 @@ package com.github.tonivade.tinydb.command;
 import java.util.Optional;
 
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
@@ -13,7 +13,7 @@ import com.github.tonivade.tinydb.data.IDatabase;
 
 @FunctionalInterface
 public interface ITinyDBCommand {
-  void execute(IDatabase db, IRequest request, IResponse response);
+  RedisToken execute(IDatabase db, IRequest request);
 
   default ITinyDB getTinyDB(IServerContext server) {
     return (ITinyDB) server;

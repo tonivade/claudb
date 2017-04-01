@@ -10,7 +10,7 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
 import com.github.tonivade.tinydb.command.TinyDBResponse;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
@@ -25,10 +25,10 @@ import com.github.tonivade.tinydb.data.IDatabase;
 @ParamType(DataType.SET)
 public class SetMembersCommand implements ITinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
-        new TinyDBResponse(response).addValue(value);
-    }
+  @Override
+  public RedisToken execute(IDatabase db, IRequest request) {
+    DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
+    return new TinyDBResponse().addValue(value);
+  }
 
 }

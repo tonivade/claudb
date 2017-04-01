@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 import com.github.tonivade.tinydb.command.zset.SortedSetRemoveCommand;
@@ -19,21 +20,21 @@ import com.github.tonivade.tinydb.command.zset.SortedSetRemoveCommand;
 @CommandUnderTest(SortedSetRemoveCommand.class)
 public class SortedSetRemoveCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
-            .withParams("key", "a")
-            .execute()
-            .assertValue("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
-            .verify().addInt(1);
+  @Test
+  public void testExecute() throws Exception {
+    rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
+    .withParams("key", "a")
+    .execute()
+    .assertValue("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
+    .then(RedisToken.integer(1));
 
-        rule.withParams("key", "a")
-            .execute()
-            .assertValue("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
-            .verify().addInt(0);
-    }
+    rule.withParams("key", "a")
+    .execute()
+    .assertValue("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
+    .then(RedisToken.integer(0));
+  }
 
 }
