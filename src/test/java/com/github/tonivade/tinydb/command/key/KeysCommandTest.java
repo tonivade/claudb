@@ -5,7 +5,7 @@
 
 package com.github.tonivade.tinydb.command.key;
 
-import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.tinydb.command.InAnyOrderRedisArrayMatcher.containsInAnyOrder;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 
 import org.junit.Rule;
@@ -28,10 +28,9 @@ public class KeysCommandTest {
     .withData("c", string("3"))
     .withParams("*")
     .execute()
-    // FIXME: order
-    .then(array(RedisToken.string("abc"),
-                RedisToken.string("acd"),
-                RedisToken.string("c")));
+    .then(containsInAnyOrder(RedisToken.string("abc"),
+                             RedisToken.string("acd"),
+                             RedisToken.string("c")));
   }
 
   @Test
@@ -41,8 +40,8 @@ public class KeysCommandTest {
     .withData("c", string("3"))
     .withParams("a??")
     .execute()
-    .then(array(RedisToken.string("abc"),
-                RedisToken.string("acd")));
+    .then(containsInAnyOrder(RedisToken.string("abc"),
+                             RedisToken.string("acd")));
   }
 
   @Test
@@ -52,8 +51,8 @@ public class KeysCommandTest {
     .withData("c", string("3"))
     .withParams("a*")
     .execute()
-    .then(array(RedisToken.string("abc"),
-                RedisToken.string("acd")));
+    .then(containsInAnyOrder(RedisToken.string("abc"),
+                             RedisToken.string("acd")));
   }
 
 }

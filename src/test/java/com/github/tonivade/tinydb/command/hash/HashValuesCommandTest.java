@@ -8,6 +8,7 @@ package com.github.tonivade.tinydb.command.hash;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.entry;
+import static com.github.tonivade.tinydb.command.InAnyOrderRedisArrayMatcher.containsInAnyOrder;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 
 import org.junit.Rule;
@@ -30,8 +31,7 @@ public class HashValuesCommandTest {
                        entry("key3", "value3")))
     .withParams("test")
     .execute()
-    // FIXME: order
-    .then(array(string("value1"), string("value2"), string("value3")));
+    .then(containsInAnyOrder(string("value1"), string("value2"), string("value3")));
   }
 
   @Test
