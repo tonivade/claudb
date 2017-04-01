@@ -44,7 +44,7 @@ public class TinyDBResponse {
         break;
       }
     }
-    return RedisToken.string(SafeString.EMPTY_STRING);
+    return RedisToken.nullString();
   }
 
   public RedisToken addArray(Collection<?> array) {

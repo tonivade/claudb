@@ -12,7 +12,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -28,8 +27,8 @@ public class MultiGetCommandTest {
     .withData("c", string("2"))
     .withParams("a", "b", "c")
     .execute()
-    .then(array(RedisToken.string("1"), 
-                RedisToken.string(SafeString.EMPTY_STRING),
+    .then(array(RedisToken.string("1"),
+                RedisToken.nullString(),
                 RedisToken.string("2")));
   }
 
