@@ -5,7 +5,6 @@
 
 package com.github.tonivade.tinydb.command;
 
-import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
@@ -22,9 +21,9 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
-public class TinyDBResponse {
+class TinyDBResponse {
 
-  public RedisToken addValue(DatabaseValue value) {
+  RedisToken convert(DatabaseValue value) {
     if (value != null) {
       switch (value.getType()) {
       case STRING:
@@ -37,7 +36,7 @@ public class TinyDBResponse {
       case LIST:
       case SET:
           Collection<SafeString> list = value.getValue();
-          return addArray(list);
+          return convert(list);
       default:
         break;
       }
@@ -45,7 +44,7 @@ public class TinyDBResponse {
     return RedisToken.nullString();
   }
 
-  public RedisToken addArray(Collection<?> array) {
+  RedisToken convert(Collection<?> array) {
     if (array == null) {
       return RedisToken.array();
     }
@@ -57,9 +56,9 @@ public class TinyDBResponse {
         Case(instanceOf(Integer.class), RedisToken::integer),
         Case(instanceOf(Boolean.class), RedisToken::integer),
         Case(instanceOf(String.class), RedisToken::string),
-        Case(instanceOf(Double.class), x -> string(x.toString())),
+        Case(instanceOf(Double.class), x -> RedisToken.string(x.toString())),
         Case(instanceOf(SafeString.class), RedisToken::string),
-        Case(instanceOf(DatabaseValue.class), this::addValue),
+        Case(instanceOf(DatabaseValue.class), this::convert),
         Case(instanceOf(RedisToken.class), Function.identity()),
         Case(is(null), x -> RedisToken.nullString()));
   }

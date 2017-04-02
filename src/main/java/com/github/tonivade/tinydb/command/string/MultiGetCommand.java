@@ -13,7 +13,7 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.command.TinyDBResponse;
+
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
@@ -30,6 +30,6 @@ public class MultiGetCommand implements ITinyDBCommand {
     for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
       result.add(db.get(key));
     }
-    return new TinyDBResponse().addArray(result);
+    return convert(result);
   }
 }

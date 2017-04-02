@@ -21,7 +21,7 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.command.TinyDBResponse;
+
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.IDatabase;
@@ -52,7 +52,7 @@ public class SubscribeCommand implements ITinyDBCommand {
       getSessionState(request.getSession()).addSubscription(channel);
       result.addAll(asList(SUBSCRIBE, channel, i++));
     }
-    return new TinyDBResponse().addArray(result);
+    return convert(result);
   }
 
 }

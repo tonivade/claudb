@@ -16,7 +16,7 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.command.TinyDBResponse;
+
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
@@ -37,6 +37,6 @@ public class SetIntersectionCommand implements ITinyDBCommand {
     for (DatabaseKey param : request.getParams().stream().skip(1).map((item) -> safeKey(item)).collect(toList())) {
       result.retainAll(db.getOrDefault(param, DatabaseValue.EMPTY_SET).<Set<SafeString>>getValue());
     }
-    return new TinyDBResponse().addArray(result);
+    return convert(result);
   }
 }

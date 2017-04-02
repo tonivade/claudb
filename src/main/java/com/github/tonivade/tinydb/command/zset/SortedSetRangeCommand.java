@@ -21,7 +21,7 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.command.TinyDBResponse;
+
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
@@ -63,7 +63,7 @@ public class SortedSetRangeCommand implements ITinyDBCommand {
         }
       }
 
-      return new TinyDBResponse().addArray(result);
+      return convert(result);
     } catch (NumberFormatException e) {
       return RedisToken.error("ERR value is not an integer or out of range");
     }

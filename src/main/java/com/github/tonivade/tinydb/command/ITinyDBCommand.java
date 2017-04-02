@@ -1,5 +1,6 @@
 package com.github.tonivade.tinydb.command;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import com.github.tonivade.resp.command.IRequest;
@@ -9,6 +10,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.IDatabase;
 
 @FunctionalInterface
@@ -37,5 +39,13 @@ public interface ITinyDBCommand {
 
   default Optional<TinyDBSessionState> sessionState(ISession session) {
     return session.getValue("state");
+  }
+
+  default RedisToken convert(DatabaseValue value) {
+    return new TinyDBResponse().convert(value);
+  }
+
+  default RedisToken convert(Collection<?> list) {
+    return new TinyDBResponse().convert(list);
   }
 }
