@@ -29,7 +29,7 @@ public class SetRandomMemberCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", set("a", "b", "c"))
     .withParams("key")
     .execute()
@@ -40,7 +40,7 @@ public class SetRandomMemberCommandTest {
   }
 
   @Test
-  public void testExecuteNotExists() throws Exception {
+  public void testExecuteNotExists()  {
     rule.withParams("key")
     .execute()
     .then(RedisToken.string(SafeString.EMPTY_STRING));

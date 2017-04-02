@@ -10,12 +10,14 @@ import static com.github.tonivade.tinydb.persistence.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.io.UnsupportedEncodingException;
+
 import org.junit.Test;
 
 public class CRC64Test {
 
     @Test
-    public void testOne() throws Exception {
+    public void testOne() throws UnsupportedEncodingException {
         CRC64 crc = new CRC64();
         byte[] bytes = "123456789".getBytes("UTF-8");
         for (byte b : bytes) {
@@ -26,7 +28,7 @@ public class CRC64Test {
     }
 
     @Test
-    public void testString() throws Exception {
+    public void testString() throws UnsupportedEncodingException {
         CRC64 crc = new CRC64();
         byte[] bytes = "This is a test of the emergency broadcast system.".getBytes("UTF-8");
         crc.update(bytes, 0, bytes.length);
@@ -34,9 +36,8 @@ public class CRC64Test {
         assertThat(toHexString(toByteArray(crc.getValue())), is("27DB187FC15BBC72"));
     }
 
-
     @Test
-    public void testTest() throws Exception {
+    public void testTest() {
         CRC64 crc = new CRC64();
         byte[] bytes = HexUtil.toByteArray("524544495330303033FE00FF");
         crc.update(bytes, 0, bytes.length);

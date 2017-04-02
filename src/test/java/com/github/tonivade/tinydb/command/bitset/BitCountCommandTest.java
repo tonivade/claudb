@@ -20,7 +20,7 @@ public class BitCountCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("test", DatabaseValue.bitset(1, 5, 10, 15))
     .withParams("test")
     .execute()

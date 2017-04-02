@@ -35,7 +35,7 @@ public class UnsubscribeCommandTest {
   private ArgumentCaptor<Collection<?>> captor;
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withAdminData("subscriptions:test", set("localhost:12345"))
     .withParams("test")
     .execute()

@@ -29,7 +29,7 @@ public class PublishCommandTest {
   private ArgumentCaptor<RedisToken> captor;
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withAdminData("subscriptions:test", set("localhost:12345"))
     .withParams("test", "Hello World!")
     .execute()

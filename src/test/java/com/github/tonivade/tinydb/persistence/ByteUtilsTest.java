@@ -15,7 +15,7 @@ import com.github.tonivade.tinydb.persistence.ByteUtils;
 public class ByteUtilsTest {
 
     @Test
-    public void testInt() throws Exception {
+    public void testInt()  {
         byte[] array = ByteUtils.toByteArray(1234567890);
 
         System.out.println(HexUtil.toHexString(array));
@@ -26,7 +26,7 @@ public class ByteUtilsTest {
     }
 
     @Test
-    public void testLong() throws Exception {
+    public void testLong()  {
         byte[] array = ByteUtils.toByteArray(1234567890987654321L);
 
         System.out.println(HexUtil.toHexString(array));

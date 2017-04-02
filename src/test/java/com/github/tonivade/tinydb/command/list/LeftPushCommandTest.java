@@ -21,7 +21,7 @@ public class LeftPushCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withParams("key", "a", "b", "c")
     .execute()
     .assertValue("key", isList("a", "b", "c"))

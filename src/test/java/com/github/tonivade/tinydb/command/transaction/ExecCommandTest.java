@@ -37,7 +37,7 @@ public class ExecCommandTest {
   private final ICommand command = mock(ICommand.class);
 
   @Test
-  public void executeWithActiveTransaction() throws Exception {
+  public void executeWithActiveTransaction()  {
     givenPingCommand();
     givenExistingTransaction();
 
@@ -48,7 +48,7 @@ public class ExecCommandTest {
   }
 
   @Test
-  public void executeWithoutActiveTransaction() throws Exception {
+  public void executeWithoutActiveTransaction()  {
     rule.execute()
     .then(RedisToken.error("ERR EXEC without MULTI"));
   }

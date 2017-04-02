@@ -53,7 +53,7 @@ public class SlaveReplicationTest {
   private ArgumentCaptor<InputStream> captor;
 
   @Test
-  public void testReplication() throws Exception {
+  public void testReplication() throws IOException  {
     SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
 
     slave.start();
@@ -62,7 +62,7 @@ public class SlaveReplicationTest {
   }
 
   @Test
-  public void testProcessCommand() throws Exception {
+  public void testProcessCommand()  {
     when(context.getCommand("PING")).thenReturn(command);
 
     SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);

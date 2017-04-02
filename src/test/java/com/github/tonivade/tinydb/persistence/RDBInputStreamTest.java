@@ -18,6 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import com.github.tonivade.tinydb.data.IDatabase;
 public class RDBInputStreamTest {
 
     @Test
-    public void testEmpty() throws Exception {
+    public void testEmpty() throws IOException {
         RDBInputStream in = new RDBInputStream(array("524544495330303033FE00FF77DE0394AC9D23EA"));
 
         Map<Integer, IDatabase> databases = in.parse();
@@ -38,7 +39,7 @@ public class RDBInputStreamTest {
     }
 
     @Test
-    public void testAll() throws Exception {
+    public void testAll() throws IOException {
         RDBInputStream in = new RDBInputStream(array("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));
 
         Map<Integer, IDatabase> databases = in.parse();

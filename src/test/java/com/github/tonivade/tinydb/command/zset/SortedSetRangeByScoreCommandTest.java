@@ -23,7 +23,7 @@ public class SortedSetRangeByScoreCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "3")
     .execute()
@@ -31,7 +31,7 @@ public class SortedSetRangeByScoreCommandTest {
   }
 
   @Test
-  public void testExecuteWithScores() throws Exception {
+  public void testExecuteWithScores()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "3", "WITHSCORES")
     .execute()
@@ -41,7 +41,7 @@ public class SortedSetRangeByScoreCommandTest {
   }
 
   @Test
-  public void testExecuteWithLimit() throws Exception {
+  public void testExecuteWithLimit()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "3", "LIMIT", "1", "2")
     .execute()
@@ -49,7 +49,7 @@ public class SortedSetRangeByScoreCommandTest {
   }
 
   @Test
-  public void testExecuteExclusive() throws Exception {
+  public void testExecuteExclusive()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "(1", "3")
     .execute()
@@ -57,7 +57,7 @@ public class SortedSetRangeByScoreCommandTest {
   }
 
   @Test
-  public void testExecuteInfinity() throws Exception {
+  public void testExecuteInfinity()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "-inf", "+inf")
     .execute()

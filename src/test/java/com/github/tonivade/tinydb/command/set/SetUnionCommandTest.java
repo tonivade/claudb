@@ -22,7 +22,7 @@ public class SetUnionCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("a", set("1", "2", "3"))
     .withData("b", set("3", "4"))
     .withParams("a", "b")
@@ -31,7 +31,7 @@ public class SetUnionCommandTest {
   }
 
   @Test
-  public void testExecuteNoExists() throws Exception {
+  public void testExecuteNoExists()  {
     rule.withData("a", set("1", "2", "3"))
     .withParams("a", "b")
     .execute()

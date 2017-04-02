@@ -28,7 +28,7 @@ public class TinyDBClientTest {
     public final TinyDBRule rule = new TinyDBRule();
 
     @Test
-    public void testClient() throws Exception {
+    public void testClient()  {
         ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
         IRedisCallback callback = mock(IRedisCallback.class);

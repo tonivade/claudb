@@ -23,7 +23,7 @@ public class SlaveOfCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withParams("localhost", "34241")
     .execute()
     .then(RedisToken.status("OK"));

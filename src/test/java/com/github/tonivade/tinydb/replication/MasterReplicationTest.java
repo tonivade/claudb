@@ -39,7 +39,7 @@ public class MasterReplicationTest {
     private final TinyDBServerState serverState = new TinyDBServerState(1);
 
     @Test
-    public void testReplication() throws Exception {
+    public void testReplication()  {
         when(server.getCommandsToReplicate()).thenReturn(asList(request()));
         when(server.getValue("state")).thenReturn(Optional.of(serverState));
 

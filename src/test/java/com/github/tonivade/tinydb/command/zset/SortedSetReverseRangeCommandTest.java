@@ -23,7 +23,7 @@ public class SortedSetReverseRangeCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "-1", "0")
     .execute()

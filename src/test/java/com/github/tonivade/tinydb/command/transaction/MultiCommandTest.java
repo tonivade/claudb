@@ -19,13 +19,13 @@ public class MultiCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void executeWithoutActiveTransaction() throws Exception {
+  public void executeWithoutActiveTransaction()  {
     rule.execute()
     .then(RedisToken.status("OK"));
   }
 
   @Test
-  public void executeWithActiveTransaction() throws Exception {
+  public void executeWithActiveTransaction()  {
     when(rule.getSession().getValue("tx")).thenReturn(Optional.of(new TransactionState()));
 
     rule.execute()

@@ -17,7 +17,7 @@ import org.junit.Test;
 public class SortedSetTest {
 
     @Test
-    public void testName() throws Exception {
+    public void testName()  {
         SortedSet set = new SortedSet();
 
         assertThat(set.add(score(1, safeString("a"))), is(true));
@@ -39,7 +39,7 @@ public class SortedSetTest {
     }
 
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals()  {
         SortedSet setA = new SortedSet();
         setA.add(score(1, safeString("a")));
         setA.add(score(2, safeString("b")));
@@ -53,7 +53,7 @@ public class SortedSetTest {
     }
 
     @Test
-    public void testNotEquals() throws Exception {
+    public void testNotEquals()  {
         SortedSet setA = new SortedSet();
         setA.add(score(1, safeString("a")));
 
@@ -65,7 +65,7 @@ public class SortedSetTest {
     }
 
     @Test
-    public void testScore() throws Exception {
+    public void testScore()  {
         SortedSet set = new SortedSet();
         set.add(score(1, safeString("a")));
         set.add(score(2, safeString("b")));

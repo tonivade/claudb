@@ -22,7 +22,7 @@ public class HashLengthCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", hash(entry("a", "1"), entry("b", "2")))
     .withParams("key", "a")
     .execute()

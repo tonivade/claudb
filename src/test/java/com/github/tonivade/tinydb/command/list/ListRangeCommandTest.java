@@ -22,7 +22,7 @@ public class ListRangeCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "0", "-1")
     .execute()

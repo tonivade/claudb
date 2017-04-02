@@ -53,18 +53,18 @@ public class PersistenceManagerTest {
   private PersistenceManager manager;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp()  {
     this.manager = new PersistenceManager(server, withPersistence());
     deleteFiles();
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown()  {
     deleteFiles();
   }
 
   @Test
-  public void testRun() throws Exception {
+  public void testRun() throws IOException {
     doAnswer(new ExportRDB()).when(server).exportRDB(any());
 
     manager.run();
@@ -77,7 +77,7 @@ public class PersistenceManagerTest {
   }
 
   @Test
-  public void testStop() throws Exception {
+  public void testStop() throws IOException {
     manager.stop();
 
     verify(server).exportRDB(any());
@@ -86,7 +86,7 @@ public class PersistenceManagerTest {
   }
 
   @Test
-  public void testStart() throws Exception {
+  public void testStart() throws IOException {
     ICommand cmd = mock(ICommand.class);
     when(server.getCommand(anyString())).thenReturn(cmd);
 
@@ -102,7 +102,7 @@ public class PersistenceManagerTest {
   }
 
   @Test
-  public void testAppend() throws Exception {
+  public void testAppend() throws InterruptedException {
     manager.start();
     manager.append(array());
 

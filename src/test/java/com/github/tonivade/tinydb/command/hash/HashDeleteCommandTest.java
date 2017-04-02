@@ -22,7 +22,7 @@ public class HashDeleteCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", hash(entry("a", "1")))
     .withParams("key", "a", "b", "c")
     .execute()
@@ -30,7 +30,7 @@ public class HashDeleteCommandTest {
   }
 
   @Test
-  public void testExecuteNoKeys() throws Exception {
+  public void testExecuteNoKeys()  {
     rule.withData("key", hash(entry("d", "1")))
     .withParams("key", "a", "b", "c")
     .execute()

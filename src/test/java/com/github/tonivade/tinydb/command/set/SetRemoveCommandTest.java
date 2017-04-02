@@ -22,7 +22,7 @@ public class SetRemoveCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", set("a", "b", "c"))
     .withParams("key", "a")
     .execute()

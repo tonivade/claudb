@@ -21,7 +21,7 @@ public class SetExpiredCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute() throws InterruptedException  {
     rule.withParams("a", "1", "1")
     .execute()
     .assertValue("a", is(string("1")))

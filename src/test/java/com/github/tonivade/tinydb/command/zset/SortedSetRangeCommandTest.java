@@ -31,7 +31,7 @@ public class SortedSetRangeCommandTest {
   private ArgumentCaptor<Collection<?>> captor;
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "0", "-1")
     .execute()
@@ -39,7 +39,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteWithScores() throws Exception {
+  public void testExecuteWithScores()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "0", "-1", "WITHSCORES")
     .execute()
@@ -49,7 +49,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteHead() throws Exception {
+  public void testExecuteHead()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "0", "1")
     .execute()
@@ -57,7 +57,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteTail() throws Exception {
+  public void testExecuteTail()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "-2", "-1")
     .execute()
@@ -65,7 +65,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteToOutOfRange() throws Exception {
+  public void testExecuteToOutOfRange()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "4")
     .execute()
@@ -73,7 +73,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteFromOutOfRange() throws Exception {
+  public void testExecuteFromOutOfRange()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "4", "6")
     .execute()
@@ -81,7 +81,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteFromOrder() throws Exception {
+  public void testExecuteFromOrder()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "-1", "0")
     .execute()
@@ -89,7 +89,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteOne() throws Exception {
+  public void testExecuteOne()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "0", "0")
     .execute()
@@ -97,7 +97,7 @@ public class SortedSetRangeCommandTest {
   }
 
   @Test
-  public void testExecuteNoExists() throws Exception {
+  public void testExecuteNoExists()  {
     rule.withParams("key", "0", "-1")
     .execute()
     .then(RedisToken.array());

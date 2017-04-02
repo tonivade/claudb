@@ -22,7 +22,7 @@ public class SetBitCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecuteOne() throws Exception {
+  public void testExecuteOne()  {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "10", "1")
     .execute()
@@ -30,7 +30,7 @@ public class SetBitCommandTest {
   }
 
   @Test
-  public void testExecuteZero() throws Exception {
+  public void testExecuteZero()  {
     rule.withData("test", DatabaseValue.bitset(10))
     .withParams("test", "10", "0")
     .execute()
@@ -38,7 +38,7 @@ public class SetBitCommandTest {
   }
 
   @Test
-  public void testExecuteBitFormat() throws Exception {
+  public void testExecuteBitFormat()  {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "1", "a")
     .execute()
@@ -46,7 +46,7 @@ public class SetBitCommandTest {
   }
 
   @Test
-  public void testExecuteOffsetFormat() throws Exception {
+  public void testExecuteOffsetFormat()  {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "a", "0")
     .execute()

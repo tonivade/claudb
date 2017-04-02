@@ -22,7 +22,7 @@ public class SortedSetCardinalityCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() throws Exception {
+  public void testExecute()  {
     rule.withData("key", zset(score(1.0, "a"), score(2.0, "b"), score(3.0, "c")))
     .withParams("key")
     .execute()
