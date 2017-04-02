@@ -14,6 +14,8 @@ import static javaslang.Predicates.is;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -30,13 +32,15 @@ class TinyDBResponse {
           SafeString string = value.getValue();
           return RedisToken.string(string);
       case HASH:
-      case ZSET:
           Map<SafeString, SafeString> map = value.getValue();
           return RedisToken.array(keyValueList(map));
       case LIST:
       case SET:
           Collection<SafeString> list = value.getValue();
           return convert(list);
+      case ZSET:
+          Set<Entry<Double, SafeString>> set = value.getValue();
+          return convert(serialize(set));
       default:
         break;
       }
@@ -68,5 +72,11 @@ class TinyDBResponse {
         .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
         .map(RedisToken::string)
         .collect(toList());
+  }
+
+  private static Collection<?> serialize(Set<Entry<Double, SafeString>> set)
+  {
+    return set.stream()
+        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue())).collect(toList());
   }
 }
