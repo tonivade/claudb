@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.set;
 
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
@@ -38,7 +37,6 @@ public class SetUnionCommand implements ITinyDBCommand {
     for (DatabaseKey param : request.getParams().stream().skip(1).map((item) -> safeKey(item)).collect(toList())) {
       result.addAll(db.getOrDefault(param, DatabaseValue.EMPTY_SET).<Set<SafeString>>getValue());
     }
-    return new TinyDBResponse().addSafeArray(result);
+    return new TinyDBResponse().addArray(result);
   }
-
 }

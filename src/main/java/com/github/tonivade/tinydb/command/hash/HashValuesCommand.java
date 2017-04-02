@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.hash;
 
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
@@ -32,7 +31,6 @@ public class HashValuesCommand implements ITinyDBCommand {
   public RedisToken execute(IDatabase db, IRequest request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
     Map<SafeString, SafeString> map = value.getValue();
-    return new TinyDBResponse().addSafeArray(map.values());
+    return new TinyDBResponse().addArray(map.values());
   }
-
 }

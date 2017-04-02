@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.key;
 
 import static java.util.stream.Collectors.toSet;
@@ -34,7 +33,7 @@ public class KeysCommand implements ITinyDBCommand {
       return pattern.matcher(key.toString()).matches();
     };
     Set<SafeString> keys = db.keySet().stream().filter(predicate).map(DatabaseKey::getValue).collect(toSet());
-    return new TinyDBResponse().addSafeArray(keys);
+    return new TinyDBResponse().addArray(keys);
   }
 
   private Pattern createPattern(SafeString param) {
@@ -126,5 +125,4 @@ public class KeysCommand implements ITinyDBCommand {
     }
     return sb.toString();
   }
-
 }

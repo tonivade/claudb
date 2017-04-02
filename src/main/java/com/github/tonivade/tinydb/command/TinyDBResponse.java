@@ -6,16 +6,15 @@
 package com.github.tonivade.tinydb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
 import static javaslang.Predicates.instanceOf;
+import static javaslang.Predicates.is;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -23,7 +22,6 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
-// FIXME: refactor this ugly class
 public class TinyDBResponse {
 
   public RedisToken addValue(DatabaseValue value) {
@@ -39,7 +37,7 @@ public class TinyDBResponse {
       case LIST:
       case SET:
           Collection<SafeString> list = value.getValue();
-          return RedisToken.array(safeArrayList(list));
+          return addArray(list);
       default:
         break;
       }
@@ -61,35 +59,9 @@ public class TinyDBResponse {
         Case(instanceOf(String.class), RedisToken::string),
         Case(instanceOf(Double.class), x -> string(x.toString())),
         Case(instanceOf(SafeString.class), RedisToken::string),
-        Case(instanceOf(RedisToken.class), Function.identity()));
-  }
-
-  public RedisToken addArrayValue(Collection<DatabaseValue> array) {
-    if (array != null) {
-      return RedisToken.array(arrayValueList(array));
-    }
-    return RedisToken.array();
-  }
-
-  public RedisToken addSafeArray(Collection<SafeString> array) {
-    if (array != null) {
-      return RedisToken.array(safeArrayList(array));
-    }
-    return RedisToken.array();
-  }
-
-  public RedisToken addStringArray(Collection<String> array) {
-    if (array != null) {
-      return RedisToken.array(stringArrayList(array));
-    }
-    return RedisToken.array();
-  }
-
-  private List<RedisToken> arrayValueList(Collection<DatabaseValue> array) {
-    return array.stream().map(Optional::ofNullable)
-        .map(op -> op.map(identity()).orElse(null))
-        .map(this::addValue)
-        .collect(toList());
+        Case(instanceOf(DatabaseValue.class), this::addValue),
+        Case(instanceOf(RedisToken.class), Function.identity()),
+        Case(is(null), x -> RedisToken.nullString()));
   }
 
   private List<RedisToken> keyValueList(Map<SafeString, SafeString> map) {
@@ -97,13 +69,5 @@ public class TinyDBResponse {
         .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
         .map(RedisToken::string)
         .collect(toList());
-  }
-
-  private List<RedisToken> safeArrayList(Collection<SafeString> list) {
-    return list.stream().map(RedisToken::string).collect(toList());
-  }
-
-  private List<RedisToken> stringArrayList(Collection<String> list) {
-    return list.stream().map(RedisToken::string).collect(toList());
   }
 }

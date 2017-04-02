@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.list;
 
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
@@ -49,10 +48,9 @@ public class ListRangeCommand implements ITinyDBCommand {
 
       List<SafeString> result = list.stream().skip(min).limit((max - min) + 1).collect(toList());
 
-      return new TinyDBResponse().addSafeArray(result);
+      return new TinyDBResponse().addArray(result);
     } catch (NumberFormatException e) {
       return RedisToken.error("ERR value is not an integer or out of range");
     }
   }
-
 }

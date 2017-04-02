@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.string;
 
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class MultiGetCommand implements ITinyDBCommand {
     for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
       result.add(db.get(key));
     }
-    return new TinyDBResponse().addArrayValue(result);
+    return new TinyDBResponse().addArray(result);
   }
-
 }
