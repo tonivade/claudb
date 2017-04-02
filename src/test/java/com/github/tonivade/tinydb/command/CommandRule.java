@@ -33,7 +33,7 @@ import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 public class CommandRule implements TestRule {
 
@@ -43,7 +43,7 @@ public class CommandRule implements TestRule {
 
     private ISession session;
 
-    private ITinyDBCommand command;
+    private TinyDBCommand command;
 
     private final Object target;
 
@@ -65,7 +65,7 @@ public class CommandRule implements TestRule {
         return response;
     }
 
-    public IDatabase getDatabase() {
+    public Database getDatabase() {
         return serverState.getDatabase(0);
     }
 
@@ -77,7 +77,7 @@ public class CommandRule implements TestRule {
         return server;
     }
 
-    public IDatabase getAdminDatabase() {
+    public Database getAdminDatabase() {
         return serverState.getAdminDatabase();
     }
 
@@ -129,7 +129,7 @@ public class CommandRule implements TestRule {
         return this;
     }
 
-    private void withData(IDatabase database, DatabaseKey key, DatabaseValue value) {
+    private void withData(Database database, DatabaseKey key, DatabaseValue value) {
         database.put(key, value);
     }
 
@@ -177,11 +177,11 @@ public class CommandRule implements TestRule {
         return this;
     }
 
-    private void assertKey(IDatabase database, DatabaseKey key, Matcher<DatabaseKey> matcher) {
+    private void assertKey(Database database, DatabaseKey key, Matcher<DatabaseKey> matcher) {
         Assert.assertThat(database.getKey(key), matcher);
     }
 
-    private void assertValue(IDatabase database, DatabaseKey key, Matcher<DatabaseValue> matcher) {
+    private void assertValue(Database database, DatabaseKey key, Matcher<DatabaseValue> matcher) {
         Assert.assertThat(database.get(key), matcher);
     }
 

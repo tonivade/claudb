@@ -12,7 +12,7 @@ import java.util.Set;
 
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.SimpleDatabase;
 import com.github.tonivade.tinydb.persistence.RDBInputStream;
 import com.github.tonivade.tinydb.persistence.RDBOutputStream;
@@ -24,8 +24,8 @@ public class TinyDBServerState {
   private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
 
   private boolean master;
-  private final List<IDatabase> databases = new ArrayList<>();
-  private final IDatabase admin = new SimpleDatabase();
+  private final List<Database> databases = new ArrayList<>();
+  private final Database admin = new SimpleDatabase();
 
   public TinyDBServerState(int numDatabases) {
     this.master = true;
@@ -42,11 +42,11 @@ public class TinyDBServerState {
     return master;
   }
 
-  public IDatabase getAdminDatabase() {
+  public Database getAdminDatabase() {
     return admin;
   }
 
-  public IDatabase getDatabase(int id) {
+  public Database getDatabase(int id) {
     return databases.get(id);
   }
 
@@ -63,7 +63,7 @@ public class TinyDBServerState {
     RDBOutputStream rdb = new RDBOutputStream(output);
     rdb.preamble(RDB_VERSION);
     for (int i = 0; i < databases.size(); i++) {
-      IDatabase db = databases.get(i);
+      Database db = databases.get(i);
       if (!db.isEmpty()) {
         rdb.select(i);
         rdb.dabatase(db);

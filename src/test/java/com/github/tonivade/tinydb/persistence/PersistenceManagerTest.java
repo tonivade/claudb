@@ -38,7 +38,7 @@ import org.mockito.stubbing.Answer;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
@@ -71,7 +71,7 @@ public class PersistenceManagerTest {
 
     RDBInputStream input = new RDBInputStream(new FileInputStream(DUMP_FILE));
 
-    Map<Integer, IDatabase> databases = input.parse();
+    Map<Integer, Database> databases = input.parse();
 
     assertThat(databases, notNullValue());
   }

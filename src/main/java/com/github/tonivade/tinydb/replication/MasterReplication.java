@@ -27,7 +27,7 @@ import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 public class MasterReplication implements Runnable {
 
@@ -85,7 +85,7 @@ public class MasterReplication implements Runnable {
     }
   }
 
-  private IDatabase getAdminDatabase() {
+  private Database getAdminDatabase() {
     return getServerState().getAdminDatabase();
   }
 

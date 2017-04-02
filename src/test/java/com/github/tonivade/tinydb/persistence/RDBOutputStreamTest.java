@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.SimpleDatabase;
 
 public class RDBOutputStreamTest {
@@ -117,14 +117,14 @@ public class RDBOutputStreamTest {
 
     private static class DatabaseBuiler {
 
-        private final IDatabase db = new SimpleDatabase();
+        private final Database db = new SimpleDatabase();
 
         public DatabaseBuiler add(DatabaseKey key, DatabaseValue value) {
             db.put(key, value);
             return this;
         }
 
-        public IDatabase build() {
+        public Database build() {
             return db;
         }
     }

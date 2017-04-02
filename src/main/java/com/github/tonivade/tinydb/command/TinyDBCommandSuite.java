@@ -158,6 +158,7 @@ public class TinyDBCommandSuite extends CommandSuite {
     addCommand(MultiCommand.class);
     addCommand(ExecCommand.class);
 
+    // scripting
     addCommand(EvalCommand.class);
   }
 }

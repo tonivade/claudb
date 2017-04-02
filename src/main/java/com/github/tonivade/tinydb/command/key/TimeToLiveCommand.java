@@ -11,14 +11,14 @@ import java.time.Instant;
 
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.DatabaseKey;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
-public abstract class TimeToLiveCommand implements ITinyDBCommand {
+public abstract class TimeToLiveCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
+  public RedisToken execute(Database db, IRequest request) {
     DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
     if (key != null) {
       return keyExists(key);

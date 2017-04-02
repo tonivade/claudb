@@ -13,18 +13,18 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DatabaseKey;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("exists")
 @ParamLength(1)
-public class ExistsCommand implements ITinyDBCommand {
+public class ExistsCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
+  public RedisToken execute(Database db, IRequest request) {
     DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
     return RedisToken.integer(key != null ? !key.isExpired(Instant.now()) : false);
   }

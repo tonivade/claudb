@@ -11,16 +11,16 @@ import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TransactionState;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.TxIgnore;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("exec")
 @TxIgnore
-public class ExecCommand implements ITinyDBCommand {
+public class ExecCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
+  public RedisToken execute(Database db, IRequest request) {
     Optional<TransactionState> transaction = getTransactionIfExists(request.getSession());
     if (transaction.isPresent()) {
       ITinyDB server = getTinyDB(request.getServerContext());

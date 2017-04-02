@@ -12,20 +12,20 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("mget")
 @ParamLength(1)
-public class MultiGetCommand implements ITinyDBCommand {
+public class MultiGetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
+  public RedisToken execute(Database db, IRequest request) {
     List<DatabaseValue> result = new ArrayList<>(request.getLength());
     for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
       result.add(db.get(key));

@@ -17,22 +17,22 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("publish")
 @ParamLength(2)
-public class PublishCommand implements ITinyDBCommand {
+public class PublishCommand implements TinyDBCommand {
 
   private static final SafeString MESSAGE = safeString("message");
 
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
-    IDatabase admin = getAdminDatabase(request.getServerContext());
+  public RedisToken execute(Database db, IRequest request) {
+    Database admin = getAdminDatabase(request.getServerContext());
     DatabaseValue value = getSubscriptors(admin, request.getParam(0));
 
     Set<SafeString> subscribers = value.<Set<SafeString>>getValue();
@@ -47,7 +47,7 @@ public class PublishCommand implements ITinyDBCommand {
     getTinyDB(request.getServerContext()).publish(subscriber.toString(), message(request));
   }
 
-  private DatabaseValue getSubscriptors(IDatabase admin, SafeString channel) {
+  private DatabaseValue getSubscriptors(Database admin, SafeString channel) {
     DatabaseKey subscriptorsKey = safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel));
     return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
   }

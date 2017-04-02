@@ -13,15 +13,15 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("mset")
 @ParamLength(2)
-public class MultiSetCommand implements ITinyDBCommand {
+public class MultiSetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
+  public RedisToken execute(Database db, IRequest request) {
     SafeString key = null;
     for (SafeString value : request.getParams()) {
       if (key != null) {

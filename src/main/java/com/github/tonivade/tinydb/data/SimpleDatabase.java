@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 
-public class SimpleDatabase implements IDatabase {
+public class SimpleDatabase implements Database {
 
   private final NavigableMap<DatabaseKey, DatabaseValue> cache;
 

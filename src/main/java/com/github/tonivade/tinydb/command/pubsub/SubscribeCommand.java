@@ -20,25 +20,25 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("subscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class SubscribeCommand implements ITinyDBCommand {
+public class SubscribeCommand implements TinyDBCommand {
 
   private static final SafeString SUBSCRIBE = safeString("subscribe");
 
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
-    IDatabase admin = getAdminDatabase(request.getServerContext());
+  public RedisToken execute(Database db, IRequest request) {
+    Database admin = getAdminDatabase(request.getServerContext());
     int i = 1;
     List<Object> result = new LinkedList<>();
     for (SafeString channel : request.getParams()) {

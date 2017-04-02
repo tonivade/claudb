@@ -25,7 +25,7 @@ import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.command.annotation.TxIgnore;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 public class TinyDBCommandWrapper implements ICommand {
 
@@ -69,7 +69,7 @@ public class TinyDBCommandWrapper implements ICommand {
   @Override
   public RedisToken execute(IRequest request) {
     // FIXME: ugly piece of code, please refactor
-    IDatabase db = getCurrentDB(request);
+    Database db = getCurrentDB(request);
     if (request.getLength() < params) {
       return error("ERR wrong number of arguments for '" + request.getCommand() + "' command");
     } else if (dataType != null && !db.isType(safeKey(request.getParam(0)), dataType)) {
@@ -80,7 +80,7 @@ public class TinyDBCommandWrapper implements ICommand {
       enqueueRequest(request);
       return status("QUEUED");
     }
-    if (command instanceof ITinyDBCommand) {
+    if (command instanceof TinyDBCommand) {
       return executeTinyDBCommand(db, request);
     } else if (command instanceof ICommand) {
       return executeCommand(request);
@@ -92,8 +92,8 @@ public class TinyDBCommandWrapper implements ICommand {
     return ((ICommand) command).execute(request);
   }
 
-  private RedisToken executeTinyDBCommand(IDatabase db, IRequest request) {
-    return ((ITinyDBCommand) command).execute(db, request);
+  private RedisToken executeTinyDBCommand(Database db, IRequest request) {
+    return ((TinyDBCommand) command).execute(db, request);
   }
 
   private void enqueueRequest(IRequest request) {
@@ -108,7 +108,7 @@ public class TinyDBCommandWrapper implements ICommand {
     return session.getValue("tx");
   }
 
-  private IDatabase getCurrentDB(IRequest request) {
+  private Database getCurrentDB(IRequest request) {
     TinyDBServerState serverState = getServerState(request.getServerContext());
     TinyDBSessionState sessionState = getSessionState(request.getSession());
     return serverState.getDatabase(sessionState.getCurrentDB());

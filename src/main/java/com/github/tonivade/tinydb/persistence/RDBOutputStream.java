@@ -23,7 +23,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 public class RDBOutputStream {
 
@@ -60,7 +60,7 @@ public class RDBOutputStream {
     length(db);
   }
 
-  public void dabatase(IDatabase db) throws IOException {
+  public void dabatase(Database db) throws IOException {
     for (Entry<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
       value(entry.getKey(), entry.getValue());
     }

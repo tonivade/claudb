@@ -33,12 +33,12 @@ import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseKey;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {
   @Mock
-  private IDatabase db;
+  private Database db;
   @Mock
   private IRequest request;
   @Mock
@@ -117,27 +117,27 @@ public class CommandWrapperTest {
   }
 
   @Command("test")
-  private static class SomeCommand implements ITinyDBCommand {
+  private static class SomeCommand implements TinyDBCommand {
     @Override
-    public RedisToken execute(IDatabase db, IRequest request) {
+    public RedisToken execute(Database db, IRequest request) {
       return responseOk();
     }
   }
 
   @Command("test")
   @ParamLength(2)
-  private static class LengthCommand implements ITinyDBCommand {
+  private static class LengthCommand implements TinyDBCommand {
     @Override
-    public RedisToken execute(IDatabase db, IRequest request) {
+    public RedisToken execute(Database db, IRequest request) {
       return responseOk();
     }
   }
 
   @Command("test")
   @ParamType(DataType.STRING)
-  private static class TypeCommand implements ITinyDBCommand {
+  private static class TypeCommand implements TinyDBCommand {
     @Override
-    public RedisToken execute(IDatabase db, IRequest request) {
+    public RedisToken execute(Database db, IRequest request) {
       return responseOk();
     }
   }

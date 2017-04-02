@@ -25,7 +25,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 public class RDBInputStreamTest {
 
@@ -33,7 +33,7 @@ public class RDBInputStreamTest {
     public void testEmpty() throws IOException {
         RDBInputStream in = new RDBInputStream(array("524544495330303033FE00FF77DE0394AC9D23EA"));
 
-        Map<Integer, IDatabase> databases = in.parse();
+        Map<Integer, Database> databases = in.parse();
 
         assertThat(databases.size(), is(1));
     }
@@ -42,7 +42,7 @@ public class RDBInputStreamTest {
     public void testAll() throws IOException {
         RDBInputStream in = new RDBInputStream(array("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));
 
-        Map<Integer, IDatabase> databases = in.parse();
+        Map<Integer, Database> databases = in.parse();
 
         assertThat(databases.size(), is(6));
 
@@ -55,7 +55,7 @@ public class RDBInputStreamTest {
         assertThat(databases.get(5).isEmpty(), is(true));
     }
 
-    private void assertDB(IDatabase db,DatabaseValue value) {
+    private void assertDB(Database db,DatabaseValue value) {
         assertThat(db, notNullValue());
         assertThat(db.get(safeKey("a")), is(value));
     }

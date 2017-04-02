@@ -21,24 +21,24 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("unsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class UnsubscribeCommand implements ITinyDBCommand {
+public class UnsubscribeCommand implements TinyDBCommand {
 
   private static final SafeString UNSUBSCRIBE = safeString("unsubscribe");
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
-    IDatabase admin = getAdminDatabase(request.getServerContext());
+  public RedisToken execute(Database db, IRequest request) {
+    Database admin = getAdminDatabase(request.getServerContext());
     Collection<SafeString> channels = getChannels(request);
     int i = channels.size();
     List<Object> result = new LinkedList<>();

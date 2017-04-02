@@ -24,14 +24,14 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("info")
-public class InfoCommand implements ITinyDBCommand {
+public class InfoCommand implements TinyDBCommand {
 
   private static final String SHARP = "#";
   private static final String SEPARATOR = ":";
@@ -48,7 +48,7 @@ public class InfoCommand implements ITinyDBCommand {
   private static final String SECTION_SERVER = "server";
 
   @Override
-  public RedisToken execute(IDatabase db, IRequest request) {
+  public RedisToken execute(Database db, IRequest request) {
     Map<String, Map<String, String>> sections = new HashMap<>();
     Optional<SafeString> param = request.getOptionalParam(0);
     if (param.isPresent()) {
