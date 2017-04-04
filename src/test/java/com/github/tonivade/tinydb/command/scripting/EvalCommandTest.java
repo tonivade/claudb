@@ -101,4 +101,12 @@ public class EvalCommandTest {
         .execute()
         .then(error("eval threw javax.script.ScriptException: [string \"script\"]:1: unfinished string"));
   }
+
+  @Test
+  public void testExcecuteScript()
+  {
+    rule.withParams("local keys = redis.call('keys', '*region*') for i,k in ipairs(keys) do local res = redis.call('del', k) end", "0")
+        .execute()
+        .then(error("ERROR"));
+  }
 }
