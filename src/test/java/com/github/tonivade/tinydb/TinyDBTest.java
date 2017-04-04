@@ -11,6 +11,7 @@ import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
+import java.util.function.Consumer;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class TinyDBTest {
 
   @Test
   public void testCommands() {
-    try (Jedis jedis = createClientConnection()) {
+    execute(jedis -> {
       assertThat(jedis.ping(), equalTo("PONG"));
       assertThat(jedis.echo("Hi!"), equalTo("Hi!"));
       assertThat(jedis.set("a", "1"), equalTo("OK"));
@@ -41,12 +42,12 @@ public class TinyDBTest {
       assertThat(jedis.get("a"), nullValue());
       assertThat(jedis.eval("return 1"), equalTo(1L));
       assertThat(jedis.quit(), equalTo("OK"));
-    }
+    });
   }
 
   @Test
   public void testPipeline() {
-    try (Jedis jedis = createClientConnection()) {
+    execute(jedis -> {
       Pipeline p = jedis.pipelined();
       p.ping();
       p.echo("Hi!");
@@ -61,7 +62,6 @@ public class TinyDBTest {
       p.get("a");
       p.del("a");
       p.get("a");
-      p.eval("return 1");
 
       Iterator<Object> result = p.syncAndReturnAll().iterator();
       assertThat(result.next(), equalTo("PONG"));
@@ -77,39 +77,41 @@ public class TinyDBTest {
       assertThat(result.next(), equalTo("2"));
       assertThat(result.next(), equalTo(1L));
       assertThat(result.next(), nullValue());
-      assertThat(result.next(), equalTo(1L));
 
       jedis.quit();
-    }
+    });
   }
 
   @Test
-  public void testEval() throws Exception
+  public void testEval()
   {
-    try (Jedis jedis = createClientConnection()) {
-      assertThat(jedis.eval("return 1"), equalTo(1L));
-    }
+    execute(jedis -> assertThat(jedis.eval("return 1"), equalTo(1L)));
   }
 
   @Test
-  public void testEvalScript() throws Exception
+  public void testEvalScript()
   {
-    try (Jedis jedis = createClientConnection()) {
-      assertThat(jedis.eval("local keys = redis.call('keys', '*region*') for i,k in ipairs(keys) do local res = redis.call('del', k) end"),
-                 equalTo(1L));
-    }
+    String script = "local keys = redis.call('keys', '*region*') "
+        + "for i,k in ipairs(keys) do local res = redis.call('del', k) end";
+    execute(jedis -> assertThat(jedis.eval(script), nullValue()));
   }
 
   @Test
   public void testLoad100000() {
-    int times = 100000;
-    try (Jedis jedis = createClientConnection()) {
+    execute(jedis -> {
+      int times = 100000;
       long start = System.nanoTime();
       for (int i = 0; i < times; i++) {
         jedis.set(key(i), value(i));
       }
       jedis.quit();
       assertThat((System.nanoTime() - start) / times, lessThan(1000000L));
+    });
+  }
+
+  private void execute(Consumer<Jedis> action) {
+    try (Jedis jedis = createClientConnection()) {
+      action.accept(jedis);
     }
   }
 
@@ -124,5 +126,4 @@ public class TinyDBTest {
   private String key(int i) {
     return "key" + String.valueOf(i);
   }
-
 }

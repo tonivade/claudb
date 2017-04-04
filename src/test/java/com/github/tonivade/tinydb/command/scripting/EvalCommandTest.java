@@ -7,6 +7,7 @@ package com.github.tonivade.tinydb.command.scripting;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 
@@ -22,6 +23,13 @@ public class EvalCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
+
+  @Test
+  public void testExecuteVoid() {
+    rule.withParams("return nil", "0")
+        .execute()
+        .then(nullString());
+  }
 
   @Test
   public void testExecuteInteger() {
@@ -103,10 +111,12 @@ public class EvalCommandTest {
   }
 
   @Test
-  public void testExcecuteScript()
+  public void testExecuteScript()
   {
-    rule.withParams("local keys = redis.call('keys', '*region*') for i,k in ipairs(keys) do local res = redis.call('del', k) end", "0")
+    rule.withCommand("keys", request -> array(string("key1"), string("value1"), string("key2"), string("value2")))
+        .withCommand("del", request -> integer(true))
+        .withParams("local keys = redis.call('keys', '*region*') for i,k in ipairs(keys) do local res = redis.call('del', k) end", "0")
         .execute()
-        .then(error("ERROR"));
+        .then(nullString());
   }
 }

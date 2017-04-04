@@ -6,7 +6,9 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static java.lang.String.valueOf;
 import static javaslang.API.$;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
@@ -98,9 +100,9 @@ public class LuaInterpreter {
   private RedisToken convertBoolean(Boolean value) {
     return value.booleanValue() ? integer(1) : string(SafeString.EMPTY_STRING);
   }
-  
+
   private RedisToken convertUnknown(Object value) {
-    return string(String.valueOf(value));
+    return value != null ? string(valueOf(value)) : nullString();
   }
 
   private Object[] toArray(List<SafeString> keys) {

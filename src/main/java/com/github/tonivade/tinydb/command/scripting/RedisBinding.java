@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.luaj.vm2.LuaInteger;
 import org.luaj.vm2.LuaString;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
@@ -50,11 +52,28 @@ public class RedisBinding extends VarArgFunction {
   }
 
   private LuaValue convert(RedisToken token) {
-    return Match(token).of(Case(isType(RedisTokenType.STRING), value -> LuaString.valueOf(value.getValue().toString())),
-                           Case(isType(RedisTokenType.STATUS), value -> LuaString.valueOf(value.getValue().toString())),
-                           Case(isType(RedisTokenType.ARRAY), value -> LuaString.valueOf(value.toString())),
-                           Case(isType(RedisTokenType.INTEGER), value -> LuaString.valueOf(value.toString())),
-                           Case($(), value -> LuaString.valueOf(value.toString())));
+    return Match(token).of(Case(isType(RedisTokenType.STRING), this::toLuaString),
+                           Case(isType(RedisTokenType.STATUS), this::toLuaString),
+                           Case(isType(RedisTokenType.ARRAY), this::toLuaTable),
+                           Case(isType(RedisTokenType.INTEGER), this::toLuaNumber),
+                           Case($(), value -> toLuaTable(value)));
+  }
+
+  private LuaInteger toLuaNumber(RedisToken value) {
+    return LuaInteger.valueOf(Integer.parseInt(value.getValue().toString()));
+  }
+
+  private LuaTable toLuaTable(RedisToken value) {
+    LuaTable table = LuaValue.tableOf();
+    int i = 0;
+    for (RedisToken token : value.<List<RedisToken>>getValue()) {
+      table.set(++i, convert(token));
+    }
+    return table;
+  }
+
+  private LuaString toLuaString(RedisToken value) {
+    return LuaString.valueOf(value.getValue().toString());
   }
 
   private Predicate<? super RedisToken> isType(RedisTokenType type) {
