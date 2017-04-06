@@ -6,6 +6,7 @@
 package com.github.tonivade.tinydb.replication;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
@@ -22,12 +23,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.Database;
 
 public class MasterReplication implements Runnable {
 
@@ -103,9 +105,9 @@ public class MasterReplication implements Runnable {
   private List<RedisToken> commandsToReplicate() {
     List<RedisToken> commands = new LinkedList<>();
 
-    for (List<RedisToken> command : server.getCommandsToReplicate()) {
-      commands.add(selectCommand(command.get(0)));
-      commands.add(array(command.stream().skip(1).collect(toList())));
+    for (ArrayRedisToken command : server.getCommandsToReplicate()) {
+      commands.add(selectCommand(command.getValue().stream().findFirst().orElse(nullString())));
+      commands.add(array(command.getValue().stream().skip(1).collect(toList())));
     }
     return commands;
   }

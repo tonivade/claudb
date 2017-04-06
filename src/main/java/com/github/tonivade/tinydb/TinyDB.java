@@ -12,6 +12,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
@@ -34,7 +36,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
 
   private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
-  private final BlockingQueue<List<RedisToken>> queue = new LinkedBlockingQueue<>();
+  private final BlockingQueue<ArrayRedisToken> queue = new LinkedBlockingQueue<>();
 
   private final Optional<PersistenceManager> persistence;
 
@@ -71,8 +73,8 @@ public class TinyDB extends RedisServer implements ITinyDB {
   }
 
   @Override
-  public List<List<RedisToken>> getCommandsToReplicate() {
-    List<List<RedisToken>> current = new LinkedList<>();
+  public List<ArrayRedisToken> getCommandsToReplicate() {
+    List<ArrayRedisToken> current = new LinkedList<>();
     queue.drainTo(current);
     return current;
   }
@@ -147,11 +149,11 @@ public class TinyDB extends RedisServer implements ITinyDB {
 
   private void replication(IRequest request, ICommand command) {
     if (!isReadOnlyCommand(request.getCommand())) {
-      List<RedisToken> array = requestToArray(request);
+      ArrayRedisToken array = requestToArray(request);
       if (hasSlaves()) {
         queue.add(array);
       }
-      persistence.ifPresent((p) -> p.append(array));
+      persistence.ifPresent(p -> p.append(array));
     }
   }
 
@@ -159,12 +161,12 @@ public class TinyDB extends RedisServer implements ITinyDB {
     return getCommands().isPresent(command, ReadOnly.class);
   }
 
-  private List<RedisToken> requestToArray(IRequest request) {
-    List<RedisToken> array = new LinkedList<>();
+  private ArrayRedisToken requestToArray(IRequest request) {
+    List<RedisToken<?>> array = new LinkedList<>();
     array.add(currentDbToken(request));
     array.add(commandToken(request));
     array.addAll(paramTokens(request));
-    return array;
+    return RedisToken.array(array);
   }
 
   private RedisToken commandToken(IRequest request) {
@@ -179,7 +181,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
     return getSessionState(request.getSession()).getCurrentDB();
   }
 
-  private List<RedisToken> paramTokens(IRequest request) {
+  private List<RedisToken<?>> paramTokens(IRequest request) {
     return request.getParams().stream().map(RedisToken::string).collect(toList());
   }
 

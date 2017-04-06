@@ -8,10 +8,10 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static javaslang.API.$;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
+import static javaslang.Predicates.instanceOf;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import org.luaj.vm2.LuaInteger;
 import org.luaj.vm2.LuaString;
@@ -21,7 +21,11 @@ import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisTokenType;
+import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.StatusRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.UnknownRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class RedisBinding extends VarArgFunction {
@@ -52,31 +56,27 @@ public class RedisBinding extends VarArgFunction {
   }
 
   private LuaValue convert(RedisToken token) {
-    return Match(token).of(Case(isType(RedisTokenType.STRING), this::toLuaString),
-                           Case(isType(RedisTokenType.STATUS), this::toLuaString),
-                           Case(isType(RedisTokenType.ARRAY), this::toLuaTable),
-                           Case(isType(RedisTokenType.INTEGER), this::toLuaNumber),
-                           Case($(), value -> toLuaTable(value)));
+    return Match(token).of(Case(instanceOf(StringRedisToken.class), this::toLuaString),
+                           Case(instanceOf(StatusRedisToken.class), this::toLuaString),
+                           Case(instanceOf(ArrayRedisToken.class), this::toLuaTable),
+                           Case(instanceOf(IntegerRedisToken.class), this::toLuaNumber),
+                           Case(instanceOf(UnknownRedisToken.class), this::toLuaString));
   }
 
-  private LuaInteger toLuaNumber(RedisToken value) {
+  private LuaInteger toLuaNumber(IntegerRedisToken value) {
     return LuaInteger.valueOf(Integer.parseInt(value.getValue().toString()));
   }
 
-  private LuaTable toLuaTable(RedisToken value) {
+  private LuaTable toLuaTable(ArrayRedisToken value) {
     LuaTable table = LuaValue.tableOf();
     int i = 0;
-    for (RedisToken token : value.<List<RedisToken>>getValue()) {
+    for (RedisToken<?> token : value.getValue()) {
       table.set(++i, convert(token));
     }
     return table;
   }
 
-  private LuaString toLuaString(RedisToken value) {
+  private LuaString toLuaString(RedisToken<?> value) {
     return LuaString.valueOf(value.getValue().toString());
-  }
-
-  private Predicate<? super RedisToken> isType(RedisTokenType type) {
-    return value -> value.getType() == type;
   }
 }

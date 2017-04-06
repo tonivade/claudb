@@ -15,7 +15,7 @@ import com.github.tonivade.tinydb.data.Database;
 
 @FunctionalInterface
 public interface TinyDBCommand {
-  RedisToken execute(Database db, IRequest request);
+  RedisToken<?> execute(Database db, IRequest request);
 
   default ITinyDB getTinyDB(IServerContext server) {
     return (ITinyDB) server;
@@ -41,11 +41,11 @@ public interface TinyDBCommand {
     return session.getValue("state");
   }
 
-  default RedisToken convert(DatabaseValue value) {
-    return TinyDBResponse.convert(value);
+  default RedisToken<?> convert(DatabaseValue value) {
+    return TinyDBResponse.convertValue(value);
   }
 
-  default RedisToken convert(Collection<?> list) {
-    return TinyDBResponse.convert(list);
+  default RedisToken<?> convert(Collection<?> list) {
+    return TinyDBResponse.convertArray(list);
   }
 }

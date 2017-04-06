@@ -5,6 +5,8 @@
 
 package com.github.tonivade.tinydb;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,32 +26,32 @@ import com.github.tonivade.tinydb.ITinyDB;
 
 public class TinyDBClientTest {
 
-    @Rule
-    public final TinyDBRule rule = new TinyDBRule();
+  @Rule
+  public final TinyDBRule rule = new TinyDBRule();
 
-    @Test
-    public void testClient()  {
-        ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
+  @Test
+  public void testClient()  {
+    ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
-        IRedisCallback callback = mock(IRedisCallback.class);
-        RedisClient client = new RedisClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
+    IRedisCallback callback = mock(IRedisCallback.class);
+    RedisClient client = new RedisClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
 
-        client.start();
+    client.start();
 
-        verify(callback, timeout(1000)).onConnect();
+    verify(callback, timeout(1000)).onConnect();
 
-        client.send("ping");
+    client.send(array(string("ping")));
 
-        verify(callback, timeout(1000)).onMessage(captor.capture());
+    verify(callback, timeout(1000)).onMessage(captor.capture());
 
-        RedisToken message = captor.getValue();
+    RedisToken message = captor.getValue();
 
-        assertThat(message.getType(), is(RedisTokenType.STATUS));
-        assertThat(message.getValue(), is(safeString("PONG")));
+    assertThat(message.getType(), is(RedisTokenType.STATUS));
+    assertThat(message.getValue(), is(safeString("PONG")));
 
-        client.stop();
+    client.stop();
 
-        verify(callback, timeout(1000)).onDisconnect();
-    }
+    verify(callback, timeout(1000)).onDisconnect();
+  }
 
 }
