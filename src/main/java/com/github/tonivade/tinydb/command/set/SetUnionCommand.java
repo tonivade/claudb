@@ -31,7 +31,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetUnionCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     DatabaseValue first = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
     Set<SafeString> result = new HashSet<>(first.<Set<SafeString>>getValue());
     for (DatabaseKey param : request.getParams().stream().skip(1).map((item) -> safeKey(item)).collect(toList())) {

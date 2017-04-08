@@ -25,7 +25,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class GetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     return convert(db.get(safeKey(request.getParam(0))));
   }
 

@@ -27,7 +27,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class ListSetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     try {
       int index = Integer.parseInt(request.getParam(1).toString());
       db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,

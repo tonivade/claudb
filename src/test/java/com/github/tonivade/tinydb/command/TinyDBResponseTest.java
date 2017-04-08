@@ -22,7 +22,7 @@ public class TinyDBResponseTest {
 
   @Test
   public void convertsString() {
-    RedisToken token = TinyDBResponse.convertValue(string("test"));
+    RedisToken<?> token = TinyDBResponse.convertValue(string("test"));
 
     assertThat(token, equalTo(RedisToken.string("test")));
   }
@@ -30,7 +30,7 @@ public class TinyDBResponseTest {
   @Test
   public void convertsSet()
   {
-    RedisToken token = TinyDBResponse.convertValue(set(safeString("a"),
+    RedisToken<?> token = TinyDBResponse.convertValue(set(safeString("a"),
                                                   safeString("b"),
                                                   safeString("c")));
 
@@ -42,7 +42,7 @@ public class TinyDBResponseTest {
   @Test
   public void convertsList()
   {
-    RedisToken token = TinyDBResponse.convertValue(list(safeString("a"),
+    RedisToken<?> token = TinyDBResponse.convertValue(list(safeString("a"),
                                                    safeString("b"),
                                                    safeString("c")));
 
@@ -54,7 +54,7 @@ public class TinyDBResponseTest {
   @Test
   public void convertsHash()
   {
-    RedisToken token = TinyDBResponse.convertValue(hash(entry(safeString("key1"), safeString("value1")),
+    RedisToken<?> token = TinyDBResponse.convertValue(hash(entry(safeString("key1"), safeString("value1")),
                                                    entry(safeString("key2"), safeString("value2")),
                                                    entry(safeString("key3"), safeString("value3"))));
 
@@ -68,7 +68,7 @@ public class TinyDBResponseTest {
 
   @Test
   public void convertsZset() {
-    RedisToken token = TinyDBResponse.convertValue(zset(score(1.0, safeString("a")),
+    RedisToken<?> token = TinyDBResponse.convertValue(zset(score(1.0, safeString("a")),
                                                    score(2.0, safeString("b")),
                                                    score(3.0, safeString("c"))));
 
@@ -80,8 +80,9 @@ public class TinyDBResponseTest {
                                          RedisToken.string("c")));
   }
 
+  @Test
   public void convertsNull() {
-    RedisToken token = TinyDBResponse.convertValue((DatabaseValue) null);
+    RedisToken<?> token = TinyDBResponse.convertValue((DatabaseValue) null);
 
     assertThat(token, equalTo(RedisToken.nullString()));
   }

@@ -1,6 +1,7 @@
 package com.github.tonivade.tinydb.command;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -12,11 +13,11 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 
-public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
+public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken<?>> {
 
-  private List<RedisToken> expected;
+  private List<RedisToken<?>> expected;
 
-  public InAnyOrderRedisArrayMatcher(List<RedisToken> expected)
+  public InAnyOrderRedisArrayMatcher(List<RedisToken<?>> expected)
   {
     this.expected = expected;
   }
@@ -27,7 +28,7 @@ public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
   }
 
   @Override
-  protected boolean matchesSafely(RedisToken item) {
+  protected boolean matchesSafely(RedisToken<?> item) {
     if (item.getType() == RedisTokenType.ARRAY) {
       ArrayRedisToken array = (ArrayRedisToken) item;
       Collection<RedisToken<?>> tokens = array.getValue();
@@ -36,7 +37,7 @@ public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
     return false;
   }
 
-  public static InAnyOrderRedisArrayMatcher containsInAnyOrder(RedisToken... tokens) {
-    return new InAnyOrderRedisArrayMatcher(Arrays.asList(tokens));
+  public static InAnyOrderRedisArrayMatcher containsInAnyOrder(RedisToken<?>... tokens) {
+    return new InAnyOrderRedisArrayMatcher(asList(tokens));
   }
 }

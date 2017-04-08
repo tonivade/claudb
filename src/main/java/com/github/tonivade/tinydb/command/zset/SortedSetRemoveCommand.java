@@ -32,7 +32,7 @@ import com.github.tonivade.tinydb.data.SortedSet;
 public class SortedSetRemoveCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     List<SafeString> items =  request.getParams().stream().skip(1).collect(toList());
     List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,

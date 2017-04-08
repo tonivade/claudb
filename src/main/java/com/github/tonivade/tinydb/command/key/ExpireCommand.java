@@ -16,7 +16,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class ExpireCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     try {
       DatabaseKey key = db.overrideKey(safeKey(request.getParam(0), parsetTtl(request.getParam(1))));
       return RedisToken.integer(key != null);

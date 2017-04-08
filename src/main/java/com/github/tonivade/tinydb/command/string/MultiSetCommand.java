@@ -21,7 +21,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class MultiSetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     SafeString key = null;
     for (SafeString value : request.getParams()) {
       if (key != null) {

@@ -25,7 +25,7 @@ public class SyncCommand implements TinyDBCommand {
   private MasterReplication master;
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     try {
       ITinyDB server = getTinyDB(request.getServerContext());
 

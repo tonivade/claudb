@@ -19,7 +19,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class RenameCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     if (db.rename(safeKey(request.getParam(0)), safeKey(request.getParam(1)))) {
       return RedisToken.responseOk();
     } else {

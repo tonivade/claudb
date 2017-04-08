@@ -5,7 +5,6 @@
 
 package com.github.tonivade.tinydb.persistence;
 
-import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static java.nio.ByteBuffer.wrap;
 import static java.util.stream.Collectors.toList;
@@ -125,7 +124,7 @@ public class PersistenceManager implements Runnable {
 
   private void processCommand(ArrayRedisToken token) {
     Collection<RedisToken<?>> array = token.getValue();
-    RedisToken<SafeString> commandToken = (RedisToken<SafeString>) array.stream().findFirst().orElse(nullString());;
+    RedisToken<SafeString> commandToken = (RedisToken<SafeString>) array.stream().findFirst().orElse(nullString());
     List<RedisToken<SafeString>> paramTokens = List.class.cast(array.stream().skip(1).collect(toList()));
 
     LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());

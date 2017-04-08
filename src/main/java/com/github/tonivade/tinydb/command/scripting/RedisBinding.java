@@ -5,7 +5,6 @@
 package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static javaslang.API.$;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
 import static javaslang.Predicates.instanceOf;

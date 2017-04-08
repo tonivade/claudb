@@ -24,7 +24,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class ExistsCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
     return RedisToken.integer(key != null ? !key.isExpired(Instant.now()) : false);
   }

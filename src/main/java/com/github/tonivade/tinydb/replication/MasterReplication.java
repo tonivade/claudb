@@ -78,10 +78,10 @@ public class MasterReplication implements Runnable {
 
   @Override
   public void run() {
-    List<RedisToken> commands = createCommands();
+    List<ArrayRedisToken> commands = createCommands();
 
     for (SafeString slave : getSlaves()) {
-      for (RedisToken command : commands) {
+      for (ArrayRedisToken command : commands) {
         server.publish(slave.toString(), command);
       }
     }
@@ -95,15 +95,15 @@ public class MasterReplication implements Runnable {
     return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
   }
 
-  private List<RedisToken> createCommands() {
-    List<RedisToken> commands = new LinkedList<>();
+  private List<ArrayRedisToken> createCommands() {
+    List<ArrayRedisToken> commands = new LinkedList<>();
     commands.add(pingCommand());
     commands.addAll(commandsToReplicate());
     return commands;
   }
 
-  private List<RedisToken> commandsToReplicate() {
-    List<RedisToken> commands = new LinkedList<>();
+  private List<ArrayRedisToken> commandsToReplicate() {
+    List<ArrayRedisToken> commands = new LinkedList<>();
 
     for (ArrayRedisToken command : server.getCommandsToReplicate()) {
       commands.add(selectCommand(command.getValue().stream().findFirst().orElse(nullString())));
@@ -112,11 +112,11 @@ public class MasterReplication implements Runnable {
     return commands;
   }
 
-  private RedisToken selectCommand(RedisToken database) {
+  private ArrayRedisToken selectCommand(RedisToken<?> database) {
     return array(string(SELECT_COMMAND), database);
   }
 
-  private RedisToken pingCommand() {
+  private ArrayRedisToken pingCommand() {
     return array(string(PING_COMMAND));
   }
 

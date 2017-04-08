@@ -28,7 +28,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class HashValuesCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
     Map<SafeString, SafeString> map = value.getValue();
     return convert(map.values());
