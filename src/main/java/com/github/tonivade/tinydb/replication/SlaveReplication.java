@@ -5,7 +5,9 @@
 
 package com.github.tonivade.tinydb.replication;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -32,7 +34,7 @@ public class SlaveReplication implements IRedisCallback {
 
   private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
 
-  private static final String SYNC_COMMAND = "SYNC\r\n";
+  private static final String SYNC_COMMAND = "SYNC";
 
   private final RedisClient client;
   private final ITinyDB server;
@@ -57,7 +59,7 @@ public class SlaveReplication implements IRedisCallback {
   @Override
   public void onConnect() {
     LOGGER.info(() -> "Connected with master");
-    client.send(SYNC_COMMAND);
+    client.send(array(string(SYNC_COMMAND)));
   }
 
   @Override
@@ -106,14 +108,14 @@ public class SlaveReplication implements IRedisCallback {
   private void processRDB(StringRedisToken token) {
     try {
       SafeString value = token.getValue();
-      server.importRDB(array(value));
+      server.importRDB(toStream(value));
       LOGGER.info(() -> "loaded RDB file from master");
     } catch (IOException e) {
       LOGGER.log(Level.SEVERE, "error importing RDB file", e);
     }
   }
 
-  private InputStream array(SafeString value) throws UnsupportedEncodingException {
+  private InputStream toStream(SafeString value) throws UnsupportedEncodingException {
     return new ByteBufferInputStream(value.getBytes());
   }
 
