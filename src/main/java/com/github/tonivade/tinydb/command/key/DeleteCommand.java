@@ -21,7 +21,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class DeleteCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     int removed = 0;
     for (SafeString key : request.getParams()) {
       DatabaseValue value = db.remove(safeKey(key));

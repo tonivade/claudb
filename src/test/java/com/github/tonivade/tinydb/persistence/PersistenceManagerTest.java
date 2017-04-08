@@ -22,8 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
@@ -37,6 +35,7 @@ import org.mockito.stubbing.Answer;
 
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.data.Database;
 
@@ -104,7 +103,7 @@ public class PersistenceManagerTest {
   @Test
   public void testAppend() throws InterruptedException {
     manager.start();
-    manager.append(array());
+    manager.append(pingCommand());
 
     Thread.sleep(1000);
 
@@ -155,10 +154,8 @@ public class PersistenceManagerTest {
     return str;
   }
 
-  private List<RedisToken> array() {
-    List<RedisToken> array = new LinkedList<>();
-    array.add(string("PING"));
-    return array;
+  private ArrayRedisToken pingCommand() {
+    return RedisToken.array(string("PING"));
   }
 
   private static class ExportRDB implements Answer<Void> {

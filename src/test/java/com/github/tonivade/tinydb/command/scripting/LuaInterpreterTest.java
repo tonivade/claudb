@@ -38,7 +38,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void keys() {
-    RedisToken token = interpreter.execute(safeString("return KEYS[1]"),
+    RedisToken<?> token = interpreter.execute(safeString("return KEYS[1]"),
                                            asList(safeString("key1")),
                                            emptyList());
 
@@ -47,7 +47,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void argv() {
-    RedisToken token = interpreter.execute(safeString("return ARGV[1]"),
+    RedisToken<?> token = interpreter.execute(safeString("return ARGV[1]"),
                                            asList(safeString("key1")),
                                            asList(safeString("value1")));
 
@@ -56,7 +56,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void keysAndArgv() {
-    RedisToken token = interpreter.execute(safeString("return {KEYS[1], ARGV[1]}"),
+    RedisToken<?> token = interpreter.execute(safeString("return {KEYS[1], ARGV[1]}"),
                                            asList(safeString("key1")),
                                            asList(safeString("value1")));
 
@@ -65,7 +65,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void number() {
-    RedisToken token = interpreter.execute(safeString("return 1"),
+    RedisToken<?> token = interpreter.execute(safeString("return 1"),
                                            emptyList(),
                                            emptyList());
 
@@ -74,7 +74,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void boolTrue() {
-    RedisToken token = interpreter.execute(safeString("return true"),
+    RedisToken<?> token = interpreter.execute(safeString("return true"),
                                            emptyList(),
                                            emptyList());
 
@@ -83,7 +83,7 @@ public class LuaInterpreterTest {
 
   @Test
   public void boolFalse() {
-    RedisToken token = interpreter.execute(safeString("return false"),
+    RedisToken<?> token = interpreter.execute(safeString("return false"),
                                            emptyList(),
                                            emptyList());
 
@@ -94,7 +94,7 @@ public class LuaInterpreterTest {
   public void ping() {
     when(redis.call(safeString("ping"))).thenReturn(status("PONG"));
 
-    RedisToken token = interpreter.execute(safeString("return redis.call('ping')"),
+    RedisToken<?> token = interpreter.execute(safeString("return redis.call('ping')"),
                                            emptyList(),
                                            emptyList());
 
@@ -105,7 +105,7 @@ public class LuaInterpreterTest {
   public void echo() {
     when(redis.call(safeString("echo"), safeString("hello"))).thenReturn(string("hello"));
 
-    RedisToken token = interpreter.execute(safeString("return redis.call('echo', 'hello')"),
+    RedisToken<?> token = interpreter.execute(safeString("return redis.call('echo', 'hello')"),
                                            emptyList(),
                                            emptyList());
 

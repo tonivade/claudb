@@ -26,7 +26,7 @@ public class PublishCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Captor
-  private ArgumentCaptor<RedisToken> captor;
+  private ArgumentCaptor<RedisToken<?>> captor;
 
   @Test
   public void testExecute()  {
@@ -34,7 +34,7 @@ public class PublishCommandTest {
     .withParams("test", "Hello World!")
     .execute()
     .then(RedisToken.integer(1))
-    .verify(ITinyDB.class).publish("localhost:12345", 
+    .verify(ITinyDB.class).publish("localhost:12345",
                                    array(string("message"), string("test"), string("Hello World!")));
   }
 

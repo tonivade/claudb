@@ -67,7 +67,7 @@ public class TinyDBCommandWrapper implements ICommand {
   }
 
   @Override
-  public RedisToken execute(IRequest request) {
+  public RedisToken<?> execute(IRequest request) {
     // FIXME: ugly piece of code, please refactor
     Database db = getCurrentDB(request);
     if (request.getLength() < params) {
@@ -88,11 +88,11 @@ public class TinyDBCommandWrapper implements ICommand {
     return error("invalid command type: " + command.getClass());
   }
 
-  private RedisToken executeCommand(IRequest request) {
+  private RedisToken<?> executeCommand(IRequest request) {
     return ((ICommand) command).execute(request);
   }
 
-  private RedisToken executeTinyDBCommand(Database db, IRequest request) {
+  private RedisToken<?> executeTinyDBCommand(Database db, IRequest request) {
     return ((TinyDBCommand) command).execute(db, request);
   }
 

@@ -24,7 +24,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class DecrementCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     try {
       DatabaseValue value = db.merge(safeKey(request.getParam(0)), string("-1"),
           (oldValue, newValue) -> {

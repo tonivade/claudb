@@ -20,8 +20,8 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @Command("getbit")
 @ParamLength(2)
@@ -29,7 +29,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class GetBitCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     try {
       int offset = Integer.parseInt(request.getParam(1).toString());
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), bitset());

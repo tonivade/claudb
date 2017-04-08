@@ -28,7 +28,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class RightPopCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {

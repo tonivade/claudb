@@ -28,6 +28,9 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class LuaInterpreter {
@@ -38,7 +41,7 @@ public class LuaInterpreter {
     this.redis = binding;
   }
 
-  public RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
+  public RedisToken<?> execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("luaj");
@@ -57,7 +60,7 @@ public class LuaInterpreter {
     return binding;
   }
 
-  private RedisToken convert(Object result) {
+  private RedisToken<?> convert(Object result) {
     return Match(result).of(Case(instanceOf(LuaTable.class), this::convertLuaTable),
                             Case(instanceOf(LuaNumber.class), this::convertLuaNumber),
                             Case(instanceOf(LuaBoolean.class), this::convertLuaBoolean),
@@ -68,8 +71,8 @@ public class LuaInterpreter {
                             Case($(), this::convertUnknown));
   }
 
-  private RedisToken convertLuaTable(LuaTable value) {
-    List<RedisToken> tokens = new ArrayList<>();
+  private ArrayRedisToken convertLuaTable(LuaTable value) {
+    List<RedisToken<?>> tokens = new ArrayList<>();
     for (LuaValue key : value.keys())
     {
       tokens.add(convert(value.get(key)));
@@ -77,31 +80,31 @@ public class LuaInterpreter {
     return array(tokens);
   }
 
-  private RedisToken convertLuaNumber(LuaNumber value) {
+  private IntegerRedisToken convertLuaNumber(LuaNumber value) {
     return integer(value.toint());
   }
 
-  private RedisToken convertLuaString(LuaString value) {
+  private StringRedisToken convertLuaString(LuaString value) {
     return string(value.tojstring());
   }
 
-  private RedisToken convertLuaBoolean(LuaBoolean value) {
+  private RedisToken<?> convertLuaBoolean(LuaBoolean value) {
     return value.toboolean() ? integer(1) : string(SafeString.EMPTY_STRING);
   }
 
-  private RedisToken convertNumber(Number number) {
+  private IntegerRedisToken convertNumber(Number number) {
     return integer(number.intValue());
   }
 
-  private RedisToken convertString(String string) {
+  private StringRedisToken convertString(String string) {
     return string(string);
   }
 
-  private RedisToken convertBoolean(Boolean value) {
+  private RedisToken<?> convertBoolean(Boolean value) {
     return value.booleanValue() ? integer(1) : string(SafeString.EMPTY_STRING);
   }
 
-  private RedisToken convertUnknown(Object value) {
+  private StringRedisToken convertUnknown(Object value) {
     return value != null ? string(valueOf(value)) : nullString();
   }
 

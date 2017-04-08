@@ -5,7 +5,6 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,8 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mockito;
 
 import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TransactionState;
@@ -34,7 +35,7 @@ public class ExecCommandTest {
   @Captor
   private ArgumentCaptor<Collection<?>> captor;
 
-  private final ICommand command = mock(ICommand.class);
+  private final ICommand command = Mockito.spy(new MockCommand());
 
   @Test
   public void executeWithActiveTransaction()  {
@@ -55,7 +56,6 @@ public class ExecCommandTest {
 
   private void givenPingCommand() {
     when(rule.getServer().getCommand("ping")).thenReturn(command);
-    when(command.execute(any())).thenReturn(string(""));
   }
 
   private void givenExistingTransaction() {
@@ -71,5 +71,12 @@ public class ExecCommandTest {
     transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
     transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
     return transaction;
+  }
+  
+  private static class MockCommand implements ICommand {
+    @Override
+    public RedisToken<?> execute(IRequest request) {
+      return RedisToken.string("");
+    }
   }
 }

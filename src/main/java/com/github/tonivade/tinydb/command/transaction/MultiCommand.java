@@ -16,7 +16,7 @@ public class MultiCommand implements TinyDBCommand {
   private static final String TRASACTION_KEY = "tx";
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     if (!isTxActive(request.getSession())) {
       createTransaction(request.getSession());
       return RedisToken.responseOk();

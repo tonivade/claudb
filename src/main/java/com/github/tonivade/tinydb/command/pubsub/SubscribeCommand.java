@@ -37,7 +37,7 @@ public class SubscribeCommand implements TinyDBCommand {
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     Database admin = getAdminDatabase(request.getServerContext());
     int i = 1;
     List<Object> result = new LinkedList<>();

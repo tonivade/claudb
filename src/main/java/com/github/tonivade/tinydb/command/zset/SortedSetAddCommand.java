@@ -32,7 +32,7 @@ import com.github.tonivade.tinydb.data.SortedSet;
 public class SortedSetAddCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     try {
       DatabaseValue initial = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
       DatabaseValue result = db.merge(safeKey(request.getParam(0)), parseInput(request),

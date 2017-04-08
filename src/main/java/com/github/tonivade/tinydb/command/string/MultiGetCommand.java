@@ -25,7 +25,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class MultiGetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     List<DatabaseValue> result = new ArrayList<>(request.getLength());
     for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
       result.add(db.get(key));

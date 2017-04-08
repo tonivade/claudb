@@ -28,7 +28,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetCardinalityCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
     Set<SafeString> set = value.getValue();
     return RedisToken.integer(set.size());

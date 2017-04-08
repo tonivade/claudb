@@ -23,7 +23,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class EvalCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, IRequest request) {
     SafeString script = request.getParam(0);
 
     int numParams = parseInt(request.getParam(1).toString());
