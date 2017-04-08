@@ -7,12 +7,12 @@ package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.tinydb.TinyDBConfig.withoutPersistence;
+import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +27,7 @@ import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
@@ -80,7 +81,7 @@ public class TinyDB extends RedisServer implements ITinyDB {
   }
 
   @Override
-  public void publish(String sourceKey, RedisToken message) {
+  public void publish(String sourceKey, RedisToken<?> message) {
     ISession session = getSession(sourceKey);
     if (session != null) {
       session.publish(message);
@@ -128,10 +129,10 @@ public class TinyDB extends RedisServer implements ITinyDB {
   }
 
   @Override
-  protected RedisToken executeCommand(ICommand command, IRequest request) {
+  protected RedisToken<?> executeCommand(ICommand command, IRequest request) {
     if (!isReadOnly(request.getCommand())) {
       try {
-        RedisToken response = command.execute(request);
+        RedisToken<?> response = command.execute(request);
         replication(request, command);
         return response;
       } catch (RuntimeException e) {
@@ -169,12 +170,12 @@ public class TinyDB extends RedisServer implements ITinyDB {
     return RedisToken.array(array);
   }
 
-  private RedisToken commandToken(IRequest request) {
+  private StringRedisToken commandToken(IRequest request) {
     return RedisToken.string(request.getCommand());
   }
 
-  private RedisToken currentDbToken(IRequest request) {
-    return RedisToken.string(String.valueOf(getCurrentDB(request)));
+  private StringRedisToken currentDbToken(IRequest request) {
+    return RedisToken.string(valueOf(getCurrentDB(request)));
   }
 
   private int getCurrentDB(IRequest request) {

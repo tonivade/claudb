@@ -26,6 +26,6 @@ public interface ITinyDB extends IServerContext {
   void exportRDB(OutputStream output) throws IOException;
   Database getDatabase(int i);
   Database getAdminDatabase();
-  void publish(String sourceKey, RedisToken message);
+  void publish(String sourceKey, RedisToken<?> message);
   List<ArrayRedisToken> getCommandsToReplicate();
 }
