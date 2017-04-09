@@ -131,7 +131,7 @@ In my laptop (intel core i5, with 4G of RAM)
 
 You need to clon the repo:
 
-    $ git clone https://github.com/tonivade/tiny-db.git
+    $ git clone https://github.com/tonivade/tinydb.git
 
 TinyDB uses Gradle as building tool, but you don't need Gradle installed, just type:
 
@@ -142,12 +142,16 @@ This scripts automatically download Gradle and then runs the tasks.
 Or if you have Gradle installed, just type
 
     $ gradle build
+    
+Create all-in-one jar
+
+    $ gradle fatJar
 
 ## USAGE
 
 You can start a new server listening in default port 7081.
 
-    $ java -jar tiny-db-all.jar
+    $ java -jar tinydb-all.jar
     
 Parameters:
 
