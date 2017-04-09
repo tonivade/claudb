@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.replication;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
@@ -18,8 +17,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.github.tonivade.resp.IRedisCallback;
-import com.github.tonivade.resp.RedisClient;
+import com.github.tonivade.resp.RespCallback;
+import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.ISession;
 import com.github.tonivade.resp.command.Request;
@@ -30,20 +29,20 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.persistence.ByteBufferInputStream;
 
-public class SlaveReplication implements IRedisCallback {
+public class SlaveReplication implements RespCallback {
 
   private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
 
   private static final String SYNC_COMMAND = "SYNC";
 
-  private final RedisClient client;
+  private final RespClient client;
   private final ITinyDB server;
   private final ISession session;
 
   public SlaveReplication(ITinyDB server, ISession session, String host, int port) {
     this.server = server;
     this.session = session;
-    this.client = new RedisClient(host, port, this);
+    this.client = new RespClient(host, port, this);
   }
 
   public void start() {

@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.RedisToken.error;
@@ -21,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.github.tonivade.resp.RedisServer;
+import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.command.ISession;
@@ -33,7 +32,7 @@ import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
-public class TinyDB extends RedisServer implements ITinyDB {
+public class TinyDB extends RespServer implements ITinyDB {
 
   private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 

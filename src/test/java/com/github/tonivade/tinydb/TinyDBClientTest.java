@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
@@ -18,8 +17,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.github.tonivade.resp.IRedisCallback;
-import com.github.tonivade.resp.RedisClient;
+import com.github.tonivade.resp.RespCallback;
+import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 
@@ -32,8 +31,8 @@ public class TinyDBClientTest {
   public void testClient()  {
     ArgumentCaptor<RedisToken<?>> captor = ArgumentCaptor.forClass(RedisToken.class);
 
-    IRedisCallback callback = mock(IRedisCallback.class);
-    RedisClient client = new RedisClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
+    RespCallback callback = mock(RespCallback.class);
+    RespClient client = new RespClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
 
     client.start();
 
