@@ -25,13 +25,13 @@ public class PersistCommandTest {
         rule.withData("test", string("value"))
             .withParams("test")
             .execute()
-            .then(RedisToken.integer(true));
+            .assertThat(RedisToken.integer(true));
     }
 
     public void testExecuteNotExists() {
         rule.withParams("notExists", "10")
             .execute()
-            .then(RedisToken.integer(false));
+            .assertThat(RedisToken.integer(false));
     }
 
 }

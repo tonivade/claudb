@@ -28,21 +28,21 @@ public class SortedSetAddCommandTest {
     rule.withParams("key", "1", "one")
     .execute()
     .assertValue("key", is(zset(score(1.0, "one"))))
-    .then(RedisToken.integer(1));
+    .assertThat(RedisToken.integer(1));
 
     rule.withParams("key", "2", "two")
     .execute()
     .assertValue("key", is(zset(
         score(1.0, "one"),
         score(2.0, "two"))))
-    .then(RedisToken.integer(1));
+    .assertThat(RedisToken.integer(1));
 
     rule.withParams("key", "2", "one")
     .execute()
     .assertValue("key", is(zset(
         score(1.0, "one"),
         score(2.0, "two"))))
-    .then(RedisToken.integer(0));
+    .assertThat(RedisToken.integer(0));
   }
 
 }

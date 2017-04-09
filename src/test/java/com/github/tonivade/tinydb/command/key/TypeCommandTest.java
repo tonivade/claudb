@@ -30,7 +30,7 @@ public class TypeCommandTest {
   public void testExecuteString() {
     rule.withData("a", string("string"))
     .withParams("a").execute()
-    .then(RedisToken.status("string"));
+    .assertThat(RedisToken.status("string"));
   }
 
   @Test
@@ -38,7 +38,7 @@ public class TypeCommandTest {
     rule.withData("a", hash(entry("k1", "v1")))
     .withParams("a")
     .execute()
-    .then(RedisToken.status("hash"));
+    .assertThat(RedisToken.status("hash"));
   }
 
   @Test
@@ -46,7 +46,7 @@ public class TypeCommandTest {
     rule.withData("a", list("a", "b", "c"))
     .withParams("a")
     .execute()
-    .then(RedisToken.status("list"));
+    .assertThat(RedisToken.status("list"));
   }
 
   @Test
@@ -54,7 +54,7 @@ public class TypeCommandTest {
     rule.withData("a", set("a", "b", "c"))
     .withParams("a")
     .execute()
-    .then(RedisToken.status("set"));
+    .assertThat(RedisToken.status("set"));
   }
 
   @Test
@@ -62,14 +62,14 @@ public class TypeCommandTest {
     rule.withData("a", zset(score(1.0, "a"), score(2.0, "b"), score(3.0, "c")))
     .withParams("a")
     .execute()
-    .then(RedisToken.status("zset"));
+    .assertThat(RedisToken.status("zset"));
   }
 
   @Test
   public void testExecuteNotExists() {
     rule.withData("a", string("string"))
     .withParams("b").execute()
-    .then(RedisToken.status("none"));
+    .assertThat(RedisToken.status("none"));
   }
 
 }

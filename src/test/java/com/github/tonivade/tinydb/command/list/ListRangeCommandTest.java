@@ -26,7 +26,7 @@ public class ListRangeCommandTest {
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "0", "-1")
     .execute()
-    .then(array(string("a"), string("b"), string("c")));
+    .assertThat(array(string("a"), string("b"), string("c")));
   }
 
 }

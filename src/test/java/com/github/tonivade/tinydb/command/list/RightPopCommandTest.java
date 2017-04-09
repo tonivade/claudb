@@ -27,7 +27,7 @@ public class RightPopCommandTest {
     .withParams("key")
     .execute()
     .assertValue("key", isList("a", "b"))
-    .then(RedisToken.string("c"));
+    .assertThat(RedisToken.string("c"));
   }
 
 }

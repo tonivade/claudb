@@ -25,7 +25,7 @@ public class SelectCommandTest {
   public void testExecute() {
     rule.withParams("10")
     .execute()
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
 
     assertThat(rule.getSessionState().getCurrentDB(), is(10));
   }
@@ -34,7 +34,7 @@ public class SelectCommandTest {
   public void testExecuteWithInvalidParam() {
     rule.withParams("asdfsdf")
     .execute()
-    .then(RedisToken.error("ERR invalid DB index"));
+    .assertThat(RedisToken.error("ERR invalid DB index"));
   }
 
 }

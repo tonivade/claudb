@@ -26,14 +26,14 @@ public class AppendCommandTest {
     rule.withData("test", string("Hola"))
     .withParams("test", " mundo")
     .execute()
-    .then(RedisToken.integer(10));
+    .assertThat(RedisToken.integer(10));
   }
 
   @Test
   public void testExecuteNoExists() {
     rule.withParams("test", " mundo")
     .execute()
-    .then(RedisToken.integer(6));
+    .assertThat(RedisToken.integer(6));
   }
 
 }

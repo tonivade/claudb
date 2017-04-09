@@ -27,7 +27,7 @@ public class SetIntersectionCommandTest {
     .withData("b", set("3", "4"))
     .withParams("a", "b")
     .execute()
-    .then(array(string("3")));
+    .assertThat(array(string("3")));
   }
 
   @Test
@@ -35,7 +35,7 @@ public class SetIntersectionCommandTest {
     rule.withData("a", set("1", "2", "3"))
     .withParams("a", "b")
     .execute()
-    .then(array());
+    .assertThat(array());
   }
 
 }

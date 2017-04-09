@@ -38,17 +38,13 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 public class CommandRule implements TestRule {
 
     private IRequest request;
-
     private ITinyDB server;
-
     private ISession session;
-
     private TinyDBCommand command;
 
     private final Object target;
 
     private final TinyDBServerState serverState = new TinyDBServerState(1);
-
     private final TinyDBSessionState sessionState = new TinyDBSessionState();
 
     private RedisToken<?> response;
@@ -185,12 +181,12 @@ public class CommandRule implements TestRule {
         Assert.assertThat(database.get(key), matcher);
     }
 
-    public CommandRule then(RedisToken<?> token) {
-      then(equalTo(token));
+    public CommandRule assertThat(RedisToken<?> token) {
+      assertThat(equalTo(token));
       return this;
     }
 
-    public CommandRule then(Matcher<? super RedisToken<?>> matcher) {
+    public CommandRule assertThat(Matcher<? super RedisToken<?>> matcher) {
       Assert.assertThat(this.response, matcher);
       return this;
     }

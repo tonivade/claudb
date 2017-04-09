@@ -31,14 +31,14 @@ public class HashValuesCommandTest {
                        entry("key3", "value3")))
     .withParams("test")
     .execute()
-    .then(containsInAnyOrder(string("value1"), string("value2"), string("value3")));
+    .assertThat(containsInAnyOrder(string("value1"), string("value2"), string("value3")));
   }
 
   @Test
   public void testExecuteNotExists() {
     rule.withParams("test")
     .execute()
-    .then(array());
+    .assertThat(array());
   }
 
 }

@@ -29,7 +29,7 @@ public class RenameCommandTest {
             .execute()
             .assertValue("a", is(nullValue()))
             .assertValue("b", is(string("1")))
-            .then(RedisToken.status("OK"));
+            .assertThat(RedisToken.status("OK"));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class RenameCommandTest {
             .execute()
             .assertValue("a", is(nullValue()))
             .assertValue("b", is(nullValue()))
-            .then(RedisToken.error("ERR no such key"));
+            .assertThat(RedisToken.error("ERR no such key"));
     }
 
 }

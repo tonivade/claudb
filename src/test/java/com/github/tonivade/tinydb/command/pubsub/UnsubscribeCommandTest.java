@@ -39,7 +39,7 @@ public class UnsubscribeCommandTest {
     rule.withAdminData("subscriptions:test", set("localhost:12345"))
     .withParams("test")
     .execute()
-    .then(array(string("unsubscribe"), string("test"), integer(0)))
+    .assertThat(array(string("unsubscribe"), string("test"), integer(0)))
     .assertAdminValue("subscriptions:test", isSet());
 
     assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test"))));

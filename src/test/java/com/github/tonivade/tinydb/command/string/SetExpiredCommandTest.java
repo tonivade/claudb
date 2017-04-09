@@ -25,7 +25,7 @@ public class SetExpiredCommandTest {
     rule.withParams("a", "1", "1")
     .execute()
     .assertValue("a", is(string("1")))
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
 
     Thread.sleep(500);
     rule.assertKey("a", isNotExpired())

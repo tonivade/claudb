@@ -25,11 +25,11 @@ public class SetCardinalityCommandTest {
     rule.withData("key", set("a", "b", "c"))
     .withParams("key")
     .execute()
-    .then(RedisToken.integer(3));
+    .assertThat(RedisToken.integer(3));
 
     rule.withParams("notExists")
     .execute()
-    .then(RedisToken.integer(0));
+    .assertThat(RedisToken.integer(0));
   }
 
 }

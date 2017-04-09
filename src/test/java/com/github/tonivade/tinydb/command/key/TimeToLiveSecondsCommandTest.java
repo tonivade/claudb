@@ -26,7 +26,7 @@ public class TimeToLiveSecondsCommandTest extends TimeToLiveCommandTest {
     rule.withData(new DatabaseKey(safeString("test"), now.plusSeconds(10)), string("value"))
     .withParams("test")
     .execute()
-    .then(org.hamcrest.Matchers.any(RedisToken.class));
+    .assertThat(org.hamcrest.Matchers.any(RedisToken.class));
   }
 
 }

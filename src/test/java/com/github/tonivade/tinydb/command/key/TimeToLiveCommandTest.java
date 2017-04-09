@@ -27,7 +27,7 @@ public abstract class TimeToLiveCommandTest {
         rule.withData(safeKey(safeString("test")), string("value"))
             .withParams("test")
             .execute()
-            .then(RedisToken.integer(-1));
+            .assertThat(RedisToken.integer(-1));
     }
 
     @Test
@@ -37,6 +37,6 @@ public abstract class TimeToLiveCommandTest {
         rule.withData(new DatabaseKey(safeString("test"), now.minusSeconds(10)), string("value"))
             .withParams("test")
             .execute()
-            .then(RedisToken.integer(-2));
+            .assertThat(RedisToken.integer(-2));
     }
 }

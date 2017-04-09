@@ -43,7 +43,7 @@ public class ExecCommandTest {
     givenExistingTransaction();
 
     rule.execute()
-    .then(array(string(""), string(""), string("")));
+    .assertThat(array(string(""), string(""), string("")));
 
     verify(command, times(3)).execute(any());
   }
@@ -51,7 +51,7 @@ public class ExecCommandTest {
   @Test
   public void executeWithoutActiveTransaction()  {
     rule.execute()
-    .then(RedisToken.error("ERR EXEC without MULTI"));
+    .assertThat(RedisToken.error("ERR EXEC without MULTI"));
   }
 
   private void givenPingCommand() {

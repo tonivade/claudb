@@ -26,7 +26,7 @@ public class SlaveOfCommandTest {
   public void testExecute()  {
     rule.withParams("localhost", "34241")
     .execute()
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
   }
 
 }

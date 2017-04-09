@@ -25,14 +25,14 @@ public class ExistsCommandTest {
     rule.withData("test", string("value"))
     .withParams("test")
     .execute()
-    .then(RedisToken.integer(true));
+    .assertThat(RedisToken.integer(true));
   }
 
   @Test
   public void testExecuteNotExists() {
     rule.withParams("test")
     .execute()
-    .then(RedisToken.integer(false));
+    .assertThat(RedisToken.integer(false));
   }
 
 }

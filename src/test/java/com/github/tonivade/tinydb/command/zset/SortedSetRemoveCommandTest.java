@@ -29,12 +29,12 @@ public class SortedSetRemoveCommandTest {
     .withParams("key", "a")
     .execute()
     .assertValue("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
-    .then(RedisToken.integer(1));
+    .assertThat(RedisToken.integer(1));
 
     rule.withParams("key", "a")
     .execute()
     .assertValue("key", is(zset(score(2.0F, "b"), score(3.0F, "c"))))
-    .then(RedisToken.integer(0));
+    .assertThat(RedisToken.integer(0));
   }
 
 }

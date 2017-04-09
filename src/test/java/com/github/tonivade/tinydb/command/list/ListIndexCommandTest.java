@@ -26,27 +26,27 @@ public class ListIndexCommandTest {
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "0")
     .execute()
-    .then(RedisToken.string("a"));
+    .assertThat(RedisToken.string("a"));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "-1")
     .execute()
-    .then(RedisToken.string("c"));
+    .assertThat(RedisToken.string("c"));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "-4")
     .execute()
-    .then(RedisToken.string(SafeString.EMPTY_STRING));
+    .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "4")
     .execute()
-    .then(RedisToken.string(SafeString.EMPTY_STRING));
+    .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "a")
     .execute()
-    .then(RedisToken.error("ERR value is not an integer or out of range"));
+    .assertThat(RedisToken.error("ERR value is not an integer or out of range"));
   }
 
 }

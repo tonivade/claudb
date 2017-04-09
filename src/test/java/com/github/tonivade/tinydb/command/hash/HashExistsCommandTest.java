@@ -26,7 +26,7 @@ public class HashExistsCommandTest {
     rule.withData("key", hash(entry("a", "1")))
     .withParams("key", "a")
     .execute()
-    .then(RedisToken.integer(true));
+    .assertThat(RedisToken.integer(true));
   }
 
 }

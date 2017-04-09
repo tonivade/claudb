@@ -26,7 +26,7 @@ public class HashSetCommandTest {
     rule.withData("a", hash(entry("key", "value")))
     .withParams("a", "key", "value")
     .execute()
-    .then(integer(false));
+    .assertThat(integer(false));
   }
 
 }

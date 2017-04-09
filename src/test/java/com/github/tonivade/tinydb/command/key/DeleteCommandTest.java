@@ -28,7 +28,7 @@ public class DeleteCommandTest {
     .withParams("test")
     .execute()
     .assertValue("test", is(nullValue()))
-    .then(RedisToken.integer(1));
+    .assertThat(RedisToken.integer(1));
   }
 
 }

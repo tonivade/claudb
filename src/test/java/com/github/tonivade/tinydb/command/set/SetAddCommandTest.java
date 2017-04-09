@@ -25,7 +25,7 @@ public class SetAddCommandTest {
     rule.withParams("key", "value")
     .execute()
     .assertValue("key", isSet("value"))
-    .then(RedisToken.integer(1));
+    .assertThat(RedisToken.integer(1));
   }
 
 }

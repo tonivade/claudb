@@ -25,12 +25,12 @@ public class RightPushCommandTest {
     rule.withParams("key", "a", "b", "c")
     .execute()
     .assertValue("key", isList("a", "b", "c"))
-    .then(RedisToken.integer(3));
+    .assertThat(RedisToken.integer(3));
 
     rule.withParams("key", "d")
     .execute()
     .assertValue("key", isList("a", "b", "c", "d"))
-    .then(RedisToken.integer(4));
+    .assertThat(RedisToken.integer(4));
   }
 
 }

@@ -27,25 +27,25 @@ public class ListSetCommandTest {
     .withParams("key", "0", "A")
     .execute()
     .assertValue("key", isList("A", "b", "c"))
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "-1", "C")
     .execute()
     .assertValue("key", isList("a", "b", "C"))
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "z", "C")
     .execute()
     .assertValue("key", isList("a", "b", "c"))
-    .then(RedisToken.error("ERR value is not an integer or out of range"));
+    .assertThat(RedisToken.error("ERR value is not an integer or out of range"));
 
     rule.withData("key", list("a", "b", "c"))
     .withParams("key", "99", "C")
     .execute()
     .assertValue("key", isList("a", "b", "c"))
-    .then(RedisToken.error("ERR index out of range"));
+    .assertThat(RedisToken.error("ERR index out of range"));
   }
 
 }

@@ -33,7 +33,7 @@ public class PublishCommandTest {
     rule.withAdminData("subscriptions:test", set("localhost:12345"))
     .withParams("test", "Hello World!")
     .execute()
-    .then(RedisToken.integer(1))
+    .assertThat(RedisToken.integer(1))
     .verify(ITinyDB.class).publish("localhost:12345",
                                    array(string("message"), string("test"), string("Hello World!")));
   }

@@ -28,7 +28,7 @@ public class KeysCommandTest {
     .withData("c", string("3"))
     .withParams("*")
     .execute()
-    .then(containsInAnyOrder(RedisToken.string("abc"),
+    .assertThat(containsInAnyOrder(RedisToken.string("abc"),
                              RedisToken.string("acd"),
                              RedisToken.string("c")));
   }
@@ -40,7 +40,7 @@ public class KeysCommandTest {
     .withData("c", string("3"))
     .withParams("a??")
     .execute()
-    .then(containsInAnyOrder(RedisToken.string("abc"),
+    .assertThat(containsInAnyOrder(RedisToken.string("abc"),
                              RedisToken.string("acd")));
   }
 
@@ -51,7 +51,7 @@ public class KeysCommandTest {
     .withData("c", string("3"))
     .withParams("a*")
     .execute()
-    .then(containsInAnyOrder(RedisToken.string("abc"),
+    .assertThat(containsInAnyOrder(RedisToken.string("abc"),
                              RedisToken.string("acd")));
   }
 

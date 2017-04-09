@@ -27,7 +27,7 @@ public class HashKeysCommandTest {
     rule.withData("key", hash(entry("a", "1"), entry("b", "2")))
     .withParams("key", "a")
     .execute()
-    .then(containsInAnyOrder(string("a"), string("b")));
+    .assertThat(containsInAnyOrder(string("a"), string("b")));
   }
 
 }

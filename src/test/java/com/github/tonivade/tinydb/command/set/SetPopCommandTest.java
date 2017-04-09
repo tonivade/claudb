@@ -33,7 +33,7 @@ public class SetPopCommandTest {
     rule.withData("key", set("a", "b", "c"))
     .withParams("key")
     .execute()
-    .then(notNullValue());
+    .assertThat(notNullValue());
 
     DatabaseValue value = rule.getDatabase().get(safeKey("key"));
     assertThat(value.<Set<String>>getValue().size(), is(2));
@@ -43,7 +43,7 @@ public class SetPopCommandTest {
   public void testExecuteNotExists()  {
     rule.withParams("key")
     .execute()
-    .then(RedisToken.string(SafeString.EMPTY_STRING));
+    .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
   }
 
 }

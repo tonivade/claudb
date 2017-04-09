@@ -25,7 +25,7 @@ public class GetSetCommandTest {
     rule.withData("a", string("1"))
     .withParams("a", "2")
     .execute()
-    .then(RedisToken.string("1"));
+    .assertThat(RedisToken.string("1"));
   }
 
 }

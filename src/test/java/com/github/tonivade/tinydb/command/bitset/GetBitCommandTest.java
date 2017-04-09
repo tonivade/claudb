@@ -25,7 +25,7 @@ public class GetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset(10))
     .withParams("test", "10")
     .execute()
-    .then(RedisToken.integer(true));
+    .assertThat(RedisToken.integer(true));
   }
 
   @Test
@@ -33,7 +33,7 @@ public class GetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "10")
     .execute()
-    .then(RedisToken.integer(false));
+    .assertThat(RedisToken.integer(false));
   }
 
   @Test
@@ -41,7 +41,7 @@ public class GetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "a")
     .execute()
-    .then(RedisToken.error("bit offset is not an integer"));
+    .assertThat(RedisToken.error("bit offset is not an integer"));
   }
 
 }

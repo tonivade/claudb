@@ -30,7 +30,7 @@ public class HashGetAllCommandTest {
                        entry("key3", "value3")))
     .withParams("a")
     .execute()
-    .then(array(string("key1"), string("value1"),
+    .assertThat(array(string("key1"), string("value1"),
                 string("key3"), string("value3"),
                 string("key2"), string("value2")));
   }
@@ -39,7 +39,7 @@ public class HashGetAllCommandTest {
   public void testExecuteNotExists() {
     rule.withParams("a")
     .execute()
-    .then(array());
+    .assertThat(array());
   }
 
 }

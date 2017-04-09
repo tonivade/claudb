@@ -26,7 +26,7 @@ public class SetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "10", "1")
     .execute()
-    .then(integer(false));
+    .assertThat(integer(false));
   }
 
   @Test
@@ -34,7 +34,7 @@ public class SetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset(10))
     .withParams("test", "10", "0")
     .execute()
-    .then(integer(true));
+    .assertThat(integer(true));
   }
 
   @Test
@@ -42,7 +42,7 @@ public class SetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "1", "a")
     .execute()
-    .then(error("bit or offset is not an integer"));
+    .assertThat(error("bit or offset is not an integer"));
   }
 
   @Test
@@ -50,6 +50,6 @@ public class SetBitCommandTest {
     rule.withData("test", DatabaseValue.bitset())
     .withParams("test", "a", "0")
     .execute()
-    .then(error("bit or offset is not an integer"));
+    .assertThat(error("bit or offset is not an integer"));
   }
 }

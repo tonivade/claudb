@@ -30,7 +30,7 @@ public class MultiSetCommandTest {
     .assertValue("a", is(string("1")))
     .assertValue("b", is(string("2")))
     .assertValue("c", is(string("3")))
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
 
     assertThat(rule.getDatabase().size(), is(3));
   }

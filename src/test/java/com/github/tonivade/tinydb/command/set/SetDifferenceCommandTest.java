@@ -27,7 +27,7 @@ public class SetDifferenceCommandTest {
     .withData("b", set("3", "4"))
     .withParams("a", "b")
     .execute()
-    .then(containsInAnyOrder(string("1"), string("2")));
+    .assertThat(containsInAnyOrder(string("1"), string("2")));
   }
 
   @Test
@@ -35,7 +35,7 @@ public class SetDifferenceCommandTest {
     rule.withData("a", set("1", "2", "3"))
     .withParams("a", "b")
     .execute()
-    .then(containsInAnyOrder(string("1"), string("2"), string("3")));
+    .assertThat(containsInAnyOrder(string("1"), string("2"), string("3")));
   }
 
 }

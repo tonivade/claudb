@@ -24,6 +24,6 @@ public class BitCountCommandTest {
     rule.withData("test", DatabaseValue.bitset(1, 5, 10, 15))
     .withParams("test")
     .execute()
-    .then(integer(4));
+    .assertThat(integer(4));
   }
 }

@@ -26,7 +26,7 @@ public class HashLengthCommandTest {
     rule.withData("key", hash(entry("a", "1"), entry("b", "2")))
     .withParams("key", "a")
     .execute()
-    .then(RedisToken.integer(2));
+    .assertThat(RedisToken.integer(2));
   }
 
 }

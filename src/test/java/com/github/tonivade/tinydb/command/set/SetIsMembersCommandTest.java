@@ -25,12 +25,12 @@ public class SetIsMembersCommandTest {
     rule.withData("key", set("a", "b", "c"))
     .withParams("key", "a")
     .execute()
-    .then(RedisToken.integer(true));
+    .assertThat(RedisToken.integer(true));
 
     rule.withData("key", set("a", "b", "c"))
     .withParams("key", "z")
     .execute()
-    .then(RedisToken.integer(false));
+    .assertThat(RedisToken.integer(false));
   }
 
 }

@@ -21,7 +21,7 @@ public class MultiCommandTest {
   @Test
   public void executeWithoutActiveTransaction()  {
     rule.execute()
-    .then(RedisToken.status("OK"));
+    .assertThat(RedisToken.status("OK"));
   }
 
   @Test
@@ -29,6 +29,6 @@ public class MultiCommandTest {
     when(rule.getSession().getValue("tx")).thenReturn(Optional.of(new TransactionState()));
 
     rule.execute()
-    .then(RedisToken.error("ERR MULTI calls can not be nested"));
+    .assertThat(RedisToken.error("ERR MULTI calls can not be nested"));
   }
 }

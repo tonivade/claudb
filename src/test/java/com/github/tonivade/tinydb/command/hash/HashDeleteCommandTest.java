@@ -26,7 +26,7 @@ public class HashDeleteCommandTest {
     rule.withData("key", hash(entry("a", "1")))
     .withParams("key", "a", "b", "c")
     .execute()
-    .then(RedisToken.integer(true));
+    .assertThat(RedisToken.integer(true));
   }
 
   @Test
@@ -34,7 +34,7 @@ public class HashDeleteCommandTest {
     rule.withData("key", hash(entry("d", "1")))
     .withParams("key", "a", "b", "c")
     .execute()
-    .then(RedisToken.integer(false));
+    .assertThat(RedisToken.integer(false));
   }
 
 }

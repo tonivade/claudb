@@ -26,6 +26,6 @@ public class SetMembersCommandTest {
         rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
-            .then(array(string("a"), string("b"), string("c")));
+            .assertThat(array(string("a"), string("b"), string("c")));
     }
 }

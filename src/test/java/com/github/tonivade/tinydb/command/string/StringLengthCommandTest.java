@@ -26,7 +26,7 @@ public class StringLengthCommandTest {
     rule.withData("a", string("test"))
     .withParams("a")
     .execute()
-    .then(RedisToken.integer(4));
+    .assertThat(RedisToken.integer(4));
   }
 
 }

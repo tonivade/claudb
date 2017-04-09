@@ -22,6 +22,6 @@ public class InfoCommandTest {
   public void testExecute()  {
     rule.withParams()
     .execute()
-    .then(org.hamcrest.Matchers.any(RedisToken.class));
+    .assertThat(org.hamcrest.Matchers.any(RedisToken.class));
   }
 }

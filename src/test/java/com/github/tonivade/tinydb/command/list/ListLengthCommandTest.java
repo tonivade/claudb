@@ -25,7 +25,7 @@ public class ListLengthCommandTest {
     rule.withData("key", list("a", "b", "c"))
     .withParams("key")
     .execute()
-    .then(RedisToken.integer(3));
+    .assertThat(RedisToken.integer(3));
   }
 
 }

@@ -27,7 +27,7 @@ public class MultiGetCommandTest {
     .withData("c", string("2"))
     .withParams("a", "b", "c")
     .execute()
-    .then(array(RedisToken.string("1"),
+    .assertThat(array(RedisToken.string("1"),
                 RedisToken.nullString(),
                 RedisToken.string("2")));
   }

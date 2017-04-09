@@ -29,7 +29,7 @@ public class SubscribeCommandTest {
   public void testExecute()  {
     rule.withParams("test")
     .execute()
-    .then(array(string("subscribe"), string("test"), integer(1)))
+    .assertThat(array(string("subscribe"), string("test"), integer(1)))
     .assertAdminValue("subscriptions:test", isSet("localhost:12345"));
 
     assertThat(rule.getSessionState().getSubscriptions(), contains(safeString("test")));

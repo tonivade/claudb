@@ -27,7 +27,7 @@ public class SortedSetRangeByScoreCommandTest {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "3")
     .execute()
-    .then(array(string("a"), string("b"), string("c")));
+    .assertThat(array(string("a"), string("b"), string("c")));
   }
 
   @Test
@@ -35,7 +35,7 @@ public class SortedSetRangeByScoreCommandTest {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "3", "WITHSCORES")
     .execute()
-    .then(array(string("a"), string("1.0"), 
+    .assertThat(array(string("a"), string("1.0"), 
         string("b"), string("2.0"), 
         string("c"), string("3.0")));
   }
@@ -45,7 +45,7 @@ public class SortedSetRangeByScoreCommandTest {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "1", "3", "LIMIT", "1", "2")
     .execute()
-    .then(array(string("b"), string("c")));
+    .assertThat(array(string("b"), string("c")));
   }
 
   @Test
@@ -53,7 +53,7 @@ public class SortedSetRangeByScoreCommandTest {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "(1", "3")
     .execute()
-    .then(array(string("b"), string("c")));
+    .assertThat(array(string("b"), string("c")));
   }
 
   @Test
@@ -61,7 +61,7 @@ public class SortedSetRangeByScoreCommandTest {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "-inf", "+inf")
     .execute()
-    .then(array(string("a"), string("b"), string("c")));
+    .assertThat(array(string("a"), string("b"), string("c")));
   }
 
 }

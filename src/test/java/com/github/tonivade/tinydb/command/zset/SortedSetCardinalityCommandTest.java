@@ -26,11 +26,11 @@ public class SortedSetCardinalityCommandTest {
     rule.withData("key", zset(score(1.0, "a"), score(2.0, "b"), score(3.0, "c")))
     .withParams("key")
     .execute()
-    .then(RedisToken.integer(3));
+    .assertThat(RedisToken.integer(3));
 
     rule.withParams("notExists")
     .execute()
-    .then(RedisToken.integer(0));
+    .assertThat(RedisToken.integer(0));
   }
 
 }

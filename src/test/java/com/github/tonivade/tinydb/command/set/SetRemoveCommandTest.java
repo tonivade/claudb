@@ -27,12 +27,12 @@ public class SetRemoveCommandTest {
     .withParams("key", "a")
     .execute()
     .assertValue("key", isSet("b", "c"))
-    .then(RedisToken.integer(1));
+    .assertThat(RedisToken.integer(1));
 
     rule.withParams("key", "a")
     .execute()
     .assertValue("key", isSet("b", "c"))
-    .then(RedisToken.integer(0));
+    .assertThat(RedisToken.integer(0));
   }
 
 }

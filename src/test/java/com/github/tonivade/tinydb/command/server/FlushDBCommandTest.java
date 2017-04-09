@@ -26,7 +26,7 @@ public class FlushDBCommandTest {
   public void testExecute() {
     rule.withData("a", string("test"))
     .execute()
-    .then(status("OK"));
+    .assertThat(status("OK"));
 
     assertThat(rule.getDatabase().isEmpty(), is(true));
   }

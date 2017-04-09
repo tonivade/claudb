@@ -22,7 +22,6 @@ import com.github.tonivade.resp.IRedisCallback;
 import com.github.tonivade.resp.RedisClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
-import com.github.tonivade.tinydb.ITinyDB;
 
 public class TinyDBClientTest {
 
@@ -31,7 +30,7 @@ public class TinyDBClientTest {
 
   @Test
   public void testClient()  {
-    ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
+    ArgumentCaptor<RedisToken<?>> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     IRedisCallback callback = mock(IRedisCallback.class);
     RedisClient client = new RedisClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
@@ -44,7 +43,7 @@ public class TinyDBClientTest {
 
     verify(callback, timeout(1000)).onMessage(captor.capture());
 
-    RedisToken message = captor.getValue();
+    RedisToken<?> message = captor.getValue();
 
     assertThat(message.getType(), is(RedisTokenType.STATUS));
     assertThat(message.getValue(), is(safeString("PONG")));

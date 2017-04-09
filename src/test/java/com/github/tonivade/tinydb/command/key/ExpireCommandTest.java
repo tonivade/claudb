@@ -29,11 +29,11 @@ public class ExpireCommandTest {
     .execute()
     .assertKey("test", isNotExpired())
     .assertValue("test", is(string("value")))
-    .then(RedisToken.integer(true));
+    .assertThat(RedisToken.integer(true));
 
     rule.withParams("notExists", "10")
     .execute()
-    .then(RedisToken.integer(false));
+    .assertThat(RedisToken.integer(false));
   }
 
 }

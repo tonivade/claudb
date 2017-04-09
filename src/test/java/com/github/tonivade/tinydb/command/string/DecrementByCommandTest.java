@@ -23,15 +23,15 @@ public class DecrementByCommandTest {
   public void testExecute() {
     rule.withParams("a", "10")
     .execute()
-    .then(RedisToken.integer(-10));
+    .assertThat(RedisToken.integer(-10));
 
     rule.withParams("a", "10")
     .execute()
-    .then(RedisToken.integer(-20));
+    .assertThat(RedisToken.integer(-20));
 
     rule.withParams("a", "5")
     .execute()
-    .then(RedisToken.integer(-25));
+    .assertThat(RedisToken.integer(-25));
   }
 
 }
