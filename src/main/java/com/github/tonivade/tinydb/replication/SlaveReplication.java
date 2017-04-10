@@ -83,7 +83,7 @@ public class SlaveReplication implements RespCallback {
 
   private void processCommand(ArrayRedisToken token) {
     Collection<RedisToken<?>> array = token.getValue();
-    RedisToken<SafeString> commandToken = (RedisToken<SafeString>) array.stream().findFirst().orElse(nullString());;
+    RedisToken<SafeString> commandToken = (RedisToken<SafeString>) array.stream().findFirst().orElse(nullString());
     List<RedisToken<SafeString>> paramTokens = List.class.cast(array.stream().skip(1).collect(toList()));
 
     LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
