@@ -85,6 +85,8 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
 - Transactions
     - MULTI
     - EXEC
+ - Scripting
+    - EVAL
 
 ## Design
 
@@ -107,7 +109,6 @@ Now TinyDB support master/slave replication, a master can have multiple slaves, 
 slaves can't have slaves.
 
 Also implements partially the Pub/Sub subsystem.
-
 
 ## Performance
 
