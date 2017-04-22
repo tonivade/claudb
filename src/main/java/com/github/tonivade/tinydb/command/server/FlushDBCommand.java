@@ -7,17 +7,17 @@ package com.github.tonivade.tinydb.command.server;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("flushdb")
-public class FlushDBCommand implements ITinyDBCommand {
+public class FlushDBCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        db.clear();
-        response.addSimpleStr(IResponse.RESULT_OK);
-    }
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    db.clear();
+    return RedisToken.responseOk();
+  }
 
 }

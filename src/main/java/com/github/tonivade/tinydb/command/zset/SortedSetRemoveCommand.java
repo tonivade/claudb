@@ -17,38 +17,37 @@ import java.util.Set;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.SortedSet;
-
 
 @Command("zrem")
 @ParamLength(2)
 @ParamType(DataType.ZSET)
-public class SortedSetRemoveCommand implements ITinyDBCommand {
+public class SortedSetRemoveCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<SafeString> items =  request.getParams().stream().skip(1).collect(toList());
-        List<SafeString> removed = new LinkedList<>();
-        db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,
-                (oldValue, newValue) -> {
-                    Set<Entry<Double, SafeString>> merge = new SortedSet();
-                    merge.addAll(oldValue.getValue());
-                    for (SafeString item : items) {
-                        if (merge.remove(item)) {
-                            removed.add(item);
-                        }
-                    }
-                    return zset(merge);
-                });
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    List<SafeString> items =  request.getParams().stream().skip(1).collect(toList());
+    List<SafeString> removed = new LinkedList<>();
+    db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,
+             (oldValue, newValue) -> {
+               Set<Entry<Double, SafeString>> merge = new SortedSet();
+               merge.addAll(oldValue.getValue());
+               for (SafeString item : items) {
+                 if (merge.remove(item)) {
+                   removed.add(item);
+                 }
+               }
+               return zset(merge);
+             });
 
-        response.addInt(removed.size());
-    }
+    return RedisToken.integer(removed.size());
+  }
 
 }

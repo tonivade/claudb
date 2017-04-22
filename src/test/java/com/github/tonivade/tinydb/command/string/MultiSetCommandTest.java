@@ -12,6 +12,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 import com.github.tonivade.tinydb.command.string.MultiSetCommand;
@@ -19,19 +20,19 @@ import com.github.tonivade.tinydb.command.string.MultiSetCommand;
 @CommandUnderTest(MultiSetCommand.class)
 public class MultiSetCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() {
-        rule.withParams("a", "1", "b", "2", "c", "3")
-            .execute()
-            .assertValue("a", is(string("1")))
-            .assertValue("b", is(string("2")))
-            .assertValue("c", is(string("3")))
-            .verify().addSimpleStr("OK");
+  @Test
+  public void testExecute() {
+    rule.withParams("a", "1", "b", "2", "c", "3")
+    .execute()
+    .assertValue("a", is(string("1")))
+    .assertValue("b", is(string("2")))
+    .assertValue("c", is(string("3")))
+    .assertThat(RedisToken.status("OK"));
 
-        assertThat(rule.getDatabase().size(), is(3));
-    }
+    assertThat(rule.getDatabase().size(), is(3));
+  }
 
 }

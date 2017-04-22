@@ -15,9 +15,9 @@ import com.github.tonivade.tinydb.data.DatabaseKey;
 @ParamLength(1)
 public class TimeToLiveSecondsCommand extends TimeToLiveCommand {
 
-    @Override
-    protected int timeToLive(DatabaseKey key, Instant now) {
-        return key.timeToLiveSeconds(now);
-    }
+  @Override
+  protected int timeToLive(DatabaseKey key, Instant now) {
+    return key.timeToLiveSeconds(now);
+  }
 
 }

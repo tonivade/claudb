@@ -1,12 +1,15 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
-apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'tinydb'
-version = '0.8.0'
+version = '0.9.0'
+
+configurations {
+  codacy
+}
 
 buildscript {
     repositories {
@@ -15,28 +18,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.0.1'
         classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
 jacocoTestReport {
     reports {
-        xml.enabled = true // coveralls plugin depends on xml format report
+        xml.enabled = true
         html.enabled = true
-    }
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-    }
-    test {
-        java {
-            srcDirs = ['src/test/java']
-        }
     }
 }
 
@@ -49,16 +38,24 @@ repositories {
     maven {
         url = 'https://oss.sonatype.org/content/repositories/snapshots'
     }
+    maven {
+        url = "http://dl.bintray.com/typesafe/maven-releases" 
+    }
+    maven { 
+      url = "https://jitpack.io"
+    }
 }
 
 dependencies {
-    compile 'com.github.tonivade:resp-server:0.5.0'
+    compile 'com.github.tonivade:resp-server:0.6.0'
     compile 'com.github.tonivade:equalizer:0.2.0'
-    compile 'net.sf.jopt-simple:jopt-simple:4.9'
+    compile 'net.sf.jopt-simple:jopt-simple:5.0.3'
+    compile 'org.luaj:luaj-jse:3.0.1'
     testCompile 'junit:junit:4.12'
-    testCompile 'redis.clients:jedis:2.6.3'
-    testCompile 'org.mockito:mockito-core:2.2.29'
+    testCompile 'redis.clients:jedis:2.9.0'
+    testCompile 'org.mockito:mockito-core:2.7.22'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
+    codacy("com.github.codacy:codacy-coverage-reporter:-SNAPSHOT")
 }
 
 compileJava {  
@@ -123,4 +120,10 @@ nexus {
 task copyToLib(type: Copy) {
     into "$buildDir/output/lib"
     from configurations.runtime
+}
+
+task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoTestReport) {
+  main = "com.codacy.CodacyCoverageReporter"
+  classpath = configurations.codacy
+  args = ["-l", "Java", "-r", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"]
 }

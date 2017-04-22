@@ -2,9 +2,10 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -16,40 +17,39 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.github.tonivade.resp.IRedisCallback;
-import com.github.tonivade.resp.RedisClient;
+import com.github.tonivade.resp.RespCallback;
+import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
-import com.github.tonivade.tinydb.ITinyDB;
 
 public class TinyDBClientTest {
 
-    @Rule
-    public final TinyDBRule rule = new TinyDBRule();
+  @Rule
+  public final TinyDBRule rule = new TinyDBRule();
 
-    @Test
-    public void testClient() throws Exception {
-        ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
+  @Test
+  public void testClient()  {
+    ArgumentCaptor<RedisToken<?>> captor = ArgumentCaptor.forClass(RedisToken.class);
 
-        IRedisCallback callback = mock(IRedisCallback.class);
-        RedisClient client = new RedisClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
+    RespCallback callback = mock(RespCallback.class);
+    RespClient client = new RespClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
 
-        client.start();
+    client.start();
 
-        verify(callback, timeout(1000)).onConnect();
+    verify(callback, timeout(1000)).onConnect();
 
-        client.send("ping");
+    client.send(array(string("ping")));
 
-        verify(callback, timeout(1000)).onMessage(captor.capture());
+    verify(callback, timeout(1000)).onMessage(captor.capture());
 
-        RedisToken message = captor.getValue();
+    RedisToken<?> message = captor.getValue();
 
-        assertThat(message.getType(), is(RedisTokenType.STATUS));
-        assertThat(message.getValue(), is(safeString("PONG")));
+    assertThat(message.getType(), is(RedisTokenType.STATUS));
+    assertThat(message.getValue(), is(safeString("PONG")));
 
-        client.stop();
+    client.stop();
 
-        verify(callback, timeout(1000)).onDisconnect();
-    }
+    verify(callback, timeout(1000)).onDisconnect();
+  }
 
 }

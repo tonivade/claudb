@@ -5,28 +5,28 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.DatabaseKey;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("expire")
 @ParamLength(2)
-public class ExpireCommand implements ITinyDBCommand {
+public class ExpireCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        try {
-            DatabaseKey key = db.overrideKey(safeKey(request.getParam(0), parsetTtl(request.getParam(1))));
-            response.addInt(key != null);
-        } catch (NumberFormatException e) {
-            response.addError("ERR value is not an integer or out of range");
-        }
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    try {
+      DatabaseKey key = db.overrideKey(safeKey(request.getParam(0), parsetTtl(request.getParam(1))));
+      return RedisToken.integer(key != null);
+    } catch (NumberFormatException e) {
+      return RedisToken.error("ERR value is not an integer or out of range");
     }
+  }
 
-    private int parsetTtl(SafeString param) throws NumberFormatException {
-        return Integer.parseInt(param.toString());
-    }
+  private int parsetTtl(SafeString param) throws NumberFormatException {
+    return Integer.parseInt(param.toString());
+  }
 
 }

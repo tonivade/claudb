@@ -20,101 +20,102 @@ import java.util.stream.Stream;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
+
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("zrangebyscore")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetRangeByScoreCommand implements ITinyDBCommand {
+public class SortedSetRangeByScoreCommand implements TinyDBCommand {
 
-    private static final String EXCLUSIVE = "(";
-    private static final String MINUS_INFINITY = "-inf";
-    private static final String INIFITY = "+inf";
-    private static final String PARAM_WITHSCORES = "WITHSCORES";
-    private static final String PARAM_LIMIT = "LIMIT";
+  private static final String EXCLUSIVE = "(";
+  private static final String MINUS_INFINITY = "-inf";
+  private static final String INIFITY = "+inf";
+  private static final String PARAM_WITHSCORES = "WITHSCORES";
+  private static final String PARAM_LIMIT = "LIMIT";
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        try {
-            DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-            NavigableSet<Entry<Double, SafeString>> set = value.getValue();
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    try {
+      DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
+      NavigableSet<Entry<Double, SafeString>> set = value.getValue();
 
-            float from = parseRange(request.getParam(1).toString());
-            float to = parseRange(request.getParam(2).toString());
+      float from = parseRange(request.getParam(1).toString());
+      float to = parseRange(request.getParam(2).toString());
 
-            Options options = parseOptions(request);
+      Options options = parseOptions(request);
 
-            Set<Entry<Double, SafeString>> range = set.subSet(
-                    score(from, SafeString.EMPTY_STRING), inclusive(request.getParam(1)),
-                    score(to, SafeString.EMPTY_STRING), inclusive(request.getParam(2)));
+      Set<Entry<Double, SafeString>> range = set.subSet(
+          score(from, SafeString.EMPTY_STRING), inclusive(request.getParam(1)),
+          score(to, SafeString.EMPTY_STRING), inclusive(request.getParam(2)));
 
-            List<Object> result = emptyList();
-            if (from <= to) {
-                if (options.withScores) {
-                    result = range.stream().flatMap(
-                            (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
-                } else {
-                    result = range.stream().map(
-                            (o) -> o.getValue()).collect(toList());
-                }
-
-                if (options.withLimit) {
-                    result = result.stream().skip(options.offset).limit(options.count).collect(toList());
-                }
-            }
-
-            response.addArray(result);
-        } catch (NumberFormatException e) {
-            response.addError("ERR value is not an float or out of range");
+      List<Object> result = emptyList();
+      if (from <= to) {
+        if (options.withScores) {
+          result = range.stream().flatMap(
+              (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
+        } else {
+          result = range.stream().map(
+              (o) -> o.getValue()).collect(toList());
         }
-    }
 
-    private Options parseOptions(IRequest request) {
-        Options options = new Options();
-        for (int i = 3; i < request.getLength(); i++) {
-            String param = request.getParam(i).toString();
-            if (param.equalsIgnoreCase(PARAM_LIMIT)) {
-                options.withLimit = true;
-                options.offset = parseInt(request.getParam(++i).toString());
-                options.count = parseInt(request.getParam(++i).toString());
-            } else if (param.equalsIgnoreCase(PARAM_WITHSCORES)) {
-                options.withScores = true;
-            }
+        if (options.withLimit) {
+          result = result.stream().skip(options.offset).limit(options.count).collect(toList());
         }
-        return options;
-    }
+      }
 
-    private boolean inclusive(SafeString param) {
-        return !param.toString().startsWith(EXCLUSIVE);
+      return convert(result);
+    } catch (NumberFormatException e) {
+      return RedisToken.error("ERR value is not an float or out of range");
     }
+  }
 
-    private float parseRange(String param) throws NumberFormatException {
-        switch (param) {
-        case INIFITY:
-            return Float.MAX_VALUE;
-        case MINUS_INFINITY:
-            return Float.MIN_VALUE;
-        default:
-            if (param.startsWith(EXCLUSIVE)) {
-                return Float.parseFloat(param.substring(1));
-            }
-            return Float.parseFloat(param);
-        }
+  private Options parseOptions(IRequest request) {
+    Options options = new Options();
+    for (int i = 3; i < request.getLength(); i++) {
+      String param = request.getParam(i).toString();
+      if (param.equalsIgnoreCase(PARAM_LIMIT)) {
+        options.withLimit = true;
+        options.offset = parseInt(request.getParam(++i).toString());
+        options.count = parseInt(request.getParam(++i).toString());
+      } else if (param.equalsIgnoreCase(PARAM_WITHSCORES)) {
+        options.withScores = true;
+      }
     }
+    return options;
+  }
 
-    private static class Options {
-        boolean withScores;
-        boolean withLimit;
-        int offset;
-        int count;
+  private boolean inclusive(SafeString param) {
+    return !param.toString().startsWith(EXCLUSIVE);
+  }
+
+  private float parseRange(String param) throws NumberFormatException {
+    switch (param) {
+    case INIFITY:
+      return Float.MAX_VALUE;
+    case MINUS_INFINITY:
+      return Float.MIN_VALUE;
+    default:
+      if (param.startsWith(EXCLUSIVE)) {
+        return Float.parseFloat(param.substring(1));
+      }
+      return Float.parseFloat(param);
     }
+  }
+
+  private static class Options {
+    boolean withScores;
+    boolean withLimit;
+    int offset;
+    int count;
+  }
 
 }

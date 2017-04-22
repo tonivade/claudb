@@ -10,43 +10,44 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import java.time.Instant;
 
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
-import com.github.tonivade.tinydb.data.IDatabase;
 
-public abstract class TimeToLiveCommand implements ITinyDBCommand {
+public abstract class TimeToLiveCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
-        if (key != null) {
-            keyExists(response, key);
-        } else {
-            notExists(response);
-        }
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
+    if (key != null) {
+      return keyExists(key);
+    } else {
+      return notExists();
     }
+  }
 
-    protected abstract int timeToLive(DatabaseKey key, Instant now);
+  protected abstract int timeToLive(DatabaseKey key, Instant now);
 
-    private void keyExists(IResponse response, DatabaseKey key) {
-        if (key.expiredAt() != null) {
-            hasExpiredAt(response, key);
-        } else {
-            response.addInt(-1);
-        }
+  private IntegerRedisToken keyExists(DatabaseKey key) {
+    if (key.expiredAt() != null) {
+      return hasExpiredAt(key);
+    } else {
+      return RedisToken.integer(-1);
     }
+  }
 
-    private void hasExpiredAt(IResponse response, DatabaseKey key) {
-        Instant now = Instant.now();
-        if (!key.isExpired(now)) {
-            response.addInt(timeToLive(key, now));
-        } else {
-            notExists(response);
-        }
+  private IntegerRedisToken hasExpiredAt(DatabaseKey key) {
+    Instant now = Instant.now();
+    if (!key.isExpired(now)) {
+      return RedisToken.integer(timeToLive(key, now));
+    } else {
+      return notExists();
     }
+  }
 
-    private void notExists(IResponse response) {
-        response.addInt(-2);
-    }
+  private IntegerRedisToken notExists() {
+    return RedisToken.integer(-2);
+  }
 }

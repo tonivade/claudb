@@ -37,6 +37,7 @@ import com.github.tonivade.tinydb.command.list.RightPushCommand;
 import com.github.tonivade.tinydb.command.pubsub.PublishCommand;
 import com.github.tonivade.tinydb.command.pubsub.SubscribeCommand;
 import com.github.tonivade.tinydb.command.pubsub.UnsubscribeCommand;
+import com.github.tonivade.tinydb.command.scripting.EvalCommand;
 import com.github.tonivade.tinydb.command.server.FlushDBCommand;
 import com.github.tonivade.tinydb.command.server.InfoCommand;
 import com.github.tonivade.tinydb.command.server.SelectCommand;
@@ -156,5 +157,8 @@ public class TinyDBCommandSuite extends CommandSuite {
     // transactions
     addCommand(MultiCommand.class);
     addCommand(ExecCommand.class);
+
+    // scripting
+    addCommand(EvalCommand.class);
   }
 }

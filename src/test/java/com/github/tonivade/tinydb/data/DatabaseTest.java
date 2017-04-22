@@ -29,7 +29,7 @@ public class DatabaseTest {
     private final SimpleDatabase database = new SimpleDatabase();
 
     @Test
-    public void testDatabase() throws Exception {
+    public void testDatabase()  {
         database.put(safeKey("a"), string("value"));
 
         assertThat(database.get(safeKey("a")).getValue(), is(safeString("value")));
@@ -59,7 +59,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testExpire() throws Exception {
+    public void testExpire()  {
         database.put(safeKey("a"), string("1"));
         database.overrideKey(safeKey("a", 10));
         database.getKey(safeKey(""));

@@ -14,6 +14,7 @@ import java.time.Instant;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 
@@ -26,7 +27,7 @@ public abstract class TimeToLiveCommandTest {
         rule.withData(safeKey(safeString("test")), string("value"))
             .withParams("test")
             .execute()
-            .verify().addInt(-1);
+            .assertThat(RedisToken.integer(-1));
     }
 
     @Test
@@ -36,6 +37,6 @@ public abstract class TimeToLiveCommandTest {
         rule.withData(new DatabaseKey(safeString("test"), now.minusSeconds(10)), string("value"))
             .withParams("test")
             .execute()
-            .verify().addInt(-2);
+            .assertThat(RedisToken.integer(-2));
     }
 }

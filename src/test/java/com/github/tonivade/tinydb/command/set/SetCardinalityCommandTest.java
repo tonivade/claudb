@@ -10,26 +10,26 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.set.SetCardinalityCommand;
 
 @CommandUnderTest(SetCardinalityCommand.class)
 public class SetCardinalityCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withData("key", set("a", "b", "c"))
-            .withParams("key")
-            .execute()
-            .verify().addInt(3);
+  @Test
+  public void testExecute()  {
+    rule.withData("key", set("a", "b", "c"))
+    .withParams("key")
+    .execute()
+    .assertThat(RedisToken.integer(3));
 
-        rule.withParams("notExists")
-            .execute()
-            .verify().addInt(0);
-    }
+    rule.withParams("notExists")
+    .execute()
+    .assertThat(RedisToken.integer(0));
+  }
 
 }

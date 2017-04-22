@@ -12,7 +12,8 @@ import java.util.List;
 
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
+import com.github.tonivade.tinydb.data.Database;
 
 public interface ITinyDB extends IServerContext {
 
@@ -23,8 +24,8 @@ public interface ITinyDB extends IServerContext {
   void setMaster(boolean master);
   void importRDB(InputStream input) throws IOException;
   void exportRDB(OutputStream output) throws IOException;
-  IDatabase getDatabase(int i);
-  IDatabase getAdminDatabase();
-  void publish(String sourceKey, RedisToken message);
-  List<List<RedisToken>> getCommandsToReplicate();
+  Database getDatabase(int i);
+  Database getAdminDatabase();
+  void publish(String sourceKey, RedisToken<?> message);
+  List<ArrayRedisToken> getCommandsToReplicate();
 }

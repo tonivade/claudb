@@ -12,28 +12,28 @@ import java.util.Map;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("hexists")
 @ParamLength(2)
 @ParamType(DataType.HASH)
-public class HashExistsCommand implements ITinyDBCommand {
+public class HashExistsCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
 
-        Map<SafeString, SafeString> map = value.getValue();
+    Map<SafeString, SafeString> map = value.getValue();
 
-        response.addInt(map.containsKey(request.getParam(1)));
-    }
+    return RedisToken.integer(map.containsKey(request.getParam(1)));
+  }
 
 }

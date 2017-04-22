@@ -19,55 +19,56 @@ import java.util.stream.Stream;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
+
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
 @Command("zrevrange")
 @ParamLength(3)
 @ParamType(DataType.ZSET)
-public class SortedSetReverseRangeCommand implements ITinyDBCommand {
+public class SortedSetReverseRangeCommand implements TinyDBCommand {
 
-    private static final String PARAM_WITHSCORES = "WITHSCORES";
+  private static final String PARAM_WITHSCORES = "WITHSCORES";
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        try {
-            DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-            NavigableSet<Entry<Float, SafeString>> set = value.getValue();
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    try {
+      DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
+      NavigableSet<Entry<Float, SafeString>> set = value.getValue();
 
-            int from = Integer.parseInt(request.getParam(2).toString());
-            if (from < 0) {
-                from = set.size() + from;
-            }
-            int to = Integer.parseInt(request.getParam(1).toString());
-            if (to < 0) {
-                to = set.size() + to;
-            }
+      int from = Integer.parseInt(request.getParam(2).toString());
+      if (from < 0) {
+        from = set.size() + from;
+      }
+      int to = Integer.parseInt(request.getParam(1).toString());
+      if (to < 0) {
+        to = set.size() + to;
+      }
 
-            List<Object> result = emptyList();
-            if (from <= to) {
-                Optional<SafeString> withScores = request.getOptionalParam(3);
-                if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
-                    result = set.stream().skip(from).limit((to - from) + 1).flatMap(
-                            (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
-                } else {
-                    result = set.stream().skip(from).limit(
-                            (to - from) + 1).map((o) -> o.getValue()).collect(toList());
-                }
-            }
-            reverse(result);
-
-            response.addArray(result);
-        } catch (NumberFormatException e) {
-            response.addError("ERR value is not an integer or out of range");
+      List<Object> result = emptyList();
+      if (from <= to) {
+        Optional<SafeString> withScores = request.getOptionalParam(3);
+        if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
+          result = set.stream().skip(from).limit((to - from) + 1).flatMap(
+              (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
+        } else {
+          result = set.stream().skip(from).limit(
+              (to - from) + 1).map((o) -> o.getValue()).collect(toList());
         }
+      }
+      reverse(result);
+
+      return convert(result);
+    } catch (NumberFormatException e) {
+      return RedisToken.error("ERR value is not an integer or out of range");
     }
+  }
 
 }

@@ -5,26 +5,23 @@
 
 package com.github.tonivade.tinydb.command.server;
 
-import static org.mockito.Matchers.any;
-
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.server.InfoCommand;
 
 @CommandUnderTest(InfoCommand.class)
 public class InfoCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withParams()
-            .execute()
-            .verify().addBulkStr(any(SafeString.class));
-    }
+  @Test
+  public void testExecute()  {
+    rule.withParams()
+    .execute()
+    .assertThat(org.hamcrest.Matchers.any(RedisToken.class));
+  }
 }

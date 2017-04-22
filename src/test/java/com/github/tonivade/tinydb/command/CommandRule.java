@@ -8,6 +8,7 @@ package com.github.tonivade.tinydb.command;
 import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,37 +22,32 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
+import com.github.tonivade.resp.command.ICommand;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
 import com.github.tonivade.resp.command.IServerContext;
 import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
 
 public class CommandRule implements TestRule {
 
     private IRequest request;
-
-    private IResponse response;
-
     private ITinyDB server;
-
     private ISession session;
-
-    private ITinyDBCommand command;
+    private TinyDBCommand command;
 
     private final Object target;
 
     private final TinyDBServerState serverState = new TinyDBServerState(1);
-
     private final TinyDBSessionState sessionState = new TinyDBSessionState();
+
+    private RedisToken<?> response;
 
     public CommandRule(Object target) {
         this.target = target;
@@ -61,11 +57,11 @@ public class CommandRule implements TestRule {
         return request;
     }
 
-    public IResponse getResponse() {
+    public RedisToken<?> getResponse() {
         return response;
     }
 
-    public IDatabase getDatabase() {
+    public Database getDatabase() {
         return serverState.getDatabase(0);
     }
 
@@ -77,7 +73,7 @@ public class CommandRule implements TestRule {
         return server;
     }
 
-    public IDatabase getAdminDatabase() {
+    public Database getAdminDatabase() {
         return serverState.getAdminDatabase();
     }
 
@@ -88,12 +84,6 @@ public class CommandRule implements TestRule {
             public void evaluate() throws Throwable {
                 server = mock(ITinyDB.class);
                 request = mock(IRequest.class);
-                response = mock(IResponse.class, new Answer<IResponse>() {
-                    @Override
-                    public IResponse answer(InvocationOnMock invocation) throws Throwable {
-                        return (IResponse) invocation.getMock();
-                    }
-                });
                 session = mock(ISession.class);
 
                 when(request.getServerContext()).thenReturn(server);
@@ -115,6 +105,11 @@ public class CommandRule implements TestRule {
         };
     }
 
+    public CommandRule withCommand(String name, ICommand command) {
+      Mockito.when(server.getCommand(name)).thenReturn(command);
+      return this;
+    }
+
     public CommandRule withData(String key, DatabaseValue value) {
         withData(getDatabase(), safeKey(key), value);
         return this;
@@ -130,13 +125,12 @@ public class CommandRule implements TestRule {
         return this;
     }
 
-    private void withData(IDatabase database, DatabaseKey key, DatabaseValue value) {
+    private void withData(Database database, DatabaseKey key, DatabaseValue value) {
         database.put(key, value);
     }
 
     public CommandRule execute() {
-        Mockito.reset(response);
-        new TinyDBCommandWrapper(command).execute(request, response);
+        response = new TinyDBCommandWrapper(command).execute(request);
         return this;
     }
 
@@ -179,16 +173,22 @@ public class CommandRule implements TestRule {
         return this;
     }
 
-    private void assertKey(IDatabase database, DatabaseKey key, Matcher<DatabaseKey> matcher) {
+    private void assertKey(Database database, DatabaseKey key, Matcher<DatabaseKey> matcher) {
         Assert.assertThat(database.getKey(key), matcher);
     }
 
-    private void assertValue(IDatabase database, DatabaseKey key, Matcher<DatabaseValue> matcher) {
+    private void assertValue(Database database, DatabaseKey key, Matcher<DatabaseValue> matcher) {
         Assert.assertThat(database.get(key), matcher);
     }
 
-    public IResponse verify() {
-        return Mockito.verify(response);
+    public CommandRule assertThat(RedisToken<?> token) {
+      assertThat(equalTo(token));
+      return this;
+    }
+
+    public CommandRule assertThat(Matcher<? super RedisToken<?>> matcher) {
+      Assert.assertThat(this.response, matcher);
+      return this;
     }
 
     @SuppressWarnings("unchecked")
@@ -200,7 +200,7 @@ public class CommandRule implements TestRule {
         } else if (type.equals(ISession.class)) {
             return (T) Mockito.verify(session);
         }
-        return (T) verify();
+        throw new IllegalArgumentException();
     }
 
     public TinyDBServerState getServerState() {

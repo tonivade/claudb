@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -28,7 +29,7 @@ public class RenameCommandTest {
             .execute()
             .assertValue("a", is(nullValue()))
             .assertValue("b", is(string("1")))
-            .verify().addSimpleStr("OK");
+            .assertThat(RedisToken.status("OK"));
     }
 
     @Test
@@ -37,7 +38,7 @@ public class RenameCommandTest {
             .execute()
             .assertValue("a", is(nullValue()))
             .assertValue("b", is(nullValue()))
-            .verify().addError("ERR no such key");
+            .assertThat(RedisToken.error("ERR no such key"));
     }
 
 }

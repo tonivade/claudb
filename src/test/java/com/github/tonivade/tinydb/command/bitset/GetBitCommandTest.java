@@ -8,6 +8,7 @@ package com.github.tonivade.tinydb.command.bitset;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 import com.github.tonivade.tinydb.data.DatabaseValue;
@@ -16,31 +17,31 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 @CommandUnderTest(GetBitCommand.class)
 public class GetBitCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecuteOne() throws Exception {
-        rule.withData("test", DatabaseValue.bitset(10))
-            .withParams("test", "10")
-            .execute()
-            .verify().addInt(true);
-    }
+  @Test
+  public void testExecuteOne()  {
+    rule.withData("test", DatabaseValue.bitset(10))
+    .withParams("test", "10")
+    .execute()
+    .assertThat(RedisToken.integer(true));
+  }
 
-    @Test
-    public void testExecuteZero() throws Exception {
-        rule.withData("test", DatabaseValue.bitset())
-            .withParams("test", "10")
-            .execute()
-            .verify().addInt(false);
-    }
+  @Test
+  public void testExecuteZero()  {
+    rule.withData("test", DatabaseValue.bitset())
+    .withParams("test", "10")
+    .execute()
+    .assertThat(RedisToken.integer(false));
+  }
 
-    @Test
-    public void testExecuteFormat() throws Exception {
-        rule.withData("test", DatabaseValue.bitset())
-            .withParams("test", "a")
-            .execute()
-            .verify().addError("bit offset is not an integer");
-    }
+  @Test
+  public void testExecuteFormat()  {
+    rule.withData("test", DatabaseValue.bitset())
+    .withParams("test", "a")
+    .execute()
+    .assertThat(RedisToken.error("bit offset is not an integer"));
+  }
 
 }

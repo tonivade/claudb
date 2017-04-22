@@ -15,32 +15,32 @@ import java.util.List;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("rpush")
 @ParamLength(2)
 @ParamType(DataType.LIST)
-public class RightPushCommand implements ITinyDBCommand {
+public class RightPushCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        List<SafeString> values = request.getParams().stream().skip(1).collect(toList());
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    List<SafeString> values = request.getParams().stream().skip(1).collect(toList());
 
-        DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
-                (oldValue, newValue) -> {
-                    List<SafeString> merge = new LinkedList<>();
-                    merge.addAll(oldValue.getValue());
-                    merge.addAll(newValue.getValue());
-                    return list(merge);
-                });
+    DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
+        (oldValue, newValue) -> {
+          List<SafeString> merge = new LinkedList<>();
+          merge.addAll(oldValue.getValue());
+          merge.addAll(newValue.getValue());
+          return list(merge);
+        });
 
-        response.addInt(result.<List<SafeString>>getValue().size());
-    }
+    return RedisToken.integer(result.<List<SafeString>>getValue().size());
+  }
 
 }

@@ -9,40 +9,40 @@ import java.io.IOException;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.ITinyDB;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.persistence.ByteBufferOutputStream;
 import com.github.tonivade.tinydb.replication.MasterReplication;
 
 @ReadOnly
 @Command("sync")
-public class SyncCommand implements ITinyDBCommand {
+public class SyncCommand implements TinyDBCommand {
 
-    private MasterReplication master;
+  private MasterReplication master;
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        try {
-            ITinyDB server = getTinyDB(request.getServerContext());
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    try {
+      ITinyDB server = getTinyDB(request.getServerContext());
 
-            ByteBufferOutputStream output = new ByteBufferOutputStream();
-            server.exportRDB(output);
+      ByteBufferOutputStream output = new ByteBufferOutputStream();
+      server.exportRDB(output);
 
-            response.addBulkStr(new SafeString(output.toByteArray()));
+      if (master == null) {
+        master = new MasterReplication(server);
+        master.start();
+      }
 
-            if (master == null) {
-                master = new MasterReplication(server);
-                master.start();
-            }
+      master.addSlave(request.getSession().getId());
 
-            master.addSlave(request.getSession().getId());
-        } catch (IOException e) {
-            response.addError("ERROR replication error");
-        }
+      return RedisToken.string(new SafeString(output.toByteArray()));
+    } catch (IOException e) {
+      return RedisToken.error("ERROR replication error");
     }
+  }
 
 }

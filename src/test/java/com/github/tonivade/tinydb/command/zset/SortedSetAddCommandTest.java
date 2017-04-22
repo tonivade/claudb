@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 import com.github.tonivade.tinydb.command.zset.SortedSetAddCommand;
@@ -19,29 +20,29 @@ import com.github.tonivade.tinydb.command.zset.SortedSetAddCommand;
 @CommandUnderTest(SortedSetAddCommand.class)
 public class SortedSetAddCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() {
-        rule.withParams("key", "1", "one")
-            .execute()
-            .assertValue("key", is(zset(score(1.0, "one"))))
-            .verify().addInt(1);
+  @Test
+  public void testExecute() {
+    rule.withParams("key", "1", "one")
+    .execute()
+    .assertValue("key", is(zset(score(1.0, "one"))))
+    .assertThat(RedisToken.integer(1));
 
-        rule.withParams("key", "2", "two")
-            .execute()
-            .assertValue("key", is(zset(
-                    score(1.0, "one"),
-                    score(2.0, "two"))))
-            .verify().addInt(1);
+    rule.withParams("key", "2", "two")
+    .execute()
+    .assertValue("key", is(zset(
+        score(1.0, "one"),
+        score(2.0, "two"))))
+    .assertThat(RedisToken.integer(1));
 
-        rule.withParams("key", "2", "one")
-            .execute()
-            .assertValue("key", is(zset(
-                    score(1.0, "one"),
-                    score(2.0, "two"))))
-            .verify().addInt(0);
-    }
+    rule.withParams("key", "2", "one")
+    .execute()
+    .assertValue("key", is(zset(
+        score(1.0, "one"),
+        score(2.0, "two"))))
+    .assertThat(RedisToken.integer(0));
+  }
 
 }

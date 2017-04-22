@@ -5,7 +5,9 @@
 
 package com.github.tonivade.tinydb.command.server;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+
+import java.io.IOException;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,7 +15,6 @@ import org.junit.Test;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.server.SyncCommand;
 
 @CommandUnderTest(SyncCommand.class)
 public class SyncCommandTest {
@@ -22,7 +23,7 @@ public class SyncCommandTest {
     public final CommandRule rule = new CommandRule(this);
 
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute() throws IOException  {
         rule.execute()
             .verify(ITinyDB.class).exportRDB(any());
     }

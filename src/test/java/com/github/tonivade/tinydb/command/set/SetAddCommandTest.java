@@ -10,22 +10,22 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.isSet;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.set.SetAddCommand;
 
 @CommandUnderTest(SetAddCommand.class)
 public class SetAddCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withParams("key", "value")
-            .execute()
-            .assertValue("key", isSet("value"))
-            .verify().addInt(1);
-    }
+  @Test
+  public void testExecute()  {
+    rule.withParams("key", "value")
+    .execute()
+    .assertValue("key", isSet("value"))
+    .assertThat(RedisToken.integer(1));
+  }
 
 }

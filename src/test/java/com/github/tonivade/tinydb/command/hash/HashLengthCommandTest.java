@@ -11,22 +11,22 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
 @CommandUnderTest(HashLengthCommand.class)
 public class HashLengthCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withData("key", hash(entry("a", "1"), entry("b", "2")))
-            .withParams("key", "a")
-            .execute()
-            .verify().addInt(2);
-
-    }
+  @Test
+  public void testExecute()  {
+    rule.withData("key", hash(entry("a", "1"), entry("b", "2")))
+    .withParams("key", "a")
+    .execute()
+    .assertThat(RedisToken.integer(2));
+  }
 
 }

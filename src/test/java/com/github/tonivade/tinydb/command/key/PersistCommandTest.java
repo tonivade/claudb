@@ -10,6 +10,7 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -24,11 +25,13 @@ public class PersistCommandTest {
         rule.withData("test", string("value"))
             .withParams("test")
             .execute()
-            .verify().addInt(true);
+            .assertThat(RedisToken.integer(true));
+    }
 
+    public void testExecuteNotExists() {
         rule.withParams("notExists", "10")
             .execute()
-            .verify().addInt(false);
+            .assertThat(RedisToken.integer(false));
     }
 
 }

@@ -10,6 +10,7 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 import com.github.tonivade.tinydb.command.string.AppendCommand;
@@ -17,21 +18,22 @@ import com.github.tonivade.tinydb.command.string.AppendCommand;
 @CommandUnderTest(AppendCommand.class)
 public class AppendCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() {
-        rule.withData("test", string("Hola"))
-            .withParams("test", " mundo").execute()
-            .verify().addInt(10);
-    }
+  @Test
+  public void testExecute() {
+    rule.withData("test", string("Hola"))
+    .withParams("test", " mundo")
+    .execute()
+    .assertThat(RedisToken.integer(10));
+  }
 
-    @Test
-    public void testExecuteNoExists() {
-        rule.withParams("test", " mundo")
-            .execute()
-            .verify().addInt(6);
-    }
+  @Test
+  public void testExecuteNoExists() {
+    rule.withParams("test", " mundo")
+    .execute()
+    .assertThat(RedisToken.integer(6));
+  }
 
 }

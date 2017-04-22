@@ -10,14 +10,14 @@ import static com.github.tonivade.tinydb.persistence.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Test;
+import java.io.IOException;
 
-import com.github.tonivade.tinydb.persistence.ByteBufferOutputStream;
+import org.junit.Test;
 
 public class ByteBufferOutputStreamTest {
 
     @Test
-    public void testStream() throws Exception {
+    public void testStream() throws IOException {
         ByteBufferOutputStream out =  new ByteBufferOutputStream(10);
 
         out.write(9);

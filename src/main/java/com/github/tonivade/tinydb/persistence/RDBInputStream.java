@@ -31,7 +31,7 @@ import java.util.zip.CheckedInputStream;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.SimpleDatabase;
 
 public class RDBInputStream {
@@ -65,8 +65,8 @@ public class RDBInputStream {
     this.in = new CheckedInputStream(in, new CRC64());
   }
 
-  public Map<Integer, IDatabase> parse() throws IOException {
-    Map<Integer, IDatabase> databases = new HashMap<>();
+  public Map<Integer, Database> parse() throws IOException {
+    Map<Integer, Database> databases = new HashMap<>();
 
     int version = version();
 
@@ -75,7 +75,7 @@ public class RDBInputStream {
     }
 
     Long expireTime = null;
-    IDatabase db = null;
+    Database db = null;
     for (boolean end = false; !end;) {
       int read = in.read();
       switch (read) {
@@ -207,7 +207,7 @@ public class RDBInputStream {
     return hash(entries);
   }
 
-  private void ensure(IDatabase db, DatabaseKey key, DatabaseValue value) throws IOException {
+  private void ensure(Database db, DatabaseKey key, DatabaseValue value) throws IOException {
     if (db != null) {
       if (!key.isExpired(Instant.now())) {
         db.put(key, value);

@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
 import java.util.Scanner;
@@ -11,15 +10,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.github.tonivade.resp.IRedisCallback;
-import com.github.tonivade.resp.RedisClient;
+import com.github.tonivade.resp.RespCallback;
+import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-public class Client implements IRedisCallback {
+public class Client implements RespCallback {
 
   private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
@@ -28,7 +27,7 @@ public class Client implements IRedisCallback {
   private static final String END_OF_LINE = "\r\n";
   private static final String PROMPT = "> ";
 
-  private final BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
+  private final BlockingQueue<RedisToken<?>> responses = new ArrayBlockingQueue<>(1);
 
   @Override
   public void onConnect() {
@@ -41,7 +40,7 @@ public class Client implements IRedisCallback {
   }
 
   @Override
-  public void onMessage(RedisToken token) {
+  public void onMessage(RedisToken<?> token) {
     try {
       responses.put(token);
     } catch (InterruptedException e) {
@@ -49,7 +48,7 @@ public class Client implements IRedisCallback {
     }
   }
 
-  public RedisToken response() throws InterruptedException {
+  public RedisToken<?> response() throws InterruptedException {
     return responses.take();
   }
 
@@ -70,13 +69,14 @@ public class Client implements IRedisCallback {
 
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
-      RedisClient client = new RedisClient(optionHost, optionPort, callback);
+      RespClient client = new RespClient(optionHost, optionPort, callback);
       client.start();
 
       prompt();
       try (Scanner scanner = new Scanner(System.in, CHARSET_NAME)) {
         for (boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
           String line = scanner.nextLine();
+          // FIXME: send is not working
           if (!line.isEmpty()) {
             client.send(line + END_OF_LINE);
             System.out.println(callback.response());

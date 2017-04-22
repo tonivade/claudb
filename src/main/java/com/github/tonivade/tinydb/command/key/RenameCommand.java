@@ -10,21 +10,21 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IResponse;
-import com.github.tonivade.tinydb.command.ITinyDBCommand;
-import com.github.tonivade.tinydb.data.IDatabase;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.tinydb.command.TinyDBCommand;
+import com.github.tonivade.tinydb.data.Database;
 
 @Command("rename")
 @ParamLength(2)
-public class RenameCommand implements ITinyDBCommand {
+public class RenameCommand implements TinyDBCommand {
 
-    @Override
-    public void execute(IDatabase db, IRequest request, IResponse response) {
-        if (db.rename(safeKey(request.getParam(0)), safeKey(request.getParam(1)))) {
-            response.addSimpleStr(IResponse.RESULT_OK);
-        } else {
-            response.addError("ERR no such key");
-        }
+  @Override
+  public RedisToken<?> execute(Database db, IRequest request) {
+    if (db.rename(safeKey(request.getParam(0)), safeKey(request.getParam(1)))) {
+      return RedisToken.responseOk();
+    } else {
+      return RedisToken.error("ERR no such key");
     }
+  }
 
 }

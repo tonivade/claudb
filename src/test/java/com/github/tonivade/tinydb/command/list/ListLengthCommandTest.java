@@ -10,22 +10,22 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.list.ListLengthCommand;
 
 @CommandUnderTest(ListLengthCommand.class)
 public class ListLengthCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws Exception {
-        rule.withData("key", list("a", "b", "c"))
-            .withParams("key")
-            .execute()
-            .verify().addInt(3);
-    }
+  @Test
+  public void testExecute()  {
+    rule.withData("key", list("a", "b", "c"))
+    .withParams("key")
+    .execute()
+    .assertThat(RedisToken.integer(3));
+  }
 
 }

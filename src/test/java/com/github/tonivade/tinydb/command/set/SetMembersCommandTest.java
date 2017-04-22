@@ -5,22 +5,15 @@
 
 package com.github.tonivade.tinydb.command.set;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
-import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
-
-import java.util.Collection;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
-import com.github.tonivade.tinydb.command.set.SetMembersCommand;
 
 @CommandUnderTest(SetMembersCommand.class)
 public class SetMembersCommandTest {
@@ -28,18 +21,11 @@ public class SetMembersCommandTest {
     @Rule
     public final CommandRule rule = new CommandRule(this);
 
-    @Captor
-    private ArgumentCaptor<Collection<SafeString>> captor;
-
     @Test
-    public void testExecute() throws Exception {
+    public void testExecute()  {
         rule.withData("key", set("a", "b", "c"))
             .withParams("key")
             .execute()
-            .verify().addArray(captor.capture());
-
-        Collection<SafeString> value = captor.getValue();
-
-        assertThat(value, contains(safeString("a"), safeString("b"), safeString("c")));
+            .assertThat(array(string("a"), string("b"), string("c")));
     }
 }
