@@ -181,7 +181,6 @@ Or gradle
 - Ziplist and Maplist encoding not implemented yet.
 - PSUBSCRIBE and PUNSUBSCRIBE commands not implemented yet.
 - Master/Slave replication improvements. Slave with Slaves
-X Scripting with Javascript/Lua.
 - Partitioning?
 - Clustering?
 
