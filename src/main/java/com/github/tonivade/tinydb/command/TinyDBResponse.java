@@ -6,10 +6,11 @@
 package com.github.tonivade.tinydb.command;
 
 import static java.util.stream.Collectors.toList;
-import static javaslang.API.Case;
-import static javaslang.API.Match;
-import static javaslang.Predicates.instanceOf;
-import static javaslang.Predicates.is;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.Predicates.instanceOf;
+import static io.vavr.Predicates.is;
 
 import java.util.Collection;
 import java.util.List;
@@ -57,14 +58,14 @@ class TinyDBResponse {
 
   private static RedisToken<?> parseToken(Object value) {
     return Match(value).of(
-        Case(instanceOf(Integer.class), RedisToken::integer),
-        Case(instanceOf(Boolean.class), RedisToken::integer),
-        Case(instanceOf(String.class), RedisToken::string),
-        Case(instanceOf(Double.class), x -> RedisToken.string(x.toString())),
-        Case(instanceOf(SafeString.class), RedisToken::string),
-        Case(instanceOf(DatabaseValue.class), TinyDBResponse::convertValue),
-        Case(instanceOf(RedisToken.class), Function.identity()),
-        Case(is(null), x -> RedisToken.nullString()));
+        Case($(instanceOf(Integer.class)), RedisToken::integer),
+        Case($(instanceOf(Boolean.class)), RedisToken::integer),
+        Case($(instanceOf(String.class)), RedisToken::string),
+        Case($(instanceOf(Double.class)), x -> RedisToken.string(x.toString())),
+        Case($(instanceOf(SafeString.class)), RedisToken::string),
+        Case($(instanceOf(DatabaseValue.class)), TinyDBResponse::convertValue),
+        Case($(instanceOf(RedisToken.class)), Function.identity()),
+        Case($(is(null)), ignore -> RedisToken.nullString()));
   }
 
   private static List<RedisToken<?>> keyValueList(Map<SafeString, SafeString> map) {

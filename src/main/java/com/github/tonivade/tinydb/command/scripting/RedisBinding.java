@@ -5,9 +5,10 @@
 package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static javaslang.API.Case;
-import static javaslang.API.Match;
-import static javaslang.Predicates.instanceOf;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.Predicates.instanceOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +56,11 @@ public class RedisBinding extends VarArgFunction {
   }
 
   private LuaValue convert(RedisToken token) {
-    return Match(token).of(Case(instanceOf(StringRedisToken.class), this::toLuaString),
-                           Case(instanceOf(StatusRedisToken.class), this::toLuaString),
-                           Case(instanceOf(ArrayRedisToken.class), this::toLuaTable),
-                           Case(instanceOf(IntegerRedisToken.class), this::toLuaNumber),
-                           Case(instanceOf(UnknownRedisToken.class), this::toLuaString));
+    return Match(token).of(Case($(instanceOf(StringRedisToken.class)), this::toLuaString),
+                           Case($(instanceOf(StatusRedisToken.class)), this::toLuaString),
+                           Case($(instanceOf(ArrayRedisToken.class)), this::toLuaTable),
+                           Case($(instanceOf(IntegerRedisToken.class)), this::toLuaNumber),
+                           Case($(instanceOf(UnknownRedisToken.class)), this::toLuaString));
   }
 
   private LuaInteger toLuaNumber(IntegerRedisToken value) {

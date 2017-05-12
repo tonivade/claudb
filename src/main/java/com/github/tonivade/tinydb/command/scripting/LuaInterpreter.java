@@ -9,10 +9,10 @@ import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.lang.String.valueOf;
-import static javaslang.API.$;
-import static javaslang.API.Case;
-import static javaslang.API.Match;
-import static javaslang.Predicates.instanceOf;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.Predicates.instanceOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,13 +61,13 @@ public class LuaInterpreter {
   }
 
   private RedisToken<?> convert(Object result) {
-    return Match(result).of(Case(instanceOf(LuaTable.class), this::convertLuaTable),
-                            Case(instanceOf(LuaNumber.class), this::convertLuaNumber),
-                            Case(instanceOf(LuaBoolean.class), this::convertLuaBoolean),
-                            Case(instanceOf(LuaString.class), this::convertLuaString),
-                            Case(instanceOf(Number.class), this::convertNumber),
-                            Case(instanceOf(String.class), this::convertString),
-                            Case(instanceOf(Boolean.class), this::convertBoolean),
+    return Match(result).of(Case($(instanceOf(LuaTable.class)), this::convertLuaTable),
+                            Case($(instanceOf(LuaNumber.class)), this::convertLuaNumber),
+                            Case($(instanceOf(LuaBoolean.class)), this::convertLuaBoolean),
+                            Case($(instanceOf(LuaString.class)), this::convertLuaString),
+                            Case($(instanceOf(Number.class)), this::convertNumber),
+                            Case($(instanceOf(String.class)), this::convertString),
+                            Case($(instanceOf(Boolean.class)), this::convertBoolean),
                             Case($(), this::convertUnknown));
   }
 
