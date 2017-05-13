@@ -38,6 +38,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.util.HexUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {

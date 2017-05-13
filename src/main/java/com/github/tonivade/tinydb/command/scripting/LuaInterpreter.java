@@ -8,11 +8,11 @@ import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static java.lang.String.valueOf;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 import static io.vavr.Predicates.instanceOf;
+import static java.lang.String.valueOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import com.github.tonivade.resp.command.IRequest;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
@@ -112,4 +113,15 @@ public class LuaInterpreter {
     return keys.stream().map(SafeString::toString).toArray(String[]::new);
   }
 
+  static LuaInterpreter buildFor(IRequest request) {
+    return new LuaInterpreter(createBinding(request));
+  }
+
+  private static RedisBinding createBinding(IRequest request) {
+    return new RedisBinding(createLibrary(request));
+  }
+
+  private static RedisLibrary createLibrary(IRequest request) {
+    return new RedisLibrary(request.getServerContext(), request.getSession());
+  }
 }

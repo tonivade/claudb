@@ -6,13 +6,15 @@
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.tinydb.persistence.ByteUtils.toByteArray;
-import static com.github.tonivade.tinydb.persistence.HexUtil.toHexString;
+import static com.github.tonivade.tinydb.util.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;
 
 import org.junit.Test;
+
+import com.github.tonivade.tinydb.util.HexUtil;
 
 public class CRC64Test {
 

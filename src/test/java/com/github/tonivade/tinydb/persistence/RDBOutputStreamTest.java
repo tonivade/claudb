@@ -14,7 +14,7 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
-import static com.github.tonivade.tinydb.persistence.HexUtil.toHexString;
+import static com.github.tonivade.tinydb.util.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 

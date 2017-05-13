@@ -7,7 +7,7 @@ package com.github.tonivade.tinydb.replication;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static com.github.tonivade.tinydb.persistence.HexUtil.toHexString;
+import static com.github.tonivade.tinydb.util.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.timeout;

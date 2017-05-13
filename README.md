@@ -87,6 +87,8 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
     - EXEC
  - Scripting
     - EVAL
+    - EVALSHA
+    - SCRIPT LOAD
 
 ## Design
 
@@ -183,6 +185,7 @@ Or gradle
 - Master/Slave replication improvements. Slave with Slaves
 - Partitioning?
 - Clustering?
+- Geo Commands
 
 ## Continuous Integration
 

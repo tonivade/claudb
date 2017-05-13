@@ -3,7 +3,7 @@
  * Distributed under the terms of the MIT License
  */
 
-package com.github.tonivade.tinydb.persistence;
+package com.github.tonivade.tinydb.util;
 
 public class HexUtil {
 

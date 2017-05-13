@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import com.github.tonivade.tinydb.persistence.ByteUtils;
+import com.github.tonivade.tinydb.util.HexUtil;
 
 public class ByteUtilsTest {
 
