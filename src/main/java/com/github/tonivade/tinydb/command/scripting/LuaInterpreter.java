@@ -42,6 +42,10 @@ public class LuaInterpreter {
     this.redis = binding;
   }
 
+  public static LuaInterpreter buildFor(IRequest request) {
+    return new LuaInterpreter(createBinding(request));
+  }
+
   public RedisToken<?> execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
@@ -111,10 +115,6 @@ public class LuaInterpreter {
 
   private Object[] toArray(List<SafeString> keys) {
     return keys.stream().map(SafeString::toString).toArray(String[]::new);
-  }
-
-  static LuaInterpreter buildFor(IRequest request) {
-    return new LuaInterpreter(createBinding(request));
   }
 
   private static RedisBinding createBinding(IRequest request) {

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.tinydb.command.scripting;
 
 import static java.lang.Integer.parseInt;
@@ -16,8 +20,6 @@ abstract class AbstractEvalCommand implements TinyDBCommand {
 
   @Override
   public RedisToken<?> execute(Database db, IRequest request) {
-    SafeString script = script(request);
-
     int numParams = parseInt(request.getParam(1).toString());
 
     if (numParams + 2 > request.getLength()) {
@@ -26,7 +28,7 @@ abstract class AbstractEvalCommand implements TinyDBCommand {
     List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
     List<SafeString> keys = readParams(numParams, params);
     List<SafeString> argv = readArguments(numParams, params);
-    return LuaInterpreter.buildFor(request).execute(script, keys, argv);
+    return LuaInterpreter.buildFor(request).execute(script(request), keys, argv);
   }
 
   protected abstract SafeString script(IRequest request);
