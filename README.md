@@ -89,6 +89,7 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
     - EVAL
     - EVALSHA
     - SCRIPT LOAD
+    - SCRIPT EXISTS
 
 ## Design
 
