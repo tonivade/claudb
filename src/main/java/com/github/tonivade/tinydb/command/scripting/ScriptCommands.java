@@ -29,12 +29,13 @@ import io.vavr.control.Try;
 @ParamLength(1)
 @Command("script")
 public class ScriptCommands implements TinyDBCommand {
-  
+
   @Override
   public RedisToken<?> execute(Database db, IRequest request) {
     return Match(request.getParam(0))
         .of(Case($(is(safeString("load"))), ignore -> load(request)),
             Case($(is(safeString("exists"))), ignore -> exists(request)),
+            Case($(is(safeString("flush"))), ignore -> flush(request)),
             Case($(), command -> error("Unknown SCRIPT subcommand: " + command)));
   }
 
@@ -49,6 +50,11 @@ public class ScriptCommands implements TinyDBCommand {
   private RedisToken<?> exists(IRequest request) {
     TinyDBServerState server = getServerState(request.getServerContext());
     return integer(server.getScript(request.getParam(1)).isPresent());
+  }
+
+  private RedisToken<?> flush(IRequest request) {
+    getServerState(request.getServerContext()).cleanScripts();
+    return RedisToken.responseOk();
   }
 
   private String digest(SafeString script) throws NoSuchAlgorithmException {

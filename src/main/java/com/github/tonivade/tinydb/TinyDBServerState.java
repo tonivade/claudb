@@ -90,4 +90,8 @@ public class TinyDBServerState {
   public Optional<SafeString> getScript(SafeString sha1) {
     return Optional.ofNullable(scripts.get(sha1));
   }
+
+  public void cleanScripts() {
+    scripts.clear();
+  }
 }
