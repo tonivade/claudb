@@ -27,7 +27,7 @@ import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
@@ -42,7 +42,7 @@ public class LuaInterpreter {
     this.redis = binding;
   }
 
-  public static LuaInterpreter buildFor(IRequest request) {
+  public static LuaInterpreter buildFor(Request request) {
     return new LuaInterpreter(createBinding(request));
   }
 
@@ -117,11 +117,11 @@ public class LuaInterpreter {
     return keys.stream().map(SafeString::toString).toArray(String[]::new);
   }
 
-  private static RedisBinding createBinding(IRequest request) {
+  private static RedisBinding createBinding(Request request) {
     return new RedisBinding(createLibrary(request));
   }
 
-  private static RedisLibrary createLibrary(IRequest request) {
+  private static RedisLibrary createLibrary(Request request) {
     return new RedisLibrary(request.getServerContext(), request.getSession());
   }
 }

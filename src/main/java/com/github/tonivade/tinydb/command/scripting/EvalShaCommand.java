@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerState;
 
@@ -17,7 +17,7 @@ import com.github.tonivade.tinydb.TinyDBServerState;
 public class EvalShaCommand extends AbstractEvalCommand {
 
   @Override
-  protected SafeString script(IRequest request) {
+  protected SafeString script(Request request) {
     TinyDBServerState server = getServerState(request.getServerContext());
     return server.getScript(request.getParam(0)).orElseThrow(NoSuchElementException::new);
   }

@@ -3,41 +3,41 @@ package com.github.tonivade.tinydb.command;
 import java.util.Collection;
 import java.util.Optional;
 
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IServerContext;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @FunctionalInterface
 public interface TinyDBCommand {
-  RedisToken<?> execute(Database db, IRequest request);
+  RedisToken<?> execute(Database db, Request request);
 
-  default ITinyDB getTinyDB(IServerContext server) {
+  default ITinyDB getTinyDB(ServerContext server) {
     return (ITinyDB) server;
   }
 
-  default Database getAdminDatabase(IServerContext server) {
+  default Database getAdminDatabase(ServerContext server) {
     return getServerState(server).getAdminDatabase();
   }
 
-  default TinyDBServerState getServerState(IServerContext server) {
+  default TinyDBServerState getServerState(ServerContext server) {
     return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  default TinyDBSessionState getSessionState(ISession session) {
+  default TinyDBSessionState getSessionState(Session session) {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missiong session state"));
   }
 
-  default Optional<TinyDBServerState> serverState(IServerContext server) {
+  default Optional<TinyDBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  default Optional<TinyDBSessionState> sessionState(ISession session) {
+  default Optional<TinyDBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 

@@ -14,7 +14,7 @@ import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -31,7 +31,7 @@ public class PublishCommand implements TinyDBCommand {
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
     DatabaseValue value = getSubscriptors(admin, request.getParam(0));
 
@@ -43,7 +43,7 @@ public class PublishCommand implements TinyDBCommand {
     return RedisToken.integer(subscribers.size());
   }
 
-  private void publish(IRequest request, SafeString subscriber) {
+  private void publish(Request request, SafeString subscriber) {
     getTinyDB(request.getServerContext()).publish(subscriber.toString(), message(request));
   }
 
@@ -52,7 +52,7 @@ public class PublishCommand implements TinyDBCommand {
     return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
   }
 
-  private RedisToken<?> message(IRequest request) {
+  private RedisToken<?> message(Request request) {
     return array(string(MESSAGE), string(request.getParam(0)), string(request.getParam(1)));
   }
 

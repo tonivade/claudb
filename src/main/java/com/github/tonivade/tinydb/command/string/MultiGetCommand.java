@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 
@@ -25,7 +25,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class MultiGetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     List<DatabaseValue> result = new ArrayList<>(request.getLength());
     for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
       result.add(db.get(key));

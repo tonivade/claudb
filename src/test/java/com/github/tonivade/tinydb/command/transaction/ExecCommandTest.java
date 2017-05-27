@@ -18,9 +18,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mockito;
 
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TransactionState;
 import com.github.tonivade.tinydb.command.CommandRule;
@@ -35,7 +35,7 @@ public class ExecCommandTest {
   @Captor
   private ArgumentCaptor<Collection<?>> captor;
 
-  private final ICommand command = Mockito.spy(new MockCommand());
+  private final RespCommand command = Mockito.spy(new MockCommand());
 
   @Test
   public void executeWithActiveTransaction()  {
@@ -67,15 +67,15 @@ public class ExecCommandTest {
 
   private TransactionState createTransaction() {
     TransactionState transaction = new TransactionState();
-    transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
-    transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
-    transaction.enqueue(new Request(null, null, safeString("ping"), emptyList()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), emptyList()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), emptyList()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), emptyList()));
     return transaction;
   }
-  
-  private static class MockCommand implements ICommand {
+
+  private static class MockCommand implements RespCommand {
     @Override
-    public RedisToken<?> execute(IRequest request) {
+    public RedisToken<?> execute(Request request) {
       return RedisToken.string("");
     }
   }

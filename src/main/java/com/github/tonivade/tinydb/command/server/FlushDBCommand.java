@@ -6,7 +6,7 @@
 package com.github.tonivade.tinydb.command.server;
 
 import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.Database;
@@ -15,7 +15,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class FlushDBCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     db.clear();
     return RedisToken.responseOk();
   }

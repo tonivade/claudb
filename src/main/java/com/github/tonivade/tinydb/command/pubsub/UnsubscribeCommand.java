@@ -18,7 +18,7 @@ import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -37,7 +37,7 @@ public class UnsubscribeCommand implements TinyDBCommand {
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
     Collection<SafeString> channels = getChannels(request);
     int i = channels.size();
@@ -56,7 +56,7 @@ public class UnsubscribeCommand implements TinyDBCommand {
     return convert(result);
   }
 
-  private Collection<SafeString> getChannels(IRequest request) {
+  private Collection<SafeString> getChannels(Request request) {
     if (request.getParams().isEmpty()) {
       return getSessionState(request.getSession()).getSubscriptions();
     }

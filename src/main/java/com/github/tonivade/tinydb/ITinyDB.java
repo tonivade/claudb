@@ -10,12 +10,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import com.github.tonivade.resp.command.IServerContext;
+import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.data.Database;
 
-public interface ITinyDB extends IServerContext {
+public interface ITinyDB extends ServerContext {
 
   int DEFAULT_PORT = 7081;
   String DEFAULT_HOST = "localhost";

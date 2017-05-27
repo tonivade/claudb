@@ -12,7 +12,7 @@ import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -31,7 +31,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetDifferenceCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     DatabaseValue first = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
     Set<SafeString> result = new HashSet<>(first.<Set<SafeString>>getValue());
     for (DatabaseKey param : request.getParams().stream().skip(1).map((item) -> safeKey(item)).collect(toList())) {

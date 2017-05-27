@@ -19,9 +19,10 @@ import java.util.logging.Logger;
 
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
@@ -37,9 +38,9 @@ public class SlaveReplication implements RespCallback {
 
   private final RespClient client;
   private final ITinyDB server;
-  private final ISession session;
+  private final Session session;
 
-  public SlaveReplication(ITinyDB server, ISession session, String host, int port) {
+  public SlaveReplication(ITinyDB server, Session session, String host, int port) {
     this.server = server;
     this.session = session;
     this.client = new RespClient(host, port, this);
@@ -88,7 +89,7 @@ public class SlaveReplication implements RespCallback {
 
     LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
 
-    ICommand command = server.getCommand(commandToken.getValue().toString());
+    RespCommand command = server.getCommand(commandToken.getValue().toString());
 
     if (command != null) {
       command.execute(request(commandToken, paramTokens));
@@ -96,7 +97,7 @@ public class SlaveReplication implements RespCallback {
   }
 
   private Request request(RedisToken<SafeString> commandToken, List<RedisToken<SafeString>> array) {
-    return new Request(server, session, commandToken.getValue(), arrayToList(array));
+    return new DefaultRequest(server, session, commandToken.getValue(), arrayToList(array));
   }
 
   private List<SafeString> arrayToList(List<RedisToken<SafeString>> request) {

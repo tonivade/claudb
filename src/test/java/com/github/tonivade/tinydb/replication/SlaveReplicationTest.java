@@ -25,9 +25,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBRule;
 
@@ -41,13 +41,13 @@ public class SlaveReplicationTest {
   private ITinyDB context;
 
   @Mock
-  private ISession session;
+  private Session session;
 
   @Mock
-  private ICommand command;
+  private RespCommand command;
 
   @Captor
-  private ArgumentCaptor<IRequest> requestCaptor;
+  private ArgumentCaptor<Request> requestCaptor;
 
   @Captor
   private ArgumentCaptor<InputStream> captor;
@@ -75,7 +75,7 @@ public class SlaveReplicationTest {
   private void verifyCommandExecuted() {
     verify(command).execute(requestCaptor.capture());
 
-    IRequest request = requestCaptor.getValue();
+    Request request = requestCaptor.getValue();
     assertThat(request.getCommand(), is("PING"));
   }
 

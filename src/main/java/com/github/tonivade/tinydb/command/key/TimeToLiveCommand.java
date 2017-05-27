@@ -9,7 +9,7 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import java.time.Instant;
 
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -19,7 +19,7 @@ import com.github.tonivade.tinydb.data.DatabaseKey;
 public abstract class TimeToLiveCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
     if (key != null) {
       return keyExists(key);

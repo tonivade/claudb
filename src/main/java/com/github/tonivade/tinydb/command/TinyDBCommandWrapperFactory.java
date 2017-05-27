@@ -6,11 +6,11 @@
 package com.github.tonivade.tinydb.command;
 
 import com.github.tonivade.resp.command.CommandWrapperFactory;
-import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.command.RespCommand;
 
 public class TinyDBCommandWrapperFactory implements CommandWrapperFactory {
   @Override
-  public ICommand wrap(Object command) {
+  public RespCommand wrap(Object command) {
     return new TinyDBCommandWrapper(command);
   }
 }

@@ -16,7 +16,7 @@ import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -32,7 +32,7 @@ import com.github.tonivade.tinydb.data.SortedSet;
 public class SortedSetAddCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     try {
       DatabaseValue initial = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
       DatabaseValue result = db.merge(safeKey(request.getParam(0)), parseInput(request),
@@ -52,7 +52,7 @@ public class SortedSetAddCommand implements TinyDBCommand {
     return result.size() - input.size();
   }
 
-  private DatabaseValue parseInput(IRequest request) throws NumberFormatException {
+  private DatabaseValue parseInput(Request request) throws NumberFormatException {
     Set<Entry<Double, SafeString>> set = new SortedSet();
     SafeString score = null;
     for (SafeString string : request.getParams().stream().skip(1).collect(toList())) {

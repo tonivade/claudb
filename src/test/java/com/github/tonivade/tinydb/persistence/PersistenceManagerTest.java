@@ -33,7 +33,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import com.github.tonivade.resp.command.ICommand;
+import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
@@ -87,7 +87,7 @@ public class PersistenceManagerTest {
 
   @Test
   public void testStart() throws IOException {
-    ICommand cmd = mock(ICommand.class);
+    RespCommand cmd = mock(RespCommand.class);
     when(server.getCommand(anyString())).thenReturn(cmd);
 
     writeRDB();

@@ -24,8 +24,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
@@ -40,9 +40,9 @@ public class CommandWrapperTest {
   @Mock
   private Database db;
   @Mock
-  private IRequest request;
+  private Request request;
   @Mock
-  private ISession session;
+  private Session session;
   @Mock
   private ITinyDB server;
   @Mock
@@ -119,7 +119,7 @@ public class CommandWrapperTest {
   @Command("test")
   private static class SomeCommand implements TinyDBCommand {
     @Override
-    public RedisToken<?> execute(Database db, IRequest request) {
+    public RedisToken<?> execute(Database db, Request request) {
       return responseOk();
     }
   }
@@ -128,7 +128,7 @@ public class CommandWrapperTest {
   @ParamLength(2)
   private static class LengthCommand implements TinyDBCommand {
     @Override
-    public RedisToken<?> execute(Database db, IRequest request) {
+    public RedisToken<?> execute(Database db, Request request) {
       return responseOk();
     }
   }
@@ -137,7 +137,7 @@ public class CommandWrapperTest {
   @ParamType(DataType.STRING)
   private static class TypeCommand implements TinyDBCommand {
     @Override
-    public RedisToken<?> execute(Database db, IRequest request) {
+    public RedisToken<?> execute(Database db, Request request) {
       return responseOk();
     }
   }

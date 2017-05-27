@@ -20,8 +20,8 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IServerContext;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -48,7 +48,7 @@ public class InfoCommand implements TinyDBCommand {
   private static final String SECTION_SERVER = "server";
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     Map<String, Map<String, String>> sections = new HashMap<>();
     Optional<SafeString> param = request.getOptionalParam(0);
     if (param.isPresent()) {
@@ -81,7 +81,7 @@ public class InfoCommand implements TinyDBCommand {
         SECTION_COMMANDSTATS, SECTION_KEYSPACE);
   }
 
-  private Map<String, String> section(String section, IServerContext ctx) {
+  private Map<String, String> section(String section, ServerContext ctx) {
     switch (section.toLowerCase()) {
     case SECTION_SERVER:
       return server(ctx);
@@ -107,50 +107,50 @@ public class InfoCommand implements TinyDBCommand {
     return null;
   }
 
-  private Map<String, String> server(IServerContext ctx) {
+  private Map<String, String> server(ServerContext ctx) {
     return map(entry("redis_version", "2.8.21"),
         entry("tcp_port", valueOf(ctx.getPort())));
   }
 
-  private Map<String, String> replication(IServerContext ctx) {
+  private Map<String, String> replication(ServerContext ctx) {
     return map(entry("role", getServerState(ctx).isMaster() ? "master" : "slave"),
         entry("connected_slaves", slaves(ctx)));
   }
 
-  private String slaves(IServerContext ctx) {
+  private String slaves(ServerContext ctx) {
     DatabaseValue slaves = getAdminDatabase(ctx).getOrDefault("slaves", DatabaseValue.EMPTY_SET);
     return String.valueOf(slaves.<Set<String>>getValue().size());
   }
 
-  private Map<String, String> clients(IServerContext ctx) {
+  private Map<String, String> clients(ServerContext ctx) {
     return map(entry("connected_clients", valueOf(ctx.getClients())));
   }
 
-  private Map<String, String> memory(IServerContext ctx) {
+  private Map<String, String> memory(ServerContext ctx) {
     return map(entry("used_memory", valueOf(Runtime.getRuntime().totalMemory())));
   }
 
-  private Map<String, String> persistence(IServerContext ctx) {
+  private Map<String, String> persistence(ServerContext ctx) {
     // TODO:
     return map();
   }
 
-  private Map<String, String> stats(IServerContext ctx) {
+  private Map<String, String> stats(ServerContext ctx) {
     // TODO:
     return map();
   }
 
-  private Map<String, String> cpu(IServerContext ctx) {
+  private Map<String, String> cpu(ServerContext ctx) {
     // TODO:
     return map();
   }
 
-  private Map<String, String> commandstats(IServerContext ctx) {
+  private Map<String, String> commandstats(ServerContext ctx) {
     // TODO:
     return map();
   }
 
-  private Map<String, String> keyspace(IServerContext ctx) {
+  private Map<String, String> keyspace(ServerContext ctx) {
     // TODO:
     return map();
   }

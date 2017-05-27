@@ -7,7 +7,7 @@ package com.github.tonivade.tinydb.command.server;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
@@ -22,7 +22,7 @@ public class SlaveOfCommand implements TinyDBCommand {
   private SlaveReplication slave;
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     String host = request.getParam(0).toString();
     String port = request.getParam(1).toString();
 
@@ -43,7 +43,7 @@ public class SlaveOfCommand implements TinyDBCommand {
     return RedisToken.responseOk();
   }
 
-  private void startReplication(IRequest request, String host, String port) {
+  private void startReplication(Request request, String host, String port) {
     slave = new SlaveReplication(
         getTinyDB(request.getServerContext()), request.getSession(), host, Integer.parseInt(port));
 

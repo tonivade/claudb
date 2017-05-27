@@ -9,7 +9,7 @@ import static java.lang.Integer.parseInt;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
@@ -21,7 +21,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SelectCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     try {
       getSessionState(request.getSession()).setCurrentDB(parseCurrentDB(request));
       return RedisToken.responseOk();
@@ -31,7 +31,7 @@ public class SelectCommand implements TinyDBCommand {
 
   }
 
-  private int parseCurrentDB(IRequest request) {
+  private int parseCurrentDB(Request request) {
     return parseInt(request.getParam(0).toString());
   }
 

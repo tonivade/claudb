@@ -10,7 +10,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -19,7 +19,7 @@ import com.github.tonivade.tinydb.data.Database;
 abstract class AbstractEvalCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     int numParams = parseInt(request.getParam(1).toString());
 
     if (numParams + 2 > request.getLength()) {
@@ -31,7 +31,7 @@ abstract class AbstractEvalCommand implements TinyDBCommand {
     return LuaInterpreter.buildFor(request).execute(script(request), keys, argv);
   }
 
-  protected abstract SafeString script(IRequest request);
+  protected abstract SafeString script(Request request);
 
   private List<SafeString> readParams(int numParams, List<SafeString> params) {
     List<SafeString> keys = new LinkedList<>();

@@ -16,7 +16,7 @@ import java.util.Queue;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -30,7 +30,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetBitCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     try {
       int offset = Integer.parseInt(request.getParam(1).toString());
       int bit = Integer.parseInt(request.getParam(2).toString());

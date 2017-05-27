@@ -12,10 +12,10 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import java.util.Optional;
 
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IServerContext;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
@@ -27,7 +27,7 @@ import com.github.tonivade.tinydb.command.annotation.TxIgnore;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.Database;
 
-public class TinyDBCommandWrapper implements ICommand {
+public class TinyDBCommandWrapper implements RespCommand {
 
   private int params;
 
@@ -67,7 +67,7 @@ public class TinyDBCommandWrapper implements ICommand {
   }
 
   @Override
-  public RedisToken<?> execute(IRequest request) {
+  public RedisToken<?> execute(Request request) {
     // FIXME: ugly piece of code, please refactor
     Database db = getCurrentDB(request);
     if (request.getLength() < params) {
@@ -82,55 +82,55 @@ public class TinyDBCommandWrapper implements ICommand {
     }
     if (command instanceof TinyDBCommand) {
       return executeTinyDBCommand(db, request);
-    } else if (command instanceof ICommand) {
+    } else if (command instanceof RespCommand) {
       return executeCommand(request);
     }
     return error("invalid command type: " + command.getClass());
   }
 
-  private RedisToken<?> executeCommand(IRequest request) {
-    return ((ICommand) command).execute(request);
+  private RedisToken<?> executeCommand(Request request) {
+    return ((RespCommand) command).execute(request);
   }
 
-  private RedisToken<?> executeTinyDBCommand(Database db, IRequest request) {
+  private RedisToken<?> executeTinyDBCommand(Database db, Request request) {
     return ((TinyDBCommand) command).execute(db, request);
   }
 
-  private void enqueueRequest(IRequest request) {
+  private void enqueueRequest(Request request) {
     getTransactionState(request.getSession()).ifPresent(tx -> tx.enqueue(request));
   }
 
-  private boolean isTxActive(IRequest request) {
+  private boolean isTxActive(Request request) {
     return getTransactionState(request.getSession()).isPresent();
   }
 
-  private Optional<TransactionState> getTransactionState(ISession session) {
+  private Optional<TransactionState> getTransactionState(Session session) {
     return session.getValue("tx");
   }
 
-  private Database getCurrentDB(IRequest request) {
+  private Database getCurrentDB(Request request) {
     TinyDBServerState serverState = getServerState(request.getServerContext());
     TinyDBSessionState sessionState = getSessionState(request.getSession());
     return serverState.getDatabase(sessionState.getCurrentDB());
   }
 
-  private TinyDBServerState getServerState(IServerContext server) {
+  private TinyDBServerState getServerState(ServerContext server) {
     return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private TinyDBSessionState getSessionState(ISession session) {
+  private TinyDBSessionState getSessionState(Session session) {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Optional<TinyDBServerState> serverState(IServerContext server) {
+  private Optional<TinyDBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  private Optional<TinyDBSessionState> sessionState(ISession session) {
+  private Optional<TinyDBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 
-  private boolean isSubscribed(IRequest request) {
+  private boolean isSubscribed(Request request) {
     return getSessionState(request.getSession()).isSubscribed();
   }
 }

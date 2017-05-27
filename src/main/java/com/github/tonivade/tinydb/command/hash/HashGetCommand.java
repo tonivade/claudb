@@ -11,7 +11,7 @@ import java.util.Map;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -28,7 +28,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class HashGetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
     Map<SafeString, SafeString> map = value.getValue();
     return RedisToken.string(map.get(request.getParam(1)));

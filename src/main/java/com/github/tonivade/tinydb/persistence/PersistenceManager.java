@@ -26,9 +26,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.DefaultRequest;
+import com.github.tonivade.resp.command.DefaultSession;
 import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisParser;
 import com.github.tonivade.resp.protocol.RedisSerializer;
@@ -53,7 +54,7 @@ public class PersistenceManager implements Runnable {
 
   private final int syncPeriod;
 
-  private final ISession session = new Session("dummy", null);
+  private final Session session = new DefaultSession("dummy", null);
 
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -129,7 +130,7 @@ public class PersistenceManager implements Runnable {
 
     LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
 
-    ICommand command = server.getCommand(commandToken.getValue().toString());
+    RespCommand command = server.getCommand(commandToken.getValue().toString());
 
     if (command != null) {
       command.execute(request(commandToken, paramTokens));
@@ -137,7 +138,7 @@ public class PersistenceManager implements Runnable {
   }
 
   private Request request(RedisToken<SafeString> commandToken, List<RedisToken<SafeString>> array) {
-    return new Request(server, session, commandToken.getValue(), arrayToList(array));
+    return new DefaultRequest(server, session, commandToken.getValue(), arrayToList(array));
   }
 
   private List<SafeString> arrayToList(List<RedisToken<SafeString>> request) {

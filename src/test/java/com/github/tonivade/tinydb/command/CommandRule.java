@@ -23,10 +23,10 @@ import org.junit.runners.model.Statement;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.IServerContext;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TinyDBServerState;
@@ -37,9 +37,9 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 
 public class CommandRule implements TestRule {
 
-  private IRequest request;
+  private Request request;
   private ITinyDB server;
-  private ISession session;
+  private Session session;
   private TinyDBCommand command;
 
   private final Object target;
@@ -53,7 +53,7 @@ public class CommandRule implements TestRule {
     this.target = target;
   }
 
-  public IRequest getRequest() {
+  public Request getRequest() {
     return request;
   }
 
@@ -65,7 +65,7 @@ public class CommandRule implements TestRule {
     return serverState.getDatabase(0);
   }
 
-  public ISession getSession() {
+  public Session getSession() {
     return session;
   }
 
@@ -83,8 +83,8 @@ public class CommandRule implements TestRule {
       @Override
       public void evaluate() throws Throwable {
         server = mock(ITinyDB.class);
-        request = mock(IRequest.class);
-        session = mock(ISession.class);
+        request = mock(Request.class);
+        session = mock(Session.class);
 
         when(request.getServerContext()).thenReturn(server);
         when(request.getSession()).thenReturn(session);
@@ -105,7 +105,7 @@ public class CommandRule implements TestRule {
     };
   }
 
-  public CommandRule withCommand(String name, ICommand command) {
+  public CommandRule withCommand(String name, RespCommand command) {
     Mockito.when(server.getCommand(name)).thenReturn(command);
     return this;
   }
@@ -193,11 +193,11 @@ public class CommandRule implements TestRule {
 
   @SuppressWarnings("unchecked")
   public <T> T verify(Class<T> type) {
-    if (type.equals(IServerContext.class)) {
+    if (type.equals(ServerContext.class)) {
       return (T) Mockito.verify(server);
     } else if (type.equals(ITinyDB.class)) {
       return (T) Mockito.verify(server);
-    } else if (type.equals(ISession.class)) {
+    } else if (type.equals(Session.class)) {
       return (T) Mockito.verify(session);
     }
     throw new IllegalArgumentException();

@@ -6,7 +6,7 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.SafeString;
 
 @Command("eval")
@@ -14,7 +14,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 public class EvalCommand extends AbstractEvalCommand {
 
   @Override
-  protected SafeString script(IRequest request) {
+  protected SafeString script(Request request) {
     return request.getParam(0);
   }
 

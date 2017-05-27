@@ -16,7 +16,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerState;
@@ -31,7 +31,7 @@ import io.vavr.control.Try;
 public class ScriptCommands implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     return Match(request.getParam(0))
         .of(Case($(is(safeString("load"))), ignore -> load(request)),
             Case($(is(safeString("exists"))), ignore -> exists(request)),
@@ -39,7 +39,7 @@ public class ScriptCommands implements TinyDBCommand {
             Case($(), command -> error("Unknown SCRIPT subcommand: " + command)));
   }
 
-  private RedisToken<?> load(IRequest request) {
+  private RedisToken<?> load(Request request) {
     SafeString script = request.getParam(1);
     String sha1 = Try.of(() -> digest(script)).get();
     TinyDBServerState server = getServerState(request.getServerContext());
@@ -47,12 +47,12 @@ public class ScriptCommands implements TinyDBCommand {
     return RedisToken.string(sha1);
   }
 
-  private RedisToken<?> exists(IRequest request) {
+  private RedisToken<?> exists(Request request) {
     TinyDBServerState server = getServerState(request.getServerContext());
     return integer(server.getScript(request.getParam(1)).isPresent());
   }
 
-  private RedisToken<?> flush(IRequest request) {
+  private RedisToken<?> flush(Request request) {
     getServerState(request.getServerContext()).cleanScripts();
     return RedisToken.responseOk();
   }

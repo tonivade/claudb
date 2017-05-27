@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IRequest;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.ITinyDB;
 import com.github.tonivade.tinydb.TransactionState;
@@ -20,12 +20,12 @@ import com.github.tonivade.tinydb.data.Database;
 public class ExecCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     Optional<TransactionState> transaction = getTransactionIfExists(request.getSession());
     if (transaction.isPresent()) {
       ITinyDB server = getTinyDB(request.getServerContext());
       List<RedisToken<?>> responses = new ArrayList<>();
-      for (IRequest queuedRequest : transaction.get()) {
+      for (Request queuedRequest : transaction.get()) {
         responses.add(executeCommand(server, queuedRequest));
       }
       return RedisToken.array(responses);
@@ -34,12 +34,12 @@ public class ExecCommand implements TinyDBCommand {
     }
   }
 
-  private RedisToken<?> executeCommand(ITinyDB server, IRequest queuedRequest) {
-    ICommand command = server.getCommand(queuedRequest.getCommand());
+  private RedisToken<?> executeCommand(ITinyDB server, Request queuedRequest) {
+    RespCommand command = server.getCommand(queuedRequest.getCommand());
     return command.execute(queuedRequest);
   }
 
-  private Optional<TransactionState> getTransactionIfExists(ISession session) {
+  private Optional<TransactionState> getTransactionIfExists(Session session) {
     return session.removeValue("tx");
   }
 }

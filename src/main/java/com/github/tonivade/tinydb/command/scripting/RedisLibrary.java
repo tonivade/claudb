@@ -6,19 +6,20 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import static java.util.Arrays.asList;
 
-import com.github.tonivade.resp.command.ICommand;
-import com.github.tonivade.resp.command.IServerContext;
-import com.github.tonivade.resp.command.ISession;
+import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class RedisLibrary {
 
-  private IServerContext context;
-  private ISession session;
+  private ServerContext context;
+  private Session session;
 
-  public RedisLibrary(IServerContext context, ISession session) {
+  public RedisLibrary(ServerContext context, Session session) {
     this.context = context;
     this.session = session;
   }
@@ -27,11 +28,11 @@ public class RedisLibrary {
     return getCommand(commandName).execute(createRequest(commandName, params));
   }
 
-  private ICommand getCommand(SafeString commandName) {
+  private RespCommand getCommand(SafeString commandName) {
     return context.getCommand(commandName.toString());
   }
 
   private Request createRequest(SafeString commandName, SafeString... params) {
-    return new Request(context, session, commandName, asList(params));
+    return new DefaultRequest(context, session, commandName, asList(params));
   }
 }

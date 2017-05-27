@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.IRequest;
+import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
@@ -43,7 +43,7 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
   private static final String PARAM_LIMIT = "LIMIT";
 
   @Override
-  public RedisToken<?> execute(Database db, IRequest request) {
+  public RedisToken<?> execute(Database db, Request request) {
     try {
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
       NavigableSet<Entry<Double, SafeString>> set = value.getValue();
@@ -78,7 +78,7 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
     }
   }
 
-  private Options parseOptions(IRequest request) {
+  private Options parseOptions(Request request) {
     Options options = new Options();
     for (int i = 3; i < request.getLength(); i++) {
       String param = request.getParam(i).toString();
