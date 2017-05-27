@@ -25,14 +25,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
 
     @Mock
-    private ITinyDB server;
+    private TinyDBServerContext server;
 
     @InjectMocks
     private MasterReplication master;

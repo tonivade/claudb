@@ -28,7 +28,7 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.data.Database;
@@ -38,7 +38,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 public class CommandRule implements TestRule {
 
   private Request request;
-  private ITinyDB server;
+  private TinyDBServerContext server;
   private Session session;
   private TinyDBCommand command;
 
@@ -69,7 +69,7 @@ public class CommandRule implements TestRule {
     return session;
   }
 
-  public ITinyDB getServer() {
+  public TinyDBServerContext getServer() {
     return server;
   }
 
@@ -82,7 +82,7 @@ public class CommandRule implements TestRule {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
-        server = mock(ITinyDB.class);
+        server = mock(TinyDBServerContext.class);
         request = mock(Request.class);
         session = mock(Session.class);
 
@@ -195,7 +195,7 @@ public class CommandRule implements TestRule {
   public <T> T verify(Class<T> type) {
     if (type.equals(ServerContext.class)) {
       return (T) Mockito.verify(server);
-    } else if (type.equals(ITinyDB.class)) {
+    } else if (type.equals(TinyDBServerContext.class)) {
       return (T) Mockito.verify(server);
     } else if (type.equals(Session.class)) {
       return (T) Mockito.verify(session);

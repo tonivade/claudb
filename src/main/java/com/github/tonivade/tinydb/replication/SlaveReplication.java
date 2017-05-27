@@ -27,7 +27,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.persistence.ByteBufferInputStream;
 
 public class SlaveReplication implements RespCallback {
@@ -37,10 +37,10 @@ public class SlaveReplication implements RespCallback {
   private static final String SYNC_COMMAND = "SYNC";
 
   private final RespClient client;
-  private final ITinyDB server;
+  private final TinyDBServerContext server;
   private final Session session;
 
-  public SlaveReplication(ITinyDB server, Session session, String host, int port) {
+  public SlaveReplication(TinyDBServerContext server, Session session, String host, int port) {
     this.server = server;
     this.session = session;
     this.client = new RespClient(host, port, this);

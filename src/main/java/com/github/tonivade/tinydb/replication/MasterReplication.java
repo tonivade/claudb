@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
@@ -41,10 +41,10 @@ public class MasterReplication implements Runnable {
 
   private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
 
-  private final ITinyDB server;
+  private final TinyDBServerContext server;
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-  public MasterReplication(ITinyDB server) {
+  public MasterReplication(TinyDBServerContext server) {
     this.server = server;
   }
 

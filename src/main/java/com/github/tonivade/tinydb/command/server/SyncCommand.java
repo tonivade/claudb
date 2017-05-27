@@ -11,7 +11,7 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
@@ -27,7 +27,7 @@ public class SyncCommand implements TinyDBCommand {
   @Override
   public RedisToken<?> execute(Database db, Request request) {
     try {
-      ITinyDB server = getTinyDB(request.getServerContext());
+      TinyDBServerContext server = getTinyDB(request.getServerContext());
 
       ByteBufferOutputStream output = new ByteBufferOutputStream();
       server.exportRDB(output);

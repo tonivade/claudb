@@ -32,7 +32,7 @@ public class TinyDBClientTest {
     ArgumentCaptor<RedisToken<?>> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
-    RespClient client = new RespClient(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, callback);
+    RespClient client = new RespClient(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT, callback);
 
     client.start();
 

@@ -15,7 +15,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.data.Database;
 
-public interface ITinyDB extends ServerContext {
+public interface TinyDBServerContext extends ServerContext {
 
   int DEFAULT_PORT = 7081;
   String DEFAULT_HOST = "localhost";

@@ -7,7 +7,7 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.data.Database;
@@ -17,8 +17,8 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 public interface TinyDBCommand {
   RedisToken<?> execute(Database db, Request request);
 
-  default ITinyDB getTinyDB(ServerContext server) {
-    return (ITinyDB) server;
+  default TinyDBServerContext getTinyDB(ServerContext server) {
+    return (TinyDBServerContext) server;
   }
 
   default Database getAdminDatabase(ServerContext server) {

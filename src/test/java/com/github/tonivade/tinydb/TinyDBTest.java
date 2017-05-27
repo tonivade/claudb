@@ -116,7 +116,7 @@ public class TinyDBTest {
   }
 
   private Jedis createClientConnection() {
-    return new Jedis(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT, 10000);
+    return new Jedis(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT, 10000);
   }
 
   private String value(int i) {

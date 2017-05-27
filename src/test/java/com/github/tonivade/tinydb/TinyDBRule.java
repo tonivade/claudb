@@ -16,7 +16,7 @@ public class TinyDBRule  implements TestRule {
   private final TinyDB server;
 
   public TinyDBRule() {
-    this(ITinyDB.DEFAULT_HOST, ITinyDB.DEFAULT_PORT);
+    this(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT);
   }
 
   public TinyDBRule(String host, int port) {

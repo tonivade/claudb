@@ -32,7 +32,7 @@ import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
-public class TinyDB extends RespServer implements ITinyDB {
+public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 

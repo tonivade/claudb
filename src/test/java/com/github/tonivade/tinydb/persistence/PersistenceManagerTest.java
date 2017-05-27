@@ -36,7 +36,7 @@ import org.mockito.stubbing.Answer;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.util.HexUtil;
 
@@ -48,7 +48,7 @@ public class PersistenceManagerTest {
   private static final String DUMP_FILE = "dump.rdb";
 
   @Mock
-  private ITinyDB server;
+  private TinyDBServerContext server;
 
   private PersistenceManager manager;
 

@@ -38,7 +38,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBConfig;
 
 public class PersistenceManager implements Runnable {
@@ -48,7 +48,7 @@ public class PersistenceManager implements Runnable {
   private static final int MAX_FRAME_SIZE = 1024 * 1024 * 100;
 
   private OutputStream output;
-  private final ITinyDB server;
+  private final TinyDBServerContext server;
   private final String dumpFile;
   private final String redoFile;
 
@@ -58,7 +58,7 @@ public class PersistenceManager implements Runnable {
 
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-  public PersistenceManager(ITinyDB server, TinyDBConfig config) {
+  public PersistenceManager(TinyDBServerContext server, TinyDBConfig config) {
     this.server = server;
     this.dumpFile = config.getRdbFile();
     this.redoFile = config.getAofFile();

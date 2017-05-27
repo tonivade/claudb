@@ -27,7 +27,7 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
@@ -44,7 +44,7 @@ public class CommandWrapperTest {
   @Mock
   private Session session;
   @Mock
-  private ITinyDB server;
+  private TinyDBServerContext server;
   @Mock
   private TinyDBSessionState sessionState;
   @Mock

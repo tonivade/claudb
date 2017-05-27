@@ -38,7 +38,7 @@ public class Server {
   }
 
   private static int parsePort(Integer optionPort) {
-    return optionPort != null ? optionPort : ITinyDB.DEFAULT_PORT;
+    return optionPort != null ? optionPort : TinyDBServerContext.DEFAULT_PORT;
   }
 
   private static TinyDBConfig parseConfig(boolean persist) {

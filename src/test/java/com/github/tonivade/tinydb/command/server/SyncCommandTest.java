@@ -12,7 +12,7 @@ import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -25,7 +25,7 @@ public class SyncCommandTest {
     @Test
     public void testExecute() throws IOException  {
         rule.execute()
-            .verify(ITinyDB.class).exportRDB(any());
+            .verify(TinyDBServerContext.class).exportRDB(any());
     }
 
 }

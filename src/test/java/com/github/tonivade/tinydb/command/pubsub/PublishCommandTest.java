@@ -15,7 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.tinydb.ITinyDB;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -34,7 +34,7 @@ public class PublishCommandTest {
     .withParams("test", "Hello World!")
     .execute()
     .assertThat(RedisToken.integer(1))
-    .verify(ITinyDB.class).publish("localhost:12345",
+    .verify(TinyDBServerContext.class).publish("localhost:12345",
                                    array(string("message"), string("test"), string("Hello World!")));
   }
 
