@@ -33,7 +33,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetRandomMemberCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     List<SafeString> random = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
         (oldValue, newValue) -> {

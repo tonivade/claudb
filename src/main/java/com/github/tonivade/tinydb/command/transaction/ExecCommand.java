@@ -20,11 +20,11 @@ import com.github.tonivade.tinydb.data.Database;
 public class ExecCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     Optional<TransactionState> transaction = getTransactionIfExists(request.getSession());
     if (transaction.isPresent()) {
       TinyDBServerContext server = getTinyDB(request.getServerContext());
-      List<RedisToken<?>> responses = new ArrayList<>();
+      List<RedisToken> responses = new ArrayList<>();
       for (Request queuedRequest : transaction.get()) {
         responses.add(executeCommand(server, queuedRequest));
       }
@@ -34,7 +34,7 @@ public class ExecCommand implements TinyDBCommand {
     }
   }
 
-  private RedisToken<?> executeCommand(TinyDBServerContext server, Request queuedRequest) {
+  private RedisToken executeCommand(TinyDBServerContext server, Request queuedRequest) {
     RespCommand command = server.getCommand(queuedRequest.getCommand());
     return command.execute(queuedRequest);
   }

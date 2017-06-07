@@ -25,8 +25,6 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
@@ -36,7 +34,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
 
-  private final BlockingQueue<ArrayRedisToken> queue = new LinkedBlockingQueue<>();
+  private final BlockingQueue<RedisToken> queue = new LinkedBlockingQueue<>();
 
   private final Optional<PersistenceManager> persistence;
 
@@ -73,14 +71,14 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   }
 
   @Override
-  public List<ArrayRedisToken> getCommandsToReplicate() {
-    List<ArrayRedisToken> current = new LinkedList<>();
+  public List<RedisToken> getCommandsToReplicate() {
+    List<RedisToken> current = new LinkedList<>();
     queue.drainTo(current);
     return current;
   }
 
   @Override
-  public void publish(String sourceKey, RedisToken<?> message) {
+  public void publish(String sourceKey, RedisToken message) {
     Session session = getSession(sourceKey);
     if (session != null) {
       session.publish(message);
@@ -128,10 +126,10 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   }
 
   @Override
-  protected RedisToken<?> executeCommand(RespCommand command, Request request) {
+  protected RedisToken executeCommand(RespCommand command, Request request) {
     if (!isReadOnly(request.getCommand())) {
       try {
-        RedisToken<?> response = command.execute(request);
+        RedisToken response = command.execute(request);
         replication(request, command);
         return response;
       } catch (RuntimeException e) {
@@ -149,7 +147,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private void replication(Request request, RespCommand command) {
     if (!isReadOnlyCommand(request.getCommand())) {
-      ArrayRedisToken array = requestToArray(request);
+      RedisToken array = requestToArray(request);
       if (hasSlaves()) {
         queue.add(array);
       }
@@ -161,19 +159,19 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     return getCommands().isPresent(command, ReadOnly.class);
   }
 
-  private ArrayRedisToken requestToArray(Request request) {
-    List<RedisToken<?>> array = new LinkedList<>();
+  private RedisToken requestToArray(Request request) {
+    List<RedisToken> array = new LinkedList<>();
     array.add(currentDbToken(request));
     array.add(commandToken(request));
     array.addAll(paramTokens(request));
     return RedisToken.array(array);
   }
 
-  private StringRedisToken commandToken(Request request) {
+  private RedisToken commandToken(Request request) {
     return RedisToken.string(request.getCommand());
   }
 
-  private StringRedisToken currentDbToken(Request request) {
+  private RedisToken currentDbToken(Request request) {
     return RedisToken.string(valueOf(getCurrentDB(request)));
   }
 
@@ -181,7 +179,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     return getSessionState(request.getSession()).getCurrentDB();
   }
 
-  private List<RedisToken<?>> paramTokens(Request request) {
+  private List<RedisToken> paramTokens(Request request) {
     return request.getParams().stream().map(RedisToken::string).collect(toList());
   }
 

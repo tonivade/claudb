@@ -30,7 +30,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetBitCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     try {
       int offset = Integer.parseInt(request.getParam(1).toString());
       int bit = Integer.parseInt(request.getParam(2).toString());

@@ -37,7 +37,7 @@ public class UnsubscribeCommand implements TinyDBCommand {
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
     Collection<SafeString> channels = getChannels(request);
     int i = channels.size();

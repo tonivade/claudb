@@ -75,7 +75,7 @@ public class ExecCommandTest {
 
   private static class MockCommand implements RespCommand {
     @Override
-    public RedisToken<?> execute(Request request) {
+    public RedisToken execute(Request request) {
       return RedisToken.string("");
     }
   }

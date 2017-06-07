@@ -23,9 +23,9 @@ import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.persistence.ByteBufferInputStream;
@@ -68,7 +68,7 @@ public class SlaveReplication implements RespCallback {
   }
 
   @Override
-  public void onMessage(RedisToken<?> token) {
+  public void onMessage(RedisToken token) {
     switch (token.getType()) {
     case STRING:
       processRDB((StringRedisToken) token);
@@ -83,11 +83,11 @@ public class SlaveReplication implements RespCallback {
   }
 
   private void processCommand(ArrayRedisToken token) {
-    Collection<RedisToken<?>> array = token.getValue();
-    RedisToken<SafeString> commandToken = (RedisToken<SafeString>) array.stream().findFirst().orElse(nullString());
-    List<RedisToken<SafeString>> paramTokens = List.class.cast(array.stream().skip(1).collect(toList()));
+    Collection<RedisToken> array = token.getValue();
+    StringRedisToken commandToken = (StringRedisToken) array.stream().findFirst().orElse(nullString());
+    List<RedisToken> paramTokens =array.stream().skip(1).collect(toList());
 
-    LOGGER.fine(() -> "command recieved from master: " + commandToken.getValue());
+    LOGGER.fine(() -> "command recieved from master: " + commandToken);
 
     RespCommand command = server.getCommand(commandToken.getValue().toString());
 
@@ -96,12 +96,13 @@ public class SlaveReplication implements RespCallback {
     }
   }
 
-  private Request request(RedisToken<SafeString> commandToken, List<RedisToken<SafeString>> array) {
+  private Request request(StringRedisToken commandToken, List<RedisToken> array) {
     return new DefaultRequest(server, session, commandToken.getValue(), arrayToList(array));
   }
 
-  private List<SafeString> arrayToList(List<RedisToken<SafeString>> request) {
-    return request.stream().skip(1).map(RedisToken::getValue).collect(toList());
+  private List<SafeString> arrayToList(List<RedisToken> request) {
+    // FIXME: ugly hack
+    return request.stream().skip(1).map(token -> (StringRedisToken) token).map(StringRedisToken::getValue).collect(toList());
   }
 
   private void processRDB(StringRedisToken token) {
@@ -117,5 +118,4 @@ public class SlaveReplication implements RespCallback {
   private InputStream toStream(SafeString value) throws UnsupportedEncodingException {
     return new ByteBufferInputStream(value.getBytes());
   }
-
 }

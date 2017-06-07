@@ -29,7 +29,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class LeftPushCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     List<SafeString> values = request.getParams().stream().skip(1).collect(toList());
 
     DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),

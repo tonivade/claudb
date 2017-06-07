@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
 import java.io.IOException;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.data.Database;
 
 public interface TinyDBServerContext extends ServerContext {
@@ -26,6 +24,6 @@ public interface TinyDBServerContext extends ServerContext {
   void exportRDB(OutputStream output) throws IOException;
   Database getDatabase(int i);
   Database getAdminDatabase();
-  void publish(String sourceKey, RedisToken<?> message);
-  List<ArrayRedisToken> getCommandsToReplicate();
+  void publish(String sourceKey, RedisToken message);
+  List<RedisToken> getCommandsToReplicate();
 }

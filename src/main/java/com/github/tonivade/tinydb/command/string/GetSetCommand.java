@@ -25,7 +25,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class GetSetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.put(safeKey(request.getParam(0)), string(request.getParam(1)));
     return convert(value);
   }

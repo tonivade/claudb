@@ -35,7 +35,6 @@ import org.mockito.stubbing.Answer;
 
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.util.HexUtil;
@@ -155,7 +154,7 @@ public class PersistenceManagerTest {
     return str;
   }
 
-  private ArrayRedisToken pingCommand() {
+  private RedisToken pingCommand() {
     return RedisToken.array(string("PING"));
   }
 

@@ -9,15 +9,15 @@ import java.util.List;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 
-public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken<?>> {
+public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
 
-  private List<RedisToken<?>> expected;
+  private List<RedisToken> expected;
 
-  public InAnyOrderRedisArrayMatcher(List<RedisToken<?>> expected)
+  public InAnyOrderRedisArrayMatcher(List<RedisToken> expected)
   {
     this.expected = expected;
   }
@@ -28,16 +28,16 @@ public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken<?>> 
   }
 
   @Override
-  protected boolean matchesSafely(RedisToken<?> item) {
+  protected boolean matchesSafely(RedisToken item) {
     if (item.getType() == RedisTokenType.ARRAY) {
       ArrayRedisToken array = (ArrayRedisToken) item;
-      Collection<RedisToken<?>> tokens = array.getValue();
+      Collection<RedisToken> tokens = array.getValue();
       return new HashSet<>(expected).equals(new HashSet<>(tokens));
     }
     return false;
   }
 
-  public static InAnyOrderRedisArrayMatcher containsInAnyOrder(RedisToken<?>... tokens) {
+  public static InAnyOrderRedisArrayMatcher containsInAnyOrder(RedisToken... tokens) {
     return new InAnyOrderRedisArrayMatcher(asList(tokens));
   }
 }

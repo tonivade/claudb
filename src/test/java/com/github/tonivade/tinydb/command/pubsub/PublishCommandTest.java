@@ -26,7 +26,7 @@ public class PublishCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Captor
-  private ArgumentCaptor<RedisToken<?>> captor;
+  private ArgumentCaptor<RedisToken> captor;
 
   @Test
   public void testExecute()  {

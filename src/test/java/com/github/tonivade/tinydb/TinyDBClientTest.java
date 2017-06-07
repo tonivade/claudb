@@ -5,9 +5,9 @@
 package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
@@ -20,7 +20,6 @@ import org.mockito.ArgumentCaptor;
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisTokenType;
 
 public class TinyDBClientTest {
 
@@ -29,7 +28,7 @@ public class TinyDBClientTest {
 
   @Test
   public void testClient()  {
-    ArgumentCaptor<RedisToken<?>> captor = ArgumentCaptor.forClass(RedisToken.class);
+    ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
     RespClient client = new RespClient(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT, callback);
@@ -42,10 +41,7 @@ public class TinyDBClientTest {
 
     verify(callback, timeout(1000)).onMessage(captor.capture());
 
-    RedisToken<?> message = captor.getValue();
-
-    assertThat(message.getType(), is(RedisTokenType.STATUS));
-    assertThat(message.getValue(), is(safeString("PONG")));
+    assertThat(captor.getValue(), equalTo(status("PONG")));
 
     client.stop();
 

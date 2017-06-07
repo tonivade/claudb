@@ -22,8 +22,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisTokenVisitor;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
@@ -78,10 +79,10 @@ public class MasterReplication implements Runnable {
 
   @Override
   public void run() {
-    List<ArrayRedisToken> commands = createCommands();
+    List<RedisToken> commands = createCommands();
 
     for (SafeString slave : getSlaves()) {
-      for (ArrayRedisToken command : commands) {
+      for (RedisToken command : commands) {
         server.publish(slave.toString(), command);
       }
     }
@@ -95,28 +96,33 @@ public class MasterReplication implements Runnable {
     return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
   }
 
-  private List<ArrayRedisToken> createCommands() {
-    List<ArrayRedisToken> commands = new LinkedList<>();
+  private List<RedisToken> createCommands() {
+    List<RedisToken> commands = new LinkedList<>();
     commands.add(pingCommand());
     commands.addAll(commandsToReplicate());
     return commands;
   }
 
-  private List<ArrayRedisToken> commandsToReplicate() {
-    List<ArrayRedisToken> commands = new LinkedList<>();
+  private List<RedisToken> commandsToReplicate() {
+    List<RedisToken> commands = new LinkedList<>();
 
-    for (ArrayRedisToken command : server.getCommandsToReplicate()) {
-      commands.add(selectCommand(command.getValue().stream().findFirst().orElse(nullString())));
-      commands.add(array(command.getValue().stream().skip(1).collect(toList())));
+    for (RedisToken command : server.getCommandsToReplicate()) {
+      command.accept(new AbstractRedisTokenVisitor() {
+        @Override
+        public void array(ArrayRedisToken token) {
+          commands.add(selectCommand(token.getValue().stream().findFirst().orElse(nullString())));
+          commands.add(RedisToken.array(token.getValue().stream().skip(1).collect(toList())));
+        }
+      });
     }
     return commands;
   }
 
-  private ArrayRedisToken selectCommand(RedisToken<?> database) {
+  private RedisToken selectCommand(RedisToken database) {
     return array(string(SELECT_COMMAND), database);
   }
 
-  private ArrayRedisToken pingCommand() {
+  private RedisToken pingCommand() {
     return array(string(PING_COMMAND));
   }
 

@@ -27,7 +27,7 @@ public class Client implements RespCallback {
   private static final String END_OF_LINE = "\r\n";
   private static final String PROMPT = "> ";
 
-  private final BlockingQueue<RedisToken<?>> responses = new ArrayBlockingQueue<>(1);
+  private final BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
 
   @Override
   public void onConnect() {
@@ -40,7 +40,7 @@ public class Client implements RespCallback {
   }
 
   @Override
-  public void onMessage(RedisToken<?> token) {
+  public void onMessage(RedisToken token) {
     try {
       responses.put(token);
     } catch (InterruptedException e) {
@@ -48,7 +48,7 @@ public class Client implements RespCallback {
     }
   }
 
-  public RedisToken<?> response() throws InterruptedException {
+  public RedisToken response() throws InterruptedException {
     return responses.take();
   }
 

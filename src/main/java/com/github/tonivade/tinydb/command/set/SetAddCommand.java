@@ -28,7 +28,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SetAddCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.merge(safeKey(request.getParam(0)), set(request.getParam(1)), (oldValue, newValue)-> {
       Set<SafeString> merge = new HashSet<>();
       merge.addAll(oldValue.getValue());

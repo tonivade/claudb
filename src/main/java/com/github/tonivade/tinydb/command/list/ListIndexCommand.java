@@ -28,7 +28,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class ListIndexCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     try {
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
       List<SafeString> list = value.getValue();

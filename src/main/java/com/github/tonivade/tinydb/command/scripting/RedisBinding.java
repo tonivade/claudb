@@ -20,12 +20,12 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.IntegerRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.StatusRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.UnknownRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.IntegerRedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.StatusRedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.StringRedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.UnknownRedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class RedisBinding extends VarArgFunction {
@@ -70,13 +70,21 @@ public class RedisBinding extends VarArgFunction {
   private LuaTable toLuaTable(ArrayRedisToken value) {
     LuaTable table = LuaValue.tableOf();
     int i = 0;
-    for (RedisToken<?> token : value.getValue()) {
+    for (RedisToken token : value.getValue()) {
       table.set(++i, convert(token));
     }
     return table;
   }
 
-  private LuaString toLuaString(RedisToken<?> value) {
+  private LuaString toLuaString(StringRedisToken value) {
+    return LuaString.valueOf(value.getValue().toString());
+  }
+
+  private LuaString toLuaString(StatusRedisToken value) {
+    return LuaString.valueOf(value.getValue().toString());
+  }
+
+  private LuaString toLuaString(UnknownRedisToken value) {
     return LuaString.valueOf(value.getValue().toString());
   }
 }

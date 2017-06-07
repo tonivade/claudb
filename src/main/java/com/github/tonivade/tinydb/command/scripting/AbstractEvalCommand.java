@@ -19,7 +19,7 @@ import com.github.tonivade.tinydb.data.Database;
 abstract class AbstractEvalCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     int numParams = parseInt(request.getParam(1).toString());
 
     if (numParams + 2 > request.getLength()) {

@@ -27,7 +27,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class KeysCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     Pattern pattern = createPattern(request.getParam(0));
     Predicate<? super DatabaseKey> predicate = (key) -> {
       return pattern.matcher(key.toString()).matches();

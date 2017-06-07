@@ -22,7 +22,7 @@ public class SlaveOfCommand implements TinyDBCommand {
   private SlaveReplication slave;
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     String host = request.getParam(0).toString();
     String port = request.getParam(1).toString();
 

@@ -21,7 +21,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SelectCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     try {
       getSessionState(request.getSession()).setCurrentDB(parseCurrentDB(request));
       return RedisToken.responseOk();

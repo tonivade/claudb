@@ -47,7 +47,7 @@ public class CommandRule implements TestRule {
   private final TinyDBServerState serverState = new TinyDBServerState(1);
   private final TinyDBSessionState sessionState = new TinyDBSessionState();
 
-  private RedisToken<?> response;
+  private RedisToken response;
 
   public CommandRule(Object target) {
     this.target = target;
@@ -57,7 +57,7 @@ public class CommandRule implements TestRule {
     return request;
   }
 
-  public RedisToken<?> getResponse() {
+  public RedisToken getResponse() {
     return response;
   }
 
@@ -181,12 +181,12 @@ public class CommandRule implements TestRule {
     Assert.assertThat(database.get(key), matcher);
   }
 
-  public CommandRule assertThat(RedisToken<?> token) {
+  public CommandRule assertThat(RedisToken token) {
     assertThat(equalTo(token));
     return this;
   }
 
-  public CommandRule assertThat(Matcher<? super RedisToken<?>> matcher) {
+  public CommandRule assertThat(Matcher<? super RedisToken> matcher) {
     Assert.assertThat(this.response, matcher);
     return this;
   }

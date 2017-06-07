@@ -29,7 +29,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class HashSetCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     DatabaseValue value = hash(entry(request.getParam(1), request.getParam(2)));
 
     DatabaseValue resultValue = db.merge(safeKey(request.getParam(0)), value,

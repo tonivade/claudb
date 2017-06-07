@@ -48,7 +48,7 @@ public class InfoCommand implements TinyDBCommand {
   private static final String SECTION_SERVER = "server";
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     Map<String, Map<String, String>> sections = new HashMap<>();
     Optional<SafeString> param = request.getOptionalParam(0);
     if (param.isPresent()) {

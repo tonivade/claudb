@@ -38,7 +38,7 @@ public class SortedSetReverseRangeCommand implements TinyDBCommand {
   private static final String PARAM_WITHSCORES = "WITHSCORES";
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     try {
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
       NavigableSet<Entry<Float, SafeString>> set = value.getValue();

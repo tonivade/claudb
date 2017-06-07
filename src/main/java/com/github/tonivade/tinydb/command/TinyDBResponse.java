@@ -26,7 +26,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 
 class TinyDBResponse {
 
-  static RedisToken<?> convertValue(DatabaseValue value) {
+  static RedisToken convertValue(DatabaseValue value) {
     if (value != null) {
       switch (value.getType()) {
       case STRING:
@@ -49,14 +49,14 @@ class TinyDBResponse {
     return RedisToken.nullString();
   }
 
-  static RedisToken<?> convertArray(Collection<?> array) {
+  static RedisToken convertArray(Collection<?> array) {
     if (array == null) {
       return RedisToken.array();
     }
     return RedisToken.array(array.stream().map(TinyDBResponse::parseToken).collect(toList()));
   }
 
-  private static RedisToken<?> parseToken(Object value) {
+  private static RedisToken parseToken(Object value) {
     return Match(value).of(
         Case($(instanceOf(Integer.class)), RedisToken::integer),
         Case($(instanceOf(Boolean.class)), RedisToken::integer),
@@ -68,7 +68,7 @@ class TinyDBResponse {
         Case($(is(null)), ignore -> RedisToken.nullString()));
   }
 
-  private static List<RedisToken<?>> keyValueList(Map<SafeString, SafeString> map) {
+  private static List<RedisToken> keyValueList(Map<SafeString, SafeString> map) {
     return map.entrySet().stream()
         .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
         .map(RedisToken::string)

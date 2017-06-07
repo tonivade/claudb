@@ -67,7 +67,7 @@ public class TinyDBCommandWrapper implements RespCommand {
   }
 
   @Override
-  public RedisToken<?> execute(Request request) {
+  public RedisToken execute(Request request) {
     // FIXME: ugly piece of code, please refactor
     Database db = getCurrentDB(request);
     if (request.getLength() < params) {
@@ -88,11 +88,11 @@ public class TinyDBCommandWrapper implements RespCommand {
     return error("invalid command type: " + command.getClass());
   }
 
-  private RedisToken<?> executeCommand(Request request) {
+  private RedisToken executeCommand(Request request) {
     return ((RespCommand) command).execute(request);
   }
 
-  private RedisToken<?> executeTinyDBCommand(Database db, Request request) {
+  private RedisToken executeTinyDBCommand(Database db, Request request) {
     return ((TinyDBCommand) command).execute(db, request);
   }
 

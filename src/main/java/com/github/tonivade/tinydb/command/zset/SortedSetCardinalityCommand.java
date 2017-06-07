@@ -29,7 +29,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class SortedSetCardinalityCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
     Set<Entry<Float, SafeString>> set = value.getValue();
     return RedisToken.integer(set.size());

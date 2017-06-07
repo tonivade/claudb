@@ -31,7 +31,7 @@ import com.github.tonivade.tinydb.data.Database;
 public class HashDeleteCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     List<SafeString> keys = request.getParams().stream().skip(1).collect(toList());
 
     List<SafeString> removedKeys = new LinkedList<>();

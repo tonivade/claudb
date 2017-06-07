@@ -31,7 +31,7 @@ public class PublishCommand implements TinyDBCommand {
   private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
     DatabaseValue value = getSubscriptors(admin, request.getParam(0));
 
@@ -52,7 +52,7 @@ public class PublishCommand implements TinyDBCommand {
     return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
   }
 
-  private RedisToken<?> message(Request request) {
+  private RedisToken message(Request request) {
     return array(string(MESSAGE), string(request.getParam(0)), string(request.getParam(1)));
   }
 

@@ -24,7 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.RedisToken.ArrayRedisToken;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
 
@@ -53,7 +52,7 @@ public class MasterReplicationTest {
         verify(server, timeout(3000).times(3)).publish(eq("slave:2"), any(RedisToken.class));
     }
 
-    private ArrayRedisToken request() {
+    private RedisToken request() {
         return array(integer(0), string("set"), string("a"), string("b"));
     }
 

@@ -65,7 +65,7 @@ public class CommandWrapperTest {
   public void testExecute() {
     TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new SomeCommand());
 
-    RedisToken<?> response = wrapper.execute(request);
+    RedisToken response = wrapper.execute(request);
 
     assertThat(response, equalTo(responseOk()));
   }
@@ -76,7 +76,7 @@ public class CommandWrapperTest {
 
     TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new LengthCommand());
 
-    RedisToken<?> response = wrapper.execute(request);
+    RedisToken response = wrapper.execute(request);
 
     assertThat(response, equalTo(responseOk()));
   }
@@ -87,7 +87,7 @@ public class CommandWrapperTest {
 
     TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new LengthCommand());
 
-    RedisToken<?> response = wrapper.execute(request);
+    RedisToken response = wrapper.execute(request);
 
     assertThat(response, equalTo(error("ERR wrong number of arguments for 'test' command")));
   }
@@ -99,7 +99,7 @@ public class CommandWrapperTest {
 
     TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new TypeCommand());
 
-    RedisToken<?> response = wrapper.execute(request);
+    RedisToken response = wrapper.execute(request);
 
     assertThat(response, equalTo(responseOk()));
   }
@@ -111,7 +111,7 @@ public class CommandWrapperTest {
 
     TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new TypeCommand());
 
-    RedisToken<?> response = wrapper.execute(request);
+    RedisToken response = wrapper.execute(request);
 
     assertThat(response, equalTo(error("WRONGTYPE Operation against a key holding the wrong kind of value")));
   }
@@ -119,7 +119,7 @@ public class CommandWrapperTest {
   @Command("test")
   private static class SomeCommand implements TinyDBCommand {
     @Override
-    public RedisToken<?> execute(Database db, Request request) {
+    public RedisToken execute(Database db, Request request) {
       return responseOk();
     }
   }
@@ -128,7 +128,7 @@ public class CommandWrapperTest {
   @ParamLength(2)
   private static class LengthCommand implements TinyDBCommand {
     @Override
-    public RedisToken<?> execute(Database db, Request request) {
+    public RedisToken execute(Database db, Request request) {
       return responseOk();
     }
   }
@@ -137,7 +137,7 @@ public class CommandWrapperTest {
   @ParamType(DataType.STRING)
   private static class TypeCommand implements TinyDBCommand {
     @Override
-    public RedisToken<?> execute(Database db, Request request) {
+    public RedisToken execute(Database db, Request request) {
       return responseOk();
     }
   }

@@ -29,7 +29,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 public class GetBitCommand implements TinyDBCommand {
 
   @Override
-  public RedisToken<?> execute(Database db, Request request) {
+  public RedisToken execute(Database db, Request request) {
     try {
       int offset = Integer.parseInt(request.getParam(1).toString());
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), bitset());
