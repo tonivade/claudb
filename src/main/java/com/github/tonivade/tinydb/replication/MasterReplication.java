@@ -107,11 +107,12 @@ public class MasterReplication implements Runnable {
     List<RedisToken> commands = new LinkedList<>();
 
     for (RedisToken command : server.getCommandsToReplicate()) {
-      command.accept(new AbstractRedisTokenVisitor() {
+      command.accept(new AbstractRedisTokenVisitor<Void>() {
         @Override
-        public void array(ArrayRedisToken token) {
+        public Void array(ArrayRedisToken token) {
           commands.add(selectCommand(token.getValue().stream().findFirst().orElse(nullString())));
           commands.add(RedisToken.array(token.getValue().stream().skip(1).collect(toList())));
+          return null;
         }
       });
     }
