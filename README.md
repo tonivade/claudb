@@ -157,6 +157,10 @@ Create all-in-one jar
 You can start a new server listening in default port 7081.
 
     $ java -jar tinydb-all.jar
+
+or using [jrun](https://github.com/ctrueden/jrun) utility
+
+    $ jrun com.github.tonivade:tinydb:com.github.tonivade.tinydb.Server
     
 Parameters:
 
