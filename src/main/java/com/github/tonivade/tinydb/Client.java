@@ -24,7 +24,6 @@ public class Client implements RespCallback {
 
   private static final String CHARSET_NAME = "UTF-8";
   private static final String QUIT = "quit";
-  private static final String END_OF_LINE = "\r\n";
   private static final String PROMPT = "> ";
 
   private final BlockingQueue<RedisToken> responses = new ArrayBlockingQueue<>(1);
@@ -76,9 +75,8 @@ public class Client implements RespCallback {
       try (Scanner scanner = new Scanner(System.in, CHARSET_NAME)) {
         for (boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
           String line = scanner.nextLine();
-          // FIXME: send is not working
           if (!line.isEmpty()) {
-            client.send(line + END_OF_LINE);
+            client.send(line.split(" "));
             System.out.println(callback.response());
             quit = line.equalsIgnoreCase(QUIT);
           }

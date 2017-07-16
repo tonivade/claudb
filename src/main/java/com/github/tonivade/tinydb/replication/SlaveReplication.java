@@ -7,6 +7,7 @@ package com.github.tonivade.tinydb.replication;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static com.github.tonivade.resp.protocol.RedisToken.visit;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.persistence.ByteBufferInputStream;
@@ -101,8 +103,8 @@ public class SlaveReplication implements RespCallback {
   }
 
   private List<SafeString> arrayToList(List<RedisToken> request) {
-    // FIXME: ugly hack
-    return request.stream().skip(1).map(token -> (StringRedisToken) token).map(StringRedisToken::getValue).collect(toList());
+    RedisTokenVisitor<SafeString> visitor = RedisTokenVisitor.<SafeString>builder().onString(StringRedisToken::getValue).build();
+    return visit(request.stream().skip(1), visitor).collect(toList());
   }
 
   private void processRDB(StringRedisToken token) {

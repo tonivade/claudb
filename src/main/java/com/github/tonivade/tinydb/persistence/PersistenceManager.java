@@ -6,6 +6,7 @@
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.visit;
 import static java.nio.ByteBuffer.wrap;
 import static java.util.stream.Collectors.toList;
 
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -38,6 +38,7 @@ import com.github.tonivade.resp.protocol.RedisSerializer;
 import com.github.tonivade.resp.protocol.RedisSource;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
+import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBConfig;
 import com.github.tonivade.tinydb.TinyDBServerContext;
@@ -143,8 +144,8 @@ public class PersistenceManager implements Runnable {
   }
 
   private List<SafeString> arrayToList(List<RedisToken> request) {
-    // FIXME: ugly hack
-    return request.stream().skip(1).map(token -> (StringRedisToken) token).map(StringRedisToken::getValue).collect(toList());
+    RedisTokenVisitor<SafeString> visitor = RedisTokenVisitor.<SafeString>builder().onString(StringRedisToken::getValue).build();
+    return visit(request.stream().skip(1), visitor).collect(toList());
   }
 
   private void createRedo() {
