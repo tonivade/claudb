@@ -176,12 +176,12 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>tinydb</artifactId>
-        <version>0.9.0</version>
+        <version>0.10.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:tinydb:0.9.0'
+    compile 'com.github.tonivade:tinydb:0.10.0'
 
 ## TODO
 
