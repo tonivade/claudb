@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.tonivade:resp-server:0.7.0-SNAPSHOT'
+    compile 'com.github.tonivade:resp-server:0.7.0'
     compile 'com.github.tonivade:equalizer:0.2.0'
     compile 'net.sf.jopt-simple:jopt-simple:5.0.3'
     compile 'org.luaj:luaj-jse:3.0.1'
