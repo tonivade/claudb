@@ -8,6 +8,7 @@ package com.github.tonivade.tinydb.data;
 import static java.time.Instant.now;
 import static tonivade.equalizer.Equalizer.equalizer;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
@@ -15,7 +16,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class DatabaseKey implements Comparable<DatabaseKey> {
+public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
+
+  private static final long serialVersionUID = 7710472090270782053L;
 
   private final Instant expiredAt;
   private final SafeString value;

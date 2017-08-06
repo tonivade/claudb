@@ -14,6 +14,7 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static tonivade.equalizer.Equalizer.equalizer;
 
+import java.io.Serializable;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
@@ -28,7 +29,9 @@ import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class DatabaseValue {
+public class DatabaseValue implements Serializable {
+
+  private static final long serialVersionUID = -1001729166107392343L;
 
   public static final DatabaseValue EMPTY_STRING = string("");
   public static final DatabaseValue EMPTY_LIST = list();

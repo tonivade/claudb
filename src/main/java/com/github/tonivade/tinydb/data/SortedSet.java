@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.data;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -18,7 +19,9 @@ import java.util.TreeSet;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class SortedSet implements NavigableSet<Entry<Double, SafeString>> {
+public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Serializable {
+
+  private static final long serialVersionUID = -2221385877842299451L;
 
   private final Map<SafeString, Double> items = new HashMap<>();
 

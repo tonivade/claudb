@@ -13,6 +13,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.mapdb.BTreeMap;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
+
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
@@ -31,14 +36,15 @@ public class TinyDBServerState {
   private final List<Database> databases = new ArrayList<>();
   private final Database admin = new SimpleDatabase();
   private final Map<SafeString, SafeString> scripts = new HashMap<>();
+  private final DB db = DBMaker.memoryDirectDB().make();
 
   public TinyDBServerState(int numDatabases) {
     this.master = true;
     for (int i = 0; i < numDatabases; i++) {
-      this.databases.add(new SimpleDatabase());
+      this.databases.add(new SimpleDatabase(createMap(i)));
     }
   }
-
+  
   public void setMaster(boolean master) {
     this.master = master;
   }
@@ -57,6 +63,7 @@ public class TinyDBServerState {
 
   public void clear() {
     databases.clear();
+    db.close();
   }
 
   public boolean hasSlaves() {
@@ -93,5 +100,9 @@ public class TinyDBServerState {
 
   public void cleanScripts() {
     scripts.clear();
+  }
+
+  private BTreeMap<DatabaseKey, DatabaseValue> createMap(int i) {
+    return db.treeMap("name" + i).keySerializer(Serializer.JAVA).valueSerializer(Serializer.JAVA).create();
   }
 }

@@ -51,6 +51,7 @@ dependencies {
     compile 'com.github.tonivade:equalizer:0.2.0'
     compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
     compile 'org.luaj:luaj-jse:3.0.1'
+    compile 'org.mapdb:mapdb:3.0.5'
     testCompile 'junit:junit:4.12'
     testCompile 'redis.clients:jedis:2.9.0'
     testCompile 'org.mockito:mockito-core:2.8.47'
