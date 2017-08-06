@@ -34,6 +34,7 @@ import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
+import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 
 public class CommandRule implements TestRule {
 
@@ -44,7 +45,7 @@ public class CommandRule implements TestRule {
 
   private final Object target;
 
-  private final TinyDBServerState serverState = new TinyDBServerState(1);
+  private final TinyDBServerState serverState = new TinyDBServerState(new OnHeapDatabaseFactory(), 1);
   private final TinyDBSessionState sessionState = new TinyDBSessionState();
 
   private RedisToken response;

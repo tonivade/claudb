@@ -13,13 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.mapdb.BTreeMap;
-import org.mapdb.DB;
-import org.mapdb.DBMaker;
-import org.mapdb.Serializer;
-
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.SimpleDatabase;
@@ -36,12 +32,13 @@ public class TinyDBServerState {
   private final List<Database> databases = new ArrayList<>();
   private final Database admin = new SimpleDatabase();
   private final Map<SafeString, SafeString> scripts = new HashMap<>();
-  private final DB db = DBMaker.memoryDirectDB().make();
+  private final DatabaseFactory factory;
 
-  public TinyDBServerState(int numDatabases) {
+  public TinyDBServerState(DatabaseFactory factory, int numDatabases) {
+    this.factory = factory;
     this.master = true;
     for (int i = 0; i < numDatabases; i++) {
-      this.databases.add(new SimpleDatabase(createMap(i)));
+      this.databases.add(factory.create("db-" + i));
     }
   }
   
@@ -63,7 +60,7 @@ public class TinyDBServerState {
 
   public void clear() {
     databases.clear();
-    db.close();
+    factory.clear();
   }
 
   public boolean hasSlaves() {
@@ -100,9 +97,5 @@ public class TinyDBServerState {
 
   public void cleanScripts() {
     scripts.clear();
-  }
-
-  private BTreeMap<DatabaseKey, DatabaseValue> createMap(int i) {
-    return db.treeMap("name" + i).keySerializer(Serializer.JAVA).valueSerializer(Serializer.JAVA).create();
   }
 }
