@@ -9,15 +9,15 @@ import java.time.Instant;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.tinydb.data.DatabaseKey;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @Command("pttl")
 @ParamLength(1)
 public class TimeToLiveMillisCommand extends TimeToLiveCommand {
 
   @Override
-  protected int timeToLive(DatabaseKey key, Instant now) {
-    return (int) key.timeToLiveMillis(now);
+  protected int timeToLive(DatabaseValue value, Instant now) {
+    return (int) value.timeToLiveMillis(now);
   }
 
 }

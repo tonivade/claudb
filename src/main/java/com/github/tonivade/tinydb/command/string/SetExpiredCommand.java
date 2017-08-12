@@ -18,7 +18,7 @@ public class SetExpiredCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     try {
-      db.put(safeKey(request.getParam(0), parseTtl(request.getParam(1))), string(request.getParam(2)));
+      db.put(safeKey(request.getParam(0)), string(request.getParam(2)).expiredAt(parseTtl(request.getParam(1))));
       return RedisToken.responseOk();
     } catch (NumberFormatException e) {
       return RedisToken.error("ERR value is not an integer or out of range");

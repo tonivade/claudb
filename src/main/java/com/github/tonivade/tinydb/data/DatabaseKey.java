@@ -5,14 +5,11 @@
 
 package com.github.tonivade.tinydb.data;
 
-import static java.time.Instant.now;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static tonivade.equalizer.Equalizer.equalizer;
 
 import java.io.Serializable;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
@@ -20,42 +17,15 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
 
   private static final long serialVersionUID = 7710472090270782053L;
 
-  private final Instant expiredAt;
   private final SafeString value;
 
-  public DatabaseKey(SafeString value, Instant expiredAt) {
+  public DatabaseKey(SafeString value) {
     super();
     this.value = value;
-    this.expiredAt = expiredAt;
   }
 
   public SafeString getValue() {
     return value;
-  }
-
-  public boolean isExpired(Instant now) {
-    if (expiredAt != null) {
-      return now.isAfter(expiredAt);
-    }
-    return false;
-  }
-
-  public long timeToLiveMillis(Instant now) {
-    if (expiredAt != null) {
-      return timeToLive(now);
-    }
-    return -1;
-  }
-
-  public int timeToLiveSeconds(Instant now) {
-    if (expiredAt != null) {
-      return (int) Math.floorDiv(timeToLive(now), 1000L);
-    }
-    return -1;
-  }
-
-  public Instant expiredAt() {
-    return expiredAt;
   }
 
   @Override
@@ -81,18 +51,10 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
   }
 
   public static DatabaseKey safeKey(SafeString str) {
-    return new DatabaseKey(str, null);
+    return new DatabaseKey(str);
   }
 
-  public static DatabaseKey safeKey(SafeString str, int ttlSeconds) {
-    return safeKey(str, TimeUnit.SECONDS.toMillis(ttlSeconds));
-  }
-
-  public static DatabaseKey safeKey(SafeString str, long ttlMillis) {
-    return new DatabaseKey(str, now().plusMillis(ttlMillis));
-  }
-
-  private long timeToLive(Instant now) {
-    return Duration.between(now, expiredAt).toMillis();
+  public static DatabaseKey safeKey(String str) {
+    return safeKey(safeString(str));
   }
 }

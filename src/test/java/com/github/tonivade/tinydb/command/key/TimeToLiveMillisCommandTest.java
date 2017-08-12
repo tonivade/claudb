@@ -23,7 +23,7 @@ public class TimeToLiveMillisCommandTest extends TimeToLiveCommandTest {
   public void testExecute() throws InterruptedException {
     Instant now = Instant.now();
 
-    rule.withData(new DatabaseKey(safeString("test"), now.plusSeconds(10)), string("value"))
+    rule.withData(new DatabaseKey(safeString("test")), string("value").expiredAt(now.plusSeconds(10)))
     .withParams("test")
     .execute()
     .assertThat(org.hamcrest.Matchers.any(RedisToken.class));

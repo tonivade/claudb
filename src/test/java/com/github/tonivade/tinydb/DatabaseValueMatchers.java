@@ -8,9 +8,11 @@ package com.github.tonivade.tinydb;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 
+import java.time.Instant;
 import java.util.Map.Entry;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
 
@@ -54,4 +56,39 @@ public class DatabaseValueMatchers {
   public static Matcher<DatabaseValue> nullValue() {
     return IsNull.nullValue(DatabaseValue.class);
   }
+  
+  public static Matcher<DatabaseValue> isExpired() {
+    return new ValueExpiredMatcher();
+  }
+
+  public static Matcher<DatabaseValue> isNotExpired() {
+    return new ValueNotExpiredMatcher();
+  }
+
+  private static class ValueExpiredMatcher extends TypeSafeMatcher<DatabaseValue> {
+
+    @Override
+    public void describeTo(org.hamcrest.Description description) {
+      description.appendText("Value is expired");
+    }
+
+    @Override
+    protected boolean matchesSafely(DatabaseValue item) {
+      return item.isExpired(Instant.now());
+    }
+  }
+
+  private static class ValueNotExpiredMatcher extends TypeSafeMatcher<DatabaseValue> {
+
+    @Override
+    public void describeTo(org.hamcrest.Description description) {
+      description.appendText("Value is not expired");
+    }
+
+    @Override
+    protected boolean matchesSafely(DatabaseValue item) {
+      return !item.isExpired(Instant.now());
+    }
+  }
+  
 }

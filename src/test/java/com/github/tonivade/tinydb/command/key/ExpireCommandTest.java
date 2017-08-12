@@ -5,7 +5,7 @@
 
 package com.github.tonivade.tinydb.command.key;
 
-import static com.github.tonivade.tinydb.DatabaseKeyMatchers.isNotExpired;
+import static com.github.tonivade.tinydb.DatabaseValueMatchers.isNotExpired;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static org.hamcrest.CoreMatchers.is;
 
@@ -27,7 +27,7 @@ public class ExpireCommandTest {
     rule.withData("test", string("value"))
     .withParams("test", "10")
     .execute()
-    .assertKey("test", isNotExpired())
+    .assertValue("test", isNotExpired())
     .assertValue("test", is(string("value")))
     .assertThat(RedisToken.integer(true));
 

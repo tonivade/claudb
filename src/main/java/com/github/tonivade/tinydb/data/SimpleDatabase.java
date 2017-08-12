@@ -14,20 +14,19 @@ import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 import java.util.Map;
-import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 
 public class SimpleDatabase implements Database {
 
-  private final NavigableMap<DatabaseKey, DatabaseValue> cache;
+  private final Map<DatabaseKey, DatabaseValue> cache;
 
   public SimpleDatabase() {
     this(new TreeMap<>());
   }
 
-  public SimpleDatabase(NavigableMap<DatabaseKey, DatabaseValue> cache) {
+  public SimpleDatabase(Map<DatabaseKey, DatabaseValue> cache) {
     this.cache = cache;
   }
 
@@ -53,26 +52,17 @@ public class SimpleDatabase implements Database {
 
   @Override
   public DatabaseValue get(Object key) {
-    Entry<DatabaseKey, DatabaseValue> entry = null;
+    DatabaseValue value = cache.get(key);
 
-    if (key instanceof DatabaseKey) {
-      entry = getEntry((DatabaseKey) key);
-    }
-
-    if (entry != null) {
-      if (!entry.getKey().isExpired(Instant.now())) {
-        return entry.getValue();
+    if (value != null) {
+      if (!value.isExpired(Instant.now())) {
+        return value;
       }
 
       cache.remove(key);
     }
 
     return null;
-  }
-
-  private Entry<DatabaseKey, DatabaseValue> getEntry(DatabaseKey key) {
-    Entry<DatabaseKey, DatabaseValue> entry = cache.ceilingEntry(key);
-    return entry != null && entry.getKey().equals(key) ? entry : null;
   }
 
   @Override
@@ -136,22 +126,5 @@ public class SimpleDatabase implements Database {
       return true;
     }
     return false;
-  }
-
-  @Override
-  public DatabaseKey overrideKey(DatabaseKey key) {
-    Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
-
-    if (entry != null) {
-      cache.put(key, cache.remove(key));
-    }
-
-    return entry != null ? entry.getKey() : null;
-  }
-
-  @Override
-  public DatabaseKey getKey(DatabaseKey key) {
-    Entry<DatabaseKey, DatabaseValue> entry = getEntry(key);
-    return entry != null ? entry.getKey() : null;
   }
 }

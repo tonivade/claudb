@@ -34,7 +34,7 @@ public abstract class TimeToLiveCommandTest {
     public void testExecuteExpired() throws InterruptedException {
         Instant now = Instant.now();
 
-        rule.withData(new DatabaseKey(safeString("test"), now.minusSeconds(10)), string("value"))
+        rule.withData(new DatabaseKey(safeString("test")), string("value").expiredAt(now.minusSeconds(10)))
             .withParams("test")
             .execute()
             .assertThat(RedisToken.integer(-2));

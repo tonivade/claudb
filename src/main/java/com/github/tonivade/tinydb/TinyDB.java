@@ -28,7 +28,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.DirectMemoryDatabaseFactory;
+import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
 public class TinyDB extends RespServer implements TinyDBServerContext {
@@ -54,7 +54,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     } else {
       this.persistence = Optional.empty();
     }
-    putValue("state", new TinyDBServerState(new DirectMemoryDatabaseFactory(), config.getNumDatabases()));
+    putValue("state", new TinyDBServerState(new OnHeapDatabaseFactory(), config.getNumDatabases()));
   }
 
   @Override
