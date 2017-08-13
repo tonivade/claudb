@@ -5,7 +5,6 @@
 package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.RedisToken.error;
-import static com.github.tonivade.tinydb.TinyDBConfig.withoutPersistence;
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toList;
 
@@ -28,6 +27,9 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseFactory;
+import com.github.tonivade.tinydb.data.OffHeapDatabaseFactory;
+import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
 public class TinyDB extends RespServer implements TinyDBServerContext {
@@ -37,13 +39,13 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   private final BlockingQueue<RedisToken> queue = new LinkedBlockingQueue<>();
 
   private final Optional<PersistenceManager> persistence;
-
+  
   public TinyDB() {
     this(DEFAULT_HOST, DEFAULT_PORT);
   }
 
   public TinyDB(String host, int port) {
-    this(host, port, withoutPersistence());
+    this(host, port, TinyDBConfig.builder().withoutPersistence().build());
   }
 
   public TinyDB(String host, int port, TinyDBConfig config) {
@@ -53,7 +55,13 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     } else {
       this.persistence = Optional.empty();
     }
-    putValue("state", new TinyDBServerState(config.getNumDatabases()));
+    DatabaseFactory factory = null;
+    if (config.isOffHeapActive()) {
+      factory = new OffHeapDatabaseFactory();
+    } else {
+      factory = new OnHeapDatabaseFactory();
+    }
+    putValue("state", new TinyDBServerState(factory, config.getNumDatabases()));
   }
 
   @Override

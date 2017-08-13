@@ -67,7 +67,7 @@ public class RDBOutputStream {
   }
 
   private void value(DatabaseKey key, DatabaseValue value) throws IOException {
-    expiredAt(key.expiredAt());
+    expiredAt(value.getExpiredAt());
     type(value.getType());
     key(key);
     value(value);

@@ -7,7 +7,7 @@ package com.github.tonivade.tinydb.command;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -34,6 +34,7 @@ import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
+import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 
 public class CommandRule implements TestRule {
 
@@ -44,7 +45,7 @@ public class CommandRule implements TestRule {
 
   private final Object target;
 
-  private final TinyDBServerState serverState = new TinyDBServerState(1);
+  private final TinyDBServerState serverState = new TinyDBServerState(new OnHeapDatabaseFactory(), 1);
   private final TinyDBSessionState sessionState = new TinyDBSessionState();
 
   private RedisToken response;
@@ -161,20 +162,6 @@ public class CommandRule implements TestRule {
   public CommandRule assertAdminValue(String key, Matcher<DatabaseValue> matcher) {
     assertValue(getAdminDatabase(), safeKey(key), matcher);
     return this;
-  }
-
-  public CommandRule assertKey(String key, Matcher<DatabaseKey> matcher) {
-    assertKey(getDatabase(), safeKey(key), matcher);
-    return this;
-  }
-
-  public CommandRule assertAdminKey(String key, Matcher<DatabaseKey> matcher) {
-    assertKey(getAdminDatabase(), safeKey(key), matcher);
-    return this;
-  }
-
-  private void assertKey(Database database, DatabaseKey key, Matcher<DatabaseKey> matcher) {
-    Assert.assertThat(database.getKey(key), matcher);
   }
 
   private void assertValue(Database database, DatabaseKey key, Matcher<DatabaseValue> matcher) {

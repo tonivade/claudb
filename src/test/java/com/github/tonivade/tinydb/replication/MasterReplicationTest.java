@@ -26,6 +26,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
+import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
@@ -36,7 +37,7 @@ public class MasterReplicationTest {
     @InjectMocks
     private MasterReplication master;
 
-    private final TinyDBServerState serverState = new TinyDBServerState(1);
+    private final TinyDBServerState serverState = new TinyDBServerState(new OnHeapDatabaseFactory(), 1);
 
     @Test
     public void testReplication()  {

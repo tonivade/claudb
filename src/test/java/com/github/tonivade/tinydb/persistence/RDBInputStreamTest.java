@@ -5,7 +5,7 @@
 
 package com.github.tonivade.tinydb.persistence;
 
-import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.score;

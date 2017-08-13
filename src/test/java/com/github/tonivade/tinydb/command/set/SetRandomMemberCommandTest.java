@@ -5,7 +5,7 @@
 
 package com.github.tonivade.tinydb.command.set;
 
-import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.notNullValue;

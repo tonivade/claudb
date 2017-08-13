@@ -2,11 +2,10 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.DatabaseKeyMatchers.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.score;
@@ -27,7 +26,7 @@ import org.junit.Test;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.SimpleDatabase;
+import com.github.tonivade.tinydb.data.OnHeapDatabase;
 
 public class RDBOutputStreamTest {
 
@@ -58,7 +57,7 @@ public class RDBOutputStreamTest {
 
     @Test
     public void testStringTtl() throws IOException  {
-        out.dabatase(database().add(new DatabaseKey(safeString("a"), Instant.ofEpochMilli(1L)), string("test")).build());
+        out.dabatase(database().add(new DatabaseKey(safeString("a")), string("test").expiredAt(Instant.ofEpochMilli(1L))).build());
 
         assertThat(toHexString(baos.toByteArray()), is("FC00000000000000010001610474657374"));
     }
@@ -105,7 +104,7 @@ public class RDBOutputStreamTest {
         out.select(4);
         out.dabatase(database().add(safeKey("a"), hash(entry("1", "test"))).build());
         out.select(5);
-        out.dabatase(database().add(new DatabaseKey(safeString("a"), Instant.ofEpochMilli(1L)), string("test")).build());
+        out.dabatase(database().add(new DatabaseKey(safeString("a")), string("test").expiredAt(Instant.ofEpochMilli(1L))).build());
         out.end();
 
         assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));
@@ -117,7 +116,7 @@ public class RDBOutputStreamTest {
 
     private static class DatabaseBuiler {
 
-        private final Database db = new SimpleDatabase();
+        private final Database db = new OnHeapDatabase();
 
         public DatabaseBuiler add(DatabaseKey key, DatabaseValue value) {
             db.put(key, value);

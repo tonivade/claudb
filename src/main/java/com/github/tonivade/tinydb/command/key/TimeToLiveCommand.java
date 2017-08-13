@@ -12,34 +12,34 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.DatabaseKey;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 public abstract class TimeToLiveCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    DatabaseKey key = db.getKey(safeKey(request.getParam(0)));
-    if (key != null) {
-      return keyExists(key);
+    DatabaseValue value = db.get(safeKey(request.getParam(0)));
+    if (value != null) {
+      return keyExists(value);
     } else {
       return notExists();
     }
   }
 
-  protected abstract int timeToLive(DatabaseKey key, Instant now);
+  protected abstract int timeToLive(DatabaseValue value, Instant now);
 
-  private RedisToken keyExists(DatabaseKey key) {
-    if (key.expiredAt() != null) {
-      return hasExpiredAt(key);
+  private RedisToken keyExists(DatabaseValue value) {
+    if (value.getExpiredAt() != null) {
+      return hasExpiredAt(value);
     } else {
       return RedisToken.integer(-1);
     }
   }
 
-  private RedisToken hasExpiredAt(DatabaseKey key) {
+  private RedisToken hasExpiredAt(DatabaseValue value) {
     Instant now = Instant.now();
-    if (!key.isExpired(now)) {
-      return RedisToken.integer(timeToLive(key, now));
+    if (!value.isExpired(now)) {
+      return RedisToken.integer(timeToLive(value, now));
     } else {
       return notExists();
     }

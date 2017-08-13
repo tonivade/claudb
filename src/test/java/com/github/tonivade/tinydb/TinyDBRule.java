@@ -2,10 +2,7 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
-
-import static com.github.tonivade.tinydb.TinyDBConfig.withoutPersistence;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -20,7 +17,7 @@ public class TinyDBRule  implements TestRule {
   }
 
   public TinyDBRule(String host, int port) {
-    this(host, port, withoutPersistence());
+    this(host, port, TinyDBConfig.builder().withoutPersistence().build());
   }
 
   public TinyDBRule(String host, int port, TinyDBConfig config) {

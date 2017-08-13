@@ -6,6 +6,7 @@
 package com.github.tonivade.tinydb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static java.time.Instant.now;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableNavigableSet;
@@ -14,6 +15,9 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static tonivade.equalizer.Equalizer.equalizer;
 
+import java.io.Serializable;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
@@ -23,12 +27,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class DatabaseValue {
+public class DatabaseValue implements Serializable {
+
+  private static final long serialVersionUID = -1001729166107392343L;
 
   public static final DatabaseValue EMPTY_STRING = string("");
   public static final DatabaseValue EMPTY_LIST = list();
@@ -39,14 +46,20 @@ public class DatabaseValue {
   private final DataType type;
 
   private final Object value;
+  private final Instant expiredAt;
 
   public DatabaseValue(DataType type) {
     this(type, null);
   }
 
   public DatabaseValue(DataType type, Object value) {
+    this(type, value, null);
+  }
+
+  public DatabaseValue(DataType type, Object value, Instant expiredAt) {
     this.type = type;
     this.value = value;
+    this.expiredAt = expiredAt;
   }
 
   public DataType getType() {
@@ -56,6 +69,43 @@ public class DatabaseValue {
   @SuppressWarnings("unchecked")
   public <T> T getValue() {
     return (T) value;
+  }
+  
+  public Instant getExpiredAt() {
+    return expiredAt;
+  }
+  
+  public boolean isExpired(Instant now) {
+    if (expiredAt != null) {
+      return now.isAfter(expiredAt);
+    }
+    return false;
+  }
+
+  public long timeToLiveMillis(Instant now) {
+    if (expiredAt != null) {
+      return timeToLive(now);
+    }
+    return -1;
+  }
+
+  public int timeToLiveSeconds(Instant now) {
+    if (expiredAt != null) {
+      return (int) Math.floorDiv(timeToLive(now), 1000L);
+    }
+    return -1;
+  }
+
+  public DatabaseValue expiredAt(Instant instant) {
+    return new DatabaseValue(this.type, this.value, instant);
+  }
+
+  public DatabaseValue expiredAt(int ttlSeconds) {
+    return new DatabaseValue(this.type, this.value, toInstant(toMillis(ttlSeconds)));
+  }
+
+  public DatabaseValue noExpire() {
+    return new DatabaseValue(this.type, this.value);
   }
 
   @Override
@@ -146,5 +196,17 @@ public class DatabaseValue {
 
   private static Collector<Entry<SafeString, SafeString>, ?, Map<SafeString, SafeString>> toHash() {
     return toMap(Entry::getKey, Entry::getValue);
+  }
+  
+  private long timeToLive(Instant now) {
+    return Duration.between(now, expiredAt).toMillis();
+  }
+
+  private Instant toInstant(long ttlMillis) {
+    return now().plusMillis(ttlMillis);
+  }
+
+  private long toMillis(int ttlSeconds) {
+    return TimeUnit.SECONDS.toMillis(ttlSeconds);
   }
 }

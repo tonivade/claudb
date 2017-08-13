@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -32,7 +31,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.SimpleDatabase;
+import com.github.tonivade.tinydb.data.OnHeapDatabase;
 
 public class RDBInputStream {
 
@@ -80,7 +79,7 @@ public class RDBInputStream {
       int read = in.read();
       switch (read) {
       case SELECT:
-        db = new SimpleDatabase();
+        db = new OnHeapDatabase();
         databases.put(readLength(), db);
         break;
       case TTL_SECONDS:
@@ -90,23 +89,23 @@ public class RDBInputStream {
         expireTime = parseTimeMillis();
         break;
       case STRING:
-        ensure(db, readKey(expireTime), readString());
+        ensure(db, readKey(), readString(expireTime));
         expireTime = null;
         break;
       case LIST:
-        ensure(db, readKey(expireTime), readList());
+        ensure(db, readKey(), readList(expireTime));
         expireTime = null;
         break;
       case SET:
-        ensure(db, readKey(expireTime), readSet());
+        ensure(db, readKey(), readSet(expireTime));
         expireTime = null;
         break;
       case SORTED_SET:
-        ensure(db, readKey(expireTime), readSortedSet());
+        ensure(db, readKey(), readSortedSet(expireTime));
         expireTime = null;
         break;
       case HASH:
-        ensure(db, readKey(expireTime), readHash());
+        ensure(db, readKey(), readHash(expireTime));
         expireTime = null;
         break;
       case END_OF_STREAM:
@@ -165,29 +164,29 @@ public class RDBInputStream {
     return Integer.parseInt(sb.toString());
   }
 
-  private DatabaseValue readString() throws IOException {
-    return string(readSafeString());
+  private DatabaseValue readString(Long expireTime) throws IOException {
+    return string(readSafeString()).expiredAt(expireTime != null ? ofEpochMilli(expireTime) : null);
   }
 
-  private DatabaseValue readList() throws IOException {
+  private DatabaseValue readList(Long expireTime) throws IOException {
     int size = readLength();
     List<SafeString> list = new LinkedList<>();
     for (int i = 0; i < size; i++) {
       list.add(readSafeString());
     }
-    return list(list);
+    return list(list).expiredAt(expireTime != null ? ofEpochMilli(expireTime) : null);
   }
 
-  private DatabaseValue readSet() throws IOException {
+  private DatabaseValue readSet(Long expireTime) throws IOException {
     int size = readLength();
     Set<SafeString> set = new LinkedHashSet<>();
     for (int i = 0; i < size; i++) {
       set.add(readSafeString());
     }
-    return set(set);
+    return set(set).expiredAt(expireTime != null ? ofEpochMilli(expireTime) : null);
   }
 
-  private DatabaseValue readSortedSet() throws IOException {
+  private DatabaseValue readSortedSet(Long expireTime) throws IOException {
     int size = readLength();
     Set<Entry<Double, SafeString>> entries = new LinkedHashSet<>();
     for (int i = 0; i < size; i++) {
@@ -195,21 +194,21 @@ public class RDBInputStream {
       Double score = readDouble();
       entries.add(score(score, value));
     }
-    return zset(entries);
+    return zset(entries).expiredAt(expireTime != null ? ofEpochMilli(expireTime) : null);
   }
 
-  private DatabaseValue readHash() throws IOException {
+  private DatabaseValue readHash(Long expireTime) throws IOException {
     int size = readLength();
     Set<Entry<SafeString, SafeString>> entries = new LinkedHashSet<>();
     for (int i = 0; i < size; i++) {
       entries.add(entry(readSafeString(), readSafeString()));
     }
-    return hash(entries);
+    return hash(entries).expiredAt(expireTime != null ? ofEpochMilli(expireTime) : null);
   }
 
   private void ensure(Database db, DatabaseKey key, DatabaseValue value) throws IOException {
     if (db != null) {
-      if (!key.isExpired(Instant.now())) {
+      if (!value.isExpired(Instant.now())) {
         db.put(key, value);
       }
     } else {
@@ -241,8 +240,8 @@ public class RDBInputStream {
     return new SafeString(read(length));
   }
 
-  private DatabaseKey readKey(Long expireTime) throws IOException {
-    return new DatabaseKey(readSafeString(), expireTime != null ? ofEpochMilli(expireTime) : null);
+  private DatabaseKey readKey() throws IOException {
+    return new DatabaseKey(readSafeString());
   }
 
   private Double readDouble() throws IOException {
