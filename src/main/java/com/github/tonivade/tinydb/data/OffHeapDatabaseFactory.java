@@ -25,7 +25,6 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
     return builder()
         .eviction(Eviction.NONE)
         .throwOOME(true)
-//        .unlocked(true)
         .keySerializer(new FSTSerializer<>())
         .valueSerializer(new FSTSerializer<>())
         .build();
@@ -37,12 +36,12 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
 
   @Override
   public void clear() {
-
+    // nothing to do
   }
   
   private static class FSTSerializer<E> implements CacheSerializer<E> {
     
-    private static FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
+    private static final FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
     
     static {
       FST.registerClass(DatabaseValue.class);

@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.data;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class OffHeapDatabase implements Database {
 
   @Override
   public boolean containsValue(Object value) {
-    throw new RuntimeException();
+    throw new UnsupportedOperationException("not implemented");
   }
 
   @Override
@@ -82,7 +83,7 @@ public class OffHeapDatabase implements Database {
         keys.add(iterator.next());
       }
     } catch(IOException e) {
-      // FIXME
+      throw new IOError(e);
     }
     return keys;
   }
