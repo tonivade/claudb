@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -27,7 +26,7 @@ import org.junit.Test;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.SimpleDatabase;
+import com.github.tonivade.tinydb.data.OnHeapDatabase;
 
 public class RDBOutputStreamTest {
 
@@ -117,7 +116,7 @@ public class RDBOutputStreamTest {
 
     private static class DatabaseBuiler {
 
-        private final Database db = new SimpleDatabase();
+        private final Database db = new OnHeapDatabase();
 
         public DatabaseBuiler add(DatabaseKey key, DatabaseValue value) {
             db.put(key, value);

@@ -2,11 +2,7 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
-
-import static com.github.tonivade.tinydb.TinyDBConfig.withPersistence;
-import static com.github.tonivade.tinydb.TinyDBConfig.withoutPersistence;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -17,6 +13,7 @@ public class Server {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<Void> persist = parser.accepts("P", "with persistence");
+    OptionSpec<Void> offHeap = parser.accepts("O", "off heap cache");
     OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
         .defaultsTo(TinyDB.DEFAULT_HOST);
     OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
@@ -29,11 +26,11 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
-      TinyDBConfig optionPesistence = parseConfig(options.has(persist));
-      TinyDB server = new TinyDB(optionHost, optionPort, optionPesistence);
-      server.start();
-
+      TinyDBConfig config = parseConfig(options.has(persist), options.has(offHeap));
+      TinyDB server = new TinyDB(optionHost, optionPort, config);
       Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));
+
+      server.start();
     }
   }
 
@@ -41,13 +38,14 @@ public class Server {
     return optionPort != null ? optionPort : TinyDBServerContext.DEFAULT_PORT;
   }
 
-  private static TinyDBConfig parseConfig(boolean persist) {
-    TinyDBConfig config = null;
+  private static TinyDBConfig parseConfig(boolean persist, boolean offHeap) {
+    TinyDBConfig.Builder builder = TinyDBConfig.builder();
     if (persist) {
-      config = withPersistence();
-    } else {
-      config = withoutPersistence();
+      builder.withPersistence();
     }
-    return config;
+    if (offHeap) {
+      builder.withOffHeapCache();
+    }
+    return builder.build();
   }
 }

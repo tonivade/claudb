@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
 public class TinyDBConfig {
@@ -12,9 +11,10 @@ public class TinyDBConfig {
   private static final String DUMP_FILE = "dump.rdb";
   private static final String REDO_FILE = "redo.aof";
 
-  private int numDatabases;
+  private int numDatabases = DEFAULT_DATABASES;
 
   private boolean persistenceActive;
+  private boolean offHeapActive;
 
   private String rdbFile;
   private String aofFile;
@@ -27,6 +27,14 @@ public class TinyDBConfig {
 
   public void setPersistenceActive(boolean persistenceActive) {
     this.persistenceActive = persistenceActive;
+  }
+  
+  public void setOffHeapActive(boolean offHeapActive) {
+    this.offHeapActive = offHeapActive;
+  }
+  
+  public boolean isOffHeapActive() {
+    return offHeapActive;
   }
 
   public String getRdbFile() {
@@ -60,21 +68,34 @@ public class TinyDBConfig {
   public void setNumDatabases(int numDatabases) {
     this.numDatabases = numDatabases;
   }
-
-  public static TinyDBConfig withoutPersistence() {
-    TinyDBConfig config = new TinyDBConfig();
-    config.setNumDatabases(DEFAULT_DATABASES);
-    config.setPersistenceActive(false);
-    return config;
+  
+  public static Builder builder() {
+    return new Builder();
   }
-
-  public static TinyDBConfig withPersistence() {
+  
+  public static class Builder {
     TinyDBConfig config = new TinyDBConfig();
-    config.setNumDatabases(DEFAULT_DATABASES);
-    config.setPersistenceActive(true);
-    config.setRdbFile(DUMP_FILE);
-    config.setAofFile(REDO_FILE);
-    config.setSyncPeriod(DEFAULT_SYNC_PERIOD);
-    return config;
+
+    public Builder withoutPersistence() {
+      config.setPersistenceActive(false);
+      return this;
+    }
+    
+    public Builder withPersistence() {
+      config.setPersistenceActive(true);
+      config.setRdbFile(DUMP_FILE);
+      config.setAofFile(REDO_FILE);
+      config.setSyncPeriod(DEFAULT_SYNC_PERIOD);
+      return this;
+    }
+    
+    public Builder withOffHeapCache() {
+      config.setOffHeapActive(true);
+      return this;
+    }
+    
+    public TinyDBConfig build() {
+      return config;
+    }
   }
 }

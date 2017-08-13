@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -32,7 +31,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.SimpleDatabase;
+import com.github.tonivade.tinydb.data.OnHeapDatabase;
 
 public class RDBInputStream {
 
@@ -80,7 +79,7 @@ public class RDBInputStream {
       int read = in.read();
       switch (read) {
       case SELECT:
-        db = new SimpleDatabase();
+        db = new OnHeapDatabase();
         databases.put(readLength(), db);
         break;
       case TTL_SECONDS:

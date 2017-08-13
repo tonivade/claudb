@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -18,7 +22,7 @@ import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.SimpleDatabase;
+import com.github.tonivade.tinydb.data.OnHeapDatabase;
 import com.github.tonivade.tinydb.persistence.RDBInputStream;
 import com.github.tonivade.tinydb.persistence.RDBOutputStream;
 
@@ -30,7 +34,7 @@ public class TinyDBServerState {
 
   private boolean master;
   private final List<Database> databases = new ArrayList<>();
-  private final Database admin = new SimpleDatabase();
+  private final Database admin = new OnHeapDatabase();
   private final Map<SafeString, SafeString> scripts = new HashMap<>();
   private final DatabaseFactory factory;
 

@@ -18,7 +18,7 @@ import org.junit.Test;
 
 public class DatabaseTest {
 
-  private final SimpleDatabase database = new SimpleDatabase();
+  private final OnHeapDatabase database = new OnHeapDatabase();
 
   @Test
   public void testDatabase()  {

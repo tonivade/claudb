@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.data;
 
 import static java.util.Collections.unmodifiableList;
@@ -18,15 +17,15 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
 
-public class SimpleDatabase implements Database {
+public class OnHeapDatabase implements Database {
 
   private final Map<DatabaseKey, DatabaseValue> cache;
 
-  public SimpleDatabase() {
+  public OnHeapDatabase() {
     this(new TreeMap<>());
   }
 
-  public SimpleDatabase(Map<DatabaseKey, DatabaseValue> cache) {
+  public OnHeapDatabase(Map<DatabaseKey, DatabaseValue> cache) {
     this.cache = cache;
   }
 

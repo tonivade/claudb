@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -13,6 +12,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -97,6 +97,7 @@ public class TinyDBTest {
   }
 
   @Test
+  @Ignore
   public void testLoad100000() {
     execute(jedis -> {
       int times = 100000;
