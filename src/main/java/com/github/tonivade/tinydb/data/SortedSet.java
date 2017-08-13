@@ -5,6 +5,11 @@
 
 package com.github.tonivade.tinydb.data;
 
+import static java.util.stream.Collectors.toSet;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
@@ -23,22 +28,9 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
 
   private static final long serialVersionUID = -2221385877842299451L;
 
-  private final Map<SafeString, Double> items = new HashMap<>();
+  private transient Map<SafeString, Double> items = new HashMap<>();
 
-  private final NavigableSet<Entry<Double, SafeString>> scores = new TreeSet<>(
-      (o1, o2) -> {
-        int key = o1.getKey().compareTo(o2.getKey());
-        if (key != 0) {
-          return key;
-        }
-        if (SafeString.EMPTY_STRING.equals(o1.getValue())) {
-          return 0;
-        }
-        if (SafeString.EMPTY_STRING.equals(o2.getValue())) {
-          return 0;
-        }
-        return o1.getValue().compareTo(o2.getValue());
-      });
+  private transient NavigableSet<Entry<Double, SafeString>> scores = new TreeSet<>(this::compare);
 
   @Override
   public int size() {
@@ -269,5 +261,31 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
   @Override
   public String toString() {
     return scores.toString();
+  }
+
+  private int compare(Entry<Double, SafeString> o1, Entry<Double, SafeString> o2) {
+    int key = o1.getKey().compareTo(o2.getKey());
+    if (key != 0) {
+      return key;
+    }
+    if (SafeString.EMPTY_STRING.equals(o1.getValue())) {
+      return 0;
+    }
+    if (SafeString.EMPTY_STRING.equals(o2.getValue())) {
+      return 0;
+    }
+    return o1.getValue().compareTo(o2.getValue());
+  }
+  
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeObject(items);
+    out.writeObject(scores.stream().collect(toSet()));
+  }
+  
+  private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
+    this.items = new HashMap<>();
+    this.scores = new TreeSet<>(this::compare);
+    this.items.putAll((Map) input.readObject());
+    this.scores.addAll((Set) input.readObject());
   }
 }
