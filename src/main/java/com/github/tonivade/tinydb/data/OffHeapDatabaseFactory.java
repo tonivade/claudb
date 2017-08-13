@@ -7,17 +7,32 @@ package com.github.tonivade.tinydb.data;
 import java.nio.ByteBuffer;
 
 import org.caffinitas.ohc.CacheSerializer;
+import org.caffinitas.ohc.Eviction;
 import org.caffinitas.ohc.OHCache;
 import org.caffinitas.ohc.OHCacheBuilder;
 import org.nustaq.serialization.FSTConfiguration;
+
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class OffHeapDatabaseFactory implements DatabaseFactory {
 
   @Override
   public Database create(String name) {
-    OHCacheBuilder<DatabaseKey, DatabaseValue> builder = OHCacheBuilder.<DatabaseKey, DatabaseValue>newBuilder();
-    OHCache<DatabaseKey, DatabaseValue> cache = builder.keySerializer(new FSTSerializer<>()).valueSerializer(new FSTSerializer<>()).build();
-    return new OffHeapDatabase(cache);
+    return new OffHeapDatabase(createCache());
+  }
+
+  private OHCache<DatabaseKey, DatabaseValue> createCache() {
+    return builder()
+        .eviction(Eviction.NONE)
+        .throwOOME(true)
+//        .unlocked(true)
+        .keySerializer(new FSTSerializer<>())
+        .valueSerializer(new FSTSerializer<>())
+        .build();
+  }
+
+  private OHCacheBuilder<DatabaseKey, DatabaseValue> builder() {
+    return OHCacheBuilder.newBuilder();
   }
 
   @Override
@@ -27,11 +42,17 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
   
   private static class FSTSerializer<E> implements CacheSerializer<E> {
     
-    FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
+    private static FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
+    
+    static {
+      FST.registerClass(DatabaseValue.class);
+      FST.registerClass(DatabaseKey.class);
+      FST.registerClass(SafeString.class);
+    }
 
     @Override
     public void serialize(E value, ByteBuffer buf) {
-      byte[] array = fst.asByteArray(value);
+      byte[] array = FST.asByteArray(value);
       buf.putInt(array.length);
       buf.put(array);
     }
@@ -42,12 +63,12 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
       int length = buf.getInt();
       byte[] array = new byte[length];
       buf.get(array);
-      return (E) fst.asObject(array);
+      return (E) FST.asObject(array);
     }
 
     @Override
     public int serializedSize(E value) {
-      return fst.asByteArray(value).length + Integer.BYTES;
+      return FST.asByteArray(value).length + Integer.BYTES;
     }
   }
 }
