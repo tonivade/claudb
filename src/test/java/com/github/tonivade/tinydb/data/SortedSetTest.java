@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -10,11 +9,16 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.score;
 import static java.util.Collections.unmodifiableSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.*;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.nustaq.serialization.FSTConfiguration;
 
 public class SortedSetTest {
+
+  private final FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
 
   @Test
   public void testName()  {
@@ -81,5 +85,22 @@ public class SortedSetTest {
 
     assertThat(set.headSet(score(4, safeString(""))).last(), is(score(3.0, safeString("c"))));
   }
-
+  
+  @Test
+  public void testSerialization() {
+    SortedSet set = new SortedSet();
+    set.add(score(1, safeString("a")));
+    set.add(score(2, safeString("b")));
+    set.add(score(3, safeString("c")));
+    set.add(score(4, safeString("d")));
+    set.add(score(5, safeString("e")));
+    set.add(score(6, safeString("f")));
+    set.add(score(7, safeString("g")));
+    set.add(score(8, safeString("h")));
+    set.add(score(9, safeString("i")));
+    
+    SortedSet deserializedSet = (SortedSet) fst.asObject(fst.asByteArray(set));
+    
+    assertThat(deserializedSet, equalTo(set));
+  }
 }

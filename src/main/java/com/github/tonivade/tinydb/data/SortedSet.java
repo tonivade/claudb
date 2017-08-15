@@ -2,15 +2,13 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.data;
-
-import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -279,13 +277,16 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
   
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.writeObject(items);
-    out.writeObject(scores.stream().collect(toSet()));
   }
   
+  @SuppressWarnings("unchecked")
   private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
+    Map<SafeString, Double> entries = (Map<SafeString, Double>) input.readObject();
     this.items = new HashMap<>();
     this.scores = new TreeSet<>(this::compare);
-    this.items.putAll((Map) input.readObject());
-    this.scores.addAll((Set) input.readObject());
+    for (Entry<SafeString, Double> entry : entries.entrySet()) {
+      items.put(entry.getKey(), entry.getValue());
+      scores.add(new AbstractMap.SimpleEntry<>(entry.getValue(), entry.getKey()));
+    }
   }
 }
