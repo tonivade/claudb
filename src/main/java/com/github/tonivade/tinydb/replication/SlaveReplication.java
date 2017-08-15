@@ -15,8 +15,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
@@ -34,7 +35,7 @@ import com.github.tonivade.tinydb.persistence.ByteBufferInputStream;
 
 public class SlaveReplication implements RespCallback {
 
-  private static final Logger LOGGER = Logger.getLogger(SlaveReplication.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
 
   private static final String SYNC_COMMAND = "SYNC";
 
@@ -60,13 +61,13 @@ public class SlaveReplication implements RespCallback {
 
   @Override
   public void onConnect() {
-    LOGGER.info(() -> "Connected with master");
+    LOGGER.info("Connected with master");
     client.send(array(string(SYNC_COMMAND)));
   }
 
   @Override
   public void onDisconnect() {
-    LOGGER.info(() -> "Disconnected from master");
+    LOGGER.info("Disconnected from master");
   }
 
   @Override
@@ -89,7 +90,7 @@ public class SlaveReplication implements RespCallback {
     StringRedisToken commandToken = (StringRedisToken) array.stream().findFirst().orElse(nullString());
     List<RedisToken> paramTokens =array.stream().skip(1).collect(toList());
 
-    LOGGER.fine(() -> "command recieved from master: " + commandToken);
+    LOGGER.debug("command recieved from master: " + commandToken);
 
     RespCommand command = server.getCommand(commandToken.getValue().toString());
 
@@ -111,9 +112,9 @@ public class SlaveReplication implements RespCallback {
     try {
       SafeString value = token.getValue();
       server.importRDB(toStream(value));
-      LOGGER.info(() -> "loaded RDB file from master");
+      LOGGER.info("loaded RDB file from master");
     } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "error importing RDB file", e);
+      LOGGER.error("error importing RDB file", e);
     }
   }
 

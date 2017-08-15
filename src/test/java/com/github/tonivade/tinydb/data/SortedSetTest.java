@@ -17,10 +17,14 @@ import org.nustaq.serialization.FSTConfiguration;
 
 public class SortedSetTest {
 
-  private final FSTConfiguration fst = FSTConfiguration.createDefaultConfiguration();
+  private static final FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
+  
+  static {
+    FST.registerClass(SortedSet.class);
+  }
 
   @Test
-  public void testName()  {
+  public void testSet() {
     SortedSet set = new SortedSet();
 
     assertThat(set.add(score(1, safeString("a"))), is(true));
@@ -42,7 +46,7 @@ public class SortedSetTest {
   }
 
   @Test
-  public void testEquals()  {
+  public void testEquals() {
     SortedSet setA = new SortedSet();
     setA.add(score(1, safeString("a")));
     setA.add(score(2, safeString("b")));
@@ -56,7 +60,7 @@ public class SortedSetTest {
   }
 
   @Test
-  public void testNotEquals()  {
+  public void testNotEquals() {
     SortedSet setA = new SortedSet();
     setA.add(score(1, safeString("a")));
 
@@ -68,7 +72,7 @@ public class SortedSetTest {
   }
 
   @Test
-  public void testScore()  {
+  public void testScore() {
     SortedSet set = new SortedSet();
     set.add(score(1, safeString("a")));
     set.add(score(2, safeString("b")));
@@ -98,7 +102,7 @@ public class SortedSetTest {
     set.add(score(8, safeString("h")));
     set.add(score(9, safeString("i")));
     
-    SortedSet deserializedSet = (SortedSet) fst.asObject(fst.asByteArray(set));
+    SortedSet deserializedSet = (SortedSet) FST.asObject(FST.asByteArray(set));
     
     assertThat(deserializedSet, equalTo(set));
   }

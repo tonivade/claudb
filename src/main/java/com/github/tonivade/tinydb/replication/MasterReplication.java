@@ -20,7 +20,9 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisTokenVisitor;
@@ -34,7 +36,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 
 public class MasterReplication implements Runnable {
 
-  private static final Logger LOGGER = Logger.getLogger(MasterReplication.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(MasterReplication.class);
 
   private static final String SELECT_COMMAND = "SELECT";
   private static final String PING_COMMAND = "PING";
@@ -64,7 +66,7 @@ public class MasterReplication implements Runnable {
       merge.addAll(newValue.getValue());
       return set(merge);
     });
-    LOGGER.info(() -> "new slave: " + id);
+    LOGGER.info("new slave: {}", id);
   }
 
   public void removeSlave(String id) {
@@ -74,7 +76,7 @@ public class MasterReplication implements Runnable {
       merge.removeAll(newValue.getValue());
       return set(merge);
     });
-    LOGGER.info(() -> "slave revomed: " + id);
+    LOGGER.info("slave revomed: {}", id);
   }
 
   @Override

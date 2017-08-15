@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.command.Request;
@@ -34,7 +35,7 @@ import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
 public class TinyDB extends RespServer implements TinyDBServerContext {
 
-  private static final Logger LOGGER = Logger.getLogger(TinyDB.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(TinyDB.class);
 
   private final BlockingQueue<RedisToken> queue = new LinkedBlockingQueue<>();
 
@@ -75,7 +76,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
     queue.clear();
 
-    LOGGER.info(() -> "server stopped");
+    LOGGER.info("server stopped");
   }
 
   @Override
@@ -141,7 +142,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
         replication(request, command);
         return response;
       } catch (RuntimeException e) {
-        LOGGER.log(Level.SEVERE, "error executing command: " + request, e);
+        LOGGER.error("error executing command: " + request, e);
         return error("error executing command: " + request);
       }
     } else {

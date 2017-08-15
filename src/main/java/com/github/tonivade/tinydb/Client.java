@@ -7,8 +7,9 @@ package com.github.tonivade.tinydb;
 import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
@@ -20,7 +21,7 @@ import joptsimple.OptionSpec;
 
 public class Client implements RespCallback {
 
-  private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(Client.class);
 
   private static final String CHARSET_NAME = "UTF-8";
   private static final String QUIT = "quit";
@@ -43,7 +44,7 @@ public class Client implements RespCallback {
     try {
       responses.put(token);
     } catch (InterruptedException e) {
-      LOGGER.log(Level.WARNING, "message not processed", e);
+      LOGGER.warn("message not processed", e);
     }
   }
 

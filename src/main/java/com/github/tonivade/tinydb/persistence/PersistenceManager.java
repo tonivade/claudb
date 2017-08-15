@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
@@ -23,8 +22,9 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.DefaultSession;
@@ -42,10 +42,11 @@ import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBConfig;
 import com.github.tonivade.tinydb.TinyDBServerContext;
+import com.github.tonivade.tinydb.replication.SlaveReplication;
 
 public class PersistenceManager implements Runnable {
 
-  private static final Logger LOGGER = Logger.getLogger(PersistenceManager.class.getName());
+  private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
 
   private static final int MAX_FRAME_SIZE = 1024 * 1024 * 100;
 
@@ -72,14 +73,14 @@ public class PersistenceManager implements Runnable {
     importRedo();
     createRedo();
     executor.scheduleWithFixedDelay(this, syncPeriod, syncPeriod, TimeUnit.SECONDS);
-    LOGGER.info(() -> "Persistence manager started");
+    LOGGER.info("Persistence manager started");
   }
 
   public void stop() {
     executor.shutdown();
     closeRedo();
     exportRDB();
-    LOGGER.info(() -> "Persistence manager stopped");
+    LOGGER.info("Persistence manager stopped");
   }
 
   @Override
@@ -99,9 +100,9 @@ public class PersistenceManager implements Runnable {
     if (file.exists()) {
       try (InputStream rdb = new FileInputStream(file)) {
         server.importRDB(rdb);
-        LOGGER.info(() -> "RDB file imported");
+        LOGGER.info("RDB file imported");
       } catch (IOException e) {
-        LOGGER.log(Level.SEVERE, "error reading RDB", e);
+        LOGGER.error("error reading RDB", e);
       }
     }
   }
@@ -120,7 +121,7 @@ public class PersistenceManager implements Runnable {
           processCommand((ArrayRedisToken) token);
         }
       } catch (IOException e) {
-        LOGGER.log(Level.SEVERE, "error reading RDB", e);
+        LOGGER.error("error reading AOF file", e);
       }
     }
   }
@@ -130,7 +131,7 @@ public class PersistenceManager implements Runnable {
     StringRedisToken commandToken = (StringRedisToken) array.stream().findFirst().orElse(nullString());
     List<RedisToken> paramTokens = array.stream().skip(1).collect(toList());
 
-    LOGGER.fine(() -> "command recieved from master: " + commandToken);
+    LOGGER.debug("command recieved from master: {}", commandToken);
 
     RespCommand command = server.getCommand(commandToken.getValue().toString());
 
@@ -152,7 +153,7 @@ public class PersistenceManager implements Runnable {
     try {
       closeRedo();
       output = new FileOutputStream(redoFile);
-      LOGGER.info(() -> "AOF file created");
+      LOGGER.info("AOF file created");
     } catch (IOException e) {
       throw new IOError(e);
     }
@@ -163,19 +164,19 @@ public class PersistenceManager implements Runnable {
       if (output != null) {
         output.close();
         output = null;
-        LOGGER.fine(() -> "AOF file closed");
+        LOGGER.debug("AOF file closed");
       }
     } catch (IOException e) {
-      LOGGER.severe("error closing file");
+      LOGGER.error("error closing AOF file", e);
     }
   }
 
   private void exportRDB() {
     try (FileOutputStream rdb = new FileOutputStream(dumpFile)) {
       server.exportRDB(rdb);
-      LOGGER.info(() -> "RDB file exported");
+      LOGGER.info("RDB file exported");
     } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "error writing to RDB file", e);
+      LOGGER.error("error writing to RDB file", e);
     }
   }
 
@@ -185,9 +186,9 @@ public class PersistenceManager implements Runnable {
       byte[] buffer = serializer.encodeToken(command);
       output.write(buffer);
       output.flush();
-      LOGGER.fine(() -> "new command: " + command);
+      LOGGER.debug("new command: " + command);
     } catch (IOException e) {
-      LOGGER.log(Level.SEVERE, "error writing to AOF file", e);
+      LOGGER.error("error writing to AOF file", e);
     }
   }
 
