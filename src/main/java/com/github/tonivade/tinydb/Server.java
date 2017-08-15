@@ -4,6 +4,13 @@
  */
 package com.github.tonivade.tinydb;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.util.stream.Stream;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -27,11 +34,19 @@ public class Server {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
       TinyDBConfig config = parseConfig(options.has(persist), options.has(offHeap));
+     
+      readBanner().forEach(System.out::println);
+      
       TinyDB server = new TinyDB(optionHost, optionPort, config);
       Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));
-
       server.start();
     }
+  }
+
+  private static Stream<String> readBanner() throws IOException, URISyntaxException
+  {
+    InputStream banner = Server.class.getResourceAsStream("/banner.txt");
+    return new BufferedReader(new InputStreamReader(banner)).lines();
   }
 
   private static int parsePort(Integer optionPort) {
