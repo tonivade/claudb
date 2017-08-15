@@ -10,9 +10,8 @@ import static java.util.Collections.unmodifiableSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.nustaq.serialization.FSTConfiguration;
 
