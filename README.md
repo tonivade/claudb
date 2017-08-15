@@ -167,7 +167,8 @@ Parameters:
     Option        Description
     ------        -----------
     --help        print help
-    -P            enable with persistence
+    -P            enable persistence (experimental)
+    -O            enable off heap memory (experimental)
     -h            host (default: localhost)
     -p <Integer>  port (default: 7081) 
     
@@ -176,12 +177,12 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>tinydb</artifactId>
-        <version>0.10.0</version>
+        <version>0.11.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:tinydb:0.10.0'
+    compile 'com.github.tonivade:tinydb:0.11.0'
 
 ## TODO
 

@@ -12,8 +12,8 @@ public class Server {
   public static void main(String[] args) throws Exception {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
-    OptionSpec<Void> persist = parser.accepts("P", "with persistence");
-    OptionSpec<Void> offHeap = parser.accepts("O", "off heap cache");
+    OptionSpec<Void> persist = parser.accepts("P", "persistence (experimental)");
+    OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
         .defaultsTo(TinyDB.DEFAULT_HOST);
     OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
