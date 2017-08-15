@@ -132,6 +132,8 @@ And this is REDIS
     
 In my laptop (intel core i5, with 4G of RAM)
 
+In the latest version, TinyDB includes an option to use an off heap memory cache. See usage section
+
 ## BUILD
 
 You need to clon the repo:
@@ -151,6 +153,16 @@ Or if you have Gradle installed, just type
 Create all-in-one jar
 
     $ gradle fatJar
+
+## DOCKER
+
+You can create your own docker images for TinyDB using the provided `Dockerfile`
+
+    $ docker build -t tinydb .
+
+And then run the image
+
+    $ docker run -p 7081:7081 tinydb
 
 ## USAGE
 
