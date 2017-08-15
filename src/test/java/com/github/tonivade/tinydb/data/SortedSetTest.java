@@ -15,12 +15,15 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import org.nustaq.serialization.FSTConfiguration;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 public class SortedSetTest {
 
   private static final FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
   
   static {
     FST.registerClass(SortedSet.class);
+    FST.registerClass(SafeString.class);
   }
 
   @Test
