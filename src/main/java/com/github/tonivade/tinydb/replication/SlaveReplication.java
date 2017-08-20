@@ -105,7 +105,7 @@ public class SlaveReplication implements RespCallback {
 
   private List<SafeString> arrayToList(List<RedisToken> request) {
     RedisTokenVisitor<SafeString> visitor = RedisTokenVisitor.<SafeString>builder().onString(StringRedisToken::getValue).build();
-    return visit(request.stream().skip(1), visitor).collect(toList());
+    return visit(request.stream(), visitor).collect(toList());
   }
 
   private void processRDB(StringRedisToken token) {
