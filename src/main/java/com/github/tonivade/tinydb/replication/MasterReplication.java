@@ -2,21 +2,16 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.replication;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static java.util.stream.Collectors.toList;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,9 +25,6 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.TinyDBServerState;
-import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.DatabaseKey;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 
 public class MasterReplication implements Runnable {
 
@@ -41,8 +33,6 @@ public class MasterReplication implements Runnable {
   private static final String SELECT_COMMAND = "SELECT";
   private static final String PING_COMMAND = "PING";
   private static final int TASK_DELAY = 2;
-
-  private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
 
   private final TinyDBServerContext server;
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -60,22 +50,12 @@ public class MasterReplication implements Runnable {
   }
 
   public void addSlave(String id) {
-    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
-      List<SafeString> merge = new LinkedList<>();
-      merge.addAll(oldValue.getValue());
-      merge.addAll(newValue.getValue());
-      return set(merge);
-    });
+    getServerState().addSlave(id);
     LOGGER.info("new slave: {}", id);
   }
 
   public void removeSlave(String id) {
-    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
-      List<SafeString> merge = new LinkedList<>();
-      merge.addAll(oldValue.getValue());
-      merge.removeAll(newValue.getValue());
-      return set(merge);
-    });
+    getServerState().removeSlave(id);
     LOGGER.info("slave revomed: {}", id);
   }
 
@@ -83,19 +63,11 @@ public class MasterReplication implements Runnable {
   public void run() {
     List<RedisToken> commands = createCommands();
 
-    for (SafeString slave : getSlaves()) {
+    for (SafeString slave : getServerState().getSlaves()) {
       for (RedisToken command : commands) {
         server.publish(slave.toString(), command);
       }
     }
-  }
-
-  private Database getAdminDatabase() {
-    return getServerState().getAdminDatabase();
-  }
-
-  private Set<SafeString> getSlaves() {
-    return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
   }
 
   private List<RedisToken> createCommands() {
@@ -130,7 +102,7 @@ public class MasterReplication implements Runnable {
   }
 
   private TinyDBServerState getServerState() {
-    return serverState().orElseThrow(() -> new IllegalStateException("mission server state"));
+    return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   private Optional<TinyDBServerState> serverState() {

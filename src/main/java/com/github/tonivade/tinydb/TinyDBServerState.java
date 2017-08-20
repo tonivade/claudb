@@ -4,15 +4,18 @@
  */
 package com.github.tonivade.tinydb;
 
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
+import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -110,5 +113,27 @@ public class TinyDBServerState {
 
   public void cleanScripts() {
     admin.remove(SCRIPTS_KEY);
+  }
+
+  public Set<SafeString> getSlaves() {
+    return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
+  }
+
+  public void addSlave(String id) {
+    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
+      Set<SafeString> merge = new HashSet<>();
+      merge.addAll(oldValue.getValue());
+      merge.addAll(newValue.getValue());
+      return set(merge);
+    });
+  }
+
+  public void removeSlave(String id) {
+    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
+      Set<SafeString> merge = new HashSet<>();
+      merge.addAll(oldValue.getValue());
+      merge.removeAll(newValue.getValue());
+      return set(merge);
+    });
   }
 }
