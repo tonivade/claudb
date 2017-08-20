@@ -12,7 +12,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.List;
 
@@ -104,7 +103,8 @@ public class SlaveReplication implements RespCallback {
   }
 
   private List<SafeString> arrayToList(List<RedisToken> request) {
-    RedisTokenVisitor<SafeString> visitor = RedisTokenVisitor.<SafeString>builder().onString(StringRedisToken::getValue).build();
+    RedisTokenVisitor<SafeString> visitor = 
+        RedisTokenVisitor.<SafeString>builder().onString(StringRedisToken::getValue).build();
     return visit(request.stream(), visitor).collect(toList());
   }
 
@@ -118,7 +118,7 @@ public class SlaveReplication implements RespCallback {
     }
   }
 
-  private InputStream toStream(SafeString value) throws UnsupportedEncodingException {
+  private InputStream toStream(SafeString value) {
     return new ByteBufferInputStream(value.getBytes());
   }
 }
