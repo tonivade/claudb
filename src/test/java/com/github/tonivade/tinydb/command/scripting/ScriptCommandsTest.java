@@ -9,6 +9,8 @@ import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
+import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -39,18 +41,16 @@ public class ScriptCommandsTest {
 
   @Test
   public void exists() {
-    rule.getServerState().saveScript(safeString(sha1sum), safeString("return nil"));
-
-    rule.withParams("exists", sha1sum)
+    rule.withAdminData("scripts", hash(entry(safeString(sha1sum), safeString("return nil"))))
+        .withParams("exists", sha1sum)
         .execute()
         .assertThat(integer(true));
   }
 
   @Test
   public void flush() {
-    rule.getServerState().saveScript(safeString(sha1sum), safeString("return nil"));
-
-    rule.withParams("flush")
+    rule.withAdminData("scripts", hash(entry(safeString(sha1sum), safeString("return nil"))))
+        .withParams("flush")
         .execute()
         .assertThat(responseOk());
 

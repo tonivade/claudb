@@ -6,6 +6,8 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
+import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 
 import java.util.NoSuchElementException;
 
@@ -29,9 +31,8 @@ public class EvalShaCommandTest {
 
   @Test
   public void testExistingScript() {
-    rule.getServerState().saveScript(safeString("test"), safeString("return nil"));
-
-    rule.withParams("test", "0")
+    rule.withAdminData("scripts", hash(entry(safeString("test"), safeString("return nil"))))
+        .withParams("test", "0")
         .execute()
         .assertThat(nullString());
   }

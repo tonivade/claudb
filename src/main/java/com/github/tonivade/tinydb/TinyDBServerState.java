@@ -4,8 +4,9 @@
  */
 package com.github.tonivade.tinydb;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
+import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,12 +31,12 @@ public class TinyDBServerState {
 
   private static final int RDB_VERSION = 6;
 
-  private static final DatabaseKey SLAVES_KEY = safeKey(safeString("slaves"));
+  private static final DatabaseKey SLAVES_KEY = safeKey("slaves");
+  private static final DatabaseKey SCRIPTS_KEY = safeKey("scripts");
 
   private boolean master;
   private final List<Database> databases = new ArrayList<>();
   private final Database admin = new OnHeapDatabase();
-  private final Map<SafeString, SafeString> scripts = new HashMap<>();
   private final DatabaseFactory factory;
 
   public TinyDBServerState(DatabaseFactory factory, int numDatabases) {
@@ -92,14 +93,22 @@ public class TinyDBServerState {
   }
 
   public void saveScript(SafeString sha1, SafeString script) {
-    scripts.put(sha1, script);
+    DatabaseValue value = hash(entry(sha1, script));
+    admin.merge(SCRIPTS_KEY, value, (oldValue, newValue) -> {
+      Map<SafeString, SafeString> merge = new HashMap<>();
+      merge.putAll(oldValue.getValue());
+      merge.putAll(newValue.getValue());
+      return hash(merge.entrySet());
+    });
   }
 
   public Optional<SafeString> getScript(SafeString sha1) {
+    DatabaseValue value = admin.getOrDefault(SCRIPTS_KEY, DatabaseValue.EMPTY_HASH);
+    Map<SafeString, SafeString> scripts = value.getValue();
     return Optional.ofNullable(scripts.get(sha1));
   }
 
   public void cleanScripts() {
-    scripts.clear();
+    admin.remove(SCRIPTS_KEY);
   }
 }
