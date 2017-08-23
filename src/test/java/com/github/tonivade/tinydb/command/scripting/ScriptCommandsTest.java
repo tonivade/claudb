@@ -69,6 +69,5 @@ public class ScriptCommandsTest {
     rule.withParams("asdf", sha1sum)
         .execute()
         .assertThat(error("Unknown SCRIPT subcommand: asdf"));
-
   }
 }

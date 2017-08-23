@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.tinydb.command.scripting;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
@@ -44,15 +43,20 @@ public class RedisBinding extends VarArgFunction {
   private SafeString[] readArguments(Varargs args) {
     List<SafeString> params = new ArrayList<>();
     if (args.narg() > 1) {
-      for(int i = 1; i < args.narg(); i++) {
-        params.add(safeString(args.tojstring(i + 1)));
+      for (int i = 1; i < args.narg(); i++) {
+        params.add(toSafeString(args.checkstring(i + 1)));
       }
     }
     return params.stream().toArray(SafeString[]::new);
   }
 
   private SafeString readCommand(Varargs args) {
-    return safeString(args.checkjstring(1));
+    return toSafeString(args.checkstring(1));
+  }
+
+  private SafeString toSafeString(LuaString value)
+  {
+    return new SafeString(value.m_bytes);
   }
 
   private LuaValue convert(RedisToken token) {
@@ -64,7 +68,8 @@ public class RedisBinding extends VarArgFunction {
   }
 
   private LuaInteger toLuaNumber(IntegerRedisToken value) {
-    return LuaInteger.valueOf(Integer.parseInt(value.getValue().toString()));
+    Integer integer = value.getValue();
+    return LuaInteger.valueOf(integer);
   }
 
   private LuaTable toLuaTable(ArrayRedisToken value) {
@@ -77,14 +82,17 @@ public class RedisBinding extends VarArgFunction {
   }
 
   private LuaString toLuaString(StringRedisToken value) {
-    return LuaString.valueOf(value.getValue().toString());
+    SafeString string = value.getValue();
+    return LuaString.valueOf(string.getBytes());
   }
 
   private LuaString toLuaString(StatusRedisToken value) {
-    return LuaString.valueOf(value.getValue().toString());
+    String string = value.getValue();
+    return LuaString.valueOf(string);
   }
 
   private LuaString toLuaString(UnknownRedisToken value) {
-    return LuaString.valueOf(value.getValue().toString());
+    SafeString string = value.getValue();
+    return LuaString.valueOf(string.getBytes());
   }
 }
