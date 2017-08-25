@@ -42,6 +42,8 @@ public class DatabaseValue implements Serializable {
   public static final DatabaseValue EMPTY_ZSET = zset();
   public static final DatabaseValue EMPTY_HASH = hash();
 
+  public static final DatabaseValue NULL = null;
+
   private final DataType type;
 
   private final Object value;
@@ -114,8 +116,10 @@ public class DatabaseValue implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return equalizer(this).append((one, other) -> Objects.equals(one.type, other.type))
-        .append((one, other) -> Objects.equals(one.value, other.value)).applyTo(obj);
+    return equalizer(this)
+        .append((one, other) -> Objects.equals(one.type, other.type))
+        .append((one, other) -> Objects.equals(one.value, other.value))
+        .applyTo(obj);
   }
 
   @Override
