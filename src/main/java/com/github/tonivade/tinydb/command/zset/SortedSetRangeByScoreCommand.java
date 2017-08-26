@@ -61,10 +61,9 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
       if (from <= to) {
         if (options.withScores) {
           result = range.stream().flatMap(
-              (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
+              entry -> Stream.of(entry.getValue(), entry.getKey())).collect(toList());
         } else {
-          result = range.stream().map(
-              (o) -> o.getValue()).collect(toList());
+          result = range.stream().map(Entry::getValue).collect(toList());
         }
 
         if (options.withLimit) {
@@ -97,7 +96,7 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
     return !param.toString().startsWith(EXCLUSIVE);
   }
 
-  private float parseRange(String param) throws NumberFormatException {
+  private float parseRange(String param) {
     switch (param) {
     case INIFITY:
       return Float.MAX_VALUE;
@@ -117,5 +116,4 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
     int offset;
     int count;
   }
-
 }

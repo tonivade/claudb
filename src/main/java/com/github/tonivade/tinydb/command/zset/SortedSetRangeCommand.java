@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.zset;
 
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
@@ -55,11 +54,11 @@ public class SortedSetRangeCommand implements TinyDBCommand {
       if (from <= to) {
         Optional<SafeString> withScores = request.getOptionalParam(3);
         if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
-          result = set.stream().skip(from).limit((to - from) + 1).flatMap(
-              (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
+          result = set.stream().skip(from).limit((to - from) + 1l)
+              .flatMap(entry -> Stream.of(entry.getValue(), entry.getKey())).collect(toList());
         } else {
-          result = set.stream().skip(from).limit((to - from) + 1).map(
-              (o) -> o.getValue()).collect(toList());
+          result = set.stream().skip(from).limit((to - from) + 1l)
+              .map(Entry::getValue).collect(toList());
         }
       }
 

@@ -56,11 +56,11 @@ public class SortedSetReverseRangeCommand implements TinyDBCommand {
       if (from <= to) {
         Optional<SafeString> withScores = request.getOptionalParam(3);
         if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
-          result = set.stream().skip(from).limit((to - from) + 1).flatMap(
-              (o) -> Stream.of(o.getValue(), o.getKey())).collect(toList());
+          result = set.stream().skip(from).limit((to - from) + 1l)
+              .flatMap(item -> Stream.of(item.getValue(), item.getKey())).collect(toList());
         } else {
-          result = set.stream().skip(from).limit(
-              (to - from) + 1).map((o) -> o.getValue()).collect(toList());
+          result = set.stream().skip(from).limit((to - from) + 1l)
+              .map(Entry::getValue).collect(toList());
         }
       }
       reverse(result);

@@ -52,7 +52,7 @@ public class SortedSetAddCommand implements TinyDBCommand {
     return result.size() - input.size();
   }
 
-  private DatabaseValue parseInput(Request request) throws NumberFormatException {
+  private DatabaseValue parseInput(Request request) {
     Set<Entry<Double, SafeString>> set = new SortedSet();
     SafeString score = null;
     for (SafeString string : request.getParams().stream().skip(1).collect(toList())) {
