@@ -7,7 +7,6 @@ package com.github.tonivade.tinydb.command.string;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 
@@ -46,40 +45,36 @@ public class SetCommand implements TinyDBCommand {
     if (parameters.ttl != null) {
       value = value.expiredAt(Instant.now().plus(parameters.ttl));
     }
-    return saveValue(db, parameters, key, value);
+    return value.equals(saveValue(db, parameters, key, value)) ? responseOk() : nullString();
   }
 
-  private RedisToken saveValue(Database db, Parameters params, DatabaseKey key, DatabaseValue value) {
-    RedisToken response = null;
+  private DatabaseValue saveValue(Database db, Parameters params, DatabaseKey key, DatabaseValue value) {
+    DatabaseValue savedValue = null; 
     if (params.ifExists) {
-      DatabaseValue savedValue = mergeValueIfExists(db, key, value);
-      response = value.equals(savedValue) ? responseOk() : nullString();
+      savedValue = putValueIfExists(db, key, value);
     } else if (params.ifNotExists) {
-      DatabaseValue savedValue = mergeValueIfNotExists(db, key, value);
-      response = value.equals(savedValue) ? responseOk() : nullString();
+      savedValue = putValueIfNotExists(db, key, value);
     } else {
-      db.put(key, value);
-      response = responseOk();
+      savedValue = putValue(db, key, value);
     }
-    return response;
+    return savedValue;
   }
 
-  private DatabaseValue mergeValueIfExists(Database db, DatabaseKey key, DatabaseValue newValue) {
+  private DatabaseValue putValue(Database db, DatabaseKey key, DatabaseValue value) {
+    db.put(key, value);
+    return value;
+  }
+
+  private DatabaseValue putValueIfExists(Database db, DatabaseKey key, DatabaseValue value) {
     DatabaseValue oldValue = db.get(key);
     if (oldValue != null) {
-      db.put(key, newValue);
-      return newValue;
+      return putValue(db, key, value);
     }
     return oldValue;
   }
 
-  private DatabaseValue mergeValueIfNotExists(Database db, DatabaseKey key, DatabaseValue value) {
-    return db.merge(key, value, (oldValue, newValue) -> {
-      if (oldValue.equals(DatabaseValue.EMPTY_STRING)) {
-        return newValue;
-      }
-      return oldValue;
-    });
+  private DatabaseValue putValueIfNotExists(Database db, DatabaseKey key, DatabaseValue value) {
+    return db.merge(key, value, (oldValue, newValue) -> oldValue);
   }
     
   private Parameters parse(Request request) {
@@ -88,7 +83,7 @@ public class SetCommand implements TinyDBCommand {
       if (request.getLength() > 2) {
         for (int i = 2; i < request.getLength(); i++) {
           SafeString option = request.getParam(i);
-          if (option.equals(safeString("EX"))) {
+          if ("EX".equalsIgnoreCase(option.toString())) {
             if (request.getLength() > i + 1) {
               SafeString ttlInSeconds = request.getParam(++i);
               parameters.ttl = Duration.ofSeconds(Integer.parseInt(ttlInSeconds.toString()));
@@ -96,7 +91,7 @@ public class SetCommand implements TinyDBCommand {
               parameters.syntaxError = true;
               break;
             }
-          } else if (option.equals(safeString("PX"))) {
+          } else if ("PX".equalsIgnoreCase(option.toString())) {
             if (request.getLength() > i + 1) {
               SafeString ttlInMillis = request.getParam(++i);
               parameters.ttl = Duration.ofMillis(Integer.parseInt(ttlInMillis.toString()));
@@ -104,9 +99,9 @@ public class SetCommand implements TinyDBCommand {
               parameters.syntaxError = true;
               break;
             }
-          } else if (option.equals(safeString("NX"))) {
+          } else if ("NX".equalsIgnoreCase(option.toString())) {
             parameters.ifNotExists = true;
-          } else if (option.equals(safeString("XX"))) {
+          } else if ("XX".equalsIgnoreCase(option.toString())) {
             parameters.ifExists = true;
           } else {
             parameters.syntaxError = true;

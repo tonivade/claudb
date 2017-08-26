@@ -25,17 +25,10 @@ public class SetIfNotExistsCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     DatabaseKey key = safeKey(request.getParam(0));
     DatabaseValue value = string(request.getParam(1));
-    DatabaseValue savedValue = mergeValue(db, key, value);
-    return integer(savedValue.equals(value));
+    return integer(putValueIfNotExists(db, key, value).equals(value));
   }
 
-  private DatabaseValue mergeValue(Database db, DatabaseKey key, DatabaseValue value)
-  {
-    return db.merge(key, value, (oldValue, newValue) -> {
-      if (oldValue.equals(DatabaseValue.EMPTY_STRING)) {
-        return newValue;
-      }
-      return oldValue;
-    });
+  private DatabaseValue putValueIfNotExists(Database db, DatabaseKey key, DatabaseValue value) {
+    return db.merge(key, value, (oldValue, newValue) -> oldValue);
   }
 }
