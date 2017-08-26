@@ -62,6 +62,7 @@ import com.github.tonivade.tinydb.command.string.IncrementByCommand;
 import com.github.tonivade.tinydb.command.string.IncrementCommand;
 import com.github.tonivade.tinydb.command.string.MultiGetCommand;
 import com.github.tonivade.tinydb.command.string.MultiSetCommand;
+import com.github.tonivade.tinydb.command.string.MultiSetIfNotExistsCommand;
 import com.github.tonivade.tinydb.command.string.SetCommand;
 import com.github.tonivade.tinydb.command.string.SetExpiredCommand;
 import com.github.tonivade.tinydb.command.string.SetIfNotExistsCommand;
@@ -105,6 +106,7 @@ public class TinyDBCommandSuite extends CommandSuite {
     addCommand(SetBitCommand.class);
     addCommand(GetBitCommand.class);
     addCommand(SetIfNotExistsCommand.class);
+    addCommand(MultiSetIfNotExistsCommand.class);
 
     // keys
     addCommand(DeleteCommand.class);
