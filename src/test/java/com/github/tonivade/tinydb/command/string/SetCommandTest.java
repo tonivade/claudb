@@ -117,7 +117,21 @@ public class SetCommandTest {
   }
 
   @Test
+  public void testExecuteSyntaxErrorPxEx() {
+    rule.withParams("a", "2", "PX", "10", "EX", "11")
+        .execute()
+        .assertThat(error("syntax error"));
+  }
+
+  @Test
   public void testExecuteSyntaxErrorNxXx() {
+    rule.withParams("a", "2", "NX", "XX")
+        .execute()
+        .assertThat(error("syntax error"));
+  }
+
+  @Test
+  public void testExecuteSyntaxErrorXxNx() {
     rule.withParams("a", "2", "XX", "NX")
         .execute()
         .assertThat(error("syntax error"));
