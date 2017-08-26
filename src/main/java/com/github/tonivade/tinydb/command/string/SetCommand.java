@@ -9,10 +9,15 @@ import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.Predicates.instanceOf;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
+import java.util.Optional;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -24,32 +29,44 @@ import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
+import io.vavr.control.Try;
+
 @Command("set")
 @ParamLength(2)
 public class SetCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    Parameters parameters = parse(request);
-    if (parameters.parsetInt) {
-      return error("value is not an integer or out of range");
-    }
-    if (parameters.syntaxError) {
-      return error("syntax error");
-    }
+    return Try.of(() -> parse(request))
+        .map(params -> onSuccess(db, request, params))
+        .recover(this::onFailure)
+        .get();
+  }
+
+  private RedisToken onSuccess(Database db, Request request, Parameters parameters) {
     if (parameters.ifExists && parameters.ifNotExists) {
       return error("syntax error");
     }
     DatabaseKey key = safeKey(request.getParam(0));
+    DatabaseValue value = parseValue(request, parameters);
+    return value.equals(saveValue(db, parameters, key, value)) ? responseOk() : nullString();
+  }
+
+  private DatabaseValue parseValue(Request request, Parameters parameters) {
     DatabaseValue value = string(request.getParam(1));
     if (parameters.ttl != null) {
       value = value.expiredAt(Instant.now().plus(parameters.ttl));
     }
-    return value.equals(saveValue(db, parameters, key, value)) ? responseOk() : nullString();
+    return value;
+  }
+
+  private RedisToken onFailure(Throwable e) {
+    return Match(e).of(Case($(instanceOf(SyntaxException.class)), t -> error("syntax error")),
+        Case($(instanceOf(NumberFormatException.class)), f -> error("value is not an integer or out of range")));
   }
 
   private DatabaseValue saveValue(Database db, Parameters params, DatabaseKey key, DatabaseValue value) {
-    DatabaseValue savedValue = null; 
+    DatabaseValue savedValue = null;
     if (params.ifExists) {
       savedValue = putValueIfExists(db, key, value);
     } else if (params.ifNotExists) {
@@ -76,50 +93,48 @@ public class SetCommand implements TinyDBCommand {
   private DatabaseValue putValueIfNotExists(Database db, DatabaseKey key, DatabaseValue value) {
     return db.merge(key, value, (oldValue, newValue) -> oldValue);
   }
-    
+
   private Parameters parse(Request request) {
     Parameters parameters = new Parameters();
-    try {
-      if (request.getLength() > 2) {
-        for (int i = 2; i < request.getLength(); i++) {
-          SafeString option = request.getParam(i);
-          if ("EX".equalsIgnoreCase(option.toString())) {
-            if (request.getLength() > i + 1) {
-              SafeString ttlInSeconds = request.getParam(++i);
-              parameters.ttl = Duration.ofSeconds(Integer.parseInt(ttlInSeconds.toString()));
-            } else {
-              parameters.syntaxError = true;
-              break;
-            }
-          } else if ("PX".equalsIgnoreCase(option.toString())) {
-            if (request.getLength() > i + 1) {
-              SafeString ttlInMillis = request.getParam(++i);
-              parameters.ttl = Duration.ofMillis(Integer.parseInt(ttlInMillis.toString()));
-            } else {
-              parameters.syntaxError = true;
-              break;
-            }
-          } else if ("NX".equalsIgnoreCase(option.toString())) {
-            parameters.ifNotExists = true;
-          } else if ("XX".equalsIgnoreCase(option.toString())) {
-            parameters.ifExists = true;
-          } else {
-            parameters.syntaxError = true;
-            break;
-          }
+    if (request.getLength() > 2) {
+      for (int i = 2; i < request.getLength(); i++) {
+        SafeString option = request.getParam(i);
+        if (match("EX", option)) {
+          parameters.ttl = parseTtl(request, ++i)
+              .map(Duration::ofSeconds)
+              .orElseThrow(SyntaxException::new);
+        } else if (match("PX", option)) {
+          parameters.ttl = parseTtl(request, ++i)
+              .map(Duration::ofMillis)
+              .orElseThrow(SyntaxException::new);
+        } else if (match("NX", option)) {
+          parameters.ifNotExists = true;
+        } else if (match("XX", option)) {
+          parameters.ifExists = true;
+        } else {
+          throw new SyntaxException();
         }
       }
-    } catch (NumberFormatException e) {
-      parameters.parsetInt = true;
     }
     return parameters;
   }
 
+  private boolean match(String string, SafeString option) {
+    return string.equalsIgnoreCase(option.toString());
+  }
+
+  private Optional<Integer> parseTtl(Request request, int i) {
+    Optional<SafeString> ttlOption = request.getOptionalParam(i);
+    return ttlOption.map(SafeString::toString).map(Integer::parseInt);
+  }
+
   private static class Parameters {
-    boolean ifExists;
-    boolean ifNotExists;
-    TemporalAmount ttl;
-    boolean syntaxError;
-    boolean parsetInt;
+    private boolean ifExists;
+    private boolean ifNotExists;
+    private TemporalAmount ttl;
+  }
+
+  private static class SyntaxException extends RuntimeException {
+    private static final long serialVersionUID = 6960370945568192189L;
   }
 }
