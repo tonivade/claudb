@@ -110,6 +110,13 @@ public class SetCommandTest {
   }
 
   @Test
+  public void testExecuteSyntaxErrorExPx() {
+    rule.withParams("a", "2", "EX", "10", "PX", "11")
+        .execute()
+        .assertThat(error("syntax error"));
+  }
+
+  @Test
   public void testExecuteSyntaxErrorNxXx() {
     rule.withParams("a", "2", "XX", "NX")
         .execute()

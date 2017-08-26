@@ -44,9 +44,6 @@ public class SetCommand implements TinyDBCommand {
   }
 
   private RedisToken onSuccess(Database db, Request request, Parameters parameters) {
-    if (parameters.ifExists && parameters.ifNotExists) {
-      return error("syntax error");
-    }
     DatabaseKey key = safeKey(request.getParam(0));
     DatabaseValue value = parseValue(request, parameters);
     return value.equals(saveValue(db, parameters, key, value)) ? responseOk() : nullString();
@@ -100,16 +97,28 @@ public class SetCommand implements TinyDBCommand {
       for (int i = 2; i < request.getLength(); i++) {
         SafeString option = request.getParam(i);
         if (match("EX", option)) {
+          if (parameters.ttl != null) {
+            throw new SyntaxException();
+          }
           parameters.ttl = parseTtl(request, ++i)
               .map(Duration::ofSeconds)
               .orElseThrow(SyntaxException::new);
         } else if (match("PX", option)) {
+          if (parameters.ttl != null) {
+            throw new SyntaxException();
+          }
           parameters.ttl = parseTtl(request, ++i)
               .map(Duration::ofMillis)
               .orElseThrow(SyntaxException::new);
         } else if (match("NX", option)) {
+          if (parameters.ifExists) {
+            throw new SyntaxException();
+          }
           parameters.ifNotExists = true;
         } else if (match("XX", option)) {
+          if (parameters.ifNotExists) {
+            throw new SyntaxException();
+          }
           parameters.ifExists = true;
         } else {
           throw new SyntaxException();
