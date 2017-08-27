@@ -4,10 +4,7 @@
  */
 package com.github.tonivade.tinydb.persistence;
 
-import static com.github.tonivade.resp.protocol.RedisToken.nullString;
-import static com.github.tonivade.resp.protocol.RedisToken.visit;
 import static java.nio.ByteBuffer.wrap;
-import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,8 +14,6 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,22 +21,16 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.tonivade.resp.command.DefaultRequest;
-import com.github.tonivade.resp.command.DefaultSession;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
-import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.RedisParser;
 import com.github.tonivade.resp.protocol.RedisSerializer;
 import com.github.tonivade.resp.protocol.RedisSource;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
-import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBConfig;
 import com.github.tonivade.tinydb.TinyDBServerContext;
+import com.github.tonivade.tinydb.command.TinyDBCommandProcessor;
 import com.github.tonivade.tinydb.replication.SlaveReplication;
 
 public class PersistenceManager implements Runnable {
@@ -52,12 +41,10 @@ public class PersistenceManager implements Runnable {
 
   private OutputStream output;
   private final TinyDBServerContext server;
+  private final TinyDBCommandProcessor processor;
   private final String dumpFile;
   private final String redoFile;
-
   private final int syncPeriod;
-
-  private final Session session = new DefaultSession("dummy", null);
 
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
@@ -66,6 +53,7 @@ public class PersistenceManager implements Runnable {
     this.dumpFile = config.getRdbFile();
     this.redoFile = config.getAofFile();
     this.syncPeriod = config.getSyncPeriod();
+    this.processor = new TinyDBCommandProcessor(server);
   }
 
   public void start() {
@@ -118,35 +106,12 @@ public class PersistenceManager implements Runnable {
           if (token.getType() == RedisTokenType.UNKNOWN) {
             break;
           }
-          processCommand((ArrayRedisToken) token);
+          processor.processCommand((ArrayRedisToken) token);
         }
       } catch (IOException e) {
         LOGGER.error("error reading AOF file", e);
       }
     }
-  }
-
-  private void processCommand(ArrayRedisToken token) {
-    Collection<RedisToken> array = token.getValue();
-    StringRedisToken commandToken = (StringRedisToken) array.stream().findFirst().orElse(nullString());
-    List<RedisToken> paramTokens = array.stream().skip(1).collect(toList());
-
-    LOGGER.debug("command recieved from master: {}", commandToken);
-
-    RespCommand command = server.getCommand(commandToken.getValue().toString());
-
-    if (command != null) {
-      command.execute(request(commandToken, paramTokens));
-    }
-  }
-
-  private Request request(StringRedisToken commandToken, List<RedisToken> array) {
-    return new DefaultRequest(server, session, commandToken.getValue(), arrayToList(array));
-  }
-
-  private List<SafeString> arrayToList(List<RedisToken> request) {
-    RedisTokenVisitor<SafeString> visitor = RedisTokenVisitor.<SafeString>builder().onString(StringRedisToken::getValue).build();
-    return visit(request.stream(), visitor).collect(toList());
   }
 
   private void createRedo() {
