@@ -6,6 +6,7 @@ package com.github.tonivade.tinydb.data;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashSet;
@@ -47,7 +48,17 @@ public class OffHeapDatabase implements Database {
 
   @Override
   public DatabaseValue get(Object key) {
-    return cache.get((DatabaseKey) key);
+    DatabaseValue value = cache.get((DatabaseKey) key);
+
+    if (value != null) {
+      if (!value.isExpired(Instant.now())) {
+        return value;
+      }
+
+      cache.remove((DatabaseKey) key);
+    }
+
+    return null;
   }
 
   @Override
