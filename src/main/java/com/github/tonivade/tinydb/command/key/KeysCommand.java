@@ -6,6 +6,8 @@ package com.github.tonivade.tinydb.command.key;
 
 import static java.util.stream.Collectors.toSet;
 
+import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -16,10 +18,10 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
-
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
-import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseKey;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @ReadOnly
 @Command("keys")
@@ -29,11 +31,21 @@ public class KeysCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     Pattern pattern = createPattern(request.getParam(0));
-    Predicate<? super DatabaseKey> predicate = (key) -> {
-      return pattern.matcher(key.toString()).matches();
-    };
-    Set<SafeString> keys = db.keySet().stream().filter(predicate).map(DatabaseKey::getValue).collect(toSet());
+    Set<SafeString> keys = db.entrySet().stream()
+        .filter(matchPattern(pattern))
+        .filter(filterExpired(Instant.now()).negate())
+        .map(Map.Entry::getKey)
+        .map(DatabaseKey::getValue)
+        .collect(toSet());
     return convert(keys);
+  }
+  
+  private Predicate<? super Map.Entry<DatabaseKey, DatabaseValue>> filterExpired(Instant now) {
+    return entry -> entry.getValue().isExpired(now);
+  }
+
+  private Predicate<? super Map.Entry<DatabaseKey, DatabaseValue>> matchPattern(Pattern pattern) {
+    return entry -> pattern.matcher(entry.getKey().toString()).matches();
   }
 
   private Pattern createPattern(SafeString param) {
@@ -42,8 +54,7 @@ public class KeysCommand implements TinyDBCommand {
 
   /*
    * taken from
-   * http://stackoverflow.com/questions/1247772/is-there-an-equivalent-of-java-
-   * util-regex-for-glob-type-patterns
+   * http://stackoverflow.com/questions/1247772/is-there-an-equivalent-of-java-util-regex-for-glob-type-patterns
    */
   private String convertGlobToRegEx(String line) {
     int strLen = line.length();
