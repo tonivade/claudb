@@ -14,6 +14,7 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
     - TIME
     - SYNC
     - SLAVEOF
+    - ROLE
 - Connection
     - ECHO
     - PING
@@ -38,9 +39,11 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
     - INCRBY
     - INCR
     - MGET
-    - MGET
-    - SET
+    - MSET
+    - MSETNX
+    - SET (with NX, PX, NX and XX options)
     - SETEX
+    - SETNX
     - STRLEN
 - Hash
     - HDEL
