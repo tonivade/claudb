@@ -8,6 +8,11 @@ import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.RedisToken.visit;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
+import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
+import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -30,9 +35,13 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
+import com.github.tonivade.tinydb.data.DatabaseKey;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.persistence.ByteBufferInputStream;
 
 public class SlaveReplication implements RespCallback {
+
+  private static final DatabaseKey MASTER_KEY = safeKey("master");
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
 
@@ -41,16 +50,21 @@ public class SlaveReplication implements RespCallback {
   private final RespClient client;
   private final TinyDBServerContext server;
   private final Session session;
+  private final String host;
+  private final int port;
 
   public SlaveReplication(TinyDBServerContext server, Session session, String host, int port) {
     this.server = server;
     this.session = session;
+    this.host = host;
+    this.port = port;
     this.client = new RespClient(host, port, this);
   }
 
   public void start() {
     client.start();
     server.setMaster(false);
+    server.getAdminDatabase().put(MASTER_KEY, createState(false));
   }
 
   public void stop() {
@@ -62,11 +76,13 @@ public class SlaveReplication implements RespCallback {
   public void onConnect() {
     LOGGER.info("Connected with master");
     client.send(array(string(SYNC_COMMAND)));
+    server.getAdminDatabase().put(MASTER_KEY, createState(true));
   }
 
   @Override
   public void onDisconnect() {
     LOGGER.info("Disconnected from master");
+    server.getAdminDatabase().put(MASTER_KEY, createState(false));
   }
 
   @Override
@@ -89,7 +105,7 @@ public class SlaveReplication implements RespCallback {
     StringRedisToken commandToken = (StringRedisToken) array.stream().findFirst().orElse(nullString());
     List<RedisToken> paramTokens =array.stream().skip(1).collect(toList());
 
-    LOGGER.debug("command recieved from master: " + commandToken);
+    LOGGER.debug("command recieved from master: {}", commandToken);
 
     RespCommand command = server.getCommand(commandToken.getValue().toString());
 
@@ -120,5 +136,11 @@ public class SlaveReplication implements RespCallback {
 
   private InputStream toStream(SafeString value) {
     return new ByteBufferInputStream(value.getBytes());
+  }
+
+  private DatabaseValue createState(boolean connected) {
+    return hash(entry(safeString("host"), safeString(host)),
+                entry(safeString("port"), safeString(valueOf(port))),
+                entry(safeString("state"), safeString(connected ? "connected" : "disconnected")));
   }
 }

@@ -8,6 +8,8 @@ import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
+import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 
 import org.junit.Rule;
@@ -37,11 +39,13 @@ public class RoleCommandTest {
   }
   
   @Test
-  public void executeSlave()
-  {
+  public void executeSlave() {
     rule.getServerState().setMaster(false);
 
-    rule.execute()
-        .assertThat(array(string("slave"), string("master-ip"), integer(7081), string("connected"), integer(0)));
+    rule.withAdminData("master", hash(entry(safeString("host"), safeString("localhost")),
+                                      entry(safeString("port"), safeString("7081")),
+                                      entry(safeString("state"), safeString("connected"))))
+        .execute()
+        .assertThat(array(string("slave"), string("localhost"), integer(7081), string("connected"), integer(0)));
   }
 }

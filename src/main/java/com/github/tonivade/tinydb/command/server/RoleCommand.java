@@ -7,10 +7,12 @@ package com.github.tonivade.tinydb.command.server;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -31,12 +33,16 @@ public class RoleCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     TinyDBServerState serverState = getServerState(request.getServerContext());
     Database adminDatabase = getAdminDatabase(request.getServerContext());
-    return serverState.isMaster() ? master(adminDatabase) : slave();
+    return serverState.isMaster() ? master(adminDatabase) : slave(adminDatabase);
   }
 
-  private RedisToken slave() {
-    // TODO:
-    return array(string("slave"), string("master-ip"), integer(7081), string("connected"), integer(0));
+  private RedisToken slave(Database adminDatabase) {
+    DatabaseValue value = adminDatabase.getOrDefault(safeKey("master"), DatabaseValue.EMPTY_HASH);
+    Map<SafeString, SafeString> hash = value.getValue();
+    return array(string("slave"), 
+                 string(hash.get(safeString("host"))), 
+                 integer(Integer.parseInt(hash.get(safeString("port")).toString())), 
+                 string(hash.get(safeString("state"))), integer(0));
   }
 
   private RedisToken master(Database adminDatabase) {
