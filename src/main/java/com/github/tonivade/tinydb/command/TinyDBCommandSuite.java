@@ -40,6 +40,7 @@ import com.github.tonivade.tinydb.command.pubsub.UnsubscribeCommand;
 import com.github.tonivade.tinydb.command.scripting.EvalCommand;
 import com.github.tonivade.tinydb.command.scripting.EvalShaCommand;
 import com.github.tonivade.tinydb.command.scripting.ScriptCommands;
+import com.github.tonivade.tinydb.command.server.DatabaseSizeCommand;
 import com.github.tonivade.tinydb.command.server.FlushDBCommand;
 import com.github.tonivade.tinydb.command.server.InfoCommand;
 import com.github.tonivade.tinydb.command.server.RoleCommand;
@@ -89,6 +90,7 @@ public class TinyDBCommandSuite extends CommandSuite {
     addCommand(FlushDBCommand.class);
     addCommand(InfoCommand.class);
     addCommand(RoleCommand.class);
+    addCommand(DatabaseSizeCommand.class);
 
     // strings
     addCommand(GetCommand.class);
