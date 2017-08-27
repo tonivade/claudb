@@ -27,9 +27,6 @@ public class SortedSetRangeCommandTest {
   @Rule
   public final CommandRule rule = new CommandRule(this);
 
-  @Captor
-  private ArgumentCaptor<Collection<?>> captor;
-
   @Test
   public void testExecute()  {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))

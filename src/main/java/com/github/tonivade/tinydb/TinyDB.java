@@ -139,7 +139,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     if (!isReadOnly(request.getCommand())) {
       try {
         RedisToken response = command.execute(request);
-        replication(request, command);
+        replication(request);
         return response;
       } catch (RuntimeException e) {
         LOGGER.error("error executing command: " + request, e);
@@ -154,7 +154,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     return !isMaster() && !isReadOnlyCommand(command);
   }
 
-  private void replication(Request request, RespCommand command) {
+  private void replication(Request request) {
     if (!isReadOnlyCommand(request.getCommand())) {
       RedisToken array = requestToArray(request);
       if (hasSlaves()) {

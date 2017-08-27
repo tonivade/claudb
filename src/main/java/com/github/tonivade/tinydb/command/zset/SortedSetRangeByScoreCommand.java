@@ -111,9 +111,9 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
   }
 
   private static class Options {
-    boolean withScores;
-    boolean withLimit;
-    int offset;
-    int count;
+    private boolean withScores;
+    private boolean withLimit;
+    private int offset;
+    private int count;
   }
 }

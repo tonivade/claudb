@@ -9,13 +9,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mockito;
 
 import com.github.tonivade.resp.command.DefaultRequest;
@@ -31,9 +28,6 @@ public class ExecCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
-
-  @Captor
-  private ArgumentCaptor<Collection<?>> captor;
 
   private final RespCommand command = Mockito.spy(new MockCommand());
 

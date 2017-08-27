@@ -26,7 +26,7 @@ public class SlaveOfCommand implements TinyDBCommand {
     String host = request.getParam(0).toString();
     String port = request.getParam(1).toString();
 
-    boolean stopCurrent = host.equals("NO") && port.equals("ONE");
+    boolean stopCurrent = "NO".equals(host) && "ONE".equals(port);
 
     if (slave == null) {
       if (!stopCurrent) {

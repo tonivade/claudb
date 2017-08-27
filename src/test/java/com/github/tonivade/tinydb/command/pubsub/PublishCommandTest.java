@@ -11,8 +11,6 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TinyDBServerContext;
@@ -24,9 +22,6 @@ public class PublishCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
-
-  @Captor
-  private ArgumentCaptor<RedisToken> captor;
 
   @Test
   public void testExecute()  {

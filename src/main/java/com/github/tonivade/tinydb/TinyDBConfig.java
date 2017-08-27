@@ -74,7 +74,7 @@ public class TinyDBConfig {
   }
   
   public static class Builder {
-    TinyDBConfig config = new TinyDBConfig();
+    private TinyDBConfig config = new TinyDBConfig();
 
     public Builder withoutPersistence() {
       config.setPersistenceActive(false);

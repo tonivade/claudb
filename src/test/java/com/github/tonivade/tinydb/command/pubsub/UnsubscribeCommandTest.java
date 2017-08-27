@@ -15,12 +15,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
-
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
@@ -30,9 +26,6 @@ public class UnsubscribeCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
-
-  @Captor
-  private ArgumentCaptor<Collection<?>> captor;
 
   @Test
   public void testExecute()  {
