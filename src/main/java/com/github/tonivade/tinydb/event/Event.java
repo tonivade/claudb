@@ -32,11 +32,10 @@ public abstract class Event
   }
   
   public boolean applyTo(String pattern) {
-    // TODO:
-    return true;
+    return new GlobPattern(pattern).match(getChannel());
   }
   
-  public abstract SafeString toChannel();
+  public abstract String getChannel();
   public abstract SafeString getValue();
   
   @Override
