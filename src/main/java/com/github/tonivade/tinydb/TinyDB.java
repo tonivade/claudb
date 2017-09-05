@@ -25,12 +25,15 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.OffHeapDatabaseFactory;
 import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.tinydb.event.KeyEvent;
+import com.github.tonivade.tinydb.event.NotificationManager;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
 public class TinyDB extends RespServer implements TinyDBServerContext {
@@ -40,6 +43,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   private final BlockingQueue<RedisToken> queue = new LinkedBlockingQueue<>();
 
   private final Optional<PersistenceManager> persistence;
+  private final Optional<NotificationManager> notifications;
   
   public TinyDB() {
     this(DEFAULT_HOST, DEFAULT_PORT);
@@ -55,6 +59,11 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
       this.persistence = Optional.of(new PersistenceManager(this, config));
     } else {
       this.persistence = Optional.empty();
+    }
+    if (config.isNotificationsActive()) {
+      this.notifications = Optional.of(new NotificationManager(this));
+    } else {
+      this.notifications = Optional.empty();
     }
     DatabaseFactory factory = null;
     if (config.isOffHeapActive()) {
@@ -140,6 +149,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
       try {
         RedisToken response = command.execute(request);
         replication(request);
+        notification(request);
         return response;
       } catch (RuntimeException e) {
         LOGGER.error("error executing command: " + request, e);
@@ -161,6 +171,14 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
         queue.add(array);
       }
       persistence.ifPresent(p -> p.append(array));
+    }
+  }
+
+  private void notification(Request request) {
+    if (!isReadOnlyCommand(request.getCommand())) {
+      KeyEvent event = new KeyEvent(SafeString.safeString(request.getCommand()), request.getParam(0), 0);
+
+      notifications.ifPresent(n -> n.enqueue(event));
     }
   }
 

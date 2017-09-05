@@ -14,6 +14,7 @@ public class TinyDBConfig {
   private int numDatabases = DEFAULT_DATABASES;
 
   private boolean persistenceActive;
+  private boolean notificationsActive;
   private boolean offHeapActive;
 
   private String rdbFile;
@@ -27,6 +28,14 @@ public class TinyDBConfig {
 
   public void setPersistenceActive(boolean persistenceActive) {
     this.persistenceActive = persistenceActive;
+  }
+
+  public void setNotificationsActive(boolean notificationsActive) {
+    this.notificationsActive = notificationsActive;
+  }
+
+  public boolean isNotificationsActive() {
+    return notificationsActive;
   }
   
   public void setOffHeapActive(boolean offHeapActive) {
@@ -91,6 +100,11 @@ public class TinyDBConfig {
     
     public Builder withOffHeapCache() {
       config.setOffHeapActive(true);
+      return this;
+    }
+
+    public Builder withNotifications() {
+      config.setNotificationsActive(true);
       return this;
     }
     
