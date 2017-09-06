@@ -21,6 +21,7 @@ public class Server {
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<Void> persist = parser.accepts("P", "persistence (experimental)");
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
+    OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
         .defaultsTo(TinyDB.DEFAULT_HOST);
     OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
@@ -33,7 +34,9 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
-      TinyDBConfig config = parseConfig(options.has(persist), options.has(offHeap));
+      TinyDBConfig config = parseConfig(options.has(persist), 
+                                        options.has(offHeap), 
+                                        options.has(notifications));
      
       readBanner().forEach(System.out::println);
       
@@ -53,13 +56,16 @@ public class Server {
     return optionPort != null ? optionPort : TinyDBServerContext.DEFAULT_PORT;
   }
 
-  private static TinyDBConfig parseConfig(boolean persist, boolean offHeap) {
+  private static TinyDBConfig parseConfig(boolean persist, boolean offHeap, boolean notifications) {
     TinyDBConfig.Builder builder = TinyDBConfig.builder();
     if (persist) {
       builder.withPersistence();
     }
     if (offHeap) {
       builder.withOffHeapCache();
+    }
+    if (notifications) {
+      builder.withNotifications();
     }
     return builder.build();
   }

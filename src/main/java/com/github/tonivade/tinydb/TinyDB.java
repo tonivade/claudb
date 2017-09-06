@@ -170,15 +170,19 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
       if (hasSlaves()) {
         queue.add(array);
       }
-      persistence.ifPresent(p -> p.append(array));
+      persistence.ifPresent(manager -> manager.append(array));
     }
   }
 
   private void notification(Request request) {
-    if (!isReadOnlyCommand(request.getCommand())) {
-      notifications.ifPresent(n -> n.enqueue(createKeyEvent(request)));
-      notifications.ifPresent(n -> n.enqueue(createCommandEvent(request)));
+    if (!isReadOnlyCommand(request.getCommand()) && request.getLength() > 1) {
+      notifications.ifPresent(manager -> publishEvent(manager, request));
     }
+  }
+  
+  private void publishEvent(NotificationManager manager, Request request) {
+    manager.enqueue(createKeyEvent(request));
+    manager.enqueue(createCommandEvent(request));
   }
 
   private Event createKeyEvent(Request request) {
