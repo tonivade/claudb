@@ -4,7 +4,7 @@ import static java.lang.String.format;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class CommandEvent extends Event {
+class CommandEvent extends Event {
   
   private static final String KEYSPACE = "__keyspace__@%d__:%s";
 
@@ -13,12 +13,12 @@ public class CommandEvent extends Event {
   }
   
   @Override
-  public SafeString getValue() {
+  SafeString getValue() {
     return getCommand();
   }
   
   @Override
-  public String getChannel() {
+  String getChannel() {
     return format(KEYSPACE, getSchema(), getCommand());
   }
 }

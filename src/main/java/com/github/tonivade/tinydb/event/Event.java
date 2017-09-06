@@ -31,12 +31,12 @@ public abstract class Event
     return schema;
   }
   
-  public boolean applyTo(String pattern) {
+  boolean applyTo(String pattern) {
     return new GlobPattern(pattern).match(getChannel());
   }
   
-  public abstract String getChannel();
-  public abstract SafeString getValue();
+  abstract String getChannel();
+  abstract SafeString getValue();
   
   @Override
   public boolean equals(Object obj) {
@@ -51,5 +51,13 @@ public abstract class Event
   public int hashCode()
   {
     return Objects.hash(command, key, schema);
+  }
+  
+  public static KeyEvent keyEvent(SafeString command, SafeString key, int schema) {
+    return new KeyEvent(command, key, schema);
+  }
+  
+  public static CommandEvent commandEvent(SafeString command, SafeString key, int schema) {
+    return new CommandEvent(command, key, schema);
   }
 }

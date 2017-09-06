@@ -5,6 +5,7 @@
 package com.github.tonivade.tinydb;
 
 import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.String.valueOf;
 import static java.util.stream.Collectors.toList;
 
@@ -25,14 +26,13 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.OffHeapDatabaseFactory;
 import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
-import com.github.tonivade.tinydb.event.KeyEvent;
+import com.github.tonivade.tinydb.event.Event;
 import com.github.tonivade.tinydb.event.NotificationManager;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
@@ -176,10 +176,21 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private void notification(Request request) {
     if (!isReadOnlyCommand(request.getCommand())) {
-      KeyEvent event = new KeyEvent(SafeString.safeString(request.getCommand()), request.getParam(0), 0);
-
-      notifications.ifPresent(n -> n.enqueue(event));
+      notifications.ifPresent(n -> n.enqueue(createKeyEvent(request)));
+      notifications.ifPresent(n -> n.enqueue(createCommandEvent(request)));
     }
+  }
+
+  private Event createKeyEvent(Request request) {
+    return Event.keyEvent(safeString(request.getCommand()), request.getParam(0), currentDB(request));
+  }
+
+  private Event createCommandEvent(Request request) {
+    return Event.commandEvent(safeString(request.getCommand()), request.getParam(0), currentDB(request));
+  }
+
+  private Integer currentDB(Request request) {
+    return getSessionState(request.getSession()).getCurrentDB();
   }
 
   private boolean isReadOnlyCommand(String command) {

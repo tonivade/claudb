@@ -5,7 +5,6 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -37,25 +36,32 @@ public class NotificationManager {
   }
   
   private Set<Entry<String, Set<SafeString>>> getSubscriptors(Database admin, Event event) {
-    return findSubscriptions(admin).filter(applyTo(event)).collect(toSet());
+    // Pattern -> Subscriptions
+    return findAllSubscriptions(admin).filter(subscriptionApplyTo(event)).collect(toSet());
   }
 
-  private Predicate<? super Entry<String, Set<SafeString>>> applyTo(Event event) {
+  private Predicate<? super Entry<String, Set<SafeString>>> subscriptionApplyTo(Event event) {
     return entry -> event.applyTo(entry.getKey());
   }
 
-  private Stream<Entry<String, Set<SafeString>>> findSubscriptions(Database admin) {
+  private Stream<Entry<String, Set<SafeString>>> findAllSubscriptions(Database admin) {
     return admin.entrySet().stream().filter(this::isSubscription).map(this::toEntry);
   }
 
-  private SimpleEntry<String, Set<SafeString>> toEntry(Entry<DatabaseKey, DatabaseValue> entry) {
-    return new AbstractMap.SimpleEntry<>(toPattern(entry.getKey()), 
-        entry.getValue().<Set<SafeString>>getValue());
+  private Entry<String, Set<SafeString>> toEntry(Entry<DatabaseKey, DatabaseValue> entry) {
+    return entry(toPattern(entry.getKey()), toSubscriptions(entry.getValue()));
+  }
+
+  private Entry<String, Set<SafeString>> entry(String pattern, Set<SafeString> subscriptions) {
+    return new AbstractMap.SimpleEntry<>(pattern, subscriptions);
+  }
+
+  private Set<SafeString> toSubscriptions(DatabaseValue value) {
+    return value.<Set<SafeString>>getValue();
   }
 
   private String toPattern(DatabaseKey key) {
-    SafeString value = key.getValue();
-    return value.substring(PSUBSCRIPTIONS_PREFIX.length());
+    return key.getValue().substring(PSUBSCRIPTIONS_PREFIX.length());
   }
 
   private boolean isSubscription(Entry<DatabaseKey, DatabaseValue> entry) {
@@ -64,12 +70,12 @@ public class NotificationManager {
 
   private void publish(Event event) {
     for (Entry<String, Set<SafeString>> entry : getSubscriptors(server.getAdminDatabase(), event)) {
-      publish(entry.getKey(), entry.getValue(), event);
+      publishAll(entry.getValue(), toMessage(entry.getKey(), event));
     }
   }
 
-  private void publish(String pattern, Set<SafeString> clients, Event event) {
-    clients.forEach(client -> server.publish(client.toString(), toMessage(pattern, event)));
+  private void publishAll(Set<SafeString> clients, RedisToken message) {
+    clients.forEach(client -> server.publish(client.toString(), message));
   }
 
   private RedisToken toMessage(String pattern, Event event) {
