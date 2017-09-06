@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.pubsub;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
@@ -27,9 +26,8 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 @ParamLength(2)
 public class PublishCommand implements TinyDBCommand {
 
-  private static final SafeString MESSAGE = safeString("message");
-
-  private static final String SUBSCRIPTIONS_PREFIX = "subscriptions:";
+  private static final String MESSAGE = "message";
+  private static final String SUBSCRIPTION_PREFIX = "subscription:";
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -49,7 +47,7 @@ public class PublishCommand implements TinyDBCommand {
   }
 
   private DatabaseValue getSubscriptors(Database admin, SafeString channel) {
-    DatabaseKey subscriptorsKey = safeKey(safeString(SUBSCRIPTIONS_PREFIX + channel));
+    DatabaseKey subscriptorsKey = safeKey(SUBSCRIPTION_PREFIX + channel);
     return admin.getOrDefault(subscriptorsKey, DatabaseValue.EMPTY_SET);
   }
 

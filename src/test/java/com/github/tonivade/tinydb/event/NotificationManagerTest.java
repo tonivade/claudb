@@ -50,7 +50,7 @@ public class NotificationManagerTest {
 
     when(server.getAdminDatabase()).thenReturn(database);
     when(database.entrySet())
-      .thenReturn(asSet(entry(safeKey("psubscriptions:" + pattern), set(safeString(client)))));
+      .thenReturn(asSet(entry(safeKey("psubscription:" + pattern), set(safeString(client)))));
     
     manager.enqueue(event);
     

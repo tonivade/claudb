@@ -29,11 +29,11 @@ public class UnsubscribeCommandTest {
 
   @Test
   public void testExecute()  {
-    rule.withAdminData("subscriptions:test", set("localhost:12345"))
+    rule.withAdminData("subscription:test", set("localhost:12345"))
     .withParams("test")
     .execute()
     .assertThat(array(string("unsubscribe"), string("test"), integer(0)))
-    .assertAdminValue("subscriptions:test", isSet());
+    .assertAdminValue("subscription:test", isSet());
 
     assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test"))));
   }

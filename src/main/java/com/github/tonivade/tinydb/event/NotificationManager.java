@@ -26,7 +26,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 public class NotificationManager {
   
   private static final String PMESSAGE = "PMESSAGE";
-  private static final String PSUBSCRIPTIONS_PREFIX = "psubscriptions:";
+  private static final String PSUBSCRIPTION_PREFIX = "psubscription:";
 
   private final TinyDBServerContext server;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -65,11 +65,11 @@ public class NotificationManager {
   }
 
   private String toPattern(DatabaseKey key) {
-    return key.getValue().substring(PSUBSCRIPTIONS_PREFIX.length());
+    return key.getValue().substring(PSUBSCRIPTION_PREFIX.length());
   }
 
   private boolean isSubscription(Entry<DatabaseKey, DatabaseValue> entry) {
-    return entry.getKey().getValue().toString().startsWith(PSUBSCRIPTIONS_PREFIX);
+    return entry.getKey().getValue().toString().startsWith(PSUBSCRIPTION_PREFIX);
   }
 
   private void publish(Event event) {

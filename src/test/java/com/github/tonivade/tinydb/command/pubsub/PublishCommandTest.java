@@ -25,7 +25,7 @@ public class PublishCommandTest {
 
   @Test
   public void testExecute()  {
-    rule.withAdminData("subscriptions:test", set("localhost:12345"))
+    rule.withAdminData("subscription:test", set("localhost:12345"))
     .withParams("test", "Hello World!")
     .execute()
     .assertThat(RedisToken.integer(1))

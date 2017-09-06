@@ -30,7 +30,7 @@ public class SubscribeCommandTest {
     rule.withParams("test")
     .execute()
     .assertThat(array(string("subscribe"), string("test"), integer(1)))
-    .assertAdminValue("subscriptions:test", isSet("localhost:12345"));
+    .assertAdminValue("subscription:test", isSet("localhost:12345"));
 
     assertThat(rule.getSessionState().getSubscriptions(), contains(safeString("test")));
   }

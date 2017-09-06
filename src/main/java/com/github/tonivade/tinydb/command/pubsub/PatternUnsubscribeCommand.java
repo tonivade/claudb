@@ -21,43 +21,37 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
-
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
-@Command("unsubscribe")
+@Command("punsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class UnsubscribeCommand implements TinyDBCommand {
+public class PatternUnsubscribeCommand implements TinyDBCommand {
 
-  private static final String UNSUBSCRIBE = "unsubscribe";
-  private static final String SUBSCRIPTION_PREFIX = "subscription:";
+  private static final String PUNSUBSCRIBE = "punsubscribe";
+  private static final String PSUBSCRIPTION_PREFIX = "psubscription:";
 
   @Override
   public RedisToken execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
-    String sessionId = getSessionId(request);
     Collection<SafeString> channels = getChannels(request);
     int i = channels.size();
     List<Object> result = new LinkedList<>();
     for (SafeString channel : channels) {
-      admin.merge(safeKey(SUBSCRIPTION_PREFIX + channel), set(safeString(sessionId)),
+      admin.merge(safeKey(PSUBSCRIPTION_PREFIX + channel), set(safeString(request.getSession().getId())),
           (oldValue, newValue) -> {
             Set<SafeString> merge = new HashSet<>();
             merge.addAll(oldValue.getValue());
-            merge.remove(safeString(sessionId));
+            merge.remove(safeString(request.getSession().getId()));
             return set(merge);
           });
       getSessionState(request.getSession()).removeSubscription(channel);
-      result.addAll(asList(UNSUBSCRIBE, channel, --i));
+      result.addAll(asList(PUNSUBSCRIBE, channel, --i));
     }
     return convert(result);
-  }
-
-  private String getSessionId(Request request) {
-    return request.getSession().getId();
   }
 
   private Collection<SafeString> getChannels(Request request) {
