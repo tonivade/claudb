@@ -4,16 +4,11 @@
  */
 package com.github.tonivade.tinydb.command.pubsub;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static java.util.Arrays.asList;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -29,10 +24,9 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("subscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class SubscribeCommand implements TinyDBCommand {
+public class SubscribeCommand extends SubscriptionManager implements TinyDBCommand {
 
   private static final String SUBSCRIBE = "subscribe";
-  private static final String SUBSCRIPTION_PREFIX = "subscription:";
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -42,13 +36,7 @@ public class SubscribeCommand implements TinyDBCommand {
     int i = channels.size();
     List<Object> result = new LinkedList<>();
     for (SafeString channel : request.getParams()) {
-      admin.merge(safeKey(SUBSCRIPTION_PREFIX + channel), set(safeString(sessionId)),
-          (oldValue, newValue) -> {
-            Set<SafeString> merge = new HashSet<>();
-            merge.addAll(oldValue.getValue());
-            merge.add(safeString(sessionId));
-            return set(merge);
-          });
+      addSubscription(admin, sessionId, channel);
       getSessionState(request.getSession()).addSubscription(channel);
       result.addAll(asList(SUBSCRIBE, channel, i++));
     }

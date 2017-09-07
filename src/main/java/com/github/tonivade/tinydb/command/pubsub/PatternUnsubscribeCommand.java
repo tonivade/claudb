@@ -4,16 +4,11 @@
  */
 package com.github.tonivade.tinydb.command.pubsub;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static java.util.Arrays.asList;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -29,29 +24,27 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("punsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class PatternUnsubscribeCommand implements TinyDBCommand {
+public class PatternUnsubscribeCommand extends SubscriptionManager implements TinyDBCommand {
 
   private static final String PUNSUBSCRIBE = "punsubscribe";
-  private static final String PSUBSCRIPTION_PREFIX = "psubscription:";
 
   @Override
   public RedisToken execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
+    String sessionId = getSessionId(request);
     Collection<SafeString> channels = getChannels(request);
     int i = channels.size();
     List<Object> result = new LinkedList<>();
     for (SafeString channel : channels) {
-      admin.merge(safeKey(PSUBSCRIPTION_PREFIX + channel), set(safeString(request.getSession().getId())),
-          (oldValue, newValue) -> {
-            Set<SafeString> merge = new HashSet<>();
-            merge.addAll(oldValue.getValue());
-            merge.remove(safeString(request.getSession().getId()));
-            return set(merge);
-          });
+      removePatternSubscription(admin, sessionId, channel);
       getSessionState(request.getSession()).removeSubscription(channel);
       result.addAll(asList(PUNSUBSCRIBE, channel, --i));
     }
     return convert(result);
+  }
+
+  private String getSessionId(Request request) {
+    return request.getSession().getId();
   }
 
   private Collection<SafeString> getChannels(Request request) {

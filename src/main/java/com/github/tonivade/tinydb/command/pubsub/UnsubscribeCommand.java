@@ -4,16 +4,11 @@
  */
 package com.github.tonivade.tinydb.command.pubsub;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static java.util.Arrays.asList;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -21,7 +16,6 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
-
 import com.github.tonivade.tinydb.command.annotation.PubSubAllowed;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
@@ -30,10 +24,9 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("unsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class UnsubscribeCommand implements TinyDBCommand {
+public class UnsubscribeCommand extends SubscriptionManager implements TinyDBCommand {
 
   private static final String UNSUBSCRIBE = "unsubscribe";
-  private static final String SUBSCRIPTION_PREFIX = "subscription:";
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -43,13 +36,7 @@ public class UnsubscribeCommand implements TinyDBCommand {
     int i = channels.size();
     List<Object> result = new LinkedList<>();
     for (SafeString channel : channels) {
-      admin.merge(safeKey(SUBSCRIPTION_PREFIX + channel), set(safeString(sessionId)),
-          (oldValue, newValue) -> {
-            Set<SafeString> merge = new HashSet<>();
-            merge.addAll(oldValue.getValue());
-            merge.remove(safeString(sessionId));
-            return set(merge);
-          });
+      removeSubscription(admin, sessionId, channel);
       getSessionState(request.getSession()).removeSubscription(channel);
       result.addAll(asList(UNSUBSCRIBE, channel, --i));
     }

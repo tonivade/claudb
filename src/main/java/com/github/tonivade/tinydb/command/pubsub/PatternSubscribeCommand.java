@@ -5,14 +5,11 @@
 package com.github.tonivade.tinydb.command.pubsub;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static java.util.Arrays.asList;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -28,25 +25,19 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("psubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class PatternSubscribeCommand implements TinyDBCommand {
+public class PatternSubscribeCommand extends SubscriptionManager implements TinyDBCommand {
 
-  private static final SafeString PSUBSCRIBE = safeString("psubscribe");
-  private static final String PSUBSCRIPTION_PREFIX = "psubscription:";
+  private static final String PSUBSCRIBE = "psubscribe";
 
   @Override
   public RedisToken execute(Database db, Request request) {
     Database admin = getAdminDatabase(request.getServerContext());
     String sessionId = getSessionId(request);
-    int i = 1;
+    Collection<SafeString> channels = getChannels(request);
+    int i = channels.size();
     List<Object> result = new LinkedList<>();
     for (SafeString pattern : request.getParams()) {
-      admin.merge(safeKey(PSUBSCRIPTION_PREFIX + pattern), set(safeString(sessionId)),
-          (oldValue, newValue) -> {
-            Set<SafeString> merge = new HashSet<>();
-            merge.addAll(oldValue.getValue());
-            merge.add(safeString(sessionId));
-            return set(merge);
-          });
+      addPatternSubscription(admin, sessionId, pattern);
       getSessionState(request.getSession()).addSubscription(pattern);
       result.addAll(asList(PSUBSCRIBE, pattern, i++));
     }
@@ -55,6 +46,13 @@ public class PatternSubscribeCommand implements TinyDBCommand {
 
   private String getSessionId(Request request) {
     return request.getSession().getId();
+  }
+
+  private Collection<SafeString> getChannels(Request request) {
+    if (request.getParams().isEmpty()) {
+      return getSessionState(request.getSession()).getSubscriptions();
+    }
+    return request.getParams();
   }
 
 }
