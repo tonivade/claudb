@@ -2,7 +2,7 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-package com.github.tonivade.tinydb.event;
+package com.github.tonivade.tinydb.command.pubsub;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
@@ -30,6 +30,7 @@ import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
+import com.github.tonivade.tinydb.event.Event;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotificationManagerTest {
@@ -46,7 +47,7 @@ public class NotificationManagerTest {
   public void enqueue() {
     String client = "client:7070";
     String pattern = "__key*__:*";
-    KeyEvent event = new KeyEvent(safeString("set"), safeString("key"), 0);
+    Event event = Event.keyEvent(safeString("set"), safeString("key"), 0);
 
     when(server.getAdminDatabase()).thenReturn(database);
     when(database.entrySet())

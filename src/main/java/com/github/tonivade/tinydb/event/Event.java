@@ -11,8 +11,7 @@ import java.util.Objects;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public abstract class Event
-{
+public abstract class Event {
   private SafeString command;
   private SafeString key;
   private int schema;
@@ -35,12 +34,8 @@ public abstract class Event
     return schema;
   }
   
-  boolean applyTo(String pattern) {
-    return new GlobPattern(pattern).match(getChannel());
-  }
-  
-  abstract String getChannel();
-  abstract SafeString getValue();
+  public abstract String getChannel();
+  public abstract SafeString getValue();
   
   @Override
   public boolean equals(Object obj) {
@@ -52,8 +47,7 @@ public abstract class Event
   }
   
   @Override
-  public int hashCode()
-  {
+  public int hashCode() {
     return Objects.hash(command, key, schema);
   }
   

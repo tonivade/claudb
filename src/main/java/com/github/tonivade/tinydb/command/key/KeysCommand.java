@@ -21,7 +21,7 @@ import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.event.GlobPattern;
+import com.github.tonivade.tinydb.glob.GlobPattern;
 
 @ReadOnly
 @Command("keys")

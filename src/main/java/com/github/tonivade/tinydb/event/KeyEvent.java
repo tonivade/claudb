@@ -17,12 +17,12 @@ class KeyEvent extends Event {
   }
   
   @Override
-  SafeString getValue() {
+  public SafeString getValue() {
     return getCommand();
   }
   
   @Override
-  String getChannel() {
+  public String getChannel() {
     return format(KEYEVENT, getSchema(), getKey());
   }
 }

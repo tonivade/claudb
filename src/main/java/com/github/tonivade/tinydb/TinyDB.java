@@ -28,12 +28,12 @@ import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
+import com.github.tonivade.tinydb.command.pubsub.NotificationManager;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.OffHeapDatabaseFactory;
 import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.tinydb.event.Event;
-import com.github.tonivade.tinydb.event.NotificationManager;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
 public class TinyDB extends RespServer implements TinyDBServerContext {
