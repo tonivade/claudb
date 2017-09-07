@@ -29,7 +29,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.event.Event;
 import com.github.tonivade.tinydb.glob.GlobPattern;
 
-public class SubscriptionManager {
+abstract class SubscriptionManager {
   
   private static final String SUBSCRIPTION_PREFIX = "subscription:";
   private static final String PSUBSCRIPTION_PREFIX = "psubscription:";

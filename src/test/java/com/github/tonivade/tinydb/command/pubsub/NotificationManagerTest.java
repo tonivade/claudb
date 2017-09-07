@@ -46,7 +46,7 @@ public class NotificationManagerTest {
   @Test
   public void enqueue() {
     String client = "client:7070";
-    String pattern = "__key*__:*";
+    String pattern = "__key*__@*";
     Event event = Event.keyEvent(safeString("set"), safeString("key"), 0);
 
     when(server.getAdminDatabase()).thenReturn(database);
@@ -56,7 +56,7 @@ public class NotificationManagerTest {
     manager.enqueue(event);
     
     verify(server, timeout(1000)).publish(client, 
-        array(string("PMESSAGE"), string(pattern), string(event.getChannel()), string("set")));
+        array(string("pmessage"), string(pattern), string(event.getChannel()), string("set")));
   }
 
   private Set<Entry<DatabaseKey, DatabaseValue>> asSet(SimpleEntry<DatabaseKey, DatabaseValue> entry) {
