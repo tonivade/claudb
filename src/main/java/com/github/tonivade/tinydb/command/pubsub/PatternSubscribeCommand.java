@@ -38,7 +38,7 @@ public class PatternSubscribeCommand extends SubscriptionManager implements Tiny
     for (SafeString pattern : request.getParams()) {
       addPatternSubscription(admin, sessionId, pattern);
       getSessionState(request.getSession()).addSubscription(pattern);
-      result.addAll(asList(PSUBSCRIBE, pattern, i++));
+      result.addAll(asList(PSUBSCRIBE, pattern, ++i));
     }
     return convert(result);
   }
@@ -48,10 +48,7 @@ public class PatternSubscribeCommand extends SubscriptionManager implements Tiny
   }
 
   private Collection<SafeString> getChannels(Request request) {
-    if (request.getParams().isEmpty()) {
-      return getSessionState(request.getSession()).getSubscriptions();
-    }
-    return request.getParams();
+    return getSessionState(request.getSession()).getSubscriptions();
   }
 
 }

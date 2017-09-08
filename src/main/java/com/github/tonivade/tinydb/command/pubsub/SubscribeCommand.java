@@ -38,7 +38,7 @@ public class SubscribeCommand extends SubscriptionManager implements TinyDBComma
     for (SafeString channel : request.getParams()) {
       addSubscription(admin, sessionId, channel);
       getSessionState(request.getSession()).addSubscription(channel);
-      result.addAll(asList(SUBSCRIBE, channel, i++));
+      result.addAll(asList(SUBSCRIBE, channel, ++i));
     }
     return convert(result);
   }
@@ -48,10 +48,7 @@ public class SubscribeCommand extends SubscriptionManager implements TinyDBComma
   }
 
   private Collection<SafeString> getChannels(Request request) {
-    if (request.getParams().isEmpty()) {
-      return getSessionState(request.getSession()).getSubscriptions();
-    }
-    return request.getParams();
+    return getSessionState(request.getSession()).getSubscriptions();
   }
 
 }

@@ -35,7 +35,7 @@ public class PatternUnsubscribeCommand extends SubscriptionManager implements Ti
     Collection<SafeString> channels = getChannels(request);
     int i = channels.size();
     List<Object> result = new LinkedList<>();
-    for (SafeString channel : channels) {
+    for (SafeString channel : request.getParams()) {
       removePatternSubscription(admin, sessionId, channel);
       getSessionState(request.getSession()).removeSubscription(channel);
       result.addAll(asList(PUNSUBSCRIBE, channel, --i));
@@ -48,10 +48,7 @@ public class PatternUnsubscribeCommand extends SubscriptionManager implements Ti
   }
 
   private Collection<SafeString> getChannels(Request request) {
-    if (request.getParams().isEmpty()) {
-      return getSessionState(request.getSession()).getSubscriptions();
-    }
-    return request.getParams();
+    return getSessionState(request.getSession()).getSubscriptions();
   }
 
 }
