@@ -75,14 +75,16 @@ public class SubscriptionManager {
         .collect(toMap(Entry::getKey, Entry::getValue));
   }
 
-  public void patternPublish(TinyDBServerContext server, String channel, SafeString message) {
+  public int patternPublish(TinyDBServerContext server, String channel, SafeString message) {
+    int count = 0;
     for (Entry<String, Set<SafeString>> entry : getPatternSubscriptions(server.getAdminDatabase(), channel)) {
-      publish(server, entry.getValue(), toPatternMessage(entry.getKey(), channel, message));
+      count += publish(server, entry.getValue(), toPatternMessage(entry.getKey(), channel, message));
     }
+    return count;
   }
 
-  public void publish(TinyDBServerContext server, String channel, SafeString message) {
-    publish(server, getSubscription(server.getAdminDatabase(), channel), toMessage(channel, message));
+  public int publish(TinyDBServerContext server, String channel, SafeString message) {
+    return publish(server, getSubscription(server.getAdminDatabase(), channel), toMessage(channel, message));
   }
   
   private void addSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
@@ -137,8 +139,9 @@ public class SubscriptionManager {
     return entry.getKey().getValue().toString().startsWith(SUBSCRIPTION_PREFIX);
   }
 
-  private void publish(TinyDBServerContext server, Set<SafeString> clients, RedisToken message) {
+  private int publish(TinyDBServerContext server, Set<SafeString> clients, RedisToken message) {
     clients.forEach(client -> server.publish(client.toString(), message));
+    return clients.size();
   }
 
   private RedisToken toPatternMessage(String pattern, String channel, SafeString message) {

@@ -24,13 +24,23 @@ public class PublishCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute()  {
+  public void publish()  {
     rule.withAdminData("subscription:test", set("localhost:12345"))
     .withParams("test", "Hello World!")
     .execute()
     .assertThat(RedisToken.integer(1))
     .verify(TinyDBServerContext.class).publish("localhost:12345",
-                                   array(string("message"), string("test"), string("Hello World!")));
+        array(string("message"), string("test"), string("Hello World!")));
+  }
+
+  @Test
+  public void publishPattern() {
+    rule.withAdminData("psubscription:test:*", set("localhost:12345"))
+    .withParams("test:pepe", "Hello World!")
+    .execute()
+    .assertThat(RedisToken.integer(1))
+    .verify(TinyDBServerContext.class).publish("localhost:12345",
+         array(string("pmessage"), string("test:*"), string("test:pepe"), string("Hello World!")));
   }
 
 }

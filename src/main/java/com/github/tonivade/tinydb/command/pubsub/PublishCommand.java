@@ -21,17 +21,14 @@ public class PublishCommand extends SubscriptionManager implements TinyDBCommand
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    Database admin = getAdminDatabase(request.getServerContext());
-
     String channel = request.getParam(0).toString();
     SafeString message = request.getParam(1);
-    publishAll(getTinyDB(request.getServerContext()), channel, message);
-    
-    return integer(getSubscription(admin, channel).size());
+    return integer(publishAll(getTinyDB(request.getServerContext()), channel, message));
   }
 
-  private void publishAll(TinyDBServerContext tinyDB, String channel, SafeString message) {
-    publish(tinyDB, channel, message);
-    patternPublish(tinyDB, channel, message);
+  private int publishAll(TinyDBServerContext tinyDB, String channel, SafeString message) {
+    int count = publish(tinyDB, channel, message);
+    int pcount = patternPublish(tinyDB, channel, message);
+    return count + pcount;
   }
 }
