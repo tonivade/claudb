@@ -10,6 +10,8 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.Database;
 
@@ -22,8 +24,14 @@ public class PublishCommand extends SubscriptionManager implements TinyDBCommand
     Database admin = getAdminDatabase(request.getServerContext());
 
     String channel = request.getParam(0).toString();
-    publish(getTinyDB(request.getServerContext()), channel, request.getParam(1));
+    SafeString message = request.getParam(1);
+    publishAll(getTinyDB(request.getServerContext()), channel, message);
     
     return integer(getSubscription(admin, channel).size());
+  }
+
+  private void publishAll(TinyDBServerContext tinyDB, String channel, SafeString message) {
+    publish(tinyDB, channel, message);
+    patternPublish(tinyDB, channel, message);
   }
 }

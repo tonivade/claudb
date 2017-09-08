@@ -31,6 +31,7 @@ import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.event.Event;
+import com.github.tonivade.tinydb.event.NotificationManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotificationManagerTest {

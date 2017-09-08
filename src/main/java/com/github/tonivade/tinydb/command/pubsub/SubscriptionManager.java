@@ -26,10 +26,9 @@ import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.event.Event;
 import com.github.tonivade.tinydb.glob.GlobPattern;
 
-abstract class SubscriptionManager {
+public class SubscriptionManager {
   
   private static final String SUBSCRIPTION_PREFIX = "subscription:";
   private static final String PSUBSCRIPTION_PREFIX = "psubscription:";
@@ -76,16 +75,14 @@ abstract class SubscriptionManager {
         .collect(toMap(Entry::getKey, Entry::getValue));
   }
 
-  public void publish(TinyDBServerContext server, Event event) {
-    for (Entry<String, Set<SafeString>> entry : getPatternSubscriptions(server.getAdminDatabase(), event.getChannel())) {
-      publish(server, entry.getValue(), toPatternMessage(entry.getKey(), event));
+  public void patternPublish(TinyDBServerContext server, String channel, SafeString message) {
+    for (Entry<String, Set<SafeString>> entry : getPatternSubscriptions(server.getAdminDatabase(), channel)) {
+      publish(server, entry.getValue(), toPatternMessage(entry.getKey(), channel, message));
     }
   }
 
   public void publish(TinyDBServerContext server, String channel, SafeString message) {
-    for (SafeString subscriber : getSubscription(server.getAdminDatabase(), channel)) {
-      publish(server, channel, message, subscriber);
-    }
+    publish(server, getSubscription(server.getAdminDatabase(), channel), toMessage(channel, message));
   }
   
   private void addSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
@@ -144,12 +141,8 @@ abstract class SubscriptionManager {
     clients.forEach(client -> server.publish(client.toString(), message));
   }
 
-  private RedisToken toPatternMessage(String pattern, Event event) {
-    return array(string(PMESSAGE), string(pattern), string(event.getChannel()), string(event.getValue()));
-  }
-
-  private void publish(TinyDBServerContext server, String channel, SafeString message, SafeString subscriber) {
-    server.publish(subscriber.toString(), toMessage(channel, message));
+  private RedisToken toPatternMessage(String pattern, String channel, SafeString message) {
+    return array(string(PMESSAGE), string(pattern), string(channel), string(message));
   }
 
   private RedisToken toMessage(String channel, SafeString message) {

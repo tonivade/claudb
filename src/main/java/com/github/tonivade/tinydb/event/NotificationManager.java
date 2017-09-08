@@ -2,13 +2,13 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-package com.github.tonivade.tinydb.command.pubsub;
+package com.github.tonivade.tinydb.event;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.github.tonivade.tinydb.TinyDBServerContext;
-import com.github.tonivade.tinydb.event.Event;
+import com.github.tonivade.tinydb.command.pubsub.SubscriptionManager;
 
 public class NotificationManager extends SubscriptionManager {
   
@@ -20,6 +20,6 @@ public class NotificationManager extends SubscriptionManager {
   }
   
   public void enqueue(Event event) {
-    executor.execute(() -> publish(server, event));
+    executor.execute(() -> patternPublish(server, event.getChannel(), event.getValue()));
   }
 }
