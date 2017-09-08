@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.pubsub;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
@@ -21,23 +20,23 @@ import org.junit.Test;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
-@CommandUnderTest(UnsubscribeCommand.class)
-public class UnsubscribeCommandTest {
+@CommandUnderTest(PatternUnsubscribeCommand.class)
+public class PatternUnsubscribeCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute() {
-    rule.getSessionState().addSubscription(safeString("test"));
+  public void testExecute()  {
+    rule.getSessionState().addSubscription(safeString("test:*"));
     
-    rule.withAdminData("subscription:test", set("localhost:12345"))
-        .withParams("test")
+    rule.withAdminData("psubscription:test:*", set("localhost:12345"))
+        .withParams("test:*")
         .execute()
-        .assertThat(array(string("unsubscribe"), string("test"), integer(0)))
-        .assertAdminValue("subscription:test", isSet());
+        .assertThat(array(string("punsubscribe"), string("test:*"), integer(0)))
+        .assertAdminValue("psubscription:test:*", isSet());
 
-    assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test"))));
+    assertThat(rule.getSessionState().getSubscriptions(), not(contains(safeString("test:*"))));
   }
 
 }

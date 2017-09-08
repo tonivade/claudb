@@ -34,6 +34,8 @@ import com.github.tonivade.tinydb.command.list.ListRangeCommand;
 import com.github.tonivade.tinydb.command.list.ListSetCommand;
 import com.github.tonivade.tinydb.command.list.RightPopCommand;
 import com.github.tonivade.tinydb.command.list.RightPushCommand;
+import com.github.tonivade.tinydb.command.pubsub.PatternSubscribeCommand;
+import com.github.tonivade.tinydb.command.pubsub.PatternUnsubscribeCommand;
 import com.github.tonivade.tinydb.command.pubsub.PublishCommand;
 import com.github.tonivade.tinydb.command.pubsub.SubscribeCommand;
 import com.github.tonivade.tinydb.command.pubsub.UnsubscribeCommand;
@@ -163,6 +165,8 @@ public class TinyDBCommandSuite extends CommandSuite {
     addCommand(PublishCommand.class);
     addCommand(SubscribeCommand.class);
     addCommand(UnsubscribeCommand.class);
+    addCommand(PatternSubscribeCommand.class);
+    addCommand(PatternUnsubscribeCommand.class);
 
     // transactions
     addCommand(MultiCommand.class);

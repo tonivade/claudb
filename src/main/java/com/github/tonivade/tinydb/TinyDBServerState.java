@@ -26,7 +26,6 @@ import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.OnHeapDatabase;
 import com.github.tonivade.tinydb.persistence.RDBInputStream;
 import com.github.tonivade.tinydb.persistence.RDBOutputStream;
 
@@ -39,12 +38,13 @@ public class TinyDBServerState {
 
   private boolean master;
   private final List<Database> databases = new ArrayList<>();
-  private final Database admin = new OnHeapDatabase();
+  private final Database admin;
   private final DatabaseFactory factory;
 
   public TinyDBServerState(DatabaseFactory factory, int numDatabases) {
-    this.factory = factory;
     this.master = true;
+    this.factory = factory;
+    this.admin = factory.create("admin");
     for (int i = 0; i < numDatabases; i++) {
       this.databases.add(factory.create("db-" + i));
     }
@@ -92,7 +92,7 @@ public class TinyDBServerState {
   public void importRDB(InputStream input) throws IOException {
     RDBInputStream rdb = new RDBInputStream(input);
 
-    rdb.parse().forEach((i, db) -> this.databases.set(i, db));
+    rdb.parse().forEach(this.databases::set);
   }
 
   public void saveScript(SafeString sha1, SafeString script) {

@@ -21,12 +21,12 @@ import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 
 @ReadOnly
-@Command("subscribe")
+@Command("punsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class SubscribeCommand implements TinyDBCommand, SubscriptionSupport {
+public class PatternUnsubscribeCommand implements TinyDBCommand, PatternSubscriptionSupport {
 
-  private static final String SUBSCRIBE = "subscribe";
+  private static final String PUNSUBSCRIBE = "punsubscribe";
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -36,9 +36,9 @@ public class SubscribeCommand implements TinyDBCommand, SubscriptionSupport {
     int i = channels.size();
     List<Object> result = new LinkedList<>();
     for (SafeString channel : request.getParams()) {
-      addSubscription(admin, sessionId, channel);
-      getSessionState(request.getSession()).addSubscription(channel);
-      result.addAll(asList(SUBSCRIBE, channel, ++i));
+      removePatternSubscription(admin, sessionId, channel);
+      getSessionState(request.getSession()).removeSubscription(channel);
+      result.addAll(asList(PUNSUBSCRIBE, channel, --i));
     }
     return convert(result);
   }

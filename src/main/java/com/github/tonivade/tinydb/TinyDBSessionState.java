@@ -1,5 +1,7 @@
 package com.github.tonivade.tinydb;
 
+import static java.util.Collections.unmodifiableSet;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +22,7 @@ public class TinyDBSessionState {
   }
 
   public Set<SafeString> getSubscriptions() {
-    return subscriptions;
+    return unmodifiableSet(subscriptions);
   }
 
   public void addSubscription(SafeString channel) {

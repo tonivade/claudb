@@ -84,6 +84,8 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
 - Pub/Sub
     - SUBSCRIBE
     - UNSUBSCRIBE
+    - PSUBSCRIBE
+    - PUNSUBSCRIBE
     - PUBLISH
 - Transactions
     - MULTI
@@ -184,7 +186,8 @@ Parameters:
     --help        print help
     -P            enable persistence (experimental)
     -O            enable off heap memory (experimental)
-    -h            host (default: localhost)
+    -N            enable keyspace notifications (experimental)
+    -h <String>   host (default: localhost)
     -p <Integer>  port (default: 7081) 
     
 Also you can use inside your project using Maven
@@ -201,9 +204,7 @@ Or gradle
 
 ## TODO
 
-- Namespace notifications.
 - Ziplist and Maplist encoding not implemented yet.
-- PSUBSCRIBE and PUNSUBSCRIBE commands not implemented yet.
 - Master/Slave replication improvements. Slave with Slaves
 - Partitioning?
 - Clustering?
