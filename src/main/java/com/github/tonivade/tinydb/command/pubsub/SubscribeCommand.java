@@ -24,7 +24,7 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("subscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class SubscribeCommand extends SubscriptionManager implements TinyDBCommand {
+public class SubscribeCommand implements TinyDBCommand, SubscriptionSupport {
 
   private static final String SUBSCRIBE = "subscribe";
 

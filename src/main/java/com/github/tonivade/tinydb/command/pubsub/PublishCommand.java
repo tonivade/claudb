@@ -17,7 +17,7 @@ import com.github.tonivade.tinydb.data.Database;
 
 @Command("publish")
 @ParamLength(2)
-public class PublishCommand extends SubscriptionManager implements TinyDBCommand {
+public class PublishCommand implements TinyDBCommand, SubscriptionSupport, PatternSubscriptionSupport {
 
   @Override
   public RedisToken execute(Database db, Request request) {

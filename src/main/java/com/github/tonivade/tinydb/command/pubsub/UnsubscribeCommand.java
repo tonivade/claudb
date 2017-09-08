@@ -24,7 +24,7 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("unsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class UnsubscribeCommand extends SubscriptionManager implements TinyDBCommand {
+public class UnsubscribeCommand implements TinyDBCommand, SubscriptionSupport {
 
   private static final String UNSUBSCRIBE = "unsubscribe";
 

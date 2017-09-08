@@ -24,7 +24,7 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("punsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class PatternUnsubscribeCommand extends SubscriptionManager implements TinyDBCommand {
+public class PatternUnsubscribeCommand implements TinyDBCommand, PatternSubscriptionSupport {
 
   private static final String PUNSUBSCRIBE = "punsubscribe";
 

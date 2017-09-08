@@ -24,7 +24,7 @@ import com.github.tonivade.tinydb.data.Database;
 @Command("psubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class PatternSubscribeCommand extends SubscriptionManager implements TinyDBCommand {
+public class PatternSubscribeCommand implements TinyDBCommand, PatternSubscriptionSupport {
 
   private static final String PSUBSCRIBE = "psubscribe";
 
@@ -50,5 +50,4 @@ public class PatternSubscribeCommand extends SubscriptionManager implements Tiny
   private Collection<SafeString> getChannels(Request request) {
     return getSessionState(request.getSession()).getSubscriptions();
   }
-
 }

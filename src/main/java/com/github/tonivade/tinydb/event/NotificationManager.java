@@ -8,9 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.github.tonivade.tinydb.TinyDBServerContext;
-import com.github.tonivade.tinydb.command.pubsub.SubscriptionManager;
+import com.github.tonivade.tinydb.command.pubsub.PatternSubscriptionSupport;
 
-public class NotificationManager extends SubscriptionManager {
+public class NotificationManager implements PatternSubscriptionSupport {
   
   private final TinyDBServerContext server;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
