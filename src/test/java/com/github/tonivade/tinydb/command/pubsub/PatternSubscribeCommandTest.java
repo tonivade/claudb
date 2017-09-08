@@ -9,7 +9,9 @@ import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.isSet;
+import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
@@ -25,13 +27,37 @@ public class PatternSubscribeCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute()  {
+  public void testExecute() {
     rule.withParams("test:*")
         .execute()
         .assertThat(array(string("psubscribe"), string("test:*"), integer(1)))
         .assertAdminValue("psubscription:test:*", isSet("localhost:12345"));
 
     assertThat(rule.getSessionState().getSubscriptions(), contains(safeString("test:*")));
+  }
+  
+  @Test
+  public void testExecuteExisting() {
+    rule.withAdminData("psubscription:test:*", set(safeString("localhost:54321")))
+        .withParams("test:*")
+        .execute()
+        .assertThat(array(string("psubscribe"), string("test:*"), integer(1)))
+        .assertAdminValue("psubscription:test:*", isSet("localhost:12345", "localhost:54321"));
+
+    assertThat(rule.getSessionState().getSubscriptions(), contains(safeString("test:*")));
+  }
+  
+  @Test
+  public void testExecuteOther() {
+    rule.getSessionState().addSubscription(safeString("other:*"));
+    
+    rule.withParams("test:*")
+        .execute()
+        .assertThat(array(string("psubscribe"), string("test:*"), integer(2)))
+        .assertAdminValue("psubscription:test:*", isSet("localhost:12345"));
+
+    assertThat(rule.getSessionState().getSubscriptions(), containsInAnyOrder(safeString("test:*"), 
+                                                                             safeString("other:*")));
   }
 
 }
