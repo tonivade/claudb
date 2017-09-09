@@ -5,19 +5,22 @@
 
 package com.github.tonivade.tinydb.command.server;
 
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -50,7 +53,7 @@ public class InfoCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    Map<String, Map<String, String>> sections = new HashMap<>();
+    Map<String, Map<String, String>> sections = new LinkedHashMap<>();
     Optional<SafeString> param = request.getOptionalParam(0);
     if (param.isPresent()) {
       String sectionName = param.get().toString();
@@ -60,7 +63,7 @@ public class InfoCommand implements TinyDBCommand {
         sections.put(section, section(section, request.getServerContext()));
       }
     }
-    return RedisToken.string(safeString(makeString(sections)));
+    return string(safeString(makeString(sections)));
   }
 
   private String makeString(Map<String, Map<String, String>> sections) {
@@ -111,7 +114,16 @@ public class InfoCommand implements TinyDBCommand {
   private Map<String, String> server(ServerContext ctx) {
     return map(entry("redis_version", "2.8.24"),
                entry("tcp_port", valueOf(ctx.getPort())),
-               entry("os", System.getProperty("os.name")));
+               entry("os", fullOsName()),
+               entry("java_version", javaVersion()));
+  }
+
+  private String javaVersion() {
+    return System.getProperty("java.version");
+  }
+
+  private String fullOsName() {
+    return System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch");
   }
 
   private Map<String, String> replication(ServerContext ctx) {
@@ -159,7 +171,8 @@ public class InfoCommand implements TinyDBCommand {
 
   @SafeVarargs
   private static Map<String, String> map(Entry<String, String> ... values) {
-    return Stream.of(values).collect(toMap(Entry::getKey, Entry::getValue));
+    return Stream.of(values)
+        .collect(collectingAndThen(toMap(Entry::getKey, Entry::getValue), TreeMap<String, String>::new));
   }
 
   public static Entry<String, String> entry(String key, String value) {
