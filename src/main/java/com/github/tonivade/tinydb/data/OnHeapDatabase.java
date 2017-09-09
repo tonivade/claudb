@@ -12,9 +12,9 @@ import static java.util.stream.Collectors.toSet;
 import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.BiFunction;
 
 public class OnHeapDatabase implements Database {
@@ -22,7 +22,7 @@ public class OnHeapDatabase implements Database {
   private final Map<DatabaseKey, DatabaseValue> cache;
 
   public OnHeapDatabase() {
-    this(new TreeMap<>());
+    this(new HashMap<>());
   }
 
   public OnHeapDatabase(Map<DatabaseKey, DatabaseValue> cache) {
@@ -40,17 +40,17 @@ public class OnHeapDatabase implements Database {
   }
 
   @Override
-  public boolean containsKey(Object key) {
+  public boolean containsKey(DatabaseKey key) {
     return cache.containsKey(key);
   }
 
   @Override
-  public boolean containsValue(Object value) {
+  public boolean containsValue(DatabaseValue value) {
     return cache.containsValue(value);
   }
 
   @Override
-  public DatabaseValue get(Object key) {
+  public DatabaseValue get(DatabaseKey key) {
     DatabaseValue value = cache.get(key);
 
     if (value != null) {
@@ -72,7 +72,7 @@ public class OnHeapDatabase implements Database {
   }
 
   @Override
-  public DatabaseValue remove(Object key) {
+  public DatabaseValue remove(DatabaseKey key) {
     return cache.remove(key);
   }
 
@@ -125,5 +125,10 @@ public class OnHeapDatabase implements Database {
       return true;
     }
     return false;
+  }
+  
+  @Override
+  public DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue) {
+    return cache.getOrDefault(key, defaultValue);
   }
 }

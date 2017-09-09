@@ -6,6 +6,7 @@
 package com.github.tonivade.tinydb.command.server;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
@@ -26,8 +27,8 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @ReadOnly
 @Command("info")
@@ -108,8 +109,9 @@ public class InfoCommand implements TinyDBCommand {
   }
 
   private Map<String, String> server(ServerContext ctx) {
-    return map(entry("redis_version", "2.8.21"),
-        entry("tcp_port", valueOf(ctx.getPort())));
+    return map(entry("redis_version", "2.8.24"),
+               entry("tcp_port", valueOf(ctx.getPort())),
+               entry("os", System.getProperty("os.name")));
   }
 
   private Map<String, String> replication(ServerContext ctx) {
@@ -118,7 +120,7 @@ public class InfoCommand implements TinyDBCommand {
   }
 
   private String slaves(ServerContext ctx) {
-    DatabaseValue slaves = getAdminDatabase(ctx).getOrDefault("slaves", DatabaseValue.EMPTY_SET);
+    DatabaseValue slaves = getAdminDatabase(ctx).getOrDefault(safeKey("slaves"), DatabaseValue.EMPTY_SET);
     return String.valueOf(slaves.<Set<String>>getValue().size());
   }
 

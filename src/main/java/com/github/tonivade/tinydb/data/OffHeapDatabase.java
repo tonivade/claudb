@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import org.caffinitas.ohc.CloseableIterator;
 import org.caffinitas.ohc.OHCache;
@@ -37,17 +38,17 @@ public class OffHeapDatabase implements Database {
   }
 
   @Override
-  public boolean containsKey(Object key) {
-    return cache.containsKey((DatabaseKey) key);
+  public boolean containsKey(DatabaseKey key) {
+    return cache.containsKey(key);
   }
 
   @Override
-  public boolean containsValue(Object value) {
+  public boolean containsValue(DatabaseValue value) {
     throw new UnsupportedOperationException("not implemented");
   }
 
   @Override
-  public DatabaseValue get(Object key) {
+  public DatabaseValue get(DatabaseKey key) {
     DatabaseValue value = cache.get((DatabaseKey) key);
 
     if (value != null) {
@@ -68,15 +69,15 @@ public class OffHeapDatabase implements Database {
   }
 
   @Override
-  public DatabaseValue remove(Object key) {
-    DatabaseValue value = cache.get((DatabaseKey) key);
-    cache.remove((DatabaseKey) key);
+  public DatabaseValue remove(DatabaseKey key) {
+    DatabaseValue value = cache.get(key);
+    cache.remove(key);
     return value;
   }
 
   @Override
   public void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m) {
-    for (Entry<? extends DatabaseKey, ? extends DatabaseValue> entry : m.entrySet()) {
+    for (Map.Entry<? extends DatabaseKey, ? extends DatabaseValue> entry : m.entrySet()) {
       put(entry.getKey(), entry.getValue());
     }
   }
@@ -131,5 +132,32 @@ public class OffHeapDatabase implements Database {
       return true;
     }
     return false;
+  }
+  
+  @Override
+  public DatabaseValue putIfAbsent(DatabaseKey key, DatabaseValue value) {
+    if (cache.putIfAbsent(key, value)) {
+      return value;
+    }
+    return cache.get(key);
+  }
+  
+  @Override
+  public DatabaseValue merge(DatabaseKey key, DatabaseValue value,
+      BiFunction<? super DatabaseValue, ? super DatabaseValue, ? extends DatabaseValue> remappingFunction) {
+    DatabaseValue oldValue = cache.get(key);
+    DatabaseValue newValue = oldValue == null ? value : remappingFunction.apply(oldValue, value);
+    if(newValue == null) {
+      cache.remove(key);
+    } else {
+      cache.put(key, newValue);
+    }
+    return newValue;
+  }
+  
+  @Override
+  public DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue) {
+    DatabaseValue value = cache.get(key);
+    return value != null ? value : defaultValue;
   }
 }
