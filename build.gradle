@@ -65,6 +65,14 @@ compileJava {
     options.forkOptions.executable = "javac"
 }
 
+processResources {
+    filesMatching('**/banner.txt') {
+        filter {
+            it.replace('@version@', version)
+        }
+    }
+}
+
 task fatJar(type: Jar) {
     manifest { 
         attributes "Main-Class": "com.github.tonivade.tinydb.Server"
