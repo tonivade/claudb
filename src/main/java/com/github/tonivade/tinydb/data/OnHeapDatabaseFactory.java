@@ -4,11 +4,13 @@
  */
 package com.github.tonivade.tinydb.data;
 
+import java.util.HashMap;
+
 public class OnHeapDatabaseFactory implements DatabaseFactory {
 
   @Override
   public Database create(String name) {
-    return new OnHeapDatabase();
+    return new OnHeapDatabase(new HashMap<>());
   }
 
   @Override

@@ -38,15 +38,16 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
   public void clear() {
     // nothing to do
   }
-  
+
   private static class FSTSerializer<E> implements CacheSerializer<E> {
-    
+
     private static final FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
-    
+
     static {
       FST.registerClass(DatabaseValue.class);
       FST.registerClass(DatabaseKey.class);
       FST.registerClass(SafeString.class);
+      FST.registerClass(SortedSet.class);
     }
 
     @Override

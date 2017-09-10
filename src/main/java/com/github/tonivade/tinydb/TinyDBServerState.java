@@ -49,7 +49,7 @@ public class TinyDBServerState {
       this.databases.add(factory.create("db-" + i));
     }
   }
-  
+
   public void setMaster(boolean master) {
     this.master = master;
   }
@@ -92,7 +92,10 @@ public class TinyDBServerState {
   public void importRDB(InputStream input) throws IOException {
     RDBInputStream rdb = new RDBInputStream(input);
 
-    rdb.parse().forEach(this.databases::set);
+    Map<Integer, Map<DatabaseKey, DatabaseValue>> load = rdb.parse();
+    for (Map.Entry<Integer, Map<DatabaseKey, DatabaseValue>> entry : load.entrySet()) {
+      databases.get(entry.getKey()).overrideAll(entry.getValue());
+    }
   }
 
   public void saveScript(SafeString sha1, SafeString script) {

@@ -16,9 +16,9 @@ import java.util.Set;
 
 import org.junit.Test;
 
-public class DatabaseTest {
+public class OnHeapDatabaseTest {
 
-  private final Database database = new OnHeapDatabase();
+  private final Database database = new OnHeapDatabaseFactory().create("test");
 
   @Test
   public void testDatabase()  {

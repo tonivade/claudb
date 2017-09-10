@@ -34,7 +34,7 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.tinydb.TinyDBRule;
 import com.github.tonivade.tinydb.TinyDBServerContext;
-import com.github.tonivade.tinydb.data.OnHeapDatabase;
+import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
@@ -55,7 +55,7 @@ public class SlaveReplicationTest {
 
   @Test
   public void testReplication() throws IOException  {
-    when(context.getAdminDatabase()).thenReturn(new OnHeapDatabase());
+    when(context.getAdminDatabase()).thenReturn(new OnHeapDatabaseFactory().create("test"));
 
     SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
 
@@ -97,7 +97,7 @@ public class SlaveReplicationTest {
   }
 
   private void verifyStateUpdated() {
-    assertThat(context.getAdminDatabase().get(safeKey("master")), 
+    assertThat(context.getAdminDatabase().get(safeKey("master")),
                equalTo(hash(entry(safeString("host"), safeString("localhost")),
                             entry(safeString("port"), safeString("7081")),
                             entry(safeString("state"), safeString("connected")))));

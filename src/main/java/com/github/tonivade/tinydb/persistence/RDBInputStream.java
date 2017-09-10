@@ -30,8 +30,6 @@ import java.util.zip.CheckedInputStream;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.OnHeapDatabase;
 
 public class RDBInputStream {
 
@@ -60,12 +58,11 @@ public class RDBInputStream {
   private final CheckedInputStream in;
 
   public RDBInputStream(InputStream in) {
-    super();
     this.in = new CheckedInputStream(in, new CRC64());
   }
 
-  public Map<Integer, Database> parse() throws IOException {
-    Map<Integer, Database> databases = new HashMap<>();
+  public Map<Integer, Map<DatabaseKey, DatabaseValue>> parse() throws IOException {
+    Map<Integer, Map<DatabaseKey, DatabaseValue>> databases = new HashMap<>();
 
     int version = version();
 
@@ -74,12 +71,12 @@ public class RDBInputStream {
     }
 
     Long expireTime = null;
-    Database db = null;
+    HashMap<DatabaseKey, DatabaseValue> db = null;
     for (boolean end = false; !end;) {
       int read = in.read();
       switch (read) {
       case SELECT:
-        db = new OnHeapDatabase();
+        db = new HashMap<>();
         databases.put(readLength(), db);
         break;
       case TTL_SECONDS:
@@ -206,7 +203,7 @@ public class RDBInputStream {
     return hash(entries).expiredAt(expireTime != null ? ofEpochMilli(expireTime) : null);
   }
 
-  private void ensure(Database db, DatabaseKey key, DatabaseValue value) throws IOException {
+  private void ensure(Map<DatabaseKey, DatabaseValue> db, DatabaseKey key, DatabaseValue value) throws IOException {
     if (db != null) {
       if (!value.isExpired(Instant.now())) {
         db.put(key, value);

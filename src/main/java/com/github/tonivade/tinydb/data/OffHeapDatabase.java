@@ -4,8 +4,8 @@
  */
 package com.github.tonivade.tinydb.data;
 
-import java.io.IOError;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.AbstractMap;
 import java.util.Collection;
@@ -14,19 +14,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
-
 import org.caffinitas.ohc.CloseableIterator;
 import org.caffinitas.ohc.OHCache;
 
 public class OffHeapDatabase implements Database {
 
   private OHCache<DatabaseKey, DatabaseValue> cache;
-  
+
   public OffHeapDatabase(OHCache<DatabaseKey, DatabaseValue> cache) {
     this.cache = cache;
   }
-  
+
   @Override
   public int size() {
     return (int) cache.size();
@@ -43,20 +41,15 @@ public class OffHeapDatabase implements Database {
   }
 
   @Override
-  public boolean containsValue(DatabaseValue value) {
-    throw new UnsupportedOperationException("not implemented");
-  }
-
-  @Override
   public DatabaseValue get(DatabaseKey key) {
-    DatabaseValue value = cache.get((DatabaseKey) key);
+    DatabaseValue value = cache.get(key);
 
     if (value != null) {
       if (!value.isExpired(Instant.now())) {
         return value;
       }
 
-      cache.remove((DatabaseKey) key);
+      cache.remove(key);
     }
 
     return null;
@@ -95,7 +88,7 @@ public class OffHeapDatabase implements Database {
         keys.add(iterator.next());
       }
     } catch(IOException e) {
-      throw new IOError(e);
+      throw new UncheckedIOException(e);
     }
     return keys;
   }
@@ -116,48 +109,5 @@ public class OffHeapDatabase implements Database {
       entries.add(new AbstractMap.SimpleEntry<>(key, cache.get(key)));
     }
     return entries;
-  }
-
-  @Override
-  public boolean isType(DatabaseKey key, DataType type) {
-    DatabaseValue value = cache.get(key);
-    return value != null ? value.getType() == type : true;
-  }
-
-  @Override
-  public boolean rename(DatabaseKey from, DatabaseKey to) {
-    DatabaseValue value = remove(from);
-    if (value != null) {
-      cache.put(to, value);
-      return true;
-    }
-    return false;
-  }
-  
-  @Override
-  public DatabaseValue putIfAbsent(DatabaseKey key, DatabaseValue value) {
-    if (cache.putIfAbsent(key, value)) {
-      return value;
-    }
-    return cache.get(key);
-  }
-  
-  @Override
-  public DatabaseValue merge(DatabaseKey key, DatabaseValue value,
-      BiFunction<? super DatabaseValue, ? super DatabaseValue, ? extends DatabaseValue> remappingFunction) {
-    DatabaseValue oldValue = cache.get(key);
-    DatabaseValue newValue = oldValue == null ? value : remappingFunction.apply(oldValue, value);
-    if(newValue == null) {
-      cache.remove(key);
-    } else {
-      cache.put(key, newValue);
-    }
-    return newValue;
-  }
-  
-  @Override
-  public DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue) {
-    DatabaseValue value = cache.get(key);
-    return value != null ? value : defaultValue;
   }
 }

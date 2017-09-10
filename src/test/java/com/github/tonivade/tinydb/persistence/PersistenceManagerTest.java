@@ -35,7 +35,8 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.TinyDBConfig;
 import com.github.tonivade.tinydb.TinyDBServerContext;
-import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseKey;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.util.HexUtil;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -69,7 +70,7 @@ public class PersistenceManagerTest {
 
     RDBInputStream input = new RDBInputStream(new FileInputStream(DUMP_FILE));
 
-    Map<Integer, Database> databases = input.parse();
+    Map<Integer, Map<DatabaseKey, DatabaseValue>> databases = input.parse();
 
     assertThat(databases, notNullValue());
   }

@@ -12,18 +12,12 @@ import static java.util.stream.Collectors.toSet;
 import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 public class OnHeapDatabase implements Database {
 
   private final Map<DatabaseKey, DatabaseValue> cache;
-
-  public OnHeapDatabase() {
-    this(new HashMap<>());
-  }
 
   public OnHeapDatabase(Map<DatabaseKey, DatabaseValue> cache) {
     this.cache = cache;
@@ -42,11 +36,6 @@ public class OnHeapDatabase implements Database {
   @Override
   public boolean containsKey(DatabaseKey key) {
     return cache.containsKey(key);
-  }
-
-  @Override
-  public boolean containsValue(DatabaseValue value) {
-    return cache.containsValue(value);
   }
 
   @Override
@@ -99,36 +88,5 @@ public class OnHeapDatabase implements Database {
   @Override
   public Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
     return cache.entrySet().stream().map(entry -> new SimpleEntry<>(entry.getKey(), entry.getValue())).collect(toSet());
-  }
-
-  @Override
-  public DatabaseValue putIfAbsent(DatabaseKey key, DatabaseValue value) {
-    return cache.putIfAbsent(key, value);
-  }
-
-  @Override
-  public DatabaseValue merge(DatabaseKey key, DatabaseValue value,
-      BiFunction<? super DatabaseValue, ? super DatabaseValue, ? extends DatabaseValue> remappingFunction) {
-    return cache.merge(key, value, remappingFunction);
-  }
-
-  @Override
-  public boolean isType(DatabaseKey key, DataType type) {
-    return cache.getOrDefault(key, new DatabaseValue(type)).getType() == type;
-  }
-
-  @Override
-  public boolean rename(DatabaseKey from, DatabaseKey to) {
-    DatabaseValue value = cache.remove(from);
-    if (value != null) {
-      cache.put(to, value);
-      return true;
-    }
-    return false;
-  }
-  
-  @Override
-  public DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue) {
-    return cache.getOrDefault(key, defaultValue);
   }
 }

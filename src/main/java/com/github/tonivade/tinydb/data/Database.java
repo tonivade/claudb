@@ -17,8 +17,6 @@ public interface Database {
 
   boolean containsKey(DatabaseKey key);
 
-  boolean containsValue(DatabaseValue value);
-
   DatabaseValue get(DatabaseKey key);
 
   DatabaseValue put(DatabaseKey key, DatabaseValue value);
@@ -35,15 +33,49 @@ public interface Database {
 
   Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet();
 
-  DatabaseValue putIfAbsent(DatabaseKey key, DatabaseValue value);
+  default DatabaseValue putIfAbsent(DatabaseKey key, DatabaseValue value) {
+    DatabaseValue oldValue = get(key);
+    if (oldValue == null) {
+        oldValue = put(key, value);
+    }
+    return oldValue;
+  }
 
-  DatabaseValue merge(DatabaseKey key, DatabaseValue value,
-      BiFunction<? super DatabaseValue, ? super DatabaseValue, ? extends DatabaseValue> remappingFunction);
+  default DatabaseValue merge(DatabaseKey key, DatabaseValue value,
+      BiFunction<DatabaseValue, DatabaseValue, DatabaseValue> remappingFunction) {
+    DatabaseValue oldValue = get(key);
+    DatabaseValue newValue = oldValue == null ? value : remappingFunction.apply(oldValue, value);
+    if(newValue == null) {
+      remove(key);
+    } else {
+      put(key, newValue);
+    }
+    return newValue;
+  }
 
-  boolean isType(DatabaseKey key, DataType type);
+  default DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue) {
+    DatabaseValue value = get(key);
+    return (value != null || containsKey(key))
+        ? value
+        : defaultValue;
+  }
 
-  boolean rename(DatabaseKey from, DatabaseKey to);
-  
-  DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue);
+  default boolean isType(DatabaseKey key, DataType type) {
+    DatabaseValue value = get(key);
+    return value != null ? value.getType() == type : true;
+  }
 
+  default boolean rename(DatabaseKey from, DatabaseKey to) {
+    DatabaseValue value = remove(from);
+    if (value != null) {
+      put(to, value);
+      return true;
+    }
+    return false;
+  }
+
+  default void overrideAll(Map<DatabaseKey, DatabaseValue> value) {
+    clear();
+    putAll(value);
+  }
 }
