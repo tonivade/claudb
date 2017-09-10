@@ -39,7 +39,7 @@ public class TinyDBServerState {
   private static final DatabaseKey SLAVES_KEY = safeKey("slaves");
   private static final DatabaseKey SCRIPTS_KEY = safeKey("scripts");
 
-  private boolean master;
+  private boolean master = true;
 
   private final List<Database> databases = new ArrayList<>();
   private final Database admin;
