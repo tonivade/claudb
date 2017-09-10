@@ -16,11 +16,14 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Queue;
 import java.util.Set;
 
+import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
@@ -37,17 +40,23 @@ public class TinyDBServerState {
   private static final DatabaseKey SCRIPTS_KEY = safeKey("scripts");
 
   private boolean master;
+
   private final List<Database> databases = new ArrayList<>();
   private final Database admin;
   private final DatabaseFactory factory;
 
+  private final Queue<RedisToken> queue = new LinkedList<>();
+
   public TinyDBServerState(DatabaseFactory factory, int numDatabases) {
-    this.master = true;
     this.factory = factory;
     this.admin = factory.create("admin");
     for (int i = 0; i < numDatabases; i++) {
       this.databases.add(factory.create("db-" + i));
     }
+  }
+
+  public void append(RedisToken command) {
+    queue.offer(command);
   }
 
   public void setMaster(boolean master) {
@@ -138,5 +147,11 @@ public class TinyDBServerState {
       merge.removeAll(newValue.getValue());
       return set(merge);
     });
+  }
+
+  public List<RedisToken> getCommandsToReplicate() {
+    List<RedisToken> list = new LinkedList<>(queue);
+    queue.clear();
+    return list;
   }
 }

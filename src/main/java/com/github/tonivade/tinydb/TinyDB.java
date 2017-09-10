@@ -15,9 +15,6 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +33,11 @@ import com.github.tonivade.tinydb.event.Event;
 import com.github.tonivade.tinydb.event.NotificationManager;
 import com.github.tonivade.tinydb.persistence.PersistenceManager;
 
+import io.reactivex.Observable;
+
 public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TinyDB.class);
-
-  private final BlockingQueue<RedisToken> queue = new LinkedBlockingQueue<>();
 
   private final Optional<PersistenceManager> persistence;
   private final Optional<NotificationManager> notifications;
@@ -77,22 +74,23 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   @Override
   public void start() {
     super.start();
+
+    getState().setMaster(true);
   }
 
   @Override
   public void stop() {
     super.stop();
 
-    queue.clear();
-
-    LOGGER.info("server stopped");
+    getState().clear();
   }
 
   @Override
   public List<RedisToken> getCommandsToReplicate() {
-    List<RedisToken> current = new LinkedList<>();
-    queue.drainTo(current);
-    return current;
+    return executeOn(Observable.<List<RedisToken>>create(observable -> {
+      observable.onNext(getState().getCommandsToReplicate());
+      observable.onComplete();
+    })).blockingFirst();
   }
 
   @Override
@@ -115,12 +113,18 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   @Override
   public void exportRDB(OutputStream output) throws IOException {
-    getState().exportRDB(output);
+    executeOn(Observable.create(observable -> {
+      getState().exportRDB(output);
+      observable.onComplete();
+    })).blockingSubscribe();
   }
 
   @Override
   public void importRDB(InputStream input) throws IOException {
-    getState().importRDB(input);
+    executeOn(Observable.create(observable -> {
+      getState().importRDB(input);
+      observable.onComplete();
+    })).blockingSubscribe();
   }
 
   @Override
@@ -168,7 +172,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     if (!isReadOnlyCommand(request.getCommand())) {
       RedisToken array = requestToArray(request);
       if (hasSlaves()) {
-        queue.add(array);
+        getState().append(array);
       }
       persistence.ifPresent(manager -> manager.append(array));
     }

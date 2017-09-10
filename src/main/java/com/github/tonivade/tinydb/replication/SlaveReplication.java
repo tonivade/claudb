@@ -21,9 +21,9 @@ import org.slf4j.LoggerFactory;
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.command.Session;
-import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.command.TinyDBCommandProcessor;
@@ -44,7 +44,6 @@ public class SlaveReplication implements RespCallback {
   private final TinyDBCommandProcessor processor;
   private final String host;
   private final int port;
-
 
   public SlaveReplication(TinyDBServerContext server, Session session, String host, int port) {
     this.server = server;
@@ -80,16 +79,15 @@ public class SlaveReplication implements RespCallback {
 
   @Override
   public void onMessage(RedisToken token) {
-    switch (token.getType()) {
-    case STRING:
-      processRDB((StringRedisToken) token);
-      break;
-    case ARRAY:
-      processor.processCommand((ArrayRedisToken) token);
-      break;
-    default:
-      break;
-    }
+    token.accept(RedisTokenVisitor.builder()
+        .onString(string -> {
+          processRDB(string);
+          return null;
+        })
+        .onArray(array -> {
+          processor.processCommand(array);
+          return null;
+        }).build());
   }
 
   private void processRDB(StringRedisToken token) {
