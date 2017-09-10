@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,6 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
-import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.OffHeapDatabaseFactory;
@@ -184,6 +184,10 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     }
   }
 
+  private boolean isReadOnlyCommand(String command) {
+    return getTinyDBCommands().isReadOnly(command);
+  }
+
   private void publishEvent(NotificationManager manager, Request request) {
     manager.enqueue(createKeyEvent(request));
     manager.enqueue(createCommandEvent(request));
@@ -199,10 +203,6 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private Integer currentDB(Request request) {
     return getSessionState(request.getSession()).getCurrentDB();
-  }
-
-  private boolean isReadOnlyCommand(String command) {
-    return getCommands().isPresent(command, ReadOnly.class);
   }
 
   private RedisToken requestToArray(Request request) {
@@ -247,6 +247,10 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private boolean hasSlaves() {
     return getState().hasSlaves();
+  }
+
+  private TinyDBCommandSuite getTinyDBCommands() {
+    return (TinyDBCommandSuite) getCommands();
   }
 
 }

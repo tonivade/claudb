@@ -5,7 +5,13 @@
 
 package com.github.tonivade.tinydb.command;
 
+import static java.util.Arrays.asList;
+
+import java.util.HashSet;
+import java.util.Set;
+
 import com.github.tonivade.resp.command.CommandSuite;
+import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.command.bitset.BitCountCommand;
 import com.github.tonivade.tinydb.command.bitset.GetBitCommand;
 import com.github.tonivade.tinydb.command.bitset.SetBitCommand;
@@ -81,6 +87,8 @@ import com.github.tonivade.tinydb.command.zset.SortedSetRemoveCommand;
 import com.github.tonivade.tinydb.command.zset.SortedSetReverseRangeCommand;
 
 public class TinyDBCommandSuite extends CommandSuite {
+
+  private static final Set<String> COMMAND_BLACK_LIST = new HashSet<>(asList("ping", "echo", "quit", "time"));
 
   public TinyDBCommandSuite() {
     super(new TinyDBCommandWrapperFactory());
@@ -179,4 +187,9 @@ public class TinyDBCommandSuite extends CommandSuite {
     addCommand(EvalShaCommand.class);
     addCommand(ScriptCommands.class);
   }
+
+  public boolean isReadOnly(String command) {
+    return COMMAND_BLACK_LIST.contains(command) || isPresent(command, ReadOnly.class);
+  }
+
 }
