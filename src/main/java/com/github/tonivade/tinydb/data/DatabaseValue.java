@@ -6,10 +6,8 @@ package com.github.tonivade.tinydb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.time.Instant.now;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableNavigableSet;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static tonivade.equalizer.Equalizer.equalizer;
@@ -20,6 +18,7 @@ import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -71,11 +70,11 @@ public class DatabaseValue implements Serializable {
   public <T> T getValue() {
     return (T) value;
   }
-  
+
   public Instant getExpiredAt() {
     return expiredAt;
   }
-  
+
   public boolean isExpired(Instant now) {
     if (expiredAt != null) {
       return now.isAfter(expiredAt);
@@ -136,37 +135,45 @@ public class DatabaseValue implements Serializable {
   }
 
   public static DatabaseValue list(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.LIST, unmodifiableList(values.stream().collect(toList())));
+    return new DatabaseValue(DataType.LIST,
+        requireNonNull(values).stream().collect(collectingAndThen(toList(), Collections::unmodifiableList)));
   }
 
   public static DatabaseValue list(SafeString... values) {
-    return new DatabaseValue(DataType.LIST, unmodifiableList(Stream.of(values).collect(toList())));
+    return new DatabaseValue(DataType.LIST,
+        Stream.of(values).collect(collectingAndThen(toList(), Collections::unmodifiableList)));
   }
 
   public static DatabaseValue set(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.SET, unmodifiableSet(values.stream().collect(toSet())));
+    return new DatabaseValue(DataType.SET,
+        requireNonNull(values).stream().collect(collectingAndThen(toSet(), Collections::unmodifiableSet)));
   }
 
   public static DatabaseValue set(SafeString... values) {
-    return new DatabaseValue(DataType.SET, unmodifiableSet(Stream.of(values).collect(toSet())));
+    return new DatabaseValue(DataType.SET,
+        Stream.of(values).collect(collectingAndThen(toSet(), Collections::unmodifiableSet)));
   }
 
   public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
-    return new DatabaseValue(DataType.ZSET, unmodifiableNavigableSet(values.stream().collect(toSortedSet())));
+    return new DatabaseValue(DataType.ZSET,
+        requireNonNull(values).stream().collect(collectingAndThen(toSortedSet(), Collections::unmodifiableNavigableSet)));
   }
 
   @SafeVarargs
   public static DatabaseValue zset(Entry<Double, SafeString>... values) {
-    return new DatabaseValue(DataType.ZSET, unmodifiableNavigableSet(Stream.of(values).collect(toSortedSet())));
+    return new DatabaseValue(DataType.ZSET,
+        Stream.of(values).collect(collectingAndThen(toSortedSet(), Collections::unmodifiableNavigableSet)));
   }
 
   public static DatabaseValue hash(Collection<Entry<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH, unmodifiableMap(values.stream().collect(toHash())));
+    return new DatabaseValue(DataType.HASH,
+        requireNonNull(values).stream().collect(collectingAndThen(toHash(), Collections::unmodifiableMap)));
   }
 
   @SafeVarargs
   public static DatabaseValue hash(Entry<SafeString, SafeString>... values) {
-    return new DatabaseValue(DataType.HASH, unmodifiableMap(Stream.of(values).collect(toHash())));
+    return new DatabaseValue(DataType.HASH,
+        Stream.of(values).collect(collectingAndThen(toHash(), Collections::unmodifiableMap)));
   }
 
   public static DatabaseValue bitset(int... ones) {
@@ -200,7 +207,7 @@ public class DatabaseValue implements Serializable {
   private static Collector<Entry<SafeString, SafeString>, ?, Map<SafeString, SafeString>> toHash() {
     return toMap(Entry::getKey, Entry::getValue);
   }
-  
+
   private long timeToLive(Instant now) {
     return Duration.between(now, expiredAt).toMillis();
   }
