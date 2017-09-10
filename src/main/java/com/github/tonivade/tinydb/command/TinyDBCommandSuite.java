@@ -70,6 +70,7 @@ import com.github.tonivade.tinydb.command.string.SetCommand;
 import com.github.tonivade.tinydb.command.string.SetExpiredCommand;
 import com.github.tonivade.tinydb.command.string.SetIfNotExistsCommand;
 import com.github.tonivade.tinydb.command.string.StringLengthCommand;
+import com.github.tonivade.tinydb.command.transaction.DiscardCommand;
 import com.github.tonivade.tinydb.command.transaction.ExecCommand;
 import com.github.tonivade.tinydb.command.transaction.MultiCommand;
 import com.github.tonivade.tinydb.command.zset.SortedSetAddCommand;
@@ -171,6 +172,7 @@ public class TinyDBCommandSuite extends CommandSuite {
     // transactions
     addCommand(MultiCommand.class);
     addCommand(ExecCommand.class);
+    addCommand(DiscardCommand.class);
 
     // scripting
     addCommand(EvalCommand.class);
