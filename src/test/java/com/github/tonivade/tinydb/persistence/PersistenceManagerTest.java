@@ -5,6 +5,7 @@
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -37,7 +38,6 @@ import com.github.tonivade.tinydb.TinyDBConfig;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.util.HexUtil;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
@@ -162,7 +162,7 @@ public class PersistenceManagerTest {
     @Override
     public Void answer(InvocationOnMock invocation) throws Throwable {
       OutputStream output = (OutputStream) invocation.getArguments()[0];
-      output.write(HexUtil.toByteArray("524544495330303033FE00FF77DE0394AC9D23EA"));
+      output.write(fromHexString("524544495330303033FE00FF77DE0394AC9D23EA").getBytes());
       return null;
     }
   }

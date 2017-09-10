@@ -22,8 +22,6 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerState;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.util.HexUtil;
-
 import io.vavr.control.Try;
 
 @ParamLength(1)
@@ -59,6 +57,6 @@ public class ScriptCommands implements TinyDBCommand {
 
   private String digest(SafeString script) throws NoSuchAlgorithmException {
     MessageDigest digest = MessageDigest.getInstance("SHA-1");
-    return HexUtil.toHexString(digest.digest(script.getBytes()));
+    return new SafeString(digest.digest(script.getBytes())).toHexString();
   }
 }

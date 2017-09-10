@@ -10,7 +10,6 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
-import static com.github.tonivade.tinydb.util.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -32,6 +31,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
+import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBRule;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
@@ -93,7 +93,7 @@ public class SlaveReplicationTest {
     int readed = stream.read(buffer);
 
     assertThat(readed, is(buffer.length));
-    assertThat(toHexString(buffer), is("524544495330303036FF224AF218835A1E69"));
+    assertThat(new SafeString(buffer).toHexString(), equalTo("524544495330303036FF224AF218835A1E69"));
   }
 
   private void verifyStateUpdated() {

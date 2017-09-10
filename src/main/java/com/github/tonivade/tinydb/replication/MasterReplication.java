@@ -5,7 +5,6 @@
 package com.github.tonivade.tinydb.replication;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
-import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
 
@@ -84,8 +83,8 @@ public class MasterReplication implements Runnable {
       command.accept(new AbstractRedisTokenVisitor<Void>() {
         @Override
         public Void array(ArrayRedisToken token) {
-          commands.add(selectCommand(token.getValue().stream().findFirst().orElse(nullString())));
-          commands.add(RedisToken.array(token.getValue().stream().skip(1).collect(toList())));
+          commands.add(selectCommand(token));
+          commands.add(command(token));
           return null;
         }
       });
@@ -93,12 +92,17 @@ public class MasterReplication implements Runnable {
     return commands;
   }
 
-  private RedisToken selectCommand(RedisToken database) {
-    return array(string(SELECT_COMMAND), database);
+  private RedisToken selectCommand(ArrayRedisToken token) {
+    return array(string(SELECT_COMMAND),
+        token.getValue().stream().findFirst().orElse(string("0")));
   }
 
   private RedisToken pingCommand() {
     return array(string(PING_COMMAND));
+  }
+
+  private RedisToken command(ArrayRedisToken token) {
+    return array(token.getValue().stream().skip(1).collect(toList()));
   }
 
   private TinyDBServerState getServerState() {

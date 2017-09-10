@@ -44,13 +44,13 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private final Optional<PersistenceManager> persistence;
   private final Optional<NotificationManager> notifications;
-  
+
   public TinyDB() {
     this(DEFAULT_HOST, DEFAULT_PORT);
   }
 
   public TinyDB(String host, int port) {
-    this(host, port, TinyDBConfig.builder().withoutPersistence().build());
+    this(host, port, TinyDBConfig.builder().build());
   }
 
   public TinyDB(String host, int port, TinyDBConfig config) {
@@ -179,7 +179,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
       notifications.ifPresent(manager -> publishEvent(manager, request));
     }
   }
-  
+
   private void publishEvent(NotificationManager manager, Request request) {
     manager.enqueue(createKeyEvent(request));
     manager.enqueue(createCommandEvent(request));

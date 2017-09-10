@@ -2,9 +2,9 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
+import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.score;
@@ -13,7 +13,6 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
-import static com.github.tonivade.tinydb.util.HexUtil.toByteArray;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -61,7 +60,7 @@ public class RDBInputStreamTest {
   }
 
   private InputStream array(String string) {
-    return new ByteBufferInputStream(toByteArray(string));
+    return new ByteBufferInputStream(fromHexString(string).getBytes());
   }
 
 }

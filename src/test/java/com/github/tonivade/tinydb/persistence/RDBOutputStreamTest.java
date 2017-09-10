@@ -5,15 +5,14 @@
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.score;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.set;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
-import static com.github.tonivade.tinydb.util.HexUtil.toHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -23,9 +22,10 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
 
 public class RDBOutputStreamTest {
@@ -108,6 +108,10 @@ public class RDBOutputStreamTest {
     out.end();
 
     assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));
+  }
+
+  private String toHexString(byte[] byteArray) {
+    return new SafeString(byteArray).toHexString();
   }
 
   public static DatabaseBuiler database() {
