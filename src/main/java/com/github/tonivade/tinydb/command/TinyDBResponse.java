@@ -5,15 +5,15 @@
 
 package com.github.tonivade.tinydb.command;
 
-import static java.util.stream.Collectors.toList;
+import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
 import static io.vavr.API.Match;
 import static io.vavr.Predicates.instanceOf;
 import static io.vavr.Predicates.is;
+import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -23,6 +23,8 @@ import java.util.stream.Stream;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
+
+import io.vavr.collection.List;
 
 class TinyDBResponse {
 
@@ -34,14 +36,16 @@ class TinyDBResponse {
           return RedisToken.string(string);
       case HASH:
           Map<SafeString, SafeString> map = value.getValue();
-          return RedisToken.array(keyValueList(map));
+          return array(keyValueList(map).toJavaList());
       case LIST:
+          List<SafeString> list = value.getValue();
+          return convertArray(list.toJavaList());
       case SET:
-          Collection<SafeString> list = value.getValue();
-          return convertArray(list);
+          Set<SafeString> set = value.getValue();
+          return convertArray(set);
       case ZSET:
-          Set<Entry<Double, SafeString>> set = value.getValue();
-          return convertArray(serialize(set));
+          Set<Entry<Double, SafeString>> zset = value.getValue();
+          return convertArray(serialize(zset));
       default:
         break;
       }
@@ -72,7 +76,7 @@ class TinyDBResponse {
     return map.entrySet().stream()
         .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
         .map(RedisToken::string)
-        .collect(toList());
+        .collect(List.collector());
   }
 
   private static Collection<?> serialize(Set<Entry<Double, SafeString>> set) {

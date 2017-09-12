@@ -20,7 +20,6 @@ import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
@@ -30,6 +29,9 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.SafeString;
+
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
 
 public class DatabaseValue implements Serializable {
 
@@ -134,14 +136,16 @@ public class DatabaseValue implements Serializable {
     return new DatabaseValue(DataType.STRING, value);
   }
 
+  public static DatabaseValue list(Seq<SafeString> values) {
+    return new DatabaseValue(DataType.LIST, requireNonNull(values).toList());
+  }
+
   public static DatabaseValue list(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.LIST,
-        requireNonNull(values).stream().collect(collectingAndThen(toList(), Collections::unmodifiableList)));
+    return new DatabaseValue(DataType.LIST, requireNonNull(values).stream().collect(List.collector()));
   }
 
   public static DatabaseValue list(SafeString... values) {
-    return new DatabaseValue(DataType.LIST,
-        Stream.of(values).collect(collectingAndThen(toList(), Collections::unmodifiableList)));
+    return new DatabaseValue(DataType.LIST, Stream.of(values).collect(List.collector()));
   }
 
   public static DatabaseValue set(Collection<SafeString> values) {
@@ -190,10 +194,6 @@ public class DatabaseValue implements Serializable {
 
   public static Entry<Double, SafeString> score(double score, SafeString value) {
     return new SimpleEntry<>(score, value);
-  }
-
-  private static Collector<SafeString, ?, LinkedList<SafeString>> toList() {
-    return toCollection(LinkedList::new);
   }
 
   private static Collector<SafeString, ?, LinkedHashSet<SafeString>> toSet() {

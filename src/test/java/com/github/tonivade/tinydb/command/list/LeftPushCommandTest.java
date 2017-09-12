@@ -23,14 +23,14 @@ public class LeftPushCommandTest {
   @Test
   public void testExecute()  {
     rule.withParams("key", "a", "b", "c")
-    .execute()
-    .assertValue("key", isList("a", "b", "c"))
-    .assertThat(RedisToken.integer(3));
+        .execute()
+        .assertValue("key", isList("a", "b", "c"))
+        .assertThat(RedisToken.integer(3));
 
     rule.withParams("key", "d")
-    .execute()
-    .assertValue("key", isList("d", "a", "b", "c"))
-    .assertThat(RedisToken.integer(4));
+        .execute()
+        .assertValue("key", isList("d", "a", "b", "c"))
+        .assertThat(RedisToken.integer(4));
   }
 
 }

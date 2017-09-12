@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
@@ -21,9 +20,11 @@ import java.util.zip.CheckedOutputStream;
 
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DataType;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.Database;
+
+import io.vavr.collection.List;
 
 public class RDBOutputStream {
 

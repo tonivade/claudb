@@ -30,7 +30,7 @@ public class SetExpiredCommandTest {
     rule.assertValue("a", isNotExpired())
         .assertValue("a", notNullValue());
 
-    Thread.sleep(600);
+    Thread.sleep(800);
     rule.assertValue("a", nullValue());
   }
 

@@ -65,15 +65,6 @@ public class DatabaseValueTest {
   }
 
   @Test(expected = UnsupportedOperationException.class)
-  public void testListUnmodifiable() {
-    DatabaseValue value = list(safeString("a"), safeString("b"), safeString("c"));
-
-    List<SafeString> list = value.getValue();
-
-    list.add(safeString("d"));
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
   public void testHashUnmodifiable() {
     DatabaseValue value = hash(entry(safeString("a"), safeString("1")));
 

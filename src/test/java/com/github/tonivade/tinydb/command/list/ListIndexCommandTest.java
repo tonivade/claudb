@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.list;
 
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
@@ -24,29 +23,29 @@ public class ListIndexCommandTest {
   @Test
   public void testExecute()  {
     rule.withData("key", list("a", "b", "c"))
-    .withParams("key", "0")
-    .execute()
-    .assertThat(RedisToken.string("a"));
+        .withParams("key", "0")
+        .execute()
+        .assertThat(RedisToken.string("a"));
 
     rule.withData("key", list("a", "b", "c"))
-    .withParams("key", "-1")
-    .execute()
-    .assertThat(RedisToken.string("c"));
+        .withParams("key", "-1")
+        .execute()
+        .assertThat(RedisToken.string("c"));
 
     rule.withData("key", list("a", "b", "c"))
-    .withParams("key", "-4")
-    .execute()
-    .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
+        .withParams("key", "-4")
+        .execute()
+        .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
 
     rule.withData("key", list("a", "b", "c"))
-    .withParams("key", "4")
-    .execute()
-    .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
+        .withParams("key", "4")
+        .execute()
+        .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
 
     rule.withData("key", list("a", "b", "c"))
-    .withParams("key", "a")
-    .execute()
-    .assertThat(RedisToken.error("ERR value is not an integer or out of range"));
+        .withParams("key", "a")
+        .execute()
+        .assertThat(RedisToken.error("ERR value is not an integer or out of range"));
   }
 
 }

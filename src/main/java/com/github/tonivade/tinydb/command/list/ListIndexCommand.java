@@ -2,12 +2,11 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.list;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-
-import java.util.List;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -18,8 +17,10 @@ import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
+
+import io.vavr.collection.List;
 
 @ReadOnly
 @Command("lindex")
@@ -38,11 +39,11 @@ public class ListIndexCommand implements TinyDBCommand {
         index = list.size() + index;
       }
 
-      return RedisToken.string(list.get(index));
+      return string(list.get(index));
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an integer or out of range");
+      return error("ERR value is not an integer or out of range");
     } catch (IndexOutOfBoundsException e) {
-      return RedisToken.string(SafeString.EMPTY_STRING);
+      return string(SafeString.EMPTY_STRING);
     }
   }
 

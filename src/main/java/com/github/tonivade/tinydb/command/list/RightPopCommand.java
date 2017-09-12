@@ -9,7 +9,6 @@ import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.list;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -20,6 +19,9 @@ import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.DatabaseValue;
+
+import io.vavr.collection.List;
+
 import com.github.tonivade.tinydb.data.Database;
 
 @Command("rpop")
@@ -29,15 +31,12 @@ public class RightPopCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    List<SafeString> removed = new LinkedList<>();
+    LinkedList<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
-          List<SafeString> merge = new LinkedList<>();
-          merge.addAll(oldValue.getValue());
-          if (!merge.isEmpty()) {
-            removed.add(merge.remove(merge.size() - 1));
-          }
-          return list(merge);
+          List<SafeString> list = oldValue.getValue();
+          list.reverse().headOption().forEach(removed::add);
+          return list(list.reverse().tailOption().getOrElse(List::empty).reverse());
         });
 
     if (removed.isEmpty()) {
