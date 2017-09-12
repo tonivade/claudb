@@ -31,8 +31,8 @@ public class TinyDBResponseTest {
   public void convertsSet()
   {
     RedisToken token = TinyDBResponse.convertValue(set(safeString("a"),
-                                                  safeString("b"),
-                                                  safeString("c")));
+                                                       safeString("b"),
+                                                       safeString("c")));
 
     assertThat(token, containsInAnyOrder(RedisToken.string("a"),
                                          RedisToken.string("b"),
@@ -43,8 +43,8 @@ public class TinyDBResponseTest {
   public void convertsList()
   {
     RedisToken token = TinyDBResponse.convertValue(list(safeString("a"),
-                                                   safeString("b"),
-                                                   safeString("c")));
+                                                        safeString("b"),
+                                                        safeString("c")));
 
     assertThat(token, equalTo(array(RedisToken.string("a"),
                                     RedisToken.string("b"),
@@ -55,8 +55,8 @@ public class TinyDBResponseTest {
   public void convertsHash()
   {
     RedisToken token = TinyDBResponse.convertValue(hash(entry(safeString("key1"), safeString("value1")),
-                                                   entry(safeString("key2"), safeString("value2")),
-                                                   entry(safeString("key3"), safeString("value3"))));
+                                                        entry(safeString("key2"), safeString("value2")),
+                                                        entry(safeString("key3"), safeString("value3"))));
 
     assertThat(token, containsInAnyOrder(RedisToken.string("key1"),
                                          RedisToken.string("value1"),
@@ -69,8 +69,8 @@ public class TinyDBResponseTest {
   @Test
   public void convertsZset() {
     RedisToken token = TinyDBResponse.convertValue(zset(score(1.0, safeString("a")),
-                                                   score(2.0, safeString("b")),
-                                                   score(3.0, safeString("c"))));
+                                                        score(2.0, safeString("b")),
+                                                        score(3.0, safeString("c"))));
 
     assertThat(token, containsInAnyOrder(RedisToken.string("1.0"),
                                          RedisToken.string("a"),

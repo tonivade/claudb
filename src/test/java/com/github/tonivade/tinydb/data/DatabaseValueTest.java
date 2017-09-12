@@ -7,7 +7,6 @@ package com.github.tonivade.tinydb.data;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
-import static com.github.tonivade.tinydb.data.DatabaseValue.list;
 import static com.github.tonivade.tinydb.data.DatabaseValue.score;
 import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
@@ -16,7 +15,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;

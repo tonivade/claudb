@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command.list;
 
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.list;
@@ -40,7 +41,7 @@ public class LeftPopCommand implements TinyDBCommand {
         });
 
     if (removed.isEmpty()) {
-      return string(SafeString.EMPTY_STRING);
+      return nullString();
     } else {
       return string(removed.remove(0));
     }

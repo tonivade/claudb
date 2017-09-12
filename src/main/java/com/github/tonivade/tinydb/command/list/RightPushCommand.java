@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command.list;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.list;
 
@@ -38,7 +39,7 @@ public class RightPushCommand implements TinyDBCommand {
           return list(oldList.appendAll(newList));
         });
 
-    return RedisToken.integer(result.<List<SafeString>>getValue().size());
+    return integer(result.<List<SafeString>>getValue().size());
   }
 
 }

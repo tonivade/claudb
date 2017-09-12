@@ -29,7 +29,7 @@ public class LeftPushCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    List<SafeString> values = Stream.ofAll(request.getParams()).tail().toList();
+    List<SafeString> values = Stream.ofAll(request.getParams()).tail().reverse().toList();
 
     DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
         (oldValue, newValue) -> {

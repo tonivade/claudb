@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command.list;
 
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.isList;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
@@ -12,8 +13,6 @@ import static com.github.tonivade.tinydb.DatabaseValueMatchers.list;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -29,12 +28,12 @@ public class LeftPopCommandTest {
         .withParams("key")
         .execute()
         .assertValue("key", isList("b", "c"))
-        .assertThat(RedisToken.string("a"));
+        .assertThat(string("a"));
     
     rule.withData("key", list())
         .withParams("key")
         .execute()
-        .assertThat(string(SafeString.EMPTY_STRING));
+        .assertThat(nullString());
   }
 
 }
