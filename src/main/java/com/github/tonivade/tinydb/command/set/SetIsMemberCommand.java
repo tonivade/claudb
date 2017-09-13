@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command.set;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -31,6 +32,6 @@ public class SetIsMemberCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET);
     Set<SafeString> set = value.getValue();
-    return RedisToken.integer(set.contains(request.getParam(1)));
+    return integer(set.contains(request.getParam(1)));
   }
 }

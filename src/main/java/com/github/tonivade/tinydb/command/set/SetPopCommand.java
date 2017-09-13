@@ -38,7 +38,7 @@ public class SetPopCommand implements TinyDBCommand {
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
         (oldValue, newValue) -> {
           Set<SafeString> oldSet = oldValue.getSet();
-          SafeString item = getRandomItem(oldSet);
+          SafeString item = getRandomItem(oldSet.toArray());
           removed.add(item);
           return set(oldSet.remove(item));
         });
@@ -49,11 +49,11 @@ public class SetPopCommand implements TinyDBCommand {
     }
   }
 
-  private SafeString getRandomItem(Set<SafeString> oldSet) {
-    return oldSet.toArray().get(random(oldSet.toArray()));
+  private SafeString getRandomItem(Array<SafeString> array) {
+    return array.get(random(array));
   }
 
-  private int random(Array<?> merge) {
-    return new Random().nextInt(merge.size());
+  private int random(Array<?> array) {
+    return new Random().nextInt(array.size());
   }
 }

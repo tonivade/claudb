@@ -84,7 +84,7 @@ public class SlaveReplicationTest {
   }
 
   private void verifyConectionAndRDBDumpImported() throws IOException {
-    verify(context, timeout(2000)).importRDB(captor.capture());
+    verify(context, timeout(3000)).importRDB(captor.capture());
 
     InputStream stream = captor.getValue();
 

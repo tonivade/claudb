@@ -37,5 +37,4 @@ public class SetAddCommand implements TinyDBCommand {
       });
     return integer(value.size());
   }
-
 }

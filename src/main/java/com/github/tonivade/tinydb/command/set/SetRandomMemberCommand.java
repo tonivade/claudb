@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.tinydb.command.set;
 
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 
@@ -41,14 +43,13 @@ public class SetRandomMemberCommand implements TinyDBCommand {
           return set(merge);
         });
     if (random.isEmpty()) {
-      return RedisToken.nullString();
+      return nullString();
     } else {
-      return RedisToken.string(random.get(0));
+      return string(random.get(0));
     }
   }
 
   private int random(Seq<?> merge) {
     return new Random().nextInt(merge.size());
   }
-
 }

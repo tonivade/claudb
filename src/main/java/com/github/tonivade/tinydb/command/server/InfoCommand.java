@@ -129,7 +129,7 @@ public class InfoCommand implements TinyDBCommand {
   }
 
   private String slaves(ServerContext ctx) {
-    return String.valueOf(getAdminDatabase(ctx).getSet(safeString("slaves")).size());
+    return valueOf(getAdminDatabase(ctx).getSet(safeString("slaves")).size());
   }
 
   private Map<String, String> clients(ServerContext ctx) {
