@@ -4,16 +4,15 @@
  */
 package com.github.tonivade.tinydb.data;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSet;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
-
 import java.time.Instant;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+import io.vavr.collection.HashSet;
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Set;
 
 public class OnHeapDatabase implements Database {
 
@@ -77,16 +76,20 @@ public class OnHeapDatabase implements Database {
 
   @Override
   public Set<DatabaseKey> keySet() {
-    return unmodifiableSet(cache.keySet().stream().collect(toSet()));
+    return HashSet.ofAll(cache.keySet());
   }
 
   @Override
-  public Collection<DatabaseValue> values() {
-    return unmodifiableList(cache.values().stream().collect(toList()));
+  public Seq<DatabaseValue> values() {
+    return List.ofAll(cache.values());
   }
 
   @Override
-  public Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
-    return cache.entrySet().stream().map(entry -> new SimpleEntry<>(entry.getKey(), entry.getValue())).collect(toSet());
+  public Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
+    return HashSet.ofAll(cache.entrySet()).map(this::toTuple2);
+  }
+
+  private Tuple2<DatabaseKey, DatabaseValue> toTuple2(Map.Entry<DatabaseKey, DatabaseValue> entry) {
+    return Tuple.of(entry.getKey(), entry.getValue());
   }
 }

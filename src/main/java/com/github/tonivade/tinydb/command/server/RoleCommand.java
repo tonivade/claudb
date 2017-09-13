@@ -13,7 +13,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
@@ -24,6 +23,8 @@ import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseValue;
+
+import io.vavr.collection.Set;
 
 @ReadOnly
 @Command("role")
@@ -51,9 +52,8 @@ public class RoleCommand implements TinyDBCommand {
 
   private List<RedisToken> slaves(Database adminDatabase) {
     DatabaseValue value = adminDatabase.getOrDefault(safeKey("slaves"), DatabaseValue.EMPTY_SET);
-    Set<SafeString> list = value.getValue();
-    return list.stream()
-        .map(SafeString::toString)
+    Set<SafeString> set = value.getValue();
+    return set.map(SafeString::toString)
         .map(slave -> slave.split(":"))
         .map(slave -> array(string(slave[0]), string(slave[1]), string("0")))
         .collect(toList());

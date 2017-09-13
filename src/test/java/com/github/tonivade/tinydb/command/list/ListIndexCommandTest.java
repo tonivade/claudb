@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -35,12 +34,12 @@ public class ListIndexCommandTest {
     rule.withData("key", list("a", "b", "c"))
         .withParams("key", "-4")
         .execute()
-        .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
+        .assertThat(RedisToken.nullString());
 
     rule.withData("key", list("a", "b", "c"))
         .withParams("key", "4")
         .execute()
-        .assertThat(RedisToken.string(SafeString.EMPTY_STRING));
+        .assertThat(RedisToken.nullString());
 
     rule.withData("key", list("a", "b", "c"))
         .withParams("key", "a")

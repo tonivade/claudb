@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -15,7 +14,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
-import java.util.Set;
 import java.util.zip.CheckedOutputStream;
 
 import com.github.tonivade.resp.protocol.SafeString;
@@ -24,7 +22,9 @@ import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
+import io.vavr.Tuple2;
 import io.vavr.collection.List;
+import io.vavr.collection.Set;
 
 public class RDBOutputStream {
 
@@ -62,8 +62,8 @@ public class RDBOutputStream {
   }
 
   public void dabatase(Database db) throws IOException {
-    for (Entry<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
-      value(entry.getKey(), entry.getValue());
+    for (Tuple2<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
+      value(entry._1(), entry._2());
     }
   }
 
@@ -92,19 +92,19 @@ public class RDBOutputStream {
   private void value(DatabaseValue value) throws IOException {
     switch (value.getType()) {
     case STRING:
-      string(value.<SafeString>getValue());
+      string(value.getString());
       break;
     case LIST:
-      list(value.getValue());
+      list(value.getList());
       break;
     case HASH:
-      hash(value.getValue());
+      hash(value.getHash());
       break;
     case SET:
-      set(value.getValue());
+      set(value.getSet());
       break;
     case ZSET:
-      zset(value.getValue());
+      zset(value.getSortedSet());
       break;
     default:
       break;

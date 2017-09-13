@@ -5,6 +5,10 @@
 package com.github.tonivade.tinydb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static io.vavr.API.$;
+import static io.vavr.API.Case;
+import static io.vavr.API.Match;
+import static io.vavr.Predicates.instanceOf;
 import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -19,7 +23,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
@@ -30,8 +33,10 @@ import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
+import io.vavr.collection.LinkedHashSet;
 import io.vavr.collection.List;
-import io.vavr.collection.Seq;
+import io.vavr.collection.Set;
+import io.vavr.collection.Traversable;
 
 public class DatabaseValue implements Serializable {
 
@@ -71,6 +76,34 @@ public class DatabaseValue implements Serializable {
   @SuppressWarnings("unchecked")
   public <T> T getValue() {
     return (T) value;
+  }
+  
+  public SafeString getString() {
+    return getValue();
+  }
+  
+  public List<SafeString> getList() {
+    return getValue();
+  }
+  
+  public Set<SafeString> getSet() {
+    return getValue();
+  }
+  
+  public NavigableSet<Entry<Double, SafeString>> getSortedSet() {
+    return getValue();
+  }
+  
+  public Map<SafeString, SafeString> getHash() {
+    return getValue();
+  }
+  
+  public int size() {
+    return Match(value).of(Case($(instanceOf(Set.class)), Set::size),
+                           Case($(instanceOf(List.class)), List::size),
+                           Case($(instanceOf(Collection.class)), Collection::size),
+                           Case($(instanceOf(Map.class)), Map::size),
+                           Case($(), x -> 1));
   }
 
   public Instant getExpiredAt() {
@@ -136,7 +169,7 @@ public class DatabaseValue implements Serializable {
     return new DatabaseValue(DataType.STRING, value);
   }
 
-  public static DatabaseValue list(Seq<SafeString> values) {
+  public static DatabaseValue list(Traversable<SafeString> values) {
     return new DatabaseValue(DataType.LIST, requireNonNull(values).toList());
   }
 
@@ -147,15 +180,18 @@ public class DatabaseValue implements Serializable {
   public static DatabaseValue list(SafeString... values) {
     return new DatabaseValue(DataType.LIST, Stream.of(values).collect(List.collector()));
   }
+  
+  public static DatabaseValue set(Traversable<SafeString> values) {
+    return new DatabaseValue(DataType.SET, requireNonNull(values).toSet());
+  }
 
   public static DatabaseValue set(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.SET,
-        requireNonNull(values).stream().collect(collectingAndThen(toSet(), Collections::unmodifiableSet)));
+    return new DatabaseValue(DataType.SET, 
+        requireNonNull(values).stream().collect(LinkedHashSet.collector()));
   }
 
   public static DatabaseValue set(SafeString... values) {
-    return new DatabaseValue(DataType.SET,
-        Stream.of(values).collect(collectingAndThen(toSet(), Collections::unmodifiableSet)));
+    return new DatabaseValue(DataType.SET, Stream.of(values).collect(LinkedHashSet.collector()));
   }
 
   public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
@@ -194,10 +230,6 @@ public class DatabaseValue implements Serializable {
 
   public static Entry<Double, SafeString> score(double score, SafeString value) {
     return new SimpleEntry<>(score, value);
-  }
-
-  private static Collector<SafeString, ?, LinkedHashSet<SafeString>> toSet() {
-    return toCollection(LinkedHashSet::new);
   }
 
   private static Collector<Entry<Double, SafeString>, ?, NavigableSet<Entry<Double, SafeString>>> toSortedSet() {

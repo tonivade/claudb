@@ -9,16 +9,9 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.set;
-import static java.util.stream.Collectors.toSet;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +25,11 @@ import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.event.Event;
 import com.github.tonivade.tinydb.event.NotificationManager;
+
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+import io.vavr.collection.Set;
+import io.vavr.collection.Stream;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotificationManagerTest {
@@ -60,11 +58,11 @@ public class NotificationManagerTest {
         array(string("pmessage"), string(pattern), string(event.getChannel()), string("set")));
   }
 
-  private Set<Entry<DatabaseKey, DatabaseValue>> asSet(SimpleEntry<DatabaseKey, DatabaseValue> entry) {
-    return Stream.of(entry).collect(toSet());
+  private Set<Tuple2<DatabaseKey, DatabaseValue>> asSet(Tuple2<DatabaseKey, DatabaseValue> entry) {
+    return Stream.of(entry).toSet();
   }
 
-  private SimpleEntry<DatabaseKey, DatabaseValue> entry(DatabaseKey key, DatabaseValue value) {
-    return new AbstractMap.SimpleEntry<DatabaseKey, DatabaseValue>(key, value);
+  private Tuple2<DatabaseKey, DatabaseValue> entry(DatabaseKey key, DatabaseValue value) {
+    return Tuple.of(key, value);
   }
 }

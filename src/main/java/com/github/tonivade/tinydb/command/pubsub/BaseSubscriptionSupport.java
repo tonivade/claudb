@@ -8,34 +8,24 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.data.Database;
 
+import io.vavr.collection.Set;
+
 public interface BaseSubscriptionSupport
 {
   default void addSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
     admin.merge(safeKey(suffix + channel), set(safeString(sessionId)),
-        (oldValue, newValue) -> {
-          Set<SafeString> merge = new HashSet<>();
-          merge.addAll(oldValue.getValue());
-          merge.add(safeString(sessionId));
-          return set(merge);
-        });
+        (oldValue, newValue) -> set(oldValue.getSet().addAll(newValue.getSet())));
   }
   
   default void removeSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
       admin.merge(safeKey(suffix + channel), set(safeString(sessionId)),
-          (oldValue, newValue) -> {
-            Set<SafeString> merge = new HashSet<>();
-            merge.addAll(oldValue.getValue());
-            merge.remove(safeString(sessionId));
-            return set(merge);
-          });
+        (oldValue, newValue) -> set(oldValue.getSet().removeAll(newValue.getSet())));
+
   }
   
   default int publish(TinyDBServerContext server, Set<SafeString> clients, RedisToken message) {

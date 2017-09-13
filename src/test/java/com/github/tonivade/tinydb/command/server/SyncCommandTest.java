@@ -19,13 +19,13 @@ import com.github.tonivade.tinydb.command.CommandUnderTest;
 @CommandUnderTest(SyncCommand.class)
 public class SyncCommandTest {
 
-    @Rule
-    public final CommandRule rule = new CommandRule(this);
+  @Rule
+  public final CommandRule rule = new CommandRule(this);
 
-    @Test
-    public void testExecute() throws IOException  {
-        rule.execute()
-            .verify(TinyDBServerContext.class).exportRDB(any());
-    }
+  @Test
+  public void testExecute() throws IOException  {
+    rule.execute()
+    .verify(TinyDBServerContext.class).exportRDB(any());
+  }
 
 }

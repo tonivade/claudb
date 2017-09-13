@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.list;
 
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
@@ -33,13 +32,9 @@ public class RightPushCommand implements TinyDBCommand {
     List<SafeString> values = Stream.ofAll(request.getParams()).tail().toList();
 
     DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
-        (oldValue, newValue) -> {
-          List<SafeString> oldList = oldValue.getValue();
-          List<SafeString> newList = newValue.getValue();
-          return list(oldList.appendAll(newList));
-        });
+        (oldValue, newValue) -> list(oldValue.getList().appendAll(newValue.getList())));
 
-    return integer(result.<List<SafeString>>getValue().size());
+    return integer(result.size());
   }
 
 }

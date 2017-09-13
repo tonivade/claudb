@@ -13,7 +13,7 @@ import com.github.tonivade.tinydb.TinyDBSessionState;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
-import io.vavr.collection.Seq;
+import io.vavr.collection.Traversable;
 
 @FunctionalInterface
 public interface TinyDBCommand {
@@ -51,7 +51,7 @@ public interface TinyDBCommand {
     return TinyDBResponse.convertArray(list);
   }
 
-  default RedisToken convert(Seq<?> list) {
+  default RedisToken convert(Traversable<?> list) {
     return TinyDBResponse.convertArray(list.toJavaList());
   }
 }

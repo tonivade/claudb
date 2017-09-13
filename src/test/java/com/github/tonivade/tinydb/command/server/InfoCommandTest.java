@@ -5,6 +5,8 @@
 
 package com.github.tonivade.tinydb.command.server;
 
+import static org.hamcrest.Matchers.any;
+
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -22,6 +24,6 @@ public class InfoCommandTest {
   public void testExecute()  {
     rule.withParams()
     .execute()
-    .assertThat(org.hamcrest.Matchers.any(RedisToken.class));
+    .assertThat(any(RedisToken.class));
   }
 }

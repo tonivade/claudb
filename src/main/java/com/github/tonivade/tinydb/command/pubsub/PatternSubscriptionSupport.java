@@ -7,12 +7,10 @@ package com.github.tonivade.tinydb.command.pubsub;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import com.github.tonivade.resp.protocol.RedisToken;
@@ -22,6 +20,10 @@ import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.glob.GlobPattern;
+
+import io.vavr.Tuple2;
+import io.vavr.collection.HashSet;
+import io.vavr.collection.Set;
 
 public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
   String PSUBSCRIPTION_PREFIX = "psubscription:";
@@ -38,11 +40,11 @@ public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
   default Set<Entry<String, Set<SafeString>>> getPatternSubscriptions(Database admin, String channel) {
     return getPatternSubscriptions(admin).entrySet().stream()
         .filter(subscriptionApplyTo(channel))
-        .collect(toSet());
+        .collect(HashSet.collector());
   }
   
   default Map<String, Set<SafeString>> getPatternSubscriptions(Database admin) {
-    return admin.entrySet().stream()
+    return admin.entrySet()
         .filter(PatternSubscriptionSupport::isPatternSubscription)
         .map(PatternSubscriptionSupport::toPatternEntry)
         .collect(toMap(Entry::getKey, Entry::getValue));
@@ -56,24 +58,20 @@ public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
     return count;
   }
 
-  static Entry<String, Set<SafeString>> toPatternEntry(Entry<DatabaseKey, DatabaseValue> entry) {
-    return entry(toPattern(entry.getKey()), toSubscriptions(entry.getValue()));
+  static Entry<String, Set<SafeString>> toPatternEntry(Tuple2<DatabaseKey, DatabaseValue> entry) {
+    return entry(toPattern(entry._1()), entry._2().getSet());
   }
 
   static Entry<String, Set<SafeString>> entry(String pattern, Set<SafeString> subscriptions) {
     return new AbstractMap.SimpleEntry<>(pattern, subscriptions);
   }
 
-  static Set<SafeString> toSubscriptions(DatabaseValue value) {
-    return value.<Set<SafeString>>getValue();
-  }
-
   static String toPattern(DatabaseKey key) {
     return key.getValue().substring(PSUBSCRIPTION_PREFIX.length());
   }
 
-  static boolean isPatternSubscription(Entry<DatabaseKey, DatabaseValue> entry) {
-    return entry.getKey().getValue().toString().startsWith(PSUBSCRIPTION_PREFIX);
+  static boolean isPatternSubscription(Tuple2<DatabaseKey, DatabaseValue> entry) {
+    return entry._1().getValue().toString().startsWith(PSUBSCRIPTION_PREFIX);
   }
 
   static RedisToken toPatternMessage(String pattern, String channel, SafeString message) {

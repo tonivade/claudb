@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+import java.util.NavigableSet;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -25,6 +25,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
 import io.vavr.collection.List;
+import io.vavr.collection.Set;
 
 class TinyDBResponse {
 
@@ -42,9 +43,9 @@ class TinyDBResponse {
           return convertArray(list.toJavaList());
       case SET:
           Set<SafeString> set = value.getValue();
-          return convertArray(set);
+          return convertArray(set.toJavaList());
       case ZSET:
-          Set<Entry<Double, SafeString>> zset = value.getValue();
+          NavigableSet<Entry<Double, SafeString>> zset = value.getValue();
           return convertArray(serialize(zset));
       default:
         break;
@@ -79,7 +80,7 @@ class TinyDBResponse {
         .collect(List.collector());
   }
 
-  private static Collection<?> serialize(Set<Entry<Double, SafeString>> set) {
+  private static Collection<?> serialize(NavigableSet<Entry<Double, SafeString>> set) {
     return set.stream()
         .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue())).collect(toList());
   }

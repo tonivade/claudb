@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.list;
 
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
@@ -32,13 +31,9 @@ public class LeftPushCommand implements TinyDBCommand {
     List<SafeString> values = Stream.ofAll(request.getParams()).tail().reverse().toList();
 
     DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
-        (oldValue, newValue) -> {
-          List<SafeString> oldList = oldValue.getValue();
-          List<SafeString> newList = newValue.getValue();
-          return list(newList.appendAll(oldList));
-        });
+        (oldValue, newValue) -> list(newValue.getList().appendAll(oldValue.getList())));
 
-    return RedisToken.integer(result.<List<SafeString>>getValue().size());
+    return RedisToken.integer(result.size());
   }
 
 }

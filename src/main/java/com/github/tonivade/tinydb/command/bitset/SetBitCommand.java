@@ -18,7 +18,6 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
@@ -36,7 +35,7 @@ public class SetBitCommand implements TinyDBCommand {
       int bit = Integer.parseInt(request.getParam(2).toString());
       Queue<Boolean> queue = new LinkedList<>();
       db.merge(safeKey(request.getParam(0)), bitset(), (oldValue, newValue) -> {
-        BitSet bitSet = BitSet.valueOf(oldValue.<SafeString>getValue().getBuffer());
+        BitSet bitSet = BitSet.valueOf(oldValue.getString().getBuffer());
         queue.add(bitSet.get(offset));
         bitSet.set(offset, bit != 0);
         return oldValue;

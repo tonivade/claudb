@@ -5,6 +5,7 @@
 package com.github.tonivade.tinydb.command.list;
 
 import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
@@ -43,7 +44,7 @@ public class ListIndexCommand implements TinyDBCommand {
     } catch (NumberFormatException e) {
       return error("ERR value is not an integer or out of range");
     } catch (IndexOutOfBoundsException e) {
-      return string(SafeString.EMPTY_STRING);
+      return nullString();
     }
   }
 
