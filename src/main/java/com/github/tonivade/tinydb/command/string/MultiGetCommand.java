@@ -4,20 +4,18 @@
  */
 package com.github.tonivade.tinydb.command.string;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
-
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
+import com.github.tonivade.tinydb.data.DataType;
+import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
-import com.github.tonivade.tinydb.data.Database;
+
+import io.vavr.collection.List;
 
 @ReadOnly
 @Command("mget")
@@ -26,10 +24,10 @@ public class MultiGetCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    List<DatabaseValue> result = new ArrayList<>(request.getLength());
-    for (DatabaseKey key : request.getParams().stream().map((item) -> DatabaseKey.safeKey(item)).collect(Collectors.toList())) {
-      result.add(db.get(key));
-    }
+    List<DatabaseValue> result = List.ofAll(request.getParams())
+        .map(DatabaseKey::safeKey)
+        .filter(key -> db.isType(key, DataType.STRING))
+        .map(db::get);
     return convert(result);
   }
 }
