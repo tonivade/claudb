@@ -4,10 +4,19 @@
  */
 package com.github.tonivade.tinydb.data;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
+
+import java.util.Map.Entry;
+import java.util.NavigableSet;
 import java.util.function.BiFunction;
+
+import com.github.tonivade.resp.protocol.SafeString;
+
+import io.vavr.Tuple2;
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Map;
+import io.vavr.collection.Set;
 
 public interface Database {
 
@@ -22,17 +31,39 @@ public interface Database {
   DatabaseValue put(DatabaseKey key, DatabaseValue value);
 
   DatabaseValue remove(DatabaseKey key);
-
-  void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m);
-
+  
   void clear();
 
   Set<DatabaseKey> keySet();
 
-  Collection<DatabaseValue> values();
+  Seq<DatabaseValue> values();
 
-  Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet();
+  Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet();
+  
+  default SafeString getString(SafeString key) {
+    return getOrDefault(safeKey(key), DatabaseValue.EMPTY_STRING).getString();
+  }
+  
+  default List<SafeString> getList(SafeString key) {
+    return getOrDefault(safeKey(key), DatabaseValue.EMPTY_LIST).getList();
+  }
+  
+  default Set<SafeString> getSet(SafeString key) {
+    return getOrDefault(safeKey(key), DatabaseValue.EMPTY_SET).getSet();
+  }
+  
+  default NavigableSet<Entry<Double, SafeString>> getSortedSet(SafeString key) {
+    return getOrDefault(safeKey(key), DatabaseValue.EMPTY_ZSET).getSortedSet();
+  }
+  
+  default Map<SafeString, SafeString> getHash(SafeString key) {
+    return getOrDefault(safeKey(key), DatabaseValue.EMPTY_HASH).getHash();
+  }
 
+  default void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> map) {
+    map.forEach(this::put);
+  }
+  
   default DatabaseValue putIfAbsent(DatabaseKey key, DatabaseValue value) {
     DatabaseValue oldValue = get(key);
     if (oldValue == null) {

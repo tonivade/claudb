@@ -5,9 +5,6 @@
 package com.github.tonivade.tinydb.command.list;
 
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-import static java.util.stream.Collectors.toList;
-
-import java.util.List;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -15,12 +12,13 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
-
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
+
+import io.vavr.collection.List;
 
 @ReadOnly
 @Command("lrange")
@@ -46,7 +44,8 @@ public class ListRangeCommand implements TinyDBCommand {
       int min = Math.min(from, to);
       int max = Math.max(from, to);
 
-      List<SafeString> result = list.stream().skip(min).limit((max - min) + 1).collect(toList());
+      // TODO: use Array
+      List<SafeString> result = list.toJavaStream().skip(min).limit((max - min) + 1).collect(List.collector());
 
       return convert(result);
     } catch (NumberFormatException e) {

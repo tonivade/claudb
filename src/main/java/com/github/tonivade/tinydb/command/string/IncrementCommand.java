@@ -5,6 +5,8 @@
 
 package com.github.tonivade.tinydb.command.string;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 
@@ -15,8 +17,8 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @Command("incr")
 @ParamLength(1)
@@ -31,9 +33,9 @@ public class IncrementCommand implements TinyDBCommand {
             int current = Integer.parseInt(oldValue.getValue().toString());
             return string(String.valueOf(current + 1));
           });
-      return RedisToken.integer(Integer.parseInt(value.getValue().toString()));
+      return integer(Integer.parseInt(value.getValue().toString()));
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an integer or out of range");
+      return error("ERR value is not an integer or out of range");
     }
   }
 

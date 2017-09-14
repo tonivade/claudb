@@ -22,5 +22,4 @@ public class PersistCommand implements TinyDBCommand {
     }
     return RedisToken.integer(value != null);
   }
-
 }

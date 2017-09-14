@@ -19,6 +19,8 @@ import org.hamcrest.core.IsNull;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
+import io.vavr.Tuple2;
+
 public class DatabaseValueMatchers {
 
   public static DatabaseValue list(String ... strings) {
@@ -29,7 +31,7 @@ public class DatabaseValueMatchers {
     return DatabaseValue.set(SafeString.safeAsList(strings));
   }
 
-  public static Entry<SafeString, SafeString> entry(String key, String value) {
+  public static Tuple2<SafeString, SafeString> entry(String key, String value) {
     return DatabaseValue.entry(safeString(key), safeString(value));
   }
 

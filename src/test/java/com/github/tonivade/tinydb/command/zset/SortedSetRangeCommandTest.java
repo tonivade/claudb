@@ -10,12 +10,8 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.score;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
 
-import java.util.Collection;
-
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;

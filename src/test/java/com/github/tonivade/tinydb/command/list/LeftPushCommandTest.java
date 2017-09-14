@@ -5,12 +5,12 @@
 
 package com.github.tonivade.tinydb.command.list;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.DatabaseValueMatchers.isList;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.CommandRule;
 import com.github.tonivade.tinydb.command.CommandUnderTest;
 
@@ -21,16 +21,16 @@ public class LeftPushCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute()  {
+  public void testExecute() {
     rule.withParams("key", "a", "b", "c")
-    .execute()
-    .assertValue("key", isList("a", "b", "c"))
-    .assertThat(RedisToken.integer(3));
+        .execute()
+        .assertValue("key", isList("c", "b", "a"))
+        .assertThat(integer(3));
 
     rule.withParams("key", "d")
-    .execute()
-    .assertValue("key", isList("d", "a", "b", "c"))
-    .assertThat(RedisToken.integer(4));
+        .execute()
+        .assertValue("key", isList("d", "c", "b", "a"))
+        .assertThat(integer(4));
   }
 
 }

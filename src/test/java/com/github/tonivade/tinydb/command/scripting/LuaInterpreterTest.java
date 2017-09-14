@@ -6,6 +6,7 @@ package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -22,7 +23,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LuaInterpreterTest {
@@ -87,7 +87,7 @@ public class LuaInterpreterTest {
                                            emptyList(),
                                            emptyList());
 
-    assertThat(token, equalTo(string(SafeString.EMPTY_STRING)));
+    assertThat(token, equalTo(nullString()));
   }
 
   @Test

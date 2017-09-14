@@ -14,7 +14,6 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
@@ -29,8 +28,7 @@ public class BitCountCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), bitset());
-    BitSet bitSet = BitSet.valueOf(value.<SafeString>getValue().getBuffer());
+    BitSet bitSet = BitSet.valueOf(value.getString().getBuffer());
     return integer(bitSet.cardinality());
   }
-
 }

@@ -7,7 +7,6 @@ package com.github.tonivade.tinydb.command.server;
 
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static java.lang.String.valueOf;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
@@ -31,7 +29,6 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @ReadOnly
 @Command("info")
@@ -132,8 +129,7 @@ public class InfoCommand implements TinyDBCommand {
   }
 
   private String slaves(ServerContext ctx) {
-    DatabaseValue slaves = getAdminDatabase(ctx).getOrDefault(safeKey("slaves"), DatabaseValue.EMPTY_SET);
-    return String.valueOf(slaves.<Set<String>>getValue().size());
+    return valueOf(getAdminDatabase(ctx).getSet(safeString("slaves")).size());
   }
 
   private Map<String, String> clients(ServerContext ctx) {

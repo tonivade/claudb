@@ -91,7 +91,7 @@ public class LuaInterpreter {
   }
 
   private RedisToken convertLuaBoolean(LuaBoolean value) {
-    return value.toboolean() ? integer(1) : string(SafeString.EMPTY_STRING);
+    return value.toboolean() ? integer(1) : nullString();
   }
 
   private RedisToken convertNumber(Number number) {
@@ -103,7 +103,7 @@ public class LuaInterpreter {
   }
 
   private RedisToken convertBoolean(Boolean value) {
-    return value.booleanValue() ? integer(1) : string(SafeString.EMPTY_STRING);
+    return value.booleanValue() ? integer(1) : nullString();
   }
 
   private RedisToken convertUnknown(Object value) {

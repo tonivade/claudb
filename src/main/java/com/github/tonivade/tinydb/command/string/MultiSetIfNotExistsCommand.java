@@ -9,7 +9,6 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -21,28 +20,30 @@ import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.data.Database;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 
+import io.vavr.Tuple2;
+
 @Command("msetnx")
 @ParamLength(2)
 public class MultiSetIfNotExistsCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
-    Set<Map.Entry<SafeString, SafeString>> pairs = toPairs(request);
+    Set<Tuple2<SafeString, SafeString>> pairs = toPairs(request);
     if (noneExists(db, pairs)) {
-      pairs.forEach(entry -> db.put(safeKey(entry.getKey()), string(entry.getValue())));
+      pairs.forEach(entry -> db.put(safeKey(entry._1()), string(entry._2())));
       return RedisToken.integer(1);
     }
     return RedisToken.integer(0);
   }
 
-  private boolean noneExists(Database db, Set<Map.Entry<SafeString, SafeString>> pairs) {
+  private boolean noneExists(Database db, Set<Tuple2<SafeString, SafeString>> pairs) {
     return pairs.stream()
-        .map(Map.Entry::getKey)
+        .map(Tuple2::_1)
         .map(DatabaseKey::safeKey)
         .noneMatch(db::containsKey);
   }
 
-  private Set<Map.Entry<SafeString, SafeString>> toPairs(Request request) {
-    Set<Map.Entry<SafeString, SafeString>> pairs = new HashSet<>();
+  private Set<Tuple2<SafeString, SafeString>> toPairs(Request request) {
+    Set<Tuple2<SafeString, SafeString>> pairs = new HashSet<>();
     SafeString key = null;
     for (SafeString value : request.getParams()) {
       if (key != null) {

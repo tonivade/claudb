@@ -4,11 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.key;
 
-import static java.util.stream.Collectors.toSet;
-
 import java.time.Instant;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -23,6 +19,9 @@ import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.glob.GlobPattern;
 
+import io.vavr.Tuple2;
+import io.vavr.collection.Set;
+
 @ReadOnly
 @Command("keys")
 @ParamLength(1)
@@ -31,12 +30,11 @@ public class KeysCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     GlobPattern pattern = createPattern(request.getParam(0));
-    Set<SafeString> keys = db.entrySet().stream()
+    Set<SafeString> keys = db.entrySet()
         .filter(matchPattern(pattern))
         .filter(filterExpired(Instant.now()).negate())
-        .map(Map.Entry::getKey)
-        .map(DatabaseKey::getValue)
-        .collect(toSet());
+        .map(Tuple2::_1)
+        .map(DatabaseKey::getValue);
     return convert(keys);
   }
   
@@ -44,12 +42,11 @@ public class KeysCommand implements TinyDBCommand {
     return new GlobPattern(param.toString());
   }
 
-  private Predicate<? super Map.Entry<DatabaseKey, DatabaseValue>> filterExpired(Instant now) {
-    return entry -> entry.getValue().isExpired(now);
+  private Predicate<? super Tuple2<DatabaseKey, DatabaseValue>> filterExpired(Instant now) {
+    return entry -> entry._2().isExpired(now);
   }
 
-  private Predicate<? super Map.Entry<DatabaseKey, DatabaseValue>> matchPattern(GlobPattern pattern) {
-    return entry -> pattern.match(entry.getKey().toString());
+  private Predicate<? super Tuple2<DatabaseKey, DatabaseValue>> matchPattern(GlobPattern pattern) {
+    return entry -> pattern.match(entry._1().toString());
   }
-
 }

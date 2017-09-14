@@ -50,5 +50,4 @@ public class SubscribeCommand implements TinyDBCommand, SubscriptionSupport {
   private Collection<SafeString> getChannels(Request request) {
     return getSessionState(request.getSession()).getSubscriptions();
   }
-
 }

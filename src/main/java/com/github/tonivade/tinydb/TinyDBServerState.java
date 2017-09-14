@@ -15,13 +15,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.Set;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
@@ -32,10 +30,14 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.persistence.RDBInputStream;
 import com.github.tonivade.tinydb.persistence.RDBOutputStream;
 
+import io.vavr.collection.LinkedHashMap;
+import io.vavr.collection.Set;
+
 public class TinyDBServerState {
 
   private static final int RDB_VERSION = 6;
 
+  private static final SafeString SLAVES = safeString("slaves");
   private static final DatabaseKey SLAVES_KEY = safeKey("slaves");
   private static final DatabaseKey SCRIPTS_KEY = safeKey("scripts");
 
@@ -81,8 +83,7 @@ public class TinyDBServerState {
   }
 
   public boolean hasSlaves() {
-    DatabaseValue slaves = admin.getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET);
-    return !slaves.<Set<String>>getValue().isEmpty();
+    return !admin.getSet(SLAVES).isEmpty();
   }
 
   public void exportRDB(OutputStream output) throws IOException {
@@ -103,7 +104,7 @@ public class TinyDBServerState {
 
     Map<Integer, Map<DatabaseKey, DatabaseValue>> load = rdb.parse();
     for (Map.Entry<Integer, Map<DatabaseKey, DatabaseValue>> entry : load.entrySet()) {
-      databases.get(entry.getKey()).overrideAll(entry.getValue());
+      databases.get(entry.getKey()).overrideAll(LinkedHashMap.ofAll(entry.getValue()));
     }
   }
 
@@ -113,14 +114,13 @@ public class TinyDBServerState {
       Map<SafeString, SafeString> merge = new HashMap<>();
       merge.putAll(oldValue.getValue());
       merge.putAll(newValue.getValue());
-      return hash(merge.entrySet());
+      return hash(LinkedHashMap.ofAll(merge));
     });
   }
 
   public Optional<SafeString> getScript(SafeString sha1) {
     DatabaseValue value = admin.getOrDefault(SCRIPTS_KEY, DatabaseValue.EMPTY_HASH);
-    Map<SafeString, SafeString> scripts = value.getValue();
-    return Optional.ofNullable(scripts.get(sha1));
+    return value.getHash().get(sha1).toJavaOptional();
   }
 
   public void cleanScripts() {
@@ -128,24 +128,18 @@ public class TinyDBServerState {
   }
 
   public Set<SafeString> getSlaves() {
-    return getAdminDatabase().getOrDefault(SLAVES_KEY, DatabaseValue.EMPTY_SET).getValue();
+    return getAdminDatabase().getSet(SLAVES);
   }
 
   public void addSlave(String id) {
     getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
-      Set<SafeString> merge = new HashSet<>();
-      merge.addAll(oldValue.getValue());
-      merge.addAll(newValue.getValue());
-      return set(merge);
+      return set(oldValue.getSet().addAll(newValue.getSet()));
     });
   }
 
   public void removeSlave(String id) {
     getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
-      Set<SafeString> merge = new HashSet<>();
-      merge.addAll(oldValue.getValue());
-      merge.removeAll(newValue.getValue());
-      return set(merge);
+      return set(oldValue.getSet().removeAll(newValue.getSet()));
     });
   }
 

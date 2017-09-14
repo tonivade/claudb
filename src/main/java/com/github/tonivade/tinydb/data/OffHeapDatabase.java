@@ -7,15 +7,17 @@ package com.github.tonivade.tinydb.data;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
-import java.util.AbstractMap;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
 import org.caffinitas.ohc.CloseableIterator;
 import org.caffinitas.ohc.OHCache;
+
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+import io.vavr.collection.List;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Set;
 
 public class OffHeapDatabase implements Database {
 
@@ -63,16 +65,9 @@ public class OffHeapDatabase implements Database {
 
   @Override
   public DatabaseValue remove(DatabaseKey key) {
-    DatabaseValue value = cache.get(key);
+    DatabaseValue value = get(key);
     cache.remove(key);
     return value;
-  }
-
-  @Override
-  public void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m) {
-    for (Map.Entry<? extends DatabaseKey, ? extends DatabaseValue> entry : m.entrySet()) {
-      put(entry.getKey(), entry.getValue());
-    }
   }
 
   @Override
@@ -82,7 +77,7 @@ public class OffHeapDatabase implements Database {
 
   @Override
   public Set<DatabaseKey> keySet() {
-    Set<DatabaseKey> keys = new HashSet<>();
+    HashSet<DatabaseKey> keys = new HashSet<>();
     try (CloseableIterator<DatabaseKey> iterator = cache.keyIterator()) {
       while(iterator.hasNext()) {
         keys.add(iterator.next());
@@ -90,24 +85,20 @@ public class OffHeapDatabase implements Database {
     } catch(IOException e) {
       throw new UncheckedIOException(e);
     }
-    return keys;
+    return io.vavr.collection.HashSet.ofAll(keys);
   }
 
   @Override
-  public Collection<DatabaseValue> values() {
-    List<DatabaseValue> values = new LinkedList<>();
+  public Seq<DatabaseValue> values() {
+    LinkedList<DatabaseValue> values = new LinkedList<>();
     for (DatabaseKey key : keySet()) {
       values.add(cache.get(key));
     }
-    return values;
+    return List.ofAll(values);
   }
 
   @Override
-  public Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
-    Set<Map.Entry<DatabaseKey, DatabaseValue>> entries = new HashSet<>();
-    for (DatabaseKey key : keySet()) {
-      entries.add(new AbstractMap.SimpleEntry<>(key, cache.get(key)));
-    }
-    return entries;
+  public Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
+    return keySet().map(key -> Tuple.of(key, get(key))).toSet();
   }
 }

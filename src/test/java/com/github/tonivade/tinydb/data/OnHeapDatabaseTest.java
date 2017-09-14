@@ -10,11 +10,11 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import org.junit.Test;
+
+import io.vavr.Tuple2;
+import io.vavr.collection.Seq;
+import io.vavr.collection.Set;
 
 public class OnHeapDatabaseTest {
 
@@ -30,7 +30,7 @@ public class OnHeapDatabaseTest {
     assertThat(database.isEmpty(), is(false));
     assertThat(database.size(), is(1));
 
-    Collection<DatabaseValue> values = database.values();
+    Seq<DatabaseValue> values = database.values();
 
     assertThat(values.size(), is(1));
     assertThat(values.contains(string("value")), is(true));
@@ -40,13 +40,13 @@ public class OnHeapDatabaseTest {
     assertThat(keySet.size(), is(1));
     assertThat(keySet.contains(safeKey("a")), is(true));
 
-    Set<Entry<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
+    Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
 
     assertThat(entrySet.size(), is(1));
 
-    Entry<DatabaseKey, DatabaseValue> entry = entrySet.iterator().next();
+    Tuple2<DatabaseKey, DatabaseValue> entry = entrySet.iterator().next();
 
-    assertThat(entry.getKey(), is(safeKey("a")));
-    assertThat(entry.getValue(), is(string("value")));
+    assertThat(entry._1(), is(safeKey("a")));
+    assertThat(entry._2(), is(string("value")));
   }
 }

@@ -13,12 +13,11 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @Command("append")
 @ParamLength(1)
@@ -32,7 +31,7 @@ public class AppendCommand implements TinyDBCommand {
           return string(append(oldValue.getValue(), newValue.getValue()));
         });
 
-    return RedisToken.integer(value.<SafeString>getValue().length());
+    return RedisToken.integer(value.getString().length());
   }
 
 }

@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.zset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -20,12 +21,11 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
-
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseValue;
 
 @ReadOnly
 @Command("zrange")
@@ -64,8 +64,7 @@ public class SortedSetRangeCommand implements TinyDBCommand {
 
       return convert(result);
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an integer or out of range");
+      return error("ERR value is not an integer or out of range");
     }
   }
-
 }

@@ -5,21 +5,15 @@
 package com.github.tonivade.tinydb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
-import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
-import static com.github.tonivade.tinydb.data.DatabaseValue.list;
 import static com.github.tonivade.tinydb.data.DatabaseValue.score;
-import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -53,33 +47,6 @@ public class DatabaseValueTest {
     assertThat(expiredValue.isExpired(expired), is(true));
     assertThat(expiredValue.timeToLiveMillis(expired), is(-1000L));
     assertThat(expiredValue.timeToLiveSeconds(expired), is(-1));
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void testSetUnmodifiable() {
-    DatabaseValue value = set(safeString("a"), safeString("b"), safeString("c"));
-
-    Set<SafeString> list = value.getValue();
-
-    list.add(safeString("d"));
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void testListUnmodifiable() {
-    DatabaseValue value = list(safeString("a"), safeString("b"), safeString("c"));
-
-    List<SafeString> list = value.getValue();
-
-    list.add(safeString("d"));
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void testHashUnmodifiable() {
-    DatabaseValue value = hash(entry(safeString("a"), safeString("1")));
-
-    Map<SafeString, SafeString> hash = value.getValue();
-
-    hash.put(safeString("d"), safeString("3"));
   }
 
   @Test(expected = UnsupportedOperationException.class)
