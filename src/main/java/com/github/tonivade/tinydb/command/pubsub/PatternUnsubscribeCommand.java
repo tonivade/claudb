@@ -50,5 +50,4 @@ public class PatternUnsubscribeCommand implements TinyDBCommand, PatternSubscrip
   private Collection<SafeString> getChannels(Request request) {
     return getSessionState(request.getSession()).getSubscriptions();
   }
-
 }

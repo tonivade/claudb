@@ -36,5 +36,4 @@ public class RightPushCommand implements TinyDBCommand {
 
     return integer(result.size());
   }
-
 }

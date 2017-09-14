@@ -31,5 +31,4 @@ public class ListLengthCommand implements TinyDBCommand {
     List<String> list = value.getValue();
     return RedisToken.integer(list.size());
   }
-
 }

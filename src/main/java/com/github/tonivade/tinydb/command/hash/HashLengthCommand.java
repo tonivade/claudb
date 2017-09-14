@@ -26,5 +26,4 @@ public class HashLengthCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     return integer(db.getHash(request.getParam(0)).size());
   }
-
 }

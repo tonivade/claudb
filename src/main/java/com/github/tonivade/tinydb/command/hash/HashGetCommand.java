@@ -30,5 +30,4 @@ public class HashGetCommand implements TinyDBCommand {
         .map(RedisToken::string)
         .getOrElse(RedisToken::nullString);
   }
-
 }

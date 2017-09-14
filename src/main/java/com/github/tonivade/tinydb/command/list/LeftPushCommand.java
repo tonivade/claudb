@@ -35,5 +35,4 @@ public class LeftPushCommand implements TinyDBCommand {
 
     return RedisToken.integer(result.size());
   }
-
 }

@@ -31,5 +31,4 @@ public class BitCountCommand implements TinyDBCommand {
     BitSet bitSet = BitSet.valueOf(value.getString().getBuffer());
     return integer(bitSet.cardinality());
   }
-
 }

@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command.string;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -29,7 +30,6 @@ public class StringLengthCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_STRING);
     SafeString string = value.getValue();
-    return RedisToken.integer(string.length());
+    return integer(string.length());
   }
-
 }

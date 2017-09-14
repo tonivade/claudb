@@ -25,7 +25,6 @@ public interface BaseSubscriptionSupport
   default void removeSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
       admin.merge(safeKey(suffix + channel), set(safeString(sessionId)),
         (oldValue, newValue) -> set(oldValue.getSet().removeAll(newValue.getSet())));
-
   }
   
   default int publish(TinyDBServerContext server, Set<SafeString> clients, RedisToken message) {

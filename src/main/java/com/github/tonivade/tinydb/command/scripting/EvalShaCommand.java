@@ -21,5 +21,4 @@ public class EvalShaCommand extends AbstractEvalCommand {
     TinyDBServerState server = getServerState(request.getServerContext());
     return server.getScript(request.getParam(0)).orElseThrow(NoSuchElementException::new);
   }
-
 }

@@ -1,4 +1,11 @@
+/*
+ * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.tinydb.command.transaction;
+
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
@@ -19,9 +26,9 @@ public class MultiCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     if (!isTxActive(request.getSession())) {
       createTransaction(request.getSession());
-      return RedisToken.responseOk();
+      return responseOk();
     } else {
-      return RedisToken.error("ERR MULTI calls can not be nested");
+      return error("ERR MULTI calls can not be nested");
     }
   }
 
@@ -32,5 +39,4 @@ public class MultiCommand implements TinyDBCommand {
   private boolean isTxActive(Session session) {
     return session.getValue(TRASACTION_KEY).isPresent();
   }
-
 }

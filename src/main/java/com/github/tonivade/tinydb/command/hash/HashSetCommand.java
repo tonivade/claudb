@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.hash;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
@@ -41,6 +42,6 @@ public class HashSetCommand implements TinyDBCommand {
 
     Map<SafeString, SafeString> resultMap = resultValue.getValue();
 
-    return RedisToken.integer(resultMap.get(request.getParam(1)) == null);
+    return integer(resultMap.get(request.getParam(1)) == null);
   }
 }

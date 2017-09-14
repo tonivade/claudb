@@ -47,5 +47,4 @@ public class ListIndexCommand implements TinyDBCommand {
       return nullString();
     }
   }
-
 }

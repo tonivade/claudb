@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.tinydb.command.string;
 
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
@@ -23,9 +22,9 @@ public class GetCommandTest {
   @Test
   public void testExecute() {
     rule.withData("key", string("value"))
-    .withParams("key")
-    .execute()
-    .assertThat(RedisToken.string("value"));
+        .withParams("key")
+        .execute()
+        .assertThat(RedisToken.string("value"));
   }
 
 }

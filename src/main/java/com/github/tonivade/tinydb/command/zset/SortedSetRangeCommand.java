@@ -67,5 +67,4 @@ public class SortedSetRangeCommand implements TinyDBCommand {
       return RedisToken.error("ERR value is not an integer or out of range");
     }
   }
-
 }
