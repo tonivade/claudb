@@ -14,18 +14,18 @@ import static io.vavr.Predicates.is;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import io.vavr.collection.Set;
+import io.vavr.collection.Stream;
 
 class TinyDBResponse {
 
@@ -74,14 +74,14 @@ class TinyDBResponse {
   }
 
   private static List<RedisToken> keyValueList(Map<SafeString, SafeString> map) {
-    return map.entrySet().stream()
-        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
+    return map
+        .flatMap(entry -> Stream.of(entry._1(), entry._2()))
         .map(RedisToken::string)
         .collect(List.collector());
   }
 
   private static Collection<?> serialize(NavigableSet<Entry<Double, SafeString>> set) {
     return set.stream()
-        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue())).collect(toList());
+        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()).toJavaStream()).collect(toList());
   }
 }

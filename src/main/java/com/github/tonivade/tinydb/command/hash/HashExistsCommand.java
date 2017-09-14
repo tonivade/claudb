@@ -5,9 +5,7 @@
 
 package com.github.tonivade.tinydb.command.hash;
 
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
-
-import java.util.Map;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -18,8 +16,9 @@ import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.data.Database;
+
+import io.vavr.collection.Map;
 
 @ReadOnly
 @Command("hexists")
@@ -29,11 +28,9 @@ public class HashExistsCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_HASH);
+    Map<SafeString, SafeString> map = db.getHash(request.getParam(0));
 
-    Map<SafeString, SafeString> map = value.getValue();
-
-    return RedisToken.integer(map.containsKey(request.getParam(1)));
+    return integer(map.containsKey(request.getParam(1)));
   }
 
 }

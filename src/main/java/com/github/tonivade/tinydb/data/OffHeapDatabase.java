@@ -7,11 +7,8 @@ package com.github.tonivade.tinydb.data;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
-import java.util.AbstractMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.caffinitas.ohc.CloseableIterator;
 import org.caffinitas.ohc.OHCache;
@@ -68,16 +65,9 @@ public class OffHeapDatabase implements Database {
 
   @Override
   public DatabaseValue remove(DatabaseKey key) {
-    DatabaseValue value = cache.get(key);
+    DatabaseValue value = get(key);
     cache.remove(key);
     return value;
-  }
-
-  @Override
-  public void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m) {
-    for (Map.Entry<? extends DatabaseKey, ? extends DatabaseValue> entry : m.entrySet()) {
-      put(entry.getKey(), entry.getValue());
-    }
   }
 
   @Override
@@ -109,14 +99,6 @@ public class OffHeapDatabase implements Database {
 
   @Override
   public Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
-    HashSet<Map.Entry<DatabaseKey, DatabaseValue>> entries = new HashSet<>();
-    for (DatabaseKey key : keySet()) {
-      entries.add(new AbstractMap.SimpleEntry<>(key, cache.get(key)));
-    }
-    return io.vavr.collection.HashSet.ofAll(entries).map(this::toTuple2);
-  }
-
-  private Tuple2<DatabaseKey, DatabaseValue> toTuple2(Entry<DatabaseKey, DatabaseValue> entry) {
-    return Tuple.of(entry.getKey(), entry.getValue());
+    return keySet().map(key -> Tuple.of(key, get(key))).toSet();
   }
 }

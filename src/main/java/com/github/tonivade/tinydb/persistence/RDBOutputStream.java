@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.time.Instant;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.zip.CheckedOutputStream;
@@ -24,6 +23,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 
 import io.vavr.Tuple2;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 
 public class RDBOutputStream {
@@ -148,9 +148,9 @@ public class RDBOutputStream {
 
   private void hash(Map<SafeString, SafeString> value) throws IOException {
     length(value.size());
-    for (Entry<SafeString, SafeString> entry : value.entrySet()) {
-      string(entry.getKey());
-      string(entry.getValue());
+    for (Tuple2<SafeString, SafeString> entry : value) {
+      string(entry._1());
+      string(entry._2());
     }
   }
 

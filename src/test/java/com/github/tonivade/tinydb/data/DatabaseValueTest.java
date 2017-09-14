@@ -5,8 +5,6 @@
 package com.github.tonivade.tinydb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
-import static com.github.tonivade.tinydb.data.DatabaseValue.hash;
 import static com.github.tonivade.tinydb.data.DatabaseValue.score;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
@@ -49,15 +47,6 @@ public class DatabaseValueTest {
     assertThat(expiredValue.isExpired(expired), is(true));
     assertThat(expiredValue.timeToLiveMillis(expired), is(-1000L));
     assertThat(expiredValue.timeToLiveSeconds(expired), is(-1));
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void testHashUnmodifiable() {
-    DatabaseValue value = hash(entry(safeString("a"), safeString("1")));
-
-    Map<SafeString, SafeString> hash = value.getValue();
-
-    hash.put(safeString("d"), safeString("3"));
   }
 
   @Test(expected = UnsupportedOperationException.class)

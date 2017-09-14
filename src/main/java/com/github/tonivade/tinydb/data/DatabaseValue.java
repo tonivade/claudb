@@ -13,7 +13,6 @@ import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
 import static tonivade.equalizer.Equalizer.equalizer;
 
 import java.io.Serializable;
@@ -23,7 +22,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Objects;
@@ -33,8 +31,12 @@ import java.util.stream.Stream;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
+import io.vavr.collection.LinkedHashMap;
 import io.vavr.collection.LinkedHashSet;
 import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import io.vavr.collection.Traversable;
 
@@ -196,24 +198,29 @@ public class DatabaseValue implements Serializable {
 
   public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
     return new DatabaseValue(DataType.ZSET,
-        requireNonNull(values).stream().collect(collectingAndThen(toSortedSet(), Collections::unmodifiableNavigableSet)));
+        requireNonNull(values).stream().collect(collectingAndThen(toSortedSet(), 
+                                                                  Collections::unmodifiableNavigableSet)));
   }
 
   @SafeVarargs
   public static DatabaseValue zset(Entry<Double, SafeString>... values) {
     return new DatabaseValue(DataType.ZSET,
-        Stream.of(values).collect(collectingAndThen(toSortedSet(), Collections::unmodifiableNavigableSet)));
+        Stream.of(values).collect(collectingAndThen(toSortedSet(), 
+                                                    Collections::unmodifiableNavigableSet)));
   }
 
-  public static DatabaseValue hash(Collection<Entry<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH,
-        requireNonNull(values).stream().collect(collectingAndThen(toHash(), Collections::unmodifiableMap)));
+  public static DatabaseValue hash(Collection<Tuple2<SafeString, SafeString>> values) {
+    return new DatabaseValue(DataType.HASH, requireNonNull(values).stream().collect(LinkedHashMap.collector()));
+  }
+
+  public static DatabaseValue hash(Traversable<Tuple2<SafeString, SafeString>> values) {
+    return new DatabaseValue(DataType.HASH, requireNonNull(values).toMap(Tuple2::_1, Tuple2::_2));
   }
 
   @SafeVarargs
-  public static DatabaseValue hash(Entry<SafeString, SafeString>... values) {
+  public static DatabaseValue hash(Tuple2<SafeString, SafeString>... values) {
     return new DatabaseValue(DataType.HASH,
-        Stream.of(values).collect(collectingAndThen(toHash(), Collections::unmodifiableMap)));
+        Stream.of(values).collect(LinkedHashMap.collector()));
   }
 
   public static DatabaseValue bitset(int... ones) {
@@ -224,8 +231,8 @@ public class DatabaseValue implements Serializable {
     return new DatabaseValue(DataType.STRING, new SafeString(bitSet.toByteArray()));
   }
 
-  public static Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {
-    return new SimpleEntry<>(key, value);
+  public static Tuple2<SafeString, SafeString> entry(SafeString key, SafeString value) {
+    return Tuple.of(key, value);
   }
 
   public static Entry<Double, SafeString> score(double score, SafeString value) {
@@ -234,10 +241,6 @@ public class DatabaseValue implements Serializable {
 
   private static Collector<Entry<Double, SafeString>, ?, NavigableSet<Entry<Double, SafeString>>> toSortedSet() {
     return toCollection(SortedSet::new);
-  }
-
-  private static Collector<Entry<SafeString, SafeString>, ?, Map<SafeString, SafeString>> toHash() {
-    return toMap(Entry::getKey, Entry::getValue);
   }
 
   private long timeToLive(Instant now) {

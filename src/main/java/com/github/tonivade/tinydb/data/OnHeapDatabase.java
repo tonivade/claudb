@@ -65,11 +65,6 @@ public class OnHeapDatabase implements Database {
   }
 
   @Override
-  public void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> m) {
-    cache.putAll(m);
-  }
-
-  @Override
   public void clear() {
     cache.clear();
   }

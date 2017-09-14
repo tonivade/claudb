@@ -31,6 +31,8 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.data.DatabaseKey;
 import com.github.tonivade.tinydb.data.DatabaseValue;
 
+import io.vavr.Tuple2;
+
 public class RDBInputStream {
 
   private static final SafeString REDIS_PREAMBLE = safeString("REDIS");
@@ -196,7 +198,7 @@ public class RDBInputStream {
 
   private DatabaseValue readHash(Long expireTime) throws IOException {
     int size = readLength();
-    Set<Entry<SafeString, SafeString>> entries = new LinkedHashSet<>();
+    Set<Tuple2<SafeString, SafeString>> entries = new LinkedHashSet<>();
     for (int i = 0; i < size; i++) {
       entries.add(entry(readSafeString(), readSafeString()));
     }

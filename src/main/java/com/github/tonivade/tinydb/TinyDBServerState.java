@@ -30,6 +30,7 @@ import com.github.tonivade.tinydb.data.DatabaseValue;
 import com.github.tonivade.tinydb.persistence.RDBInputStream;
 import com.github.tonivade.tinydb.persistence.RDBOutputStream;
 
+import io.vavr.collection.LinkedHashMap;
 import io.vavr.collection.Set;
 
 public class TinyDBServerState {
@@ -103,7 +104,7 @@ public class TinyDBServerState {
 
     Map<Integer, Map<DatabaseKey, DatabaseValue>> load = rdb.parse();
     for (Map.Entry<Integer, Map<DatabaseKey, DatabaseValue>> entry : load.entrySet()) {
-      databases.get(entry.getKey()).overrideAll(entry.getValue());
+      databases.get(entry.getKey()).overrideAll(LinkedHashMap.ofAll(entry.getValue()));
     }
   }
 
@@ -113,14 +114,13 @@ public class TinyDBServerState {
       Map<SafeString, SafeString> merge = new HashMap<>();
       merge.putAll(oldValue.getValue());
       merge.putAll(newValue.getValue());
-      return hash(merge.entrySet());
+      return hash(LinkedHashMap.ofAll(merge));
     });
   }
 
   public Optional<SafeString> getScript(SafeString sha1) {
     DatabaseValue value = admin.getOrDefault(SCRIPTS_KEY, DatabaseValue.EMPTY_HASH);
-    Map<SafeString, SafeString> scripts = value.getValue();
-    return Optional.ofNullable(scripts.get(sha1));
+    return value.getHash().get(sha1).toJavaOptional();
   }
 
   public void cleanScripts() {
