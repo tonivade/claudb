@@ -5,7 +5,7 @@
 
 package com.github.tonivade.tinydb.command.string;
 
-import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -25,6 +25,6 @@ public class GetCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    return string(db.getString(request.getParam(0)));
+    return convert(db.get(safeKey(request.getParam(0))));
   }
 }
