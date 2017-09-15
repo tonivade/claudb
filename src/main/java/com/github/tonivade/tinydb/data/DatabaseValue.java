@@ -184,7 +184,7 @@ public class DatabaseValue implements Serializable {
   }
   
   public static DatabaseValue set(Traversable<SafeString> values) {
-    return new DatabaseValue(DataType.SET, requireNonNull(values).toSet());
+    return new DatabaseValue(DataType.SET, requireNonNull(values).toLinkedSet());
   }
 
   public static DatabaseValue set(Collection<SafeString> values) {
@@ -214,7 +214,7 @@ public class DatabaseValue implements Serializable {
   }
 
   public static DatabaseValue hash(Traversable<Tuple2<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH, requireNonNull(values).toMap(Tuple2::_1, Tuple2::_2));
+    return new DatabaseValue(DataType.HASH, requireNonNull(values).toLinkedMap(Tuple2::_1, Tuple2::_2));
   }
 
   @SafeVarargs
