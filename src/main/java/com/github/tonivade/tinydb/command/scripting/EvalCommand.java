@@ -17,5 +17,4 @@ public class EvalCommand extends AbstractEvalCommand {
   protected SafeString script(Request request) {
     return request.getParam(0);
   }
-
 }

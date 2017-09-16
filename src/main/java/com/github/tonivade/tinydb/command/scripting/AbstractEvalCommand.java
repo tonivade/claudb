@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.scripting;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toList;
 
@@ -21,9 +22,8 @@ abstract class AbstractEvalCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     int numParams = parseInt(request.getParam(1).toString());
-
     if (numParams + 2 > request.getLength()) {
-      return RedisToken.error("invalid number of arguments");
+      return error("invalid number of arguments");
     }
     List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
     List<SafeString> keys = readParams(numParams, params);

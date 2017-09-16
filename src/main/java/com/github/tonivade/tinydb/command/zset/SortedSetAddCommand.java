@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.tinydb.command.zset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.score;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
@@ -41,9 +43,9 @@ public class SortedSetAddCommand implements TinyDBCommand {
             merge.addAll(newValue.getValue());
             return zset(merge);
           });
-      return RedisToken.integer(changed(initial.getValue(), result.getValue()));
+      return integer(changed(initial.getValue(), result.getValue()));
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not a valid float");
+      return error("ERR value is not a valid float");
     }
   }
 

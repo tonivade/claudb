@@ -5,6 +5,7 @@
 package com.github.tonivade.tinydb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
@@ -52,7 +53,7 @@ public class LuaInterpreter {
       engine.put("ARGV", toArray(params));
       return convert(engine.eval(script.toString()));
     } catch (ScriptException e) {
-      return RedisToken.error(e.getMessage());
+      return error(e.getMessage());
     }
   }
 

@@ -5,6 +5,7 @@
 
 package com.github.tonivade.tinydb.command.string;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.SafeString.append;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
@@ -30,8 +31,7 @@ public class AppendCommand implements TinyDBCommand {
         (oldValue, newValue) -> {
           return string(append(oldValue.getValue(), newValue.getValue()));
         });
-
-    return RedisToken.integer(value.getString().length());
+    return integer(value.getString().length());
   }
 
 }

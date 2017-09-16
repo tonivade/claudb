@@ -10,11 +10,14 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.command.TinyDBCommand;
 import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.Database;
+
+import io.vavr.collection.Map;
 
 @ReadOnly
 @Command("hlen")
@@ -24,6 +27,7 @@ public class HashLengthCommand implements TinyDBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    return integer(db.getHash(request.getParam(0)).size());
+    Map<SafeString, SafeString> hash = db.getHash(request.getParam(0));
+    return integer(hash.size());
   }
 }

@@ -5,6 +5,9 @@
 
 package com.github.tonivade.tinydb.command.server;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
+
 import java.io.IOException;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -39,10 +42,9 @@ public class SyncCommand implements TinyDBCommand {
 
       master.addSlave(request.getSession().getId());
 
-      return RedisToken.string(new SafeString(output.toByteArray()));
+      return string(new SafeString(output.toByteArray()));
     } catch (IOException e) {
-      return RedisToken.error("ERROR replication error");
+      return error("ERROR replication error");
     }
   }
-
 }

@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.zset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.reverse;
@@ -66,7 +67,7 @@ public class SortedSetReverseRangeCommand implements TinyDBCommand {
 
       return convert(result);
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an integer or out of range");
+      return error("ERR value is not an integer or out of range");
     }
   }
 }

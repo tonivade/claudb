@@ -20,7 +20,6 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
   private final SafeString value;
 
   public DatabaseKey(SafeString value) {
-    super();
     this.value = value;
   }
 

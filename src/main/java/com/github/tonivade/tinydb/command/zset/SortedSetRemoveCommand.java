@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.zset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.zset;
 import static java.util.stream.Collectors.toList;
@@ -46,6 +47,6 @@ public class SortedSetRemoveCommand implements TinyDBCommand {
                return zset(merge);
              });
 
-    return RedisToken.integer(removed.size());
+    return integer(removed.size());
   }
 }

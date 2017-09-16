@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.string;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.entry;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
@@ -30,9 +31,9 @@ public class MultiSetIfNotExistsCommand implements TinyDBCommand {
     Set<Tuple2<SafeString, SafeString>> pairs = toPairs(request);
     if (noneExists(db, pairs)) {
       pairs.forEach(entry -> db.put(safeKey(entry._1()), string(entry._2())));
-      return RedisToken.integer(1);
+      return integer(1);
     }
-    return RedisToken.integer(0);
+    return integer(0);
   }
 
   private boolean noneExists(Database db, Set<Tuple2<SafeString, SafeString>> pairs) {

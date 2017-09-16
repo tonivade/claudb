@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.hash;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -30,7 +31,7 @@ public class HashGetAllCommand implements TinyDBCommand {
     if (value != null) {
       return convert(value);
     } else {
-      return RedisToken.array();
+      return array();
     }
   }
 }

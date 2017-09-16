@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.string;
 
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
 
@@ -30,7 +31,6 @@ public class MultiSetCommand implements TinyDBCommand {
         key = value;
       }
     }
-    return RedisToken.status("OK");
+    return status("OK");
   }
-
 }

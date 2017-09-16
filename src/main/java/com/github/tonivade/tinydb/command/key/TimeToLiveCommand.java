@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.key;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import java.time.Instant;
@@ -32,20 +33,20 @@ public abstract class TimeToLiveCommand implements TinyDBCommand {
     if (value.getExpiredAt() != null) {
       return hasExpiredAt(value);
     } else {
-      return RedisToken.integer(-1);
+      return integer(-1);
     }
   }
 
   private RedisToken hasExpiredAt(DatabaseValue value) {
     Instant now = Instant.now();
     if (!value.isExpired(now)) {
-      return RedisToken.integer(timeToLive(value, now));
+      return integer(timeToLive(value, now));
     } else {
       return notExists();
     }
   }
 
   private RedisToken notExists() {
-    return RedisToken.integer(-2);
+    return integer(-2);
   }
 }

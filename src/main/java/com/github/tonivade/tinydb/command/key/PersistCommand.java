@@ -1,5 +1,6 @@
 package com.github.tonivade.tinydb.command.key;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -20,6 +21,6 @@ public class PersistCommand implements TinyDBCommand {
     if (value != null) {
       db.put(safeKey(request.getParam(0)), value.noExpire());
     }
-    return RedisToken.integer(value != null);
+    return integer(value != null);
   }
 }

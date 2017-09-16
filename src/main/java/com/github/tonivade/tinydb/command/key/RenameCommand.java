@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.tinydb.command.key;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -20,9 +22,9 @@ public class RenameCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     if (db.rename(safeKey(request.getParam(0)), safeKey(request.getParam(1)))) {
-      return RedisToken.responseOk();
+      return responseOk();
     } else {
-      return RedisToken.error("ERR no such key");
+      return error("ERR no such key");
     }
   }
 }

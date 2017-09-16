@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.zset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import java.util.Map.Entry;
@@ -31,6 +32,6 @@ public class SortedSetCardinalityCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
     Set<Entry<Float, SafeString>> set = value.getValue();
-    return RedisToken.integer(set.size());
+    return integer(set.size());
   }
 }

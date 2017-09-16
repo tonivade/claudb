@@ -45,15 +45,12 @@ public class OffHeapDatabase implements Database {
   @Override
   public DatabaseValue get(DatabaseKey key) {
     DatabaseValue value = cache.get(key);
-
     if (value != null) {
       if (!value.isExpired(Instant.now())) {
         return value;
       }
-
       cache.remove(key);
     }
-
     return null;
   }
 

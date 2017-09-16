@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.key;
 
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import java.time.Instant;
@@ -25,6 +26,6 @@ public class ExistsCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
-    return RedisToken.integer(value != null ? !value.isExpired(Instant.now()) : false);
+    return integer(value != null ? !value.isExpired(Instant.now()) : false);
   }
 }

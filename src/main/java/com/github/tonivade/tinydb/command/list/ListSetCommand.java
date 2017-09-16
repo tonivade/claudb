@@ -4,7 +4,10 @@
  */
 package com.github.tonivade.tinydb.command.list;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.tinydb.data.DatabaseValue.list;
 
 import java.util.ArrayList;
 
@@ -36,13 +39,13 @@ public class ListSetCommand implements TinyDBCommand {
             // TODO: use Array
             ArrayList<SafeString> array = new ArrayList<>(oldList.toJavaList());
             array.set(index > -1 ? index : array.size() + index, request.getParam(2));
-            return DatabaseValue.list(array);
+            return list(array);
           });
-      return RedisToken.status("OK");
+      return status("OK");
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an integer or out of range");
+      return error("ERR value is not an integer or out of range");
     } catch (IndexOutOfBoundsException e) {
-      return RedisToken.error("ERR index out of range");
+      return error("ERR index out of range");
     }
   }
 }

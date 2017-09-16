@@ -7,7 +7,6 @@ package com.github.tonivade.tinydb.command.list;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
@@ -19,7 +18,6 @@ import com.github.tonivade.tinydb.command.annotation.ParamType;
 import com.github.tonivade.tinydb.command.annotation.ReadOnly;
 import com.github.tonivade.tinydb.data.DataType;
 import com.github.tonivade.tinydb.data.Database;
-import com.github.tonivade.tinydb.data.DatabaseValue;
 
 import io.vavr.collection.List;
 
@@ -32,8 +30,7 @@ public class ListIndexCommand implements TinyDBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     try {
-      DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
-      List<SafeString> list = value.getValue();
+      List<SafeString> list = db.getList(request.getParam(0));
 
       int index = Integer.parseInt(request.getParam(1).toString());
       if (index < 0) {

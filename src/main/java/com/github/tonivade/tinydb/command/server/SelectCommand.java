@@ -5,6 +5,8 @@
 
 package com.github.tonivade.tinydb.command.server;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static java.lang.Integer.parseInt;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -24,15 +26,13 @@ public class SelectCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     try {
       getSessionState(request.getSession()).setCurrentDB(parseCurrentDB(request));
-      return RedisToken.responseOk();
+      return responseOk();
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR invalid DB index");
+      return error("ERR invalid DB index");
     }
-
   }
 
   private int parseCurrentDB(Request request) {
     return parseInt(request.getParam(0).toString());
   }
-
 }

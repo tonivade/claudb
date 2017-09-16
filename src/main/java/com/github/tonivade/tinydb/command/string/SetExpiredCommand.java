@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.string;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.string;
@@ -27,11 +28,11 @@ public class SetExpiredCommand implements TinyDBCommand {
                .expiredAt(parseTtl(request.getParam(1))));
       return responseOk();
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an integer or out of range");
+      return error("ERR value is not an integer or out of range");
     }
   }
 
-  private int parseTtl(SafeString safeString) throws NumberFormatException {
+  private int parseTtl(SafeString safeString) {
     return Integer.parseInt(safeString.toString());
   }
 }

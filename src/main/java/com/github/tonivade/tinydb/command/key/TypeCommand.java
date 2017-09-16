@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.key;
 
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 
 import com.github.tonivade.resp.annotation.Command;
@@ -25,9 +26,9 @@ public class TypeCommand implements TinyDBCommand {
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
     if (value != null) {
-      return RedisToken.status(value.getType().text());
+      return status(value.getType().text());
     } else {
-      return RedisToken.status(DataType.NONE.text());
+      return status(DataType.NONE.text());
     }
   }
 }

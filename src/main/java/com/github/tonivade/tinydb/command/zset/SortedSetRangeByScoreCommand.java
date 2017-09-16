@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.tinydb.command.zset;
 
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.tinydb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.tinydb.data.DatabaseValue.score;
 import static java.lang.Integer.parseInt;
@@ -72,7 +73,7 @@ public class SortedSetRangeByScoreCommand implements TinyDBCommand {
 
       return convert(result);
     } catch (NumberFormatException e) {
-      return RedisToken.error("ERR value is not an float or out of range");
+      return error("ERR value is not an float or out of range");
     }
   }
 
