@@ -58,8 +58,10 @@ public class SetCommand implements TinyDBCommand {
   }
 
   private RedisToken onFailure(Throwable e) {
-    return Match(e).of(Case($(instanceOf(SyntaxException.class)), t -> error("syntax error")),
-        Case($(instanceOf(NumberFormatException.class)), f -> error("value is not an integer or out of range")));
+    return Match(e)
+        .of(Case($(instanceOf(SyntaxException.class)), t -> error("syntax error")),
+            Case($(instanceOf(NumberFormatException.class)), f -> error("value is not an integer or out of range")),
+            Case($(), t -> error("error: " + e.getMessage())));
   }
 
   private DatabaseValue saveValue(Database db, Parameters params, DatabaseKey key, DatabaseValue value) {
