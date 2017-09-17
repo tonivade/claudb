@@ -6,7 +6,8 @@ package com.github.tonivade.tinydb;
 
 public class TinyDBConfig {
 
-  private static final int DEFAULT_SYNC_PERIOD = 30;
+  private static final int DEFAULT_SYNC_PERIOD = 60;
+  private static final int DEFAULT_CLEAN_PERIOD = 30;
   private static final int DEFAULT_DATABASES = 10;
   private static final String DUMP_FILE = "dump.rdb";
   private static final String REDO_FILE = "redo.aof";
@@ -20,7 +21,8 @@ public class TinyDBConfig {
   private String rdbFile;
   private String aofFile;
 
-  private int syncPeriod;
+  private int syncPeriod = DEFAULT_SYNC_PERIOD;
+  private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
 
   public boolean isPersistenceActive() {
     return persistenceActive;
@@ -37,11 +39,11 @@ public class TinyDBConfig {
   public boolean isNotificationsActive() {
     return notificationsActive;
   }
-  
+
   public void setOffHeapActive(boolean offHeapActive) {
     this.offHeapActive = offHeapActive;
   }
-  
+
   public boolean isOffHeapActive() {
     return offHeapActive;
   }
@@ -77,11 +79,19 @@ public class TinyDBConfig {
   public void setNumDatabases(int numDatabases) {
     this.numDatabases = numDatabases;
   }
-  
+
+  public long getCleanPeriod() {
+    return this.cleanPeriod;
+  }
+
+  public void setCleanPeriod(int cleanPeriod) {
+    this.cleanPeriod = cleanPeriod;
+  }
+
   public static Builder builder() {
     return new Builder();
   }
-  
+
   public static class Builder {
     private TinyDBConfig config = new TinyDBConfig();
 
@@ -89,15 +99,14 @@ public class TinyDBConfig {
       config.setPersistenceActive(false);
       return this;
     }
-    
+
     public Builder withPersistence() {
       config.setPersistenceActive(true);
       config.setRdbFile(DUMP_FILE);
       config.setAofFile(REDO_FILE);
-      config.setSyncPeriod(DEFAULT_SYNC_PERIOD);
       return this;
     }
-    
+
     public Builder withOffHeapCache() {
       config.setOffHeapActive(true);
       return this;
@@ -107,7 +116,7 @@ public class TinyDBConfig {
       config.setNotificationsActive(true);
       return this;
     }
-    
+
     public TinyDBConfig build() {
       return config;
     }

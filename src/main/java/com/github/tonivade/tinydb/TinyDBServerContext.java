@@ -7,6 +7,7 @@ package com.github.tonivade.tinydb;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.List;
 
 import com.github.tonivade.resp.command.ServerContext;
@@ -26,4 +27,5 @@ public interface TinyDBServerContext extends ServerContext {
   Database getAdminDatabase();
   void publish(String sourceKey, RedisToken message);
   List<RedisToken> getCommandsToReplicate();
+  void clean(Instant now);
 }

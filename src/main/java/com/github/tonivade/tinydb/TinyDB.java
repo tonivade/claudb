@@ -12,6 +12,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.tinydb.command.TinyDBCommandSuite;
 import com.github.tonivade.tinydb.data.Database;
+import com.github.tonivade.tinydb.data.DatabaseCleaner;
 import com.github.tonivade.tinydb.data.DatabaseFactory;
 import com.github.tonivade.tinydb.data.OffHeapDatabaseFactory;
 import com.github.tonivade.tinydb.data.OnHeapDatabaseFactory;
@@ -39,6 +41,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(TinyDB.class);
 
+  private final DatabaseCleaner cleaner;
   private final Optional<PersistenceManager> persistence;
   private final Optional<NotificationManager> notifications;
 
@@ -68,6 +71,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     } else {
       factory = new OnHeapDatabaseFactory();
     }
+    this.cleaner = new DatabaseCleaner(this, config);
     putValue("state", new TinyDBServerState(factory, config.getNumDatabases()));
   }
 
@@ -76,11 +80,18 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     super.start();
 
     getState().setMaster(true);
+
+    persistence.ifPresent(PersistenceManager::start);
+    notifications.ifPresent(NotificationManager::start);
+    cleaner.start();
   }
 
   @Override
   public void stop() {
     super.stop();
+    persistence.ifPresent(PersistenceManager::stop);
+    notifications.ifPresent(NotificationManager::stop);
+    cleaner.stop();
 
     getState().clear();
   }
@@ -136,6 +147,13 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   public void setMaster(boolean master) {
     getState().setMaster(master);
   }
+
+  @Override
+  public void clean(Instant now) {
+    executeOn(Observable.create(observable -> {
+      getState().evictExpired(now);
+      observable.onComplete();
+    })).blockingSubscribe();  }
 
   @Override
   protected void createSession(Session session) {

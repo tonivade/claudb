@@ -10,10 +10,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -31,11 +31,10 @@ import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.tinydb.TinyDBConfig;
 import com.github.tonivade.tinydb.TinyDBServerContext;
 import com.github.tonivade.tinydb.command.TinyDBCommandProcessor;
-import com.github.tonivade.tinydb.replication.SlaveReplication;
 
-public class PersistenceManager implements Runnable {
+public class PersistenceManager {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PersistenceManager.class);
 
   private static final int MAX_FRAME_SIZE = 1024 * 1024 * 100;
 
@@ -60,7 +59,7 @@ public class PersistenceManager implements Runnable {
     importRDB();
     importRedo();
     createRedo();
-    executor.scheduleWithFixedDelay(this, syncPeriod, syncPeriod, TimeUnit.SECONDS);
+    executor.scheduleWithFixedDelay(this::run, syncPeriod, syncPeriod, TimeUnit.SECONDS);
     LOGGER.info("Persistence manager started");
   }
 
@@ -71,8 +70,7 @@ public class PersistenceManager implements Runnable {
     LOGGER.info("Persistence manager stopped");
   }
 
-  @Override
-  public void run() {
+  void run() {
     exportRDB();
     createRedo();
   }
@@ -120,7 +118,7 @@ public class PersistenceManager implements Runnable {
       output = new FileOutputStream(redoFile);
       LOGGER.info("AOF file created");
     } catch (IOException e) {
-      throw new IOError(e);
+      throw new UncheckedIOException(e);
     }
   }
 
@@ -191,7 +189,7 @@ public class PersistenceManager implements Runnable {
         }
         return new SafeString(baos.toByteArray());
       } catch (IOException e) {
-        throw new IOError(e);
+        throw new UncheckedIOException(e);
       }
     }
 
@@ -205,9 +203,8 @@ public class PersistenceManager implements Runnable {
         }
         return null;
       } catch (IOException e) {
-        throw new IOError(e);
+        throw new UncheckedIOException(e);
       }
     }
   }
-
 }

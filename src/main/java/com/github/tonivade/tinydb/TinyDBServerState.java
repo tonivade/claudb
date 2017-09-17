@@ -13,6 +13,7 @@ import static com.github.tonivade.tinydb.data.DatabaseValue.set;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -147,5 +148,11 @@ public class TinyDBServerState {
     List<RedisToken> list = new LinkedList<>(queue);
     queue.clear();
     return list;
+  }
+
+  public void evictExpired(Instant now) {
+    for (Database database : databases) {
+      database.evictableKeys(now).forEach(database::remove);
+    }
   }
 }
