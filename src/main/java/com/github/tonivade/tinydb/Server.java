@@ -19,6 +19,7 @@ public class Server {
   public static void main(String[] args) throws Exception {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
+    OptionSpec<Void> verbose = parser.accepts("V", "verbose");
     OptionSpec<Void> persist = parser.accepts("P", "persistence (experimental)");
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
@@ -39,6 +40,8 @@ public class Server {
                                         options.has(notifications));
      
       readBanner().forEach(System.out::println);
+      
+      System.setProperty("root-level", options.has(verbose) ? "DEBUG": "INFO");
       
       TinyDB server = new TinyDB(optionHost, optionPort, config);
       Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));

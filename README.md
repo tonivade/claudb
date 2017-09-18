@@ -185,6 +185,7 @@ Parameters:
     Option        Description
     ------        -----------
     --help        print help
+    -V            enable verbose log
     -P            enable persistence (experimental)
     -O            enable off heap memory (experimental)
     -N            enable keyspace notifications (experimental)
