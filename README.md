@@ -1,10 +1,17 @@
-# TinyDB
+# ClauDB
 
-TinyDB is a REDIS implementation in Java. At the moment is in development and only implements a small 
+ClauDB is a REDIS implementation in Java. At the moment is in development and only implements a small 
 subset of commands and features.  The objetive is implement a full functional one-to-one replacement 
 for REDIS (2.8 branch).
 
 You will probably wonder why I do this, the answer is I do it Just For Fun.
+
+## Why ClauDB?
+
+Initially I called this project TinyDB, but there's another project with the same name, so, I've
+decided to chage to ClaudDB.
+
+Clau is :key: in Valencià, a language spoken in the eastern Spain, and ClauDB is a key-value database.
 
 ## Implemented commands
 
@@ -100,7 +107,7 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
 
 ## Design
 
-TinyDB is implemented using Java8. Is single thread, like REDIS. It uses asynchronous IO 
+ClauDB is implemented using Java8. Is single thread, like REDIS. It uses asynchronous IO 
 (netty) and reactive programing paradigm (rxjava).
 
 Requests come from IO threads and enqueues to rxjava single thread scheduler. Then IO thread is free
@@ -112,10 +119,10 @@ about.
 
 Now only implements a subset of REDIS commands, but is usable.
 
-TinyDB also supports persistence compatible with REDIS, RDB dumps and AOF journal. It can create
+ClauDB also supports persistence compatible with REDIS, RDB dumps and AOF journal. It can create
 compatible RDB files you can load in a REDIS server.
 
-Now TinyDB support master/slave replication, a master can have multiple slaves, but at the moment
+Now ClauDB support master/slave replication, a master can have multiple slaves, but at the moment
 slaves can't have slaves.
 
 Also implements partially the Pub/Sub subsystem.
@@ -124,7 +131,7 @@ Also implements partially the Pub/Sub subsystem.
 
 Performance is quite good, not as good as REDIS, but it's good enough for Java.
 
-This is TinyDB
+This is ClauDB
 
     $ redis-benchmark -t set,get -h localhost -p 7081 -n 100000 -q
     SET: 47664.44 requests per second
@@ -138,15 +145,15 @@ And this is REDIS
     
 In my laptop (intel core i5, with 4G of RAM)
 
-In the latest version, TinyDB includes an option to use an off heap memory cache. See usage section
+In the latest version, ClauDB includes an option to use an off heap memory cache. See usage section
 
 ## BUILD
 
 You need to clon the repo:
 
-    $ git clone https://github.com/tonivade/tinydb.git
+    $ git clone https://github.com/tonivade/claudb.git
 
-TinyDB uses Gradle as building tool, but you don't need Gradle installed, just type:
+ClauDB uses Gradle as building tool, but you don't need Gradle installed, just type:
 
     $ ./gradlew build
 
@@ -162,23 +169,23 @@ Create all-in-one jar
 
 ## DOCKER
 
-You can create your own docker images for TinyDB using the provided `Dockerfile`
+You can create your own docker images for ClauDB using the provided `Dockerfile`
 
-    $ docker build -t tinydb .
+    $ docker build -t claudb .
 
 And then run the image
 
-    $ docker run -p 7081:7081 tinydb
+    $ docker run -p 7081:7081 claudb
 
 ## USAGE
 
 You can start a new server listening in default port 7081.
 
-    $ java -jar tinydb-all.jar
+    $ java -jar claudb-all.jar
 
 or using [jrun](https://github.com/ctrueden/jrun) utility
 
-    $ jrun com.github.tonivade:tinydb:com.github.tonivade.tinydb.Server
+    $ jrun com.github.tonivade:claudb:com.github.tonivade.claudb.Server
     
 Parameters:
 
@@ -196,13 +203,13 @@ Also you can use inside your project using Maven
 
     <dependency>
         <groupId>com.github.tonivade</groupId>
-        <artifactId>tinydb</artifactId>
-        <version>0.13.0</version>
+        <artifactId>claudb</artifactId>
+        <version>1.0.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:tinydb:0.13.0'
+    compile 'com.github.tonivade:claudb:1.0.0'
 
 ## TODO
 
@@ -214,11 +221,12 @@ Or gradle
 
 ## Continuous Integration
 
-[![Build Status](https://travis-ci.org/tonivade/tinydb.svg?branch=master)](https://travis-ci.org/tonivade/tinydb) 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/tinydb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/tinydb&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/tinydb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/tinydb&utm_campaign=Badge_Coverage)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/tinydb)
+[![Build Status](https://travis-ci.org/tonivade/claudb.svg?branch=master)](https://travis-ci.org/tonivade/claudb) 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
 [![Dependency Status](https://www.versioneye.com/user/projects/58d4c93cdcaf9e0040b1b729/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58d4c93cdcaf9e0040b1b729)
+
 ## LICENSE
 
-TinyDB is released under MIT License
+ClauDB is released under MIT License

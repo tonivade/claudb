@@ -4,8 +4,8 @@ apply plugin: 'jacoco'
 apply plugin: 'com.bmuschko.nexus'
 
 group = 'com.github.tonivade'
-archivesBaseName = 'tinydb'
-version = '0.14.0-SNAPSHOT'
+archivesBaseName = 'claudb'
+version = '1.0.0-SNAPSHOT'
 
 configurations {
   codacy
@@ -75,9 +75,9 @@ processResources {
 
 task fatJar(type: Jar) {
     manifest { 
-        attributes "Main-Class": "com.github.tonivade.tinydb.Server"
+        attributes "Main-Class": "com.github.tonivade.claudb.Server"
     }
-    baseName = project.name + '-all'
+    baseName = archivesBaseName + '-all'
     from { 
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
     }
@@ -86,21 +86,21 @@ task fatJar(type: Jar) {
 
 modifyPom {
     project {
-        name 'TinyDB'
-        description 'TinyDB is a REDIS implementation in Java'
-        url 'https://github.com/tonivade/tinydb'
+        name 'ClauDB'
+        description 'ClauDB is a REDIS implementation in Java'
+        url 'https://github.com/tonivade/claudb'
         inceptionYear '2015'
 
         scm {
-            url 'https://github.com/tonivade/tinydb'
-            connection 'scm:https://github.com/tonivade/tinydb.git'
-            developerConnection 'scm:git://github.com/tonivade/tinydb.git'
+            url 'https://github.com/tonivade/claudb'
+            connection 'scm:https://github.com/tonivade/claudb.git'
+            developerConnection 'scm:git://github.com/tonivade/claudb.git'
         }
 
         licenses {
             license {
                 name 'The MIT License (MIT)'
-                url 'https://github.com/tonivade/tinydb/blob/master/LICENSE'
+                url 'https://github.com/tonivade/claudb/blob/master/LICENSE'
                 distribution 'repo'
             }
         }
