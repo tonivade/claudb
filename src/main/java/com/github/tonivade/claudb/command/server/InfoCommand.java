@@ -26,13 +26,13 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 
 @ReadOnly
 @Command("info")
-public class InfoCommand implements TinyDBCommand {
+public class InfoCommand implements DBCommand {
 
   private static final String SHARP = "#";
   private static final String SEPARATOR = ":";

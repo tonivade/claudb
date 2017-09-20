@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.error;
@@ -17,8 +16,8 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBServerState;
-import com.github.tonivade.claudb.TinyDBSessionState;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.PubSubAllowed;
@@ -27,7 +26,7 @@ import com.github.tonivade.claudb.command.annotation.TxIgnore;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 
-public class TinyDBCommandWrapper implements RespCommand {
+public class DBCommandWrapper implements RespCommand {
 
   private int params;
 
@@ -39,7 +38,7 @@ public class TinyDBCommandWrapper implements RespCommand {
 
   private final Object command;
 
-  public TinyDBCommandWrapper(Object command) {
+  public DBCommandWrapper(Object command) {
     this.command = command;
     ParamLength length = command.getClass().getAnnotation(ParamLength.class);
     if (length != null) {
@@ -80,8 +79,8 @@ public class TinyDBCommandWrapper implements RespCommand {
       enqueueRequest(request);
       return status("QUEUED");
     }
-    if (command instanceof TinyDBCommand) {
-      return executeTinyDBCommand(db, request);
+    if (command instanceof DBCommand) {
+      return executeDBCommand(db, request);
     } else if (command instanceof RespCommand) {
       return executeCommand(request);
     }
@@ -92,8 +91,8 @@ public class TinyDBCommandWrapper implements RespCommand {
     return ((RespCommand) command).execute(request);
   }
 
-  private RedisToken executeTinyDBCommand(Database db, Request request) {
-    return ((TinyDBCommand) command).execute(db, request);
+  private RedisToken executeDBCommand(Database db, Request request) {
+    return ((DBCommand) command).execute(db, request);
   }
 
   private void enqueueRequest(Request request) {
@@ -109,24 +108,24 @@ public class TinyDBCommandWrapper implements RespCommand {
   }
 
   private Database getCurrentDB(Request request) {
-    TinyDBServerState serverState = getServerState(request.getServerContext());
-    TinyDBSessionState sessionState = getSessionState(request.getSession());
+    DBServerState serverState = getServerState(request.getServerContext());
+    DBSessionState sessionState = getSessionState(request.getSession());
     return serverState.getDatabase(sessionState.getCurrentDB());
   }
 
-  private TinyDBServerState getServerState(ServerContext server) {
+  private DBServerState getServerState(ServerContext server) {
     return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private TinyDBSessionState getSessionState(Session session) {
+  private DBSessionState getSessionState(Session session) {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Optional<TinyDBServerState> serverState(ServerContext server) {
+  private Optional<DBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  private Optional<TinyDBSessionState> sessionState(Session session) {
+  private Optional<DBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 

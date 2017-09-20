@@ -15,7 +15,7 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
@@ -24,7 +24,7 @@ import com.github.tonivade.claudb.data.DatabaseValue;
 @Command("getbit")
 @ParamLength(2)
 @ParamType(DataType.STRING)
-public class GetBitCommand implements TinyDBCommand {
+public class GetBitCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {

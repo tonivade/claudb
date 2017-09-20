@@ -19,14 +19,14 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerState;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
 import io.vavr.control.Try;
 
 @ParamLength(1)
 @Command("script")
-public class ScriptCommands implements TinyDBCommand {
+public class ScriptCommands implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -40,13 +40,13 @@ public class ScriptCommands implements TinyDBCommand {
   private RedisToken load(Request request) {
     SafeString script = request.getParam(1);
     String sha1 = Try.of(() -> digest(script)).get();
-    TinyDBServerState server = getServerState(request.getServerContext());
+    DBServerState server = getServerState(request.getServerContext());
     server.saveScript(safeString(sha1), script);
     return RedisToken.string(sha1);
   }
 
   private RedisToken exists(Request request) {
-    TinyDBServerState server = getServerState(request.getServerContext());
+    DBServerState server = getServerState(request.getServerContext());
     return integer(server.getScript(request.getParam(1)).isPresent());
   }
 

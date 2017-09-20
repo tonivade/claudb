@@ -10,7 +10,7 @@ import static com.github.tonivade.claudb.data.DatabaseValue.set;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
 
 import io.vavr.collection.Set;
@@ -27,7 +27,7 @@ public interface BaseSubscriptionSupport
         (oldValue, newValue) -> set(oldValue.getSet().removeAll(newValue.getSet())));
   }
   
-  default int publish(TinyDBServerContext server, Set<SafeString> clients, RedisToken message) {
+  default int publish(DBServerContext server, Set<SafeString> clients, RedisToken message) {
     clients.forEach(client -> server.publish(client.toString(), message));
     return clients.size();
   }

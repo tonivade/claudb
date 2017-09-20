@@ -8,19 +8,19 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.tonivade.claudb.TinyDBConfig;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBConfig;
+import com.github.tonivade.claudb.DBServerContext;
 
 public class DatabaseCleaner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseCleaner.class);
 
-  private final TinyDBServerContext server;
-  private final TinyDBConfig config;
+  private final DBServerContext server;
+  private final DBConfig config;
 
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-  public DatabaseCleaner(TinyDBServerContext server, TinyDBConfig config) {
+  public DatabaseCleaner(DBServerContext server, DBConfig config) {
     this.server = server;
     this.config = config;
   }

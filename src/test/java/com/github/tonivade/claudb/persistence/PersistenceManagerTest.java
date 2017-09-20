@@ -34,8 +34,8 @@ import org.mockito.stubbing.Answer;
 
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBConfig;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBConfig;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 
@@ -47,13 +47,13 @@ public class PersistenceManagerTest {
   private static final String DUMP_FILE = "dump.rdb";
 
   @Mock
-  private TinyDBServerContext server;
+  private DBServerContext server;
 
   private PersistenceManager manager;
 
   @Before
   public void setUp()  {
-    this.manager = new PersistenceManager(server, TinyDBConfig.builder().withPersistence().build());
+    this.manager = new PersistenceManager(server, DBConfig.builder().withPersistence().build());
     deleteFiles();
   }
 

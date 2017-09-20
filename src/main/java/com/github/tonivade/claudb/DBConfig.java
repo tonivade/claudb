@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb;
 
-public class TinyDBConfig {
+public class DBConfig {
 
   private static final int DEFAULT_SYNC_PERIOD = 60;
   private static final int DEFAULT_CLEAN_PERIOD = 30;
@@ -93,7 +93,7 @@ public class TinyDBConfig {
   }
 
   public static class Builder {
-    private TinyDBConfig config = new TinyDBConfig();
+    private DBConfig config = new DBConfig();
 
     public Builder withoutPersistence() {
       config.setPersistenceActive(false);
@@ -117,7 +117,7 @@ public class TinyDBConfig {
       return this;
     }
 
-    public TinyDBConfig build() {
+    public DBConfig build() {
       return config;
     }
   }

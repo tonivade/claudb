@@ -28,9 +28,9 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.TinyDBServerState;
-import com.github.tonivade.claudb.TinyDBSessionState;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
@@ -39,14 +39,14 @@ import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 public class CommandRule implements TestRule {
 
   private Request request;
-  private TinyDBServerContext server;
+  private DBServerContext server;
   private Session session;
-  private TinyDBCommand command;
+  private DBCommand command;
 
   private final Object target;
 
-  private final TinyDBServerState serverState = new TinyDBServerState(new OnHeapDatabaseFactory(), 1);
-  private final TinyDBSessionState sessionState = new TinyDBSessionState();
+  private final DBServerState serverState = new DBServerState(new OnHeapDatabaseFactory(), 1);
+  private final DBSessionState sessionState = new DBSessionState();
 
   private RedisToken response;
 
@@ -70,7 +70,7 @@ public class CommandRule implements TestRule {
     return session;
   }
 
-  public TinyDBServerContext getServer() {
+  public DBServerContext getServer() {
     return server;
   }
 
@@ -83,7 +83,7 @@ public class CommandRule implements TestRule {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
-        server = mock(TinyDBServerContext.class);
+        server = mock(DBServerContext.class);
         request = mock(Request.class);
         session = mock(Session.class);
 
@@ -131,7 +131,7 @@ public class CommandRule implements TestRule {
   }
 
   public CommandRule execute() {
-    response = new TinyDBCommandWrapper(command).execute(request);
+    response = new DBCommandWrapper(command).execute(request);
     return this;
   }
 
@@ -182,7 +182,7 @@ public class CommandRule implements TestRule {
   public <T> T verify(Class<T> type) {
     if (type.equals(ServerContext.class)) {
       return (T) Mockito.verify(server);
-    } else if (type.equals(TinyDBServerContext.class)) {
+    } else if (type.equals(DBServerContext.class)) {
       return (T) Mockito.verify(server);
     } else if (type.equals(Session.class)) {
       return (T) Mockito.verify(session);
@@ -190,11 +190,11 @@ public class CommandRule implements TestRule {
     throw new IllegalArgumentException();
   }
 
-  public TinyDBServerState getServerState() {
+  public DBServerState getServerState() {
     return serverState;
   }
 
-  public TinyDBSessionState getSessionState() {
+  public DBSessionState getSessionState() {
     return sessionState;
   }
 

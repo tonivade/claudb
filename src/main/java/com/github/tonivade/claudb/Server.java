@@ -24,9 +24,9 @@ public class Server {
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
-        .defaultsTo(TinyDB.DEFAULT_HOST);
+        .defaultsTo(ClauDB.DEFAULT_HOST);
     OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
-        .defaultsTo(TinyDB.DEFAULT_PORT);
+        .defaultsTo(ClauDB.DEFAULT_PORT);
 
     OptionSet options = parser.parse(args);
 
@@ -35,7 +35,7 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
-      TinyDBConfig config = parseConfig(options.has(persist), 
+      DBConfig config = parseConfig(options.has(persist), 
                                         options.has(offHeap), 
                                         options.has(notifications));
      
@@ -43,7 +43,7 @@ public class Server {
       
       System.setProperty("root-level", options.has(verbose) ? "DEBUG": "INFO");
       
-      TinyDB server = new TinyDB(optionHost, optionPort, config);
+      ClauDB server = new ClauDB(optionHost, optionPort, config);
       Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));
       server.start();
     }
@@ -56,11 +56,11 @@ public class Server {
   }
 
   private static int parsePort(Integer optionPort) {
-    return optionPort != null ? optionPort : TinyDBServerContext.DEFAULT_PORT;
+    return optionPort != null ? optionPort : DBServerContext.DEFAULT_PORT;
   }
 
-  private static TinyDBConfig parseConfig(boolean persist, boolean offHeap, boolean notifications) {
-    TinyDBConfig.Builder builder = TinyDBConfig.builder();
+  private static DBConfig parseConfig(boolean persist, boolean offHeap, boolean notifications) {
+    DBConfig.Builder builder = DBConfig.builder();
     if (persist) {
       builder.withPersistence();
     }

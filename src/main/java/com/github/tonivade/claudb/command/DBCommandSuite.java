@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.claudb.command;
 
 import static java.util.Arrays.asList;
@@ -86,12 +85,12 @@ import com.github.tonivade.claudb.command.zset.SortedSetRangeCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetRemoveCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetReverseRangeCommand;
 
-public class TinyDBCommandSuite extends CommandSuite {
+public class DBCommandSuite extends CommandSuite {
 
   private static final Set<String> COMMAND_BLACK_LIST = new HashSet<>(asList("ping", "echo", "quit", "time"));
 
-  public TinyDBCommandSuite() {
-    super(new TinyDBCommandWrapperFactory());
+  public DBCommandSuite() {
+    super(new DBCommandWrapperFactory());
     // connection
     addCommand(SelectCommand.class);
     addCommand(SyncCommand.class);

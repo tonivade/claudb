@@ -32,18 +32,18 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBRule;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.ClauDBRule;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
 
   @Rule
-  public final TinyDBRule rule = new TinyDBRule();
+  public final ClauDBRule rule = new ClauDBRule();
 
   @Mock
-  private TinyDBServerContext context;
+  private DBServerContext context;
   @Mock
   private Session session;
   @Mock

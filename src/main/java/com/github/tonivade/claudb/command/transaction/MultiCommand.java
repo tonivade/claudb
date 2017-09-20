@@ -12,13 +12,13 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.TransactionState;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.TxIgnore;
 import com.github.tonivade.claudb.data.Database;
 
 @Command("multi")
 @TxIgnore
-public class MultiCommand implements TinyDBCommand {
+public class MultiCommand implements DBCommand {
 
   private static final String TRASACTION_KEY = "tx";
 

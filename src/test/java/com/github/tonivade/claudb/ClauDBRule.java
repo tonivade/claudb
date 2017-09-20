@@ -8,20 +8,20 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-public class TinyDBRule  implements TestRule {
+public class ClauDBRule  implements TestRule {
 
-  private final TinyDB server;
+  private final ClauDB server;
 
-  public TinyDBRule() {
-    this(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT);
+  public ClauDBRule() {
+    this(DBServerContext.DEFAULT_HOST, DBServerContext.DEFAULT_PORT);
   }
 
-  public TinyDBRule(String host, int port) {
-    this(host, port, TinyDBConfig.builder().withoutPersistence().build());
+  public ClauDBRule(String host, int port) {
+    this(host, port, DBConfig.builder().withoutPersistence().build());
   }
 
-  public TinyDBRule(String host, int port, TinyDBConfig config) {
-    this.server = new TinyDB(host, port, config);
+  public ClauDBRule(String host, int port, DBConfig config) {
+    this.server = new ClauDB(host, port, config);
   }
 
   @Override

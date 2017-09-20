@@ -11,11 +11,11 @@ import java.time.Instant;
 
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
 
-public abstract class TimeToLiveCommand implements TinyDBCommand {
+public abstract class TimeToLiveCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {

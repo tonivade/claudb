@@ -15,8 +15,8 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerState;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
@@ -27,11 +27,11 @@ import io.vavr.collection.Set;
 
 @ReadOnly
 @Command("role")
-public class RoleCommand implements TinyDBCommand {
+public class RoleCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    TinyDBServerState serverState = getServerState(request.getServerContext());
+    DBServerState serverState = getServerState(request.getServerContext());
     Database adminDatabase = getAdminDatabase(request.getServerContext());
     return serverState.isMaster() ? master(adminDatabase) : slave(adminDatabase);
   }

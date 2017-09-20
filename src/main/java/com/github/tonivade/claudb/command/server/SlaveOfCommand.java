@@ -11,7 +11,7 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.replication.SlaveReplication;
@@ -19,7 +19,7 @@ import com.github.tonivade.claudb.replication.SlaveReplication;
 @ReadOnly
 @Command("slaveof")
 @ParamLength(2)
-public class SlaveOfCommand implements TinyDBCommand {
+public class SlaveOfCommand implements DBCommand {
 
   private SlaveReplication slave;
 
@@ -47,7 +47,7 @@ public class SlaveOfCommand implements TinyDBCommand {
 
   private void startReplication(Request request, String host, String port) {
     slave = new SlaveReplication(
-        getTinyDB(request.getServerContext()), request.getSession(), host, Integer.parseInt(port));
+        getClauDB(request.getServerContext()), request.getSession(), host, Integer.parseInt(port));
 
     slave.start();
   }

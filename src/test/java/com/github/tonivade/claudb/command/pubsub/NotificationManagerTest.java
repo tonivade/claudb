@@ -19,7 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
@@ -35,7 +35,7 @@ import io.vavr.collection.Stream;
 public class NotificationManagerTest {
   
   @Mock
-  private TinyDBServerContext server;
+  private DBServerContext server;
   @Mock
   private Database database;
 

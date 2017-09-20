@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
 
@@ -35,7 +35,7 @@ public class PublishCommandTest {
         .withParams("test", "Hello World!")
         .execute()
         .assertThat(RedisToken.integer(1))
-        .verify(TinyDBServerContext.class).publish("localhost:12345",
+        .verify(DBServerContext.class).publish("localhost:12345",
             array(string("message"), string("test"), string("Hello World!")));
   }
 
@@ -45,7 +45,7 @@ public class PublishCommandTest {
         .withParams("test:pepe", "Hello World!")
         .execute()
         .assertThat(RedisToken.integer(1))
-        .verify(TinyDBServerContext.class).publish("localhost:12345",
+        .verify(DBServerContext.class).publish("localhost:12345",
              array(string("pmessage"), string("test:*"), string("test:pepe"), string("Hello World!")));
   }
 
@@ -57,9 +57,9 @@ public class PublishCommandTest {
         .execute()
         .assertThat(RedisToken.integer(2));
     
-    rule.verify(TinyDBServerContext.class).publish("localhost:12345",
+    rule.verify(DBServerContext.class).publish("localhost:12345",
         array(string("message"), string("test:pepe"), string("Hello World!")));
-    rule.verify(TinyDBServerContext.class).publish("localhost:54321",
+    rule.verify(DBServerContext.class).publish("localhost:54321",
         array(string("pmessage"), string("test:*"), string("test:pepe"), string("Hello World!")));
   }
 }

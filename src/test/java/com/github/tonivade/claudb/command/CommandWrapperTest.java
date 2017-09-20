@@ -27,9 +27,9 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.TinyDBServerState;
-import com.github.tonivade.claudb.TinyDBSessionState;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
@@ -44,11 +44,11 @@ public class CommandWrapperTest {
   @Mock
   private Session session;
   @Mock
-  private TinyDBServerContext server;
+  private DBServerContext server;
   @Mock
-  private TinyDBSessionState sessionState;
+  private DBSessionState sessionState;
   @Mock
-  private TinyDBServerState serverState;
+  private DBServerState serverState;
 
   @Before
   public void setUp() {
@@ -63,7 +63,7 @@ public class CommandWrapperTest {
 
   @Test
   public void testExecute() {
-    TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new SomeCommand());
+    DBCommandWrapper wrapper = new DBCommandWrapper(new SomeCommand());
 
     RedisToken response = wrapper.execute(request);
 
@@ -74,7 +74,7 @@ public class CommandWrapperTest {
   public void testLengthOK() {
     when(request.getLength()).thenReturn(3);
 
-    TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new LengthCommand());
+    DBCommandWrapper wrapper = new DBCommandWrapper(new LengthCommand());
 
     RedisToken response = wrapper.execute(request);
 
@@ -85,7 +85,7 @@ public class CommandWrapperTest {
   public void testLengthKO() {
     when(request.getLength()).thenReturn(1);
 
-    TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new LengthCommand());
+    DBCommandWrapper wrapper = new DBCommandWrapper(new LengthCommand());
 
     RedisToken response = wrapper.execute(request);
 
@@ -97,7 +97,7 @@ public class CommandWrapperTest {
     when(db.isType(any(DatabaseKey.class), eq(DataType.STRING))).thenReturn(true);
     when(request.getParam(0)).thenReturn(safeString("test"));
 
-    TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new TypeCommand());
+    DBCommandWrapper wrapper = new DBCommandWrapper(new TypeCommand());
 
     RedisToken response = wrapper.execute(request);
 
@@ -109,7 +109,7 @@ public class CommandWrapperTest {
     when(db.isType(any(DatabaseKey.class), eq(DataType.STRING))).thenReturn(false);
     when(request.getParam(0)).thenReturn(safeString("test"));
 
-    TinyDBCommandWrapper wrapper = new TinyDBCommandWrapper(new TypeCommand());
+    DBCommandWrapper wrapper = new DBCommandWrapper(new TypeCommand());
 
     RedisToken response = wrapper.execute(request);
 
@@ -117,7 +117,7 @@ public class CommandWrapperTest {
   }
 
   @Command("test")
-  private static class SomeCommand implements TinyDBCommand {
+  private static class SomeCommand implements DBCommand {
     @Override
     public RedisToken execute(Database db, Request request) {
       return responseOk();
@@ -126,7 +126,7 @@ public class CommandWrapperTest {
 
   @Command("test")
   @ParamLength(2)
-  private static class LengthCommand implements TinyDBCommand {
+  private static class LengthCommand implements DBCommand {
     @Override
     public RedisToken execute(Database db, Request request) {
       return responseOk();
@@ -135,7 +135,7 @@ public class CommandWrapperTest {
 
   @Command("test")
   @ParamType(DataType.STRING)
-  private static class TypeCommand implements TinyDBCommand {
+  private static class TypeCommand implements DBCommand {
     @Override
     public RedisToken execute(Database db, Request request) {
       return responseOk();

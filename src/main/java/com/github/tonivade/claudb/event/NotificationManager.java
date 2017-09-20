@@ -7,15 +7,15 @@ package com.github.tonivade.claudb.event;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.command.pubsub.PatternSubscriptionSupport;
 
 public class NotificationManager implements PatternSubscriptionSupport {
 
-  private final TinyDBServerContext server;
+  private final DBServerContext server;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-  public NotificationManager(TinyDBServerContext server) {
+  public NotificationManager(DBServerContext server) {
     this.server = server;
   }
 

@@ -19,10 +19,10 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-public class TinyDBTest {
+public class ClauDBTest {
 
   @Rule
-  public final TinyDBRule rule = new TinyDBRule();
+  public final ClauDBRule rule = new ClauDBRule();
 
   @Test
   public void testCommands() {
@@ -117,7 +117,7 @@ public class TinyDBTest {
   }
 
   private Jedis createClientConnection() {
-    return new Jedis(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT, 10000);
+    return new Jedis(DBServerContext.DEFAULT_HOST, DBServerContext.DEFAULT_PORT, 10000);
   }
 
   private String value(int i) {

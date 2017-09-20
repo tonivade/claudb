@@ -23,20 +23,20 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.TinyDBServerState;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
 
   @Mock
-  private TinyDBServerContext server;
+  private DBServerContext server;
 
   @InjectMocks
   private MasterReplication master;
 
-  private final TinyDBServerState serverState = new TinyDBServerState(new OnHeapDatabaseFactory(), 1);
+  private final DBServerState serverState = new DBServerState(new OnHeapDatabaseFactory(), 1);
 
   @Test
   public void testReplication()  {

@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
@@ -27,7 +26,7 @@ import io.vavr.collection.Map;
 import io.vavr.collection.Set;
 import io.vavr.collection.Stream;
 
-class TinyDBResponse {
+class DBResponse {
 
   static RedisToken convertValue(DatabaseValue value) {
     if (value != null) {
@@ -58,7 +57,7 @@ class TinyDBResponse {
     if (array == null) {
       return RedisToken.array();
     }
-    return RedisToken.array(array.stream().map(TinyDBResponse::parseToken).collect(toList()));
+    return RedisToken.array(array.stream().map(DBResponse::parseToken).collect(toList()));
   }
 
   private static RedisToken parseToken(Object value) {
@@ -68,7 +67,7 @@ class TinyDBResponse {
         Case($(instanceOf(String.class)), RedisToken::string),
         Case($(instanceOf(Double.class)), x -> RedisToken.string(x.toString())),
         Case($(instanceOf(SafeString.class)), RedisToken::string),
-        Case($(instanceOf(DatabaseValue.class)), TinyDBResponse::convertValue),
+        Case($(instanceOf(DatabaseValue.class)), DBResponse::convertValue),
         Case($(instanceOf(RedisToken.class)), Function.identity()),
         Case($(is(null)), ignore -> RedisToken.nullString()));
   }

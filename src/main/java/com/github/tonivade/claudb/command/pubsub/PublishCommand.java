@@ -11,24 +11,24 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
 
 @Command("publish")
 @ParamLength(2)
-public class PublishCommand implements TinyDBCommand, SubscriptionSupport, PatternSubscriptionSupport {
+public class PublishCommand implements DBCommand, SubscriptionSupport, PatternSubscriptionSupport {
 
   @Override
   public RedisToken execute(Database db, Request request) {
     String channel = request.getParam(0).toString();
     SafeString message = request.getParam(1);
-    return integer(publishAll(getTinyDB(request.getServerContext()), channel, message));
+    return integer(publishAll(getClauDB(request.getServerContext()), channel, message));
   }
 
-  private int publishAll(TinyDBServerContext tinyDB, String channel, SafeString message) {
-    int count = publish(tinyDB, channel, message);
-    int pcount = patternPublish(tinyDB, channel, message);
+  private int publishAll(DBServerContext server, String channel, SafeString message) {
+    int count = publish(server, channel, message);
+    int pcount = patternPublish(server, channel, message);
     return count + pcount;
   }
 }

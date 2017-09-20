@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class TinyDBSessionState {
+public class DBSessionState {
 
   private int db;
 

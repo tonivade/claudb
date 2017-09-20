@@ -56,9 +56,9 @@ public class Client implements RespCallback {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
-        .defaultsTo(TinyDB.DEFAULT_HOST);
+        .defaultsTo(ClauDB.DEFAULT_HOST);
     OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
-        .defaultsTo(TinyDB.DEFAULT_PORT);
+        .defaultsTo(ClauDB.DEFAULT_PORT);
 
     OptionSet options = parser.parse(args);
 
@@ -93,6 +93,6 @@ public class Client implements RespCallback {
   }
 
   private static int parsePort(Integer optionPort) {
-    return optionPort != null ? optionPort : TinyDBServerContext.DEFAULT_PORT;
+    return optionPort != null ? optionPort : DBServerContext.DEFAULT_PORT;
   }
 }

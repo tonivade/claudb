@@ -34,7 +34,7 @@ import com.github.tonivade.claudb.persistence.RDBOutputStream;
 import io.vavr.collection.LinkedHashMap;
 import io.vavr.collection.Set;
 
-public class TinyDBServerState {
+public class DBServerState {
 
   private static final int RDB_VERSION = 6;
 
@@ -50,7 +50,7 @@ public class TinyDBServerState {
 
   private final Queue<RedisToken> queue = new LinkedList<>();
 
-  public TinyDBServerState(DatabaseFactory factory, int numDatabases) {
+  public DBServerState(DatabaseFactory factory, int numDatabases) {
     this.factory = factory;
     this.admin = factory.create("admin");
     for (int i = 0; i < numDatabases; i++) {

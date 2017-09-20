@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBRule;
+import com.github.tonivade.claudb.ClauDBRule;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
 
@@ -17,7 +17,7 @@ import com.github.tonivade.claudb.command.CommandUnderTest;
 public class SlaveOfCommandTest {
 
   @Rule
-  public final TinyDBRule server = new TinyDBRule("localhost", 34241);
+  public final ClauDBRule server = new ClauDBRule("localhost", 34241);
 
   @Rule
   public final CommandRule rule = new CommandRule(this);

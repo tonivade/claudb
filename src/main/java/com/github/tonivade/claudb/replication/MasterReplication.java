@@ -22,8 +22,8 @@ import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisTokenVisitor;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.TinyDBServerState;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBServerState;
 
 public class MasterReplication implements Runnable {
 
@@ -33,10 +33,10 @@ public class MasterReplication implements Runnable {
   private static final String PING_COMMAND = "PING";
   private static final int TASK_DELAY = 2;
 
-  private final TinyDBServerContext server;
+  private final DBServerContext server;
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-  public MasterReplication(TinyDBServerContext server) {
+  public MasterReplication(DBServerContext server) {
     this.server = server;
   }
 
@@ -105,11 +105,11 @@ public class MasterReplication implements Runnable {
     return array(token.getValue().stream().skip(1).collect(toList()));
   }
 
-  private TinyDBServerState getServerState() {
+  private DBServerState getServerState() {
     return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private Optional<TinyDBServerState> serverState() {
+  private Optional<DBServerState> serverState() {
     return server.getValue("state");
   }
 }

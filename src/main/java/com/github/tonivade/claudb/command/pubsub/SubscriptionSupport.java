@@ -12,7 +12,7 @@ import java.util.Map;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
@@ -46,7 +46,7 @@ public interface SubscriptionSupport extends BaseSubscriptionSupport {
         .collect(toMap(Tuple2::_1, Tuple2::_2));
   }
 
-  default int publish(TinyDBServerContext server, String channel, SafeString message) {
+  default int publish(DBServerContext server, String channel, SafeString message) {
     return publish(server, getSubscription(server.getAdminDatabase(), channel), toMessage(channel, message));
   }
   

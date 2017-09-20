@@ -11,7 +11,7 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.DataType;
@@ -23,7 +23,7 @@ import io.vavr.collection.List;
 @Command("llen")
 @ParamLength(1)
 @ParamType(DataType.LIST)
-public class ListLengthCommand implements TinyDBCommand {
+public class ListLengthCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {

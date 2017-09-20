@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
@@ -50,7 +50,7 @@ public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
         .collect(toMap(Entry::getKey, Entry::getValue));
   }
 
-  default int patternPublish(TinyDBServerContext server, String channel, SafeString message) {
+  default int patternPublish(DBServerContext server, String channel, SafeString message) {
     int count = 0;
     for (Entry<String, Set<SafeString>> entry : getPatternSubscriptions(server.getAdminDatabase(), channel)) {
       count += publish(server, entry.getValue(), toPatternMessage(entry.getKey(), channel, message));

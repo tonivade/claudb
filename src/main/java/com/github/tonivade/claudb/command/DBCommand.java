@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.claudb.command;
 
 import java.util.Collection;
@@ -7,51 +11,51 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.TinyDBServerState;
-import com.github.tonivade.claudb.TinyDBSessionState;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
 
 import io.vavr.collection.Traversable;
 
 @FunctionalInterface
-public interface TinyDBCommand {
+public interface DBCommand {
   RedisToken execute(Database db, Request request);
 
-  default TinyDBServerContext getTinyDB(ServerContext server) {
-    return (TinyDBServerContext) server;
+  default DBServerContext getClauDB(ServerContext server) {
+    return (DBServerContext) server;
   }
 
   default Database getAdminDatabase(ServerContext server) {
     return getServerState(server).getAdminDatabase();
   }
 
-  default TinyDBServerState getServerState(ServerContext server) {
+  default DBServerState getServerState(ServerContext server) {
     return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  default TinyDBSessionState getSessionState(Session session) {
+  default DBSessionState getSessionState(Session session) {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missiong session state"));
   }
 
-  default Optional<TinyDBServerState> serverState(ServerContext server) {
+  default Optional<DBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  default Optional<TinyDBSessionState> sessionState(Session session) {
+  default Optional<DBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 
   default RedisToken convert(DatabaseValue value) {
-    return TinyDBResponse.convertValue(value);
+    return DBResponse.convertValue(value);
   }
 
   default RedisToken convert(Collection<?> list) {
-    return TinyDBResponse.convertArray(list);
+    return DBResponse.convertArray(list);
   }
 
   default RedisToken convert(Traversable<?> list) {
-    return TinyDBResponse.convertArray(list.toJavaList());
+    return DBResponse.convertArray(list.toJavaList());
   }
 }

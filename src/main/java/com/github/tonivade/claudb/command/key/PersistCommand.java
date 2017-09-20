@@ -7,13 +7,13 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
 
 @Command("persist")
 @ParamLength(1)
-public class PersistCommand implements TinyDBCommand {
+public class PersistCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {

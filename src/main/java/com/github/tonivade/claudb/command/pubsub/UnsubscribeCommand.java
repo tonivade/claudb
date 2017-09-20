@@ -15,7 +15,7 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.PubSubAllowed;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
@@ -24,7 +24,7 @@ import com.github.tonivade.claudb.data.Database;
 @Command("unsubscribe")
 @ParamLength(1)
 @PubSubAllowed
-public class UnsubscribeCommand implements TinyDBCommand, SubscriptionSupport {
+public class UnsubscribeCommand implements DBCommand, SubscriptionSupport {
 
   private static final String UNSUBSCRIBE = "unsubscribe";
 

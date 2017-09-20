@@ -14,8 +14,8 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.persistence.ByteBufferOutputStream;
@@ -23,14 +23,14 @@ import com.github.tonivade.claudb.replication.MasterReplication;
 
 @ReadOnly
 @Command("sync")
-public class SyncCommand implements TinyDBCommand {
+public class SyncCommand implements DBCommand {
 
   private MasterReplication master;
 
   @Override
   public RedisToken execute(Database db, Request request) {
     try {
-      TinyDBServerContext server = getTinyDB(request.getServerContext());
+      DBServerContext server = getClauDB(request.getServerContext());
 
       ByteBufferOutputStream output = new ByteBufferOutputStream();
       server.exportRDB(output);

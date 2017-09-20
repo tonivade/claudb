@@ -28,9 +28,9 @@ import com.github.tonivade.resp.protocol.RedisSource;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBConfig;
-import com.github.tonivade.claudb.TinyDBServerContext;
-import com.github.tonivade.claudb.command.TinyDBCommandProcessor;
+import com.github.tonivade.claudb.DBConfig;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.command.DBCommandProcessor;
 
 public class PersistenceManager {
 
@@ -39,20 +39,20 @@ public class PersistenceManager {
   private static final int MAX_FRAME_SIZE = 1024 * 1024 * 100;
 
   private OutputStream output;
-  private final TinyDBServerContext server;
-  private final TinyDBCommandProcessor processor;
+  private final DBServerContext server;
+  private final DBCommandProcessor processor;
   private final String dumpFile;
   private final String redoFile;
   private final int syncPeriod;
 
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-  public PersistenceManager(TinyDBServerContext server, TinyDBConfig config) {
+  public PersistenceManager(DBServerContext server, DBConfig config) {
     this.server = server;
     this.dumpFile = config.getRdbFile();
     this.redoFile = config.getAofFile();
     this.syncPeriod = config.getSyncPeriod();
-    this.processor = new TinyDBCommandProcessor(server);
+    this.processor = new DBCommandProcessor(server);
   }
 
   public void start() {

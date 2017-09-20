@@ -25,7 +25,7 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.command.TinyDBCommandSuite;
+import com.github.tonivade.claudb.command.DBCommandSuite;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseCleaner;
 import com.github.tonivade.claudb.data.DatabaseFactory;
@@ -37,24 +37,24 @@ import com.github.tonivade.claudb.persistence.PersistenceManager;
 
 import io.reactivex.Observable;
 
-public class TinyDB extends RespServer implements TinyDBServerContext {
+public class ClauDB extends RespServer implements DBServerContext {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(TinyDB.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
   private final DatabaseCleaner cleaner;
   private final Optional<PersistenceManager> persistence;
   private final Optional<NotificationManager> notifications;
 
-  public TinyDB() {
+  public ClauDB() {
     this(DEFAULT_HOST, DEFAULT_PORT);
   }
 
-  public TinyDB(String host, int port) {
-    this(host, port, TinyDBConfig.builder().build());
+  public ClauDB(String host, int port) {
+    this(host, port, DBConfig.builder().build());
   }
 
-  public TinyDB(String host, int port, TinyDBConfig config) {
-    super(host, port, new TinyDBCommandSuite());
+  public ClauDB(String host, int port, DBConfig config) {
+    super(host, port, new DBCommandSuite());
     if (config.isPersistenceActive()) {
       this.persistence = Optional.of(new PersistenceManager(this, config));
     } else {
@@ -72,7 +72,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
       factory = new OnHeapDatabaseFactory();
     }
     this.cleaner = new DatabaseCleaner(this, config);
-    putValue("state", new TinyDBServerState(factory, config.getNumDatabases()));
+    putValue("state", new DBServerState(factory, config.getNumDatabases()));
   }
 
   @Override
@@ -157,7 +157,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
 
   @Override
   protected void createSession(Session session) {
-    session.putValue("state", new TinyDBSessionState());
+    session.putValue("state", new DBSessionState());
   }
 
   @Override
@@ -203,7 +203,7 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
   }
 
   private boolean isReadOnlyCommand(String command) {
-    return getTinyDBCommands().isReadOnly(command);
+    return getDBCommands().isReadOnly(command);
   }
 
   private void publishEvent(NotificationManager manager, Request request) {
@@ -247,19 +247,19 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     return request.getParams().stream().map(RedisToken::string).collect(toList());
   }
 
-  private TinyDBSessionState getSessionState(Session session) {
+  private DBSessionState getSessionState(Session session) {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Optional<TinyDBSessionState> sessionState(Session session) {
+  private Optional<DBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 
-  private TinyDBServerState getState() {
+  private DBServerState getState() {
     return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private Optional<TinyDBServerState> serverState() {
+  private Optional<DBServerState> serverState() {
     return getValue("state");
   }
 
@@ -267,8 +267,8 @@ public class TinyDB extends RespServer implements TinyDBServerContext {
     return getState().hasSlaves();
   }
 
-  private TinyDBCommandSuite getTinyDBCommands() {
-    return (TinyDBCommandSuite) getCommands();
+  private DBCommandSuite getDBCommands() {
+    return (DBCommandSuite) getCommands();
   }
 
 }

@@ -13,7 +13,7 @@ import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.command.TinyDBCommand;
+import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
@@ -21,7 +21,7 @@ import com.github.tonivade.claudb.data.DatabaseValue;
 @ReadOnly
 @Command("exists")
 @ParamLength(1)
-public class ExistsCommand implements TinyDBCommand {
+public class ExistsCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {

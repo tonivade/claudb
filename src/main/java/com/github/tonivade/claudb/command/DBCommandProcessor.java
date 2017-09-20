@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2017, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
@@ -20,19 +24,19 @@ import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenVisitor;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.TinyDBServerContext;
+import com.github.tonivade.claudb.DBServerContext;
 
-public class TinyDBCommandProcessor {
-  private static final Logger LOGGER = LoggerFactory.getLogger(TinyDBCommandProcessor.class);
+public class DBCommandProcessor {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DBCommandProcessor.class);
 
-  private final TinyDBServerContext server;
+  private final DBServerContext server;
   private final Session session;
   
-  public TinyDBCommandProcessor(TinyDBServerContext server) {
+  public DBCommandProcessor(DBServerContext server) {
     this(server,  new DefaultSession("dummy", null));
   }
   
-  public TinyDBCommandProcessor(TinyDBServerContext server, Session session) {
+  public DBCommandProcessor(DBServerContext server, Session session) {
     this.server = server;
     this.session = session;
   }

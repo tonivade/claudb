@@ -21,17 +21,17 @@ import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 
-public class TinyDBClientTest {
+public class DBClientTest {
 
   @Rule
-  public final TinyDBRule rule = new TinyDBRule();
+  public final ClauDBRule rule = new ClauDBRule();
 
   @Test
   public void testClient()  {
     ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
-    RespClient client = new RespClient(TinyDBServerContext.DEFAULT_HOST, TinyDBServerContext.DEFAULT_PORT, callback);
+    RespClient client = new RespClient(DBServerContext.DEFAULT_HOST, DBServerContext.DEFAULT_PORT, callback);
 
     client.start();
 
