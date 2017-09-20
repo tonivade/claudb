@@ -225,7 +225,7 @@ Or gradle
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
-[![Dependency Status](https://www.versioneye.com/user/projects/58d4c93cdcaf9e0040b1b729/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/58d4c93cdcaf9e0040b1b729)
+[![Dependency Status](https://www.versioneye.com/user/projects/59c2cea60fb24f021cc89446/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/59c2cea60fb24f021cc89446)
 
 ## LICENSE
 
