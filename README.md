@@ -11,7 +11,7 @@ You will probably wonder why I do this, the answer is I do it Just For Fun.
 Initially I called this project TinyDB, but there's another project with the same name, so, I've
 decided to chage to ClaudDB.
 
-Clau is :key: in Valencià, a language spoken in the eastern Spain, and ClauDB is a key-value database.
+Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a key-value database.
 
 ## Implemented commands
 
