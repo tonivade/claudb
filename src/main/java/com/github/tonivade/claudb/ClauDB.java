@@ -58,13 +58,6 @@ public class ClauDB extends RespServer implements DBServerContext {
   public ClauDB(String host, int port, DBConfig config) {
     super(host, port, new DBCommandSuite());
     this.config = config;
-    DatabaseFactory factory = null;
-    if (config.isOffHeapActive()) {
-      factory = new OffHeapDatabaseFactory();
-    } else {
-      factory = new OnHeapDatabaseFactory();
-    }
-    putValue("state", new DBServerState(factory, config.getNumDatabases()));
   }
 
   @Override
@@ -272,6 +265,15 @@ public class ClauDB extends RespServer implements DBServerContext {
 
   private void init()
   {
+    DatabaseFactory factory = null;
+    if (config.isOffHeapActive()) {
+      factory = new OffHeapDatabaseFactory();
+    } else {
+      factory = new OnHeapDatabaseFactory();
+    }
+
+    putValue("state", new DBServerState(factory, config.getNumDatabases()));
+
     if (config.isPersistenceActive()) {
       this.persistence = Optional.of(new PersistenceManager(this, config));
     } else {
