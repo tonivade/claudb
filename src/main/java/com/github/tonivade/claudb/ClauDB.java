@@ -41,9 +41,11 @@ public class ClauDB extends RespServer implements DBServerContext {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
-  private final DatabaseCleaner cleaner;
-  private final Optional<PersistenceManager> persistence;
-  private final Optional<NotificationManager> notifications;
+  private DatabaseCleaner cleaner;
+  private Optional<PersistenceManager> persistence;
+  private Optional<NotificationManager> notifications;
+  
+  private final DBConfig config;
 
   public ClauDB() {
     this(DEFAULT_HOST, DEFAULT_PORT);
@@ -55,29 +57,21 @@ public class ClauDB extends RespServer implements DBServerContext {
 
   public ClauDB(String host, int port, DBConfig config) {
     super(host, port, new DBCommandSuite());
-    if (config.isPersistenceActive()) {
-      this.persistence = Optional.of(new PersistenceManager(this, config));
-    } else {
-      this.persistence = Optional.empty();
-    }
-    if (config.isNotificationsActive()) {
-      this.notifications = Optional.of(new NotificationManager(this));
-    } else {
-      this.notifications = Optional.empty();
-    }
+    this.config = config;
     DatabaseFactory factory = null;
     if (config.isOffHeapActive()) {
       factory = new OffHeapDatabaseFactory();
     } else {
       factory = new OnHeapDatabaseFactory();
     }
-    this.cleaner = new DatabaseCleaner(this, config);
     putValue("state", new DBServerState(factory, config.getNumDatabases()));
   }
 
   @Override
   public void start() {
     super.start();
+
+    init();
 
     getState().setMaster(true);
 
@@ -89,11 +83,16 @@ public class ClauDB extends RespServer implements DBServerContext {
   @Override
   public void stop() {
     super.stop();
+
     persistence.ifPresent(PersistenceManager::stop);
     notifications.ifPresent(NotificationManager::stop);
     cleaner.stop();
 
     getState().clear();
+
+    persistence = null;
+    notifications = null;
+    cleaner = null;
   }
 
   @Override
@@ -271,4 +270,18 @@ public class ClauDB extends RespServer implements DBServerContext {
     return (DBCommandSuite) getCommands();
   }
 
+  private void init()
+  {
+    if (config.isPersistenceActive()) {
+      this.persistence = Optional.of(new PersistenceManager(this, config));
+    } else {
+      this.persistence = Optional.empty();
+    }
+    if (config.isNotificationsActive()) {
+      this.notifications = Optional.of(new NotificationManager(this));
+    } else {
+      this.notifications = Optional.empty();
+    }
+    this.cleaner = new DatabaseCleaner(this, config);
+  }
 }
