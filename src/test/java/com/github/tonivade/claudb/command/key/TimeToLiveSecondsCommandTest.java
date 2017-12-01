@@ -20,7 +20,7 @@ import com.github.tonivade.claudb.data.DatabaseKey;
 public class TimeToLiveSecondsCommandTest extends TimeToLiveCommandTest {
 
   @Test
-  public void testExecute() throws InterruptedException {
+  public void testExecute() {
     Instant now = Instant.now();
 
     rule.withData(new DatabaseKey(safeString("test")), string("value").expiredAt(now.plusSeconds(10)))

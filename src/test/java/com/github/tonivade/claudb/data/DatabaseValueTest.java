@@ -33,7 +33,7 @@ public class DatabaseValueTest {
   }
 
   @Test
-  public void testExpiredKey() throws InterruptedException {
+  public void testExpiredKey() {
     Instant now = Instant.now();
 
     DatabaseValue expiredValue = string("hola").expiredAt(now.plusSeconds(10));

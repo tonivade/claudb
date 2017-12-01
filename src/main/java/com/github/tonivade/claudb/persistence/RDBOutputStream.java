@@ -48,7 +48,7 @@ public class RDBOutputStream {
     out.write(version(version));
   }
 
-  private byte[] version(int version) throws IOException {
+  private byte[] version(int version) {
     StringBuilder sb = new StringBuilder(String.valueOf(version));
     for (int i = sb.length(); i < Integer.BYTES; i++) {
       sb.insert(0, '0');

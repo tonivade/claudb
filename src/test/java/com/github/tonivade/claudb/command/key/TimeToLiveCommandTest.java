@@ -31,7 +31,7 @@ public abstract class TimeToLiveCommandTest {
     }
 
     @Test
-    public void testExecuteExpired() throws InterruptedException {
+    public void testExecuteExpired() {
         Instant now = Instant.now();
 
         rule.withData(new DatabaseKey(safeString("test")), string("value").expiredAt(now.minusSeconds(10)))

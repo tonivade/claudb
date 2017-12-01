@@ -5,10 +5,8 @@
 package com.github.tonivade.claudb;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import joptsimple.OptionParser;
@@ -49,7 +47,7 @@ public class Server {
     }
   }
 
-  private static Stream<String> readBanner() throws IOException, URISyntaxException
+  private static Stream<String> readBanner()
   {
     InputStream banner = Server.class.getResourceAsStream("/banner.txt");
     return new BufferedReader(new InputStreamReader(banner)).lines();
