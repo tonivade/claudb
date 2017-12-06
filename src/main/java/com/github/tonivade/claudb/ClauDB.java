@@ -62,6 +62,8 @@ public class ClauDB extends RespServerContext implements DBServerContext {
 
   @Override
   public void start() {
+    super.start();
+    
     init();
 
     getState().setMaster(true);
@@ -82,6 +84,8 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     persistence = null;
     notifications = null;
     cleaner = null;
+    
+    super.stop();
   }
 
   @Override
