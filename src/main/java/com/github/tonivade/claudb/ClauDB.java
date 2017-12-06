@@ -20,11 +20,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.tonivade.resp.RespServer;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.command.Session;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.DBCommandSuite;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseCleaner;
@@ -34,10 +29,15 @@ import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
+import com.github.tonivade.resp.RespServerContext;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.Session;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 import io.reactivex.Observable;
 
-public class ClauDB extends RespServer implements DBServerContext {
+public class ClauDB extends RespServerContext implements DBServerContext {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
@@ -62,8 +62,6 @@ public class ClauDB extends RespServer implements DBServerContext {
 
   @Override
   public void start() {
-    super.start();
-
     init();
 
     getState().setMaster(true);
@@ -75,8 +73,6 @@ public class ClauDB extends RespServer implements DBServerContext {
 
   @Override
   public void stop() {
-    super.stop();
-
     persistence.ifPresent(PersistenceManager::stop);
     notifications.ifPresent(NotificationManager::stop);
     cleaner.stop();
@@ -145,7 +141,8 @@ public class ClauDB extends RespServer implements DBServerContext {
     executeOn(Observable.create(observable -> {
       getState().evictExpired(now);
       observable.onComplete();
-    })).blockingSubscribe();  }
+    })).blockingSubscribe();  
+  }
 
   @Override
   protected void createSession(Session session) {
@@ -263,27 +260,43 @@ public class ClauDB extends RespServer implements DBServerContext {
     return (DBCommandSuite) getCommands();
   }
 
-  private void init()
-  {
+  private void init() {
+    DatabaseFactory factory = initFactory();
+
+    putValue("state", new DBServerState(factory, config.getNumDatabases()));
+
+    initPersistence();
+    initNotifications();
+    initCleaner();
+  }
+
+  private void initCleaner() {
+    this.cleaner = new DatabaseCleaner(this, config);
+  }
+
+  private void initNotifications() {
+    if (config.isNotificationsActive()) {
+      this.notifications = Optional.of(new NotificationManager(this));
+    } else {
+      this.notifications = Optional.empty();
+    }
+  }
+
+  private void initPersistence() {
+    if (config.isPersistenceActive()) {
+      this.persistence = Optional.of(new PersistenceManager(this, config));
+    } else {
+      this.persistence = Optional.empty();
+    }
+  }
+
+  private DatabaseFactory initFactory() {
     DatabaseFactory factory = null;
     if (config.isOffHeapActive()) {
       factory = new OffHeapDatabaseFactory();
     } else {
       factory = new OnHeapDatabaseFactory();
     }
-
-    putValue("state", new DBServerState(factory, config.getNumDatabases()));
-
-    if (config.isPersistenceActive()) {
-      this.persistence = Optional.of(new PersistenceManager(this, config));
-    } else {
-      this.persistence = Optional.empty();
-    }
-    if (config.isNotificationsActive()) {
-      this.notifications = Optional.of(new NotificationManager(this));
-    } else {
-      this.notifications = Optional.empty();
-    }
-    this.cleaner = new DatabaseCleaner(this, config);
+    return factory;
   }
 }

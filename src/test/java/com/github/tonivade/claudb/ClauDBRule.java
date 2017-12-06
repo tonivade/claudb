@@ -8,9 +8,11 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import com.github.tonivade.resp.RespServer;
+
 public class ClauDBRule  implements TestRule {
 
-  private final ClauDB server;
+  private final RespServer server;
 
   public ClauDBRule() {
     this(DBServerContext.DEFAULT_HOST, DBServerContext.DEFAULT_PORT);
@@ -21,7 +23,7 @@ public class ClauDBRule  implements TestRule {
   }
 
   public ClauDBRule(String host, int port, DBConfig config) {
-    this.server = new ClauDB(host, port, config);
+    this.server = new RespServer(new ClauDB(host, port, config));
   }
 
   @Override
