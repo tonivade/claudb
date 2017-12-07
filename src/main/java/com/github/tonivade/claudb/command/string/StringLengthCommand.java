@@ -29,7 +29,7 @@ public class StringLengthCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_STRING);
-    SafeString string = value.getValue();
+    SafeString string = value.getString();
     return integer(string.length());
   }
 }

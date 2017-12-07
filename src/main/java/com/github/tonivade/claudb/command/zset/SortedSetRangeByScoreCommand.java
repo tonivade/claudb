@@ -46,7 +46,7 @@ public class SortedSetRangeByScoreCommand implements DBCommand {
   public RedisToken execute(Database db, Request request) {
     try {
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-      NavigableSet<Entry<Double, SafeString>> set = value.getValue();
+      NavigableSet<Entry<Double, SafeString>> set = value.getSortedSet();
 
       float from = parseRange(request.getParam(1).toString());
       float to = parseRange(request.getParam(2).toString());

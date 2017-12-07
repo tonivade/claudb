@@ -50,7 +50,7 @@ public class RoleCommand implements DBCommand {
 
   private List<RedisToken> slaves(Database adminDatabase) {
     DatabaseValue value = adminDatabase.getOrDefault(safeKey("slaves"), DatabaseValue.EMPTY_SET);
-    Set<SafeString> set = value.getValue();
+    Set<SafeString> set = value.getSet();
     return set.map(SafeString::toString)
         .map(slave -> slave.split(":"))
         .map(slave -> array(string(slave[0]), string(slave[1]), string("0"))).toList();

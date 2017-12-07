@@ -39,17 +39,17 @@ public class SortedSetAddCommand implements DBCommand {
       DatabaseValue result = db.merge(safeKey(request.getParam(0)), parseInput(request),
           (oldValue, newValue) -> {
             Set<Entry<Double, SafeString>> merge = new SortedSet();
-            merge.addAll(oldValue.getValue());
-            merge.addAll(newValue.getValue());
+            merge.addAll(oldValue.getSortedSet());
+            merge.addAll(newValue.getSortedSet());
             return zset(merge);
           });
-      return integer(changed(initial.getValue(), result.getValue()));
+      return integer(changed(initial.getSortedSet(), result.getSortedSet()));
     } catch (NumberFormatException e) {
       return error("ERR value is not a valid float");
     }
   }
 
-  private int changed(Set<Entry<Float, String>> input, Set<Entry<Float, String>> result) {
+  private int changed(Set<Entry<Double, SafeString>> input, Set<Entry<Double, SafeString>> result) {
     return result.size() - input.size();
   }
 

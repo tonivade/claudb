@@ -57,15 +57,11 @@ public class DatabaseValue implements Serializable {
   private final Object value;
   private final Instant expiredAt;
 
-  public DatabaseValue(DataType type) {
-    this(type, null);
-  }
-
-  public DatabaseValue(DataType type, Object value) {
+  private DatabaseValue(DataType type, Object value) {
     this(type, value, null);
   }
 
-  public DatabaseValue(DataType type, Object value, Instant expiredAt) {
+  private DatabaseValue(DataType type, Object value, Instant expiredAt) {
     this.type = type;
     this.value = value;
     this.expiredAt = expiredAt;
@@ -74,29 +70,29 @@ public class DatabaseValue implements Serializable {
   public DataType getType() {
     return type;
   }
-
-  @SuppressWarnings("unchecked")
-  public <T> T getValue() {
-    return (T) value;
-  }
   
   public SafeString getString() {
+    requiredType(DataType.STRING);
     return getValue();
   }
   
   public List<SafeString> getList() {
+    requiredType(DataType.LIST);
     return getValue();
   }
-  
+
   public Set<SafeString> getSet() {
+    requiredType(DataType.SET);
     return getValue();
   }
   
   public NavigableSet<Entry<Double, SafeString>> getSortedSet() {
+    requiredType(DataType.ZSET);
     return getValue();
   }
   
   public Map<SafeString, SafeString> getHash() {
+    requiredType(DataType.HASH);
     return getValue();
   }
   
@@ -105,7 +101,8 @@ public class DatabaseValue implements Serializable {
                            Case($(instanceOf(List.class)), List::size),
                            Case($(instanceOf(Collection.class)), Collection::size),
                            Case($(instanceOf(Map.class)), Map::size),
-                           Case($(), x -> 1));
+                           Case($(instanceOf(SafeString.class)), 1),
+                           Case($(), other -> 0));
   }
 
   public Instant getExpiredAt() {
@@ -253,5 +250,16 @@ public class DatabaseValue implements Serializable {
 
   private long toMillis(int ttlSeconds) {
     return TimeUnit.SECONDS.toMillis(ttlSeconds);
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> T getValue() {
+    return (T) value;
+  }
+  
+  private void requiredType(DataType type) {
+    if (this.type != type) {
+      throw new IllegalStateException("invalid type: " + type);
+    }
   }
 }

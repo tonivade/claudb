@@ -32,19 +32,19 @@ class DBResponse {
     if (value != null) {
       switch (value.getType()) {
       case STRING:
-          SafeString string = value.getValue();
+          SafeString string = value.getString();
           return RedisToken.string(string);
       case HASH:
-          Map<SafeString, SafeString> map = value.getValue();
+          Map<SafeString, SafeString> map = value.getHash();
           return array(keyValueList(map).toJavaList());
       case LIST:
-          List<SafeString> list = value.getValue();
+          List<SafeString> list = value.getList();
           return convertArray(list.toJavaList());
       case SET:
-          Set<SafeString> set = value.getValue();
+          Set<SafeString> set = value.getSet();
           return convertArray(set.toJavaList());
       case ZSET:
-          NavigableSet<Entry<Double, SafeString>> zset = value.getValue();
+          NavigableSet<Entry<Double, SafeString>> zset = value.getSortedSet();
           return convertArray(serialize(zset));
       default:
         break;

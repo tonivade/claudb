@@ -9,7 +9,7 @@ import static com.github.tonivade.claudb.data.DatabaseValue.score;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import java.time.Instant;
 import java.util.Map;
@@ -48,12 +48,22 @@ public class DatabaseValueTest {
     assertThat(expiredValue.timeToLiveMillis(expired), is(-1000L));
     assertThat(expiredValue.timeToLiveSeconds(expired), is(-1));
   }
+  
+  @Test
+  public void getValue() {
+    assertThat(string("hola").getString(), is(safeString("hola")));
+  }
+  
+  @Test(expected = IllegalStateException.class)
+  public void getValueMismatch() {
+    string("hola").getList();
+  }
 
   @Test(expected = UnsupportedOperationException.class)
   public void testSortedSetUnmodifiable() {
     DatabaseValue value = zset(score(1.0, safeString("a")), score(2.0, safeString("b")), score(3.0, safeString("c")));
 
-    NavigableSet<Map.Entry<Double, SafeString>> sortedSet = value.getValue();
+    NavigableSet<Map.Entry<Double, SafeString>> sortedSet = value.getSortedSet();
 
     sortedSet.add(score(1.0, safeString("d")));
   }

@@ -24,7 +24,7 @@ public class OnHeapDatabaseTest {
   public void testDatabase()  {
     database.put(safeKey("a"), string("value"));
 
-    assertThat(database.get(safeKey("a")).getValue(), is(safeString("value")));
+    assertThat(database.get(safeKey("a")).getString(), is(safeString("value")));
     assertThat(database.containsKey(safeKey("a")), is(true));
     assertThat(database.containsKey(safeKey("b")), is(false));
     assertThat(database.isEmpty(), is(false));

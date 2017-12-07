@@ -31,7 +31,7 @@ public class ListRangeCommand implements DBCommand {
   public RedisToken execute(Database db, Request request) {
     try {
       DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST);
-      List<SafeString> list = value.getValue();
+      List<SafeString> list = value.getList();
 
       int from = Integer.parseInt(request.getParam(1).toString());
       if (from < 0) {

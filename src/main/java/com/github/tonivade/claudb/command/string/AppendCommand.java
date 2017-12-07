@@ -29,7 +29,7 @@ public class AppendCommand implements DBCommand {
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.merge(safeKey(request.getParam(0)), string(request.getParam(1)),
         (oldValue, newValue) -> {
-          return string(append(oldValue.getValue(), newValue.getValue()));
+          return string(append(oldValue.getString(), newValue.getString()));
         });
     return integer(value.getString().length());
   }

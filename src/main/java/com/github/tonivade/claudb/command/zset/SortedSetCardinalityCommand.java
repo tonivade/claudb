@@ -31,7 +31,7 @@ public class SortedSetCardinalityCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     DatabaseValue value = db.getOrDefault(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET);
-    Set<Entry<Float, SafeString>> set = value.getValue();
+    Set<Entry<Double, SafeString>> set = value.getSortedSet();
     return integer(set.size());
   }
 }

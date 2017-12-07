@@ -29,10 +29,10 @@ public class DecrementCommand implements DBCommand {
     try {
       DatabaseValue value = db.merge(safeKey(request.getParam(0)), string("-1"),
           (oldValue, newValue) -> {
-            int current = Integer.parseInt(oldValue.getValue().toString());
+            int current = Integer.parseInt(oldValue.getString().toString());
             return string(String.valueOf(current - 1));
           });
-      return integer(Integer.parseInt(value.getValue().toString()));
+      return integer(Integer.parseInt(value.getString().toString()));
     } catch (NumberFormatException e) {
       return error("ERR value is not an integer or out of range");
     }

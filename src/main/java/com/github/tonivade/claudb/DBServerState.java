@@ -113,8 +113,8 @@ public class DBServerState {
     DatabaseValue value = hash(entry(sha1, script));
     admin.merge(SCRIPTS_KEY, value, (oldValue, newValue) -> {
       Map<SafeString, SafeString> merge = new HashMap<>();
-      merge.putAll(oldValue.getValue());
-      merge.putAll(newValue.getValue());
+      merge.putAll(oldValue.getHash().toJavaMap());
+      merge.putAll(newValue.getHash().toJavaMap());
       return hash(LinkedHashMap.ofAll(merge));
     });
   }

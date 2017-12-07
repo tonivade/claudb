@@ -29,11 +29,11 @@ public class DecrementByCommand implements DBCommand {
     try {
       DatabaseValue value = db.merge(safeKey(request.getParam(0)), string("-" + request.getParam(1)),
           (oldValue, newValue) -> {
-            int decrement = Integer.parseInt(newValue.getValue().toString());
-            int current = Integer.parseInt(oldValue.getValue().toString());
+            int decrement = Integer.parseInt(newValue.getString().toString());
+            int current = Integer.parseInt(oldValue.getString().toString());
             return string(String.valueOf(current + decrement));
           });
-      return integer(Integer.parseInt(value.getValue().toString()));
+      return integer(Integer.parseInt(value.getString().toString()));
     } catch (NumberFormatException e) {
       return error("ERR value is not an integer or out of range");
     }

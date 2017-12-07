@@ -35,7 +35,7 @@ public class RightPopCommand implements DBCommand {
     LinkedList<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
-          List<SafeString> list = oldValue.getValue();
+          List<SafeString> list = oldValue.getList();
           list.reverse().headOption().forEach(removed::add);
           return list(list.reverse().tailOption().getOrElse(List::empty).reverse());
         });

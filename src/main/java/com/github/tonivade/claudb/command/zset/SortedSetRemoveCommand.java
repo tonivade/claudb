@@ -38,7 +38,7 @@ public class SortedSetRemoveCommand implements DBCommand {
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,
              (oldValue, newValue) -> {
                Set<Entry<Double, SafeString>> merge = new SortedSet();
-               merge.addAll(oldValue.getValue());
+               merge.addAll(oldValue.getSortedSet());
                for (SafeString item : items) {
                  if (merge.remove(item)) {
                    removed.add(item);

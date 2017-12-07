@@ -35,7 +35,7 @@ public class ListSetCommand implements DBCommand {
       int index = Integer.parseInt(request.getParam(1).toString());
       db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
           (oldValue, newValue) -> {
-            List<SafeString> oldList = oldValue.getValue();
+            List<SafeString> oldList = oldValue.getList();
             // TODO: use Array
             ArrayList<SafeString> array = new ArrayList<>(oldList.toJavaList());
             array.set(index > -1 ? index : array.size() + index, request.getParam(2));

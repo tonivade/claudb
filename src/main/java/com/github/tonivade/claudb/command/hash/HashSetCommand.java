@@ -40,7 +40,7 @@ public class HashSetCommand implements DBCommand {
           return hash(merge);
         });
 
-    Map<SafeString, SafeString> resultMap = resultValue.getValue();
+    Map<SafeString, SafeString> resultMap = resultValue.getHash();
 
     return integer(resultMap.get(request.getParam(1)) == null);
   }
