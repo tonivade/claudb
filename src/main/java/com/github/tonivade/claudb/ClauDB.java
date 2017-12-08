@@ -30,6 +30,7 @@ import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
 import com.github.tonivade.resp.RespServerContext;
+import com.github.tonivade.resp.SessionListener;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
@@ -38,6 +39,8 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import io.reactivex.Observable;
 
 public class ClauDB extends RespServerContext implements DBServerContext {
+
+  private static final String STATE = "state";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
@@ -56,7 +59,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   public ClauDB(String host, int port, DBConfig config) {
-    super(host, port, new DBCommandSuite());
+    super(host, port, new DBCommandSuite(), new DBSessionListener());
     this.config = config;
   }
 
@@ -149,16 +152,6 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   @Override
-  protected void createSession(Session session) {
-    session.putValue("state", new DBSessionState());
-  }
-
-  @Override
-  protected void cleanSession(Session session) {
-    session.destroy();
-  }
-
-  @Override
   protected RedisToken executeCommand(RespCommand command, Request request) {
     if (!isReadOnly(request.getCommand())) {
       try {
@@ -245,7 +238,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private Optional<DBSessionState> sessionState(Session session) {
-    return session.getValue("state");
+    return session.getValue(STATE);
   }
 
   private DBServerState getState() {
@@ -253,7 +246,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private Optional<DBServerState> serverState() {
-    return getValue("state");
+    return getValue(STATE);
   }
 
   private boolean hasSlaves() {
@@ -267,7 +260,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   private void init() {
     DatabaseFactory factory = initFactory();
 
-    putValue("state", new DBServerState(factory, config.getNumDatabases()));
+    putValue(STATE, new DBServerState(factory, config.getNumDatabases()));
 
     initPersistence();
     initNotifications();
@@ -302,5 +295,17 @@ public class ClauDB extends RespServerContext implements DBServerContext {
       factory = new OnHeapDatabaseFactory();
     }
     return factory;
+  }
+  
+  private static final class DBSessionListener implements SessionListener {
+    @Override
+    public void sessionDeleted(Session session) {
+      session.destroy();
+    }
+
+    @Override
+    public void sessionCreated(Session session) {
+      session.putValue(STATE, new DBSessionState());
+    }
   }
 }
