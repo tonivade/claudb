@@ -24,11 +24,23 @@ buildscript {
     }
 }
 
+jacoco {
+  toolVersion = '0.7.9'
+  applyTo junitPlatformTest
+}
+
 jacocoTestReport {
-    reports {
-        xml.enabled = true
-        html.enabled = true
-    }
+  reports {
+    xml.enabled = true
+    html.enabled = true
+    xml.destination file("${buildDir}/reports/jacoco/report.xml")
+  }
+}
+
+junitPlatformTest {
+  jacoco {
+    destinationFile = file("$buildDir/jacoco/test.exec")
+  }
 }
 
 sourceCompatibility = '1.8'
@@ -139,5 +151,5 @@ task copyToLib(type: Copy) {
 task sendCoverageToCodacy(type: JavaExec, dependsOn: jacocoTestReport) {
   main = "com.codacy.CodacyCoverageReporter"
   classpath = configurations.codacy
-  args = ["-l", "Java", "-r", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"]
+  args = ["-l", "Java", "-r", "${buildDir}/reports/jacoco/report.xml"]
 }
