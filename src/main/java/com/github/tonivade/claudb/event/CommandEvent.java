@@ -18,7 +18,7 @@ class CommandEvent extends Event {
   
   @Override
   public SafeString getValue() {
-    return getCommand();
+    return getKey();
   }
   
   @Override
