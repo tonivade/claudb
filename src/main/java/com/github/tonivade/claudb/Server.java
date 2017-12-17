@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Stream;
 
+import com.github.tonivade.resp.RespServer;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -34,15 +36,15 @@ public class Server {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
       DBConfig config = parseConfig(options.has(persist), 
-                                        options.has(offHeap), 
-                                        options.has(notifications));
+                                    options.has(offHeap), 
+                                    options.has(notifications));
      
       readBanner().forEach(System.out::println);
       
       System.setProperty("root-level", options.has(verbose) ? "DEBUG": "INFO");
       
-      ClauDB server = new ClauDB(optionHost, optionPort, config);
-      Runtime.getRuntime().addShutdownHook(new Thread(() -> server.stop()));
+      RespServer server = ClauDB.builder().host(optionHost).port(optionPort).config(config).build();
+      Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
       server.start();
     }
   }

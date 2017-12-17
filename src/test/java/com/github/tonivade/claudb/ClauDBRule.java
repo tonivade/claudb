@@ -23,7 +23,7 @@ public class ClauDBRule  implements TestRule {
   }
 
   public ClauDBRule(String host, int port, DBConfig config) {
-    this.server = new RespServer(new ClauDB(host, port, config));
+    this.server = ClauDB.builder().host(host).port(port).config(config).build();
   }
 
   @Override

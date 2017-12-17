@@ -29,6 +29,7 @@ import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
+import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.RespServerContext;
 import com.github.tonivade.resp.SessionListener;
 import com.github.tonivade.resp.command.Request;
@@ -61,6 +62,10 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   public ClauDB(String host, int port, DBConfig config) {
     super(host, port, new DBCommandSuite(), new DBSessionListener());
     this.config = config;
+  }
+  
+  public static ClauDB.Builder builder() {
+    return new Builder();
   }
 
   @Override
@@ -306,6 +311,31 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     @Override
     public void sessionCreated(Session session) {
       session.putValue(STATE, new DBSessionState());
+    }
+  }
+  
+  public static class Builder {
+    private String host = DEFAULT_HOST;
+    private int port = DEFAULT_PORT;
+    private DBConfig config = DBConfig.builder().build();
+    
+    public Builder host(String host) {
+      this.host = host;
+      return this;
+    }
+    
+    public Builder port(int port) {
+      this.port = port;
+      return this;
+    }
+    
+    public Builder config(DBConfig config) {
+      this.config = config;
+      return this;
+    }
+    
+    public RespServer build() {
+      return new RespServer(new ClauDB(host, port, config));
     }
   }
 }
