@@ -10,7 +10,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 class KeyEvent extends Event {
   
-  private static final String KEYEVENT = "__keyevent__@%d__:%s";
+  private static final String CHANNEL_PATTERN = "__keyevent__@%d__:%s";
 
   public KeyEvent(SafeString command, SafeString key, int schema) {
     super(command, key, schema);
@@ -23,6 +23,6 @@ class KeyEvent extends Event {
   
   @Override
   public String getChannel() {
-    return format(KEYEVENT, getSchema(), getKey());
+    return format(CHANNEL_PATTERN, getSchema(), getKey());
   }
 }

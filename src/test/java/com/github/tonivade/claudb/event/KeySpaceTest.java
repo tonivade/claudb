@@ -6,12 +6,12 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class CommandEventTest {
+public class KeySpaceTest {
   
   @Test
   void commandEvent() {
-    CommandEvent event = new CommandEvent(safeString("command"),
-                                          safeString("key"), 0);
+    KeySpace event = new KeySpace(safeString("command"),
+                                  safeString("key"), 0);
     
     assertThat(event.getValue(), equalTo(safeString("key")));
     assertThat(event.getChannel(), equalTo("__keyspace__@0__:command"));

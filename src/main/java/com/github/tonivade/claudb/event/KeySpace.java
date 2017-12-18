@@ -8,11 +8,11 @@ import static java.lang.String.format;
 
 import com.github.tonivade.resp.protocol.SafeString;
 
-class CommandEvent extends Event {
+class KeySpace extends Event {
   
-  private static final String KEYSPACE = "__keyspace__@%d__:%s";
+  private static final String CHANNEL_PATTERN = "__keyspace__@%d__:%s";
 
-  public CommandEvent(SafeString command, SafeString key, int schema) {
+  public KeySpace(SafeString command, SafeString key, int schema) {
     super(command, key, schema);
   }
   
@@ -23,6 +23,6 @@ class CommandEvent extends Event {
   
   @Override
   public String getChannel() {
-    return format(KEYSPACE, getSchema(), getCommand());
+    return format(CHANNEL_PATTERN, getSchema(), getCommand());
   }
 }

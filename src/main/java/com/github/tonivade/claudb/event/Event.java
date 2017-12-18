@@ -55,7 +55,7 @@ public abstract class Event {
     return new KeyEvent(command, key, schema);
   }
   
-  public static CommandEvent commandEvent(SafeString command, SafeString key, int schema) {
-    return new CommandEvent(command, key, schema);
+  public static KeySpace commandEvent(SafeString command, SafeString key, int schema) {
+    return new KeySpace(command, key, schema);
   }
 }
