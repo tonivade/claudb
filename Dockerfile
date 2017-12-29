@@ -8,4 +8,4 @@ RUN ./gradlew clean fatJar
 
 EXPOSE 7081
 
-CMD ["java", "-jar", "build/libs/claudb-all-1.1.0-SNAPSHOT.jar", "-h", "0.0.0.0", "-p", "7081"]
+CMD ["java", "-jar", "build/libs/claudb-all-1.2.0-SNAPSHOT.jar", "-h", "0.0.0.0", "-p", "7081"]
