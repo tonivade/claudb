@@ -13,18 +13,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 
+@ExtendWith(ClauDBExtension.class)
 public class DBClientTest {
-
-  @Rule
-  public final ClauDBRule rule = new ClauDBRule();
 
   @Test
   public void testClient()  {

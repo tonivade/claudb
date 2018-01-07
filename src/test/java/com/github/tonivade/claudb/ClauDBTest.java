@@ -12,17 +12,15 @@ import static org.junit.Assert.assertThat;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
+@ExtendWith(ClauDBExtension.class)
 public class ClauDBTest {
-
-  @Rule
-  public final ClauDBRule rule = new ClauDBRule();
 
   @Test
   public void testCommands() {
@@ -97,7 +95,7 @@ public class ClauDBTest {
   }
 
   @Test
-  @Ignore
+  @Disabled
   public void testLoad100000() {
     execute(jedis -> {
       int times = 100000;
