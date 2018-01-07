@@ -3,6 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'com.bmuschko.nexus'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'me.champeau.gradle.jmh'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'claudb'
@@ -16,17 +17,25 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+          url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
         classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+        classpath "me.champeau.gradle:jmh-gradle-plugin:0.4.5"
     }
 }
 
 jacoco {
   toolVersion = '0.7.9'
   applyTo junitPlatformTest
+}
+
+jmh {
+  duplicateClassesStrategy = 'warn'
 }
 
 jacocoTestReport {
@@ -73,6 +82,8 @@ dependencies {
     testCompile 'org.junit.platform:junit-platform-runner:1.0.2'
     testCompile 'org.mockito:mockito-core:2.13.0'
     testCompile 'org.hamcrest:hamcrest-library:1.3'
+    jmh 'org.openjdk.jmh:jmh-core:1.19'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
     codacy("com.github.codacy:codacy-coverage-reporter:-SNAPSHOT")
 }
 

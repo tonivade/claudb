@@ -6,13 +6,11 @@ package com.github.tonivade.claudb;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.number.OrderingComparison.lessThan;
 import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -94,20 +92,6 @@ public class ClauDBTest {
     execute(jedis -> assertThat(jedis.eval(script), nullValue()));
   }
 
-  @Test
-  @Disabled
-  public void testLoad100000() {
-    execute(jedis -> {
-      int times = 100000;
-      long start = System.nanoTime();
-      for (int i = 0; i < times; i++) {
-        jedis.set(key(i), value(i));
-      }
-      jedis.quit();
-      assertThat((System.nanoTime() - start) / times, lessThan(1000000L));
-    });
-  }
-
   private void execute(Consumer<Jedis> action) {
     try (Jedis jedis = createClientConnection()) {
       action.accept(jedis);
@@ -116,13 +100,5 @@ public class ClauDBTest {
 
   private Jedis createClientConnection() {
     return new Jedis(DBServerContext.DEFAULT_HOST, DBServerContext.DEFAULT_PORT, 10000);
-  }
-
-  private String value(int i) {
-    return "value" + String.valueOf(i);
-  }
-
-  private String key(int i) {
-    return "key" + String.valueOf(i);
   }
 }
