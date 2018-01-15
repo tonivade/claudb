@@ -36,6 +36,9 @@ jacoco {
 
 jmh {
   duplicateClassesStrategy = 'warn'
+  threads = 5
+  iterations = 10
+  warmupIterations = 1
 }
 
 jacocoTestReport {
