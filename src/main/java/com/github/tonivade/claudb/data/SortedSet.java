@@ -40,9 +40,14 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
     return scores.isEmpty();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean contains(Object o) {
-    return items.containsKey(o);
+    if (o instanceof Entry) {
+      Entry<Double, SafeString> entry = Entry.class.cast(o);
+      return items.containsKey(entry.getValue());
+    }
+    return false;
   }
 
   @Override
@@ -70,12 +75,16 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
     return false;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public boolean remove(Object o) {
-    if (items.containsKey(o)) {
-      double score = items.remove(o);
-      scores.remove(DatabaseValue.score(score, (SafeString) o));
-      return true;
+    if (o instanceof Entry) {
+      Entry<Double, SafeString> entry = Entry.class.cast(o);
+      if (items.containsKey(entry.getValue())) {
+        double score = items.remove(entry.getValue());
+        scores.remove(DatabaseValue.score(score, entry.getValue()));
+        return true;
+      }
     }
     return false;
   }
@@ -104,7 +113,7 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
     toRemove.removeAll(c);
     boolean result = false;
     for (SafeString key : toRemove) {
-      result |= remove(key);
+      result |= remove(DatabaseValue.score(0, key));
     }
     return result;
   }

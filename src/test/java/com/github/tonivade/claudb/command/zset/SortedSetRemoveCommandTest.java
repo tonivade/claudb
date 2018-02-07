@@ -24,7 +24,7 @@ public class SortedSetRemoveCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute()  {
+  public void testExecute() {
     rule.withData("key", zset(score(1, "a"), score(2, "b"), score(3, "c")))
     .withParams("key", "a")
     .execute()

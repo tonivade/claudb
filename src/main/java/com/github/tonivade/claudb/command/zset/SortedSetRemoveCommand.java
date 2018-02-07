@@ -6,6 +6,7 @@ package com.github.tonivade.claudb.command.zset;
 
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.claudb.data.DatabaseValue.score;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static java.util.stream.Collectors.toList;
 
@@ -40,7 +41,7 @@ public class SortedSetRemoveCommand implements DBCommand {
                Set<Entry<Double, SafeString>> merge = new SortedSet();
                merge.addAll(oldValue.getSortedSet());
                for (SafeString item : items) {
-                 if (merge.remove(item)) {
+                 if (merge.remove(score(0, item))) {
                    removed.add(item);
                  }
                }

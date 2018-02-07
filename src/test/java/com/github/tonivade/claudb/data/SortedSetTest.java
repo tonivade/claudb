@@ -34,9 +34,9 @@ public class SortedSetTest {
     assertThat(set.add(score(2, safeString("a"))), is(false));
     assertThat(set.add(score(2, safeString("b"))), is(true));
 
-    assertThat(set.contains(safeString("a")), is(true));
-    assertThat(set.contains(safeString("b")), is(true));
-    assertThat(set.contains(safeString("c")), is(false));
+    assertThat(set.contains(score(0, safeString("a"))), is(true));
+    assertThat(set.contains(score(0, safeString("b"))), is(true));
+    assertThat(set.contains(score(0, safeString("c"))), is(false));
 
     assertThat(set.score(safeString("a")), is(1.0));
     assertThat(set.score(safeString("b")), is(2.0));
@@ -44,8 +44,8 @@ public class SortedSetTest {
     assertThat(set.ranking(safeString("a")), is(0));
     assertThat(set.ranking(safeString("b")), is(1));
 
-    assertThat(set.remove(safeString("a")), is(true));
-    assertThat(set.contains(safeString("a")), is(false));
+    assertThat(set.remove(score(0, safeString("a"))), is(true));
+    assertThat(set.contains(score(0, safeString("a"))), is(false));
   }
 
   @Test
