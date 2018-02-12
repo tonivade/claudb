@@ -25,7 +25,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 public class DBClientTest {
 
   @Test
-  public void testClient()  {
+  public void testClient() {
     ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
@@ -33,17 +33,17 @@ public class DBClientTest {
 
     client.start();
 
-    verify(callback, timeout(1000)).onConnect();
+    verify(callback, timeout(2000)).onConnect();
 
     client.send(array(string("ping")));
 
-    verify(callback, timeout(1000)).onMessage(captor.capture());
+    verify(callback, timeout(2000)).onMessage(captor.capture());
 
     assertThat(captor.getValue(), equalTo(status("PONG")));
 
     client.stop();
 
-    verify(callback, timeout(1000)).onDisconnect();
+    verify(callback, timeout(2000)).onDisconnect();
   }
 
 }
