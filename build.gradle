@@ -140,6 +140,10 @@ modifyPom {
     }
 }
 
+artifacts {
+    archives fatJar
+}
+
 extraArchive {
     sources = true
     tests = false
