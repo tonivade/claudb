@@ -181,7 +181,8 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ java -jar claudb-all.jar
+    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.2.0/claudb-1.2.0-all.jar
+    $ java -jar claudb-1.2.0-all.jar
 
 or using [jrun](https://github.com/ctrueden/jrun) utility
 
