@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.claudb.data;
 
+import static com.github.tonivade.equalizer.Equalizer.equalizer;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
@@ -13,7 +14,6 @@ import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
-import static tonivade.equalizer.Equalizer.equalizer;
 
 import java.io.Serializable;
 import java.time.Duration;

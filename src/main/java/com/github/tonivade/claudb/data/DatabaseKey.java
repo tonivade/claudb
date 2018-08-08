@@ -5,7 +5,7 @@
 package com.github.tonivade.claudb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static tonivade.equalizer.Equalizer.equalizer;
+import static com.github.tonivade.equalizer.Equalizer.equalizer;
 
 import java.io.Serializable;
 import java.util.Objects;

@@ -5,7 +5,7 @@
 package com.github.tonivade.claudb.event;
 
 import static java.util.Objects.requireNonNull;
-import static tonivade.equalizer.Equalizer.equalizer;
+import static com.github.tonivade.equalizer.Equalizer.equalizer;
 
 import java.util.Objects;
 
