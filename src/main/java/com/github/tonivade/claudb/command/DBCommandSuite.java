@@ -9,7 +9,6 @@ import static java.util.Arrays.asList;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.github.tonivade.resp.command.CommandSuite;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.command.bitset.BitCountCommand;
 import com.github.tonivade.claudb.command.bitset.GetBitCommand;
@@ -80,10 +79,12 @@ import com.github.tonivade.claudb.command.transaction.ExecCommand;
 import com.github.tonivade.claudb.command.transaction.MultiCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetAddCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetCardinalityCommand;
+import com.github.tonivade.claudb.command.zset.SortedSetIncrementByCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetRangeByScoreCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetRangeCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetRemoveCommand;
 import com.github.tonivade.claudb.command.zset.SortedSetReverseRangeCommand;
+import com.github.tonivade.resp.command.CommandSuite;
 
 public class DBCommandSuite extends CommandSuite {
 
@@ -168,6 +169,7 @@ public class DBCommandSuite extends CommandSuite {
     addCommand(SortedSetRangeCommand.class);
     addCommand(SortedSetRangeByScoreCommand.class);
     addCommand(SortedSetReverseRangeCommand.class);
+    addCommand(SortedSetIncrementByCommand.class);
 
     // pub & sub
     addCommand(PublishCommand.class);
