@@ -25,7 +25,7 @@ public class SortedSetIncrementByCommandTest {
 
   @Test
   public void notExists() {
-    rule.withParams("zset", "10", "value1")
+    rule.withParams("zset", "10.0", "value1")
         .execute()
         .assertValue("zset", equalTo(zset(score(10.0, safeString("value1")))))
         .assertThat(string("10.0"));

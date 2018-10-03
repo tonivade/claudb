@@ -39,7 +39,7 @@ public class SortedSetIncrementByCommand implements DBCommand {
       NavigableSet<Entry<Double, SafeString>> set = value.getSortedSet();
 
       SafeString key = request.getParam(2);
-      Integer increment = Integer.parseInt(request.getParam(1).toString());
+      Double increment = Double.parseDouble(request.getParam(1).toString());
 
       Entry<Double, SafeString> newValue = merge(set, key, increment);
 
@@ -56,7 +56,7 @@ public class SortedSetIncrementByCommand implements DBCommand {
   }
 
   private Entry<Double, SafeString>
-          merge(NavigableSet<Entry<Double, SafeString>> set, SafeString key, Integer increment) {
+          merge(NavigableSet<Entry<Double, SafeString>> set, SafeString key, Double increment) {
     return score(findByKey(set, key).getKey() + increment, key);
   }
 
