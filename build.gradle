@@ -47,7 +47,9 @@ jacocoTestReport {
     xml.enabled = true
     html.enabled = true
     xml.destination file("${buildDir}/reports/jacoco/report.xml")
-  } } 
+  }
+} 
+
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
