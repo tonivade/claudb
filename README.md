@@ -88,6 +88,7 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - ZRANGE
     - ZREM
     - ZREVRANGE
+    - ZINCRBY
 - Pub/Sub
     - SUBSCRIBE
     - UNSUBSCRIBE
@@ -181,8 +182,8 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.2.0/claudb-1.2.0-all.jar
-    $ java -jar claudb-1.2.0-all.jar
+    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.3.0/claudb-1.3.0-all.jar
+    $ java -jar claudb-1.3.0-all.jar
 
 or using [jrun](https://github.com/ctrueden/jrun) utility
 
@@ -205,12 +206,19 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>claudb</artifactId>
-        <version>1.2.0</version>
+        <version>1.3.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:claudb:1.2.0'
+    compile 'com.github.tonivade:claudb:1.3.0'
+
+Or embed in your source code
+
+```java
+    RespServer server = ClauDB.builder().host("localhost").port(7081).build();
+    server.start(); 
+```
 
 ## TODO
 
@@ -226,7 +234,6 @@ Or gradle
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
-[![Dependency Status](https://www.versioneye.com/user/projects/59c2cea60fb24f021cc89446/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/59c2cea60fb24f021cc89446)
 
 ## LICENSE
 
