@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2018, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.claudb.command.zset;
 
 import static com.github.tonivade.claudb.data.DatabaseValue.score;
