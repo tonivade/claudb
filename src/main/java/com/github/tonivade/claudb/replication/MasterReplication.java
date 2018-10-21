@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -18,12 +17,13 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBServerState;
+import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisTokenVisitor;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.DBServerContext;
-import com.github.tonivade.claudb.DBServerState;
 
 public class MasterReplication implements Runnable {
 
@@ -109,7 +109,7 @@ public class MasterReplication implements Runnable {
     return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private Optional<DBServerState> serverState() {
+  private Option<DBServerState> serverState() {
     return server.getValue("state");
   }
 }

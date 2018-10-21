@@ -8,6 +8,7 @@ package com.github.tonivade.claudb.command.hash;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.entry;
+import static com.github.tonivade.claudb.command.InAnyOrderRedisArrayMatcher.containsInAnyOrder;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 
 import org.junit.Rule;
@@ -30,7 +31,7 @@ public class HashGetAllCommandTest {
                        entry("key3", "value3")))
     .withParams("a")
     .execute()
-    .assertThat(array(string("key1"), string("value1"),
+    .assertThat(containsInAnyOrder(string("key1"), string("value1"),
                 string("key2"), string("value2"),
                 string("key3"), string("value3")));
   }

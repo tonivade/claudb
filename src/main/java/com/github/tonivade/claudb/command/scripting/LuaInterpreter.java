@@ -4,15 +4,12 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
+import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static io.vavr.Predicates.instanceOf;
 import static java.lang.String.valueOf;
 
 import java.util.ArrayList;
@@ -28,6 +25,7 @@ import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
+import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
@@ -64,14 +62,24 @@ public class LuaInterpreter {
   }
 
   private RedisToken convert(Object result) {
-    return Match(result).of(Case($(instanceOf(LuaTable.class)), this::convertLuaTable),
-                            Case($(instanceOf(LuaNumber.class)), this::convertLuaNumber),
-                            Case($(instanceOf(LuaBoolean.class)), this::convertLuaBoolean),
-                            Case($(instanceOf(LuaString.class)), this::convertLuaString),
-                            Case($(instanceOf(Number.class)), this::convertNumber),
-                            Case($(instanceOf(String.class)), this::convertString),
-                            Case($(instanceOf(Boolean.class)), this::convertBoolean),
-                            Case($(), this::convertUnknown));
+    return Pattern1.<Object, RedisToken>build()
+        .when(instanceOf(LuaTable.class))
+          .then(table -> convertLuaTable((LuaTable) table))
+        .when(instanceOf(LuaNumber.class))
+          .then(number -> convertLuaNumber((LuaNumber) number))
+        .when(instanceOf(LuaBoolean.class))
+          .then(boolean_ -> convertLuaBoolean((LuaBoolean) boolean_))
+        .when(instanceOf(LuaString.class))
+          .then(string -> convertLuaString((LuaString) string))
+        .when(instanceOf(Number.class))
+          .then(number -> convertNumber((Number) number))
+        .when(instanceOf(String.class))
+          .then(string -> convertString((String) string))
+        .when(instanceOf(Boolean.class))
+          .then(boolean_ -> convertBoolean((Boolean) boolean_))
+        .otherwise()
+          .then(this::convertUnknown)
+        .apply(result);
   }
 
   private RedisToken convertLuaTable(LuaTable value) {

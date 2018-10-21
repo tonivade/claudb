@@ -7,25 +7,24 @@ package com.github.tonivade.claudb.command.transaction;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static java.util.Collections.emptyList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.github.tonivade.claudb.TransactionState;
+import com.github.tonivade.claudb.command.CommandRule;
+import com.github.tonivade.claudb.command.CommandUnderTest;
+import com.github.tonivade.purefun.data.ImmutableArray;
+import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.TransactionState;
-import com.github.tonivade.claudb.command.CommandRule;
-import com.github.tonivade.claudb.command.CommandUnderTest;
 
 @CommandUnderTest(ExecCommand.class)
 public class ExecCommandTest {
@@ -59,15 +58,15 @@ public class ExecCommandTest {
   private void givenExistingTransaction() {
     TransactionState transaction = createTransaction();
 
-    when(rule.getSession().getValue("tx")).thenReturn(Optional.of(transaction), Optional.empty());
-    when(rule.getSession().removeValue("tx")).thenReturn(Optional.of(transaction));
+    when(rule.getSession().getValue("tx")).thenReturn(Option.some(transaction), Option.none());
+    when(rule.getSession().removeValue("tx")).thenReturn(Option.some(transaction));
   }
 
   private TransactionState createTransaction() {
     TransactionState transaction = new TransactionState();
-    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), emptyList()));
-    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), emptyList()));
-    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), emptyList()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), ImmutableArray.empty()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), ImmutableArray.empty()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), ImmutableArray.empty()));
     return transaction;
   }
 

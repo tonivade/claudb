@@ -4,11 +4,11 @@
  */
 package com.github.tonivade.claudb.command.pubsub;
 
+import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -25,15 +25,13 @@ import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
-
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
-import io.vavr.collection.Set;
-import io.vavr.collection.Stream;
+import com.github.tonivade.purefun.Tuple;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableSet;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotificationManagerTest {
-  
+
   @Mock
   private DBServerContext server;
   @Mock
@@ -41,7 +39,7 @@ public class NotificationManagerTest {
 
   @InjectMocks
   private NotificationManager manager;
-  
+
   @Test
   public void enqueue() {
     String client = "client:7070";
@@ -51,15 +49,15 @@ public class NotificationManagerTest {
     when(server.getAdminDatabase()).thenReturn(database);
     when(database.entrySet())
       .thenReturn(asSet(entry(safeKey("psubscription:" + pattern), set(safeString(client)))));
-    
+
     manager.enqueue(event);
-    
-    verify(server, timeout(1000)).publish(client, 
+
+    verify(server, timeout(1000)).publish(client,
         array(string("pmessage"), string(pattern), string(event.getChannel()), string("set")));
   }
 
-  private Set<Tuple2<DatabaseKey, DatabaseValue>> asSet(Tuple2<DatabaseKey, DatabaseValue> entry) {
-    return Stream.of(entry).toSet();
+  private ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> asSet(Tuple2<DatabaseKey, DatabaseValue> entry) {
+    return ImmutableSet.of(entry);
   }
 
   private Tuple2<DatabaseKey, DatabaseValue> entry(DatabaseKey key, DatabaseValue value) {

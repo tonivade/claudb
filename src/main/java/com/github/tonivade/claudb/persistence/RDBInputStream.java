@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.persistence;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.claudb.data.DatabaseValue.list;
@@ -13,6 +12,7 @@ import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.claudb.persistence.ByteUtils.byteArrayToInt;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.time.Instant.ofEpochMilli;
 
 import java.io.IOException;
@@ -27,11 +27,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.CheckedInputStream;
 
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.Tuple2;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBInputStream {
 

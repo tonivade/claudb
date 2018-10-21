@@ -4,28 +4,27 @@
  */
 package com.github.tonivade.claudb.command.set;
 
-import static com.github.tonivade.resp.protocol.RedisToken.nullString;
-import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.set;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 
 import java.util.LinkedList;
 import java.util.Random;
 
-import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.collection.Array;
-import io.vavr.collection.Seq;
+import com.github.tonivade.purefun.data.ImmutableArray;
+import com.github.tonivade.purefun.data.Sequence;
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 
 @ReadOnly
 @Command("srandmember")
@@ -38,7 +37,7 @@ public class SetRandomMemberCommand implements DBCommand {
     LinkedList<SafeString> random = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
         (oldValue, newValue) -> {
-          Array<SafeString> merge = oldValue.getSet().toArray();
+          ImmutableArray<SafeString> merge = oldValue.getSet().asArray();
           random.add(merge.get(random(merge)));
           return set(merge);
         });
@@ -49,7 +48,7 @@ public class SetRandomMemberCommand implements DBCommand {
     }
   }
 
-  private int random(Seq<?> merge) {
+  private int random(Sequence<?> merge) {
     return new Random().nextInt(merge.size());
   }
 }

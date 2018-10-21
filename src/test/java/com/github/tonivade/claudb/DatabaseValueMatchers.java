@@ -5,8 +5,8 @@
 
 package com.github.tonivade.claudb;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.time.Instant;
 import java.util.Map.Entry;
@@ -16,10 +16,9 @@ import org.hamcrest.TypeSafeMatcher;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
 
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.Tuple2;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseValueMatchers {
 
@@ -58,7 +57,7 @@ public class DatabaseValueMatchers {
   public static Matcher<DatabaseValue> nullValue() {
     return IsNull.nullValue(DatabaseValue.class);
   }
-  
+
   public static Matcher<DatabaseValue> isExpired() {
     return new ValueExpiredMatcher();
   }
@@ -92,5 +91,5 @@ public class DatabaseValueMatchers {
       return !item.isExpired(Instant.now());
     }
   }
-  
+
 }

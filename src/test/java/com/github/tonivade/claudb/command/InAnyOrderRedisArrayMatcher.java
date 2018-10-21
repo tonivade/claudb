@@ -1,25 +1,22 @@
 package com.github.tonivade.claudb.command;
 
-import static java.util.Arrays.asList;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import static java.util.Objects.requireNonNull;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 
 public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
 
-  private List<RedisToken> expected;
+  private ImmutableSet<RedisToken> expected;
 
-  public InAnyOrderRedisArrayMatcher(List<RedisToken> expected)
-  {
-    this.expected = expected;
+  public InAnyOrderRedisArrayMatcher(ImmutableSet<RedisToken> expected) {
+    this.expected = requireNonNull(expected);
   }
 
   @Override
@@ -31,13 +28,13 @@ public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
   protected boolean matchesSafely(RedisToken item) {
     if (item.getType() == RedisTokenType.ARRAY) {
       ArrayRedisToken array = (ArrayRedisToken) item;
-      Collection<RedisToken> tokens = array.getValue();
-      return new HashSet<>(expected).equals(new HashSet<>(tokens));
+      Sequence<RedisToken> tokens = array.getValue();
+      return tokens.asSet().equals(expected.asSet());
     }
     return false;
   }
 
   public static InAnyOrderRedisArrayMatcher containsInAnyOrder(RedisToken... tokens) {
-    return new InAnyOrderRedisArrayMatcher(asList(tokens));
+    return new InAnyOrderRedisArrayMatcher(ImmutableSet.of(tokens));
   }
 }

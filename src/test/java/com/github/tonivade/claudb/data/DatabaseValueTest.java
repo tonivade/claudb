@@ -4,13 +4,23 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.claudb.data.DatabaseValue.entry;
+import static com.github.tonivade.claudb.data.DatabaseValue.hash;
+import static com.github.tonivade.claudb.data.DatabaseValue.list;
 import static com.github.tonivade.claudb.data.DatabaseValue.score;
+import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.Instant;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -48,12 +58,12 @@ public class DatabaseValueTest {
     assertThat(expiredValue.timeToLiveMillis(expired), is(-1000L));
     assertThat(expiredValue.timeToLiveSeconds(expired), is(-1));
   }
-  
+
   @Test
   public void getValue() {
     assertThat(string("hola").getString(), is(safeString("hola")));
   }
-  
+
   @Test(expected = IllegalStateException.class)
   public void getValueMismatch() {
     string("hola").getList();
@@ -66,5 +76,24 @@ public class DatabaseValueTest {
     NavigableSet<Map.Entry<Double, SafeString>> sortedSet = value.getSortedSet();
 
     sortedSet.add(score(1.0, safeString("d")));
+  }
+
+  @Test
+  public void serializableTest() throws IOException, ClassNotFoundException {
+    verifySerializable(list(safeString("hello world!")));
+    verifySerializable(set(safeString("hello world!")));
+    verifySerializable(hash(entry(safeString("key"), safeString("value"))));
+    verifySerializable(zset(score(1., safeString("value"))));
+    verifySerializable(string("hello world!"));
+  }
+
+  private void verifySerializable(DatabaseValue value) throws IOException, ClassNotFoundException {
+    ByteArrayOutputStream array = new ByteArrayOutputStream();
+    ObjectOutputStream output = new ObjectOutputStream(array);
+    output.writeObject(value);
+    output.flush();
+
+    ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(array.toByteArray()));
+    assertThat(value, equalTo(input.readObject()));
   }
 }

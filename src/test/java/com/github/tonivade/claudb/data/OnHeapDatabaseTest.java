@@ -4,17 +4,16 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import io.vavr.Tuple2;
-import io.vavr.collection.Seq;
-import io.vavr.collection.Set;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.Sequence;
 
 public class OnHeapDatabaseTest {
 
@@ -30,23 +29,23 @@ public class OnHeapDatabaseTest {
     assertThat(database.isEmpty(), is(false));
     assertThat(database.size(), is(1));
 
-    Seq<DatabaseValue> values = database.values();
+    Sequence<DatabaseValue> values = database.values();
 
     assertThat(values.size(), is(1));
     assertThat(values.contains(string("value")), is(true));
 
-    Set<DatabaseKey> keySet = database.keySet();
+    Sequence<DatabaseKey> keySet = database.keySet();
 
     assertThat(keySet.size(), is(1));
     assertThat(keySet.contains(safeKey("a")), is(true));
 
-    Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
+    Sequence<Tuple2<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
 
     assertThat(entrySet.size(), is(1));
 
     Tuple2<DatabaseKey, DatabaseValue> entry = entrySet.iterator().next();
 
-    assertThat(entry._1(), is(safeKey("a")));
-    assertThat(entry._2(), is(string("value")));
+    assertThat(entry.get1(), is(safeKey("a")));
+    assertThat(entry.get2(), is(string("value")));
   }
 }

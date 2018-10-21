@@ -12,13 +12,13 @@ import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import org.junit.Test;
 
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
+import com.github.tonivade.purefun.Tuple;
+import com.github.tonivade.purefun.Tuple2;
 
 public class OffHeapDatabaseTest {
-  
+
   private Database database = new OffHeapDatabaseFactory().create("test");
-  
+
   @Before
   public void setUp() {
     database.clear();
@@ -29,7 +29,7 @@ public class OffHeapDatabaseTest {
     database.put(safeKey("a"), string("1"));
     database.put(safeKey("b"), string("2"));
     database.put(safeKey("c"), string("3"));
-    
+
     assertThat(database.keySet(), containsInAnyOrder(safeKey("a"), safeKey("b"), safeKey("c")));
   }
 
@@ -38,7 +38,7 @@ public class OffHeapDatabaseTest {
     database.put(safeKey("a"), string("1"));
     database.put(safeKey("b"), string("2"));
     database.put(safeKey("c"), string("3"));
-    
+
     assertThat(database.values(), containsInAnyOrder(string("1"), string("2"), string("3")));
   }
 
@@ -47,7 +47,7 @@ public class OffHeapDatabaseTest {
     database.put(safeKey("a"), string("1"));
     database.put(safeKey("b"), string("2"));
     database.put(safeKey("c"), string("3"));
-    
+
     assertThat(database.entrySet(), containsInAnyOrder(entry(safeKey("a"), string("1")),
                                                        entry(safeKey("b"), string("2")),
                                                        entry(safeKey("c"), string("3"))));

@@ -7,12 +7,10 @@ package com.github.tonivade.claudb.data;
 import java.time.Instant;
 import java.util.Map;
 
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
-import io.vavr.collection.HashSet;
-import io.vavr.collection.List;
-import io.vavr.collection.Seq;
-import io.vavr.collection.Set;
+import com.github.tonivade.purefun.Tuple;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
 
 public class OnHeapDatabase implements Database {
 
@@ -67,21 +65,17 @@ public class OnHeapDatabase implements Database {
   }
 
   @Override
-  public Set<DatabaseKey> keySet() {
-    return HashSet.ofAll(cache.keySet());
+  public ImmutableSet<DatabaseKey> keySet() {
+    return ImmutableSet.from(cache.keySet());
   }
 
   @Override
-  public Seq<DatabaseValue> values() {
-    return List.ofAll(cache.values());
+  public Sequence<DatabaseValue> values() {
+    return ImmutableSet.from(cache.values());
   }
 
   @Override
-  public Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
-    return HashSet.ofAll(cache.entrySet()).map(this::toTuple2);
-  }
-
-  private Tuple2<DatabaseKey, DatabaseValue> toTuple2(Map.Entry<DatabaseKey, DatabaseValue> entry) {
-    return Tuple.of(entry.getKey(), entry.getValue());
+  public ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
+    return ImmutableSet.from(cache.entrySet()).map(Tuple::from);
   }
 }

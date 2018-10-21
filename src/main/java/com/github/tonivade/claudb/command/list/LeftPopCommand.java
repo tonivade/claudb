@@ -4,25 +4,24 @@
  */
 package com.github.tonivade.claudb.command.list;
 
-import static com.github.tonivade.resp.protocol.RedisToken.nullString;
-import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.list;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 
 import java.util.LinkedList;
 
-import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.collection.List;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 
 @Command("lpop")
 @ParamLength(1)
@@ -34,9 +33,9 @@ public class LeftPopCommand implements DBCommand {
     LinkedList<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
-          List<SafeString> list = oldValue.getList();
-          list.headOption().forEach(removed::add);
-          return list(list.tailOption().getOrElse(List::empty));
+          ImmutableList<SafeString> list = oldValue.getList();
+          list.head().stream().forEach(removed::add);
+          return list(list.tail());
         });
 
     if (removed.isEmpty()) {
