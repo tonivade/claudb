@@ -9,15 +9,15 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import java.time.Instant;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.function.BiFunction;
 
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.purefun.data.ImmutableMap;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.protocol.SafeString;
-
-import io.vavr.Tuple2;
-import io.vavr.collection.List;
-import io.vavr.collection.Map;
-import io.vavr.collection.Seq;
-import io.vavr.collection.Set;
 
 public interface Database {
 
@@ -35,21 +35,21 @@ public interface Database {
 
   void clear();
 
-  Set<DatabaseKey> keySet();
+  ImmutableSet<DatabaseKey> keySet();
 
-  Seq<DatabaseValue> values();
+  Sequence<DatabaseValue> values();
 
-  Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet();
+  ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> entrySet();
 
   default SafeString getString(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_STRING).getString();
   }
 
-  default List<SafeString> getList(SafeString key) {
+  default ImmutableList<SafeString> getList(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_LIST).getList();
   }
 
-  default Set<SafeString> getSet(SafeString key) {
+  default ImmutableSet<SafeString> getSet(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_SET).getSet();
   }
 
@@ -57,11 +57,11 @@ public interface Database {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_ZSET).getSortedSet();
   }
 
-  default Map<SafeString, SafeString> getHash(SafeString key) {
+  default ImmutableMap<SafeString, SafeString> getHash(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_HASH).getHash();
   }
 
-  default void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> map) {
+  default void putAll(ImmutableMap<? extends DatabaseKey, ? extends DatabaseValue> map) {
     map.forEach(this::put);
   }
 
@@ -106,14 +106,14 @@ public interface Database {
     return false;
   }
 
-  default void overrideAll(Map<DatabaseKey, DatabaseValue> value) {
+  default void overrideAll(ImmutableMap<DatabaseKey, DatabaseValue> value) {
     clear();
     putAll(value);
   }
 
   default Set<DatabaseKey> evictableKeys(Instant now) {
     return entrySet()
-        .filter(entry -> entry._2().isExpired(now))
-        .map(Tuple2::_1).toSet();
+        .filter(entry -> entry.get2().isExpired(now))
+        .map(Tuple2::get1).toSet();
   }
 }

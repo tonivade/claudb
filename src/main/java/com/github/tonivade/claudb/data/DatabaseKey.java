@@ -5,11 +5,11 @@
 package com.github.tonivade.claudb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.equalizer.Equalizer.equalizer;
 
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.github.tonivade.purefun.typeclasses.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
@@ -38,7 +38,7 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return equalizer(this)
+    return Equal.of(this)
         .append((one, other) -> Objects.equals(one.value, other.value))
         .applyTo(obj);
   }

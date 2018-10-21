@@ -5,26 +5,22 @@
 package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static io.vavr.Predicates.instanceOf;
-import static io.vavr.Predicates.is;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static java.util.stream.Collectors.toList;
 
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
-import java.util.function.Function;
+import java.util.stream.Stream;
 
+import com.github.tonivade.claudb.data.DatabaseValue;
+import com.github.tonivade.purefun.Matcher1;
+import com.github.tonivade.purefun.Pattern1;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.purefun.data.ImmutableMap;
+import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.collection.List;
-import io.vavr.collection.Map;
-import io.vavr.collection.Set;
-import io.vavr.collection.Stream;
 
 class DBResponse {
 
@@ -35,14 +31,14 @@ class DBResponse {
           SafeString string = value.getString();
           return RedisToken.string(string);
       case HASH:
-          Map<SafeString, SafeString> map = value.getHash();
-          return array(keyValueList(map).toJavaList());
+          ImmutableMap<SafeString, SafeString> map = value.getHash();
+          return array(keyValueList(map).toList());
       case LIST:
-          List<SafeString> list = value.getList();
-          return convertArray(list.toJavaList());
+          ImmutableList<SafeString> list = value.getList();
+          return convertArray(list.toList());
       case SET:
-          Set<SafeString> set = value.getSet();
-          return convertArray(set.toJavaList());
+          ImmutableSet<SafeString> set = value.getSet();
+          return convertArray(set.toSet());
       case ZSET:
           NavigableSet<Entry<Double, SafeString>> zset = value.getSortedSet();
           return convertArray(serialize(zset));
@@ -61,26 +57,34 @@ class DBResponse {
   }
 
   private static RedisToken parseToken(Object value) {
-    return Match(value).of(
-        Case($(instanceOf(Integer.class)), RedisToken::integer),
-        Case($(instanceOf(Boolean.class)), RedisToken::integer),
-        Case($(instanceOf(String.class)), RedisToken::string),
-        Case($(instanceOf(Double.class)), x -> RedisToken.string(x.toString())),
-        Case($(instanceOf(SafeString.class)), RedisToken::string),
-        Case($(instanceOf(DatabaseValue.class)), DBResponse::convertValue),
-        Case($(instanceOf(RedisToken.class)), Function.identity()),
-        Case($(is(null)), ignore -> RedisToken.nullString()));
+    return Pattern1.<Object, RedisToken>build()
+        .when(Matcher1.instanceOf(Integer.class))
+          .then(integer -> RedisToken.integer((int) integer))
+        .when(Matcher1.instanceOf(Boolean.class))
+          .then(bool -> RedisToken.integer((boolean) bool))
+        .when(Matcher1.instanceOf(String.class))
+          .then(string -> RedisToken.string((String) string))
+        .when(Matcher1.instanceOf(Double.class))
+          .then(double_ -> RedisToken.string(double_.toString()))
+        .when(Matcher1.instanceOf(SafeString.class))
+          .then(string -> RedisToken.string((SafeString) string))
+        .when(Matcher1.instanceOf(DatabaseValue.class))
+          .then(value_ -> DBResponse.convertValue((DatabaseValue) value_))
+        .when(Matcher1.instanceOf(RedisToken.class))
+          .then(token -> (RedisToken) token)
+        .otherwise()
+          .returns(nullString())
+        .apply(value);
   }
 
-  private static List<RedisToken> keyValueList(Map<SafeString, SafeString> map) {
-    return map
-        .flatMap(entry -> Stream.of(entry._1(), entry._2()))
-        .map(RedisToken::string)
-        .collect(List.collector());
+  private static ImmutableList<RedisToken> keyValueList(ImmutableMap<SafeString, SafeString> map) {
+    return ImmutableList.from(map.entries().stream()
+        .flatMap(entry -> Stream.of(entry.get1(), entry.get2()))
+        .map(RedisToken::string));
   }
 
   private static Collection<?> serialize(NavigableSet<Entry<Double, SafeString>> set) {
     return set.stream()
-        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()).toJavaStream()).collect(toList());
+        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue())).collect(toList());
   }
 }

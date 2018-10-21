@@ -29,6 +29,7 @@ import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
+import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.RespServerContext;
 import com.github.tonivade.resp.SessionListener;
@@ -48,7 +49,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   private DatabaseCleaner cleaner;
   private Optional<PersistenceManager> persistence;
   private Optional<NotificationManager> notifications;
-  
+
   private final DBConfig config;
 
   public ClauDB() {
@@ -63,7 +64,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     super(host, port, new DBCommandSuite(), new DBSessionListener());
     this.config = config;
   }
-  
+
   public static ClauDB.Builder builder() {
     return new Builder();
   }
@@ -71,7 +72,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   @Override
   public void start() {
     super.start();
-    
+
     init();
 
     getState().setMaster(true);
@@ -92,7 +93,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     persistence = null;
     notifications = null;
     cleaner = null;
-    
+
     super.stop();
   }
 
@@ -153,7 +154,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     executeOn(Observable.create(observable -> {
       getState().evictExpired(now);
       observable.onComplete();
-    })).blockingSubscribe();  
+    })).blockingSubscribe();
   }
 
   @Override
@@ -242,7 +243,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Optional<DBSessionState> sessionState(Session session) {
+  private Option<DBSessionState> sessionState(Session session) {
     return session.getValue(STATE);
   }
 
@@ -250,7 +251,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private Optional<DBServerState> serverState() {
+  private Option<DBServerState> serverState() {
     return getValue(STATE);
   }
 
@@ -301,7 +302,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     }
     return factory;
   }
-  
+
   private static final class DBSessionListener implements SessionListener {
     @Override
     public void sessionDeleted(Session session) {
@@ -313,27 +314,27 @@ public class ClauDB extends RespServerContext implements DBServerContext {
       session.putValue(STATE, new DBSessionState());
     }
   }
-  
+
   public static class Builder {
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
     private DBConfig config = DBConfig.builder().build();
-    
+
     public Builder host(String host) {
       this.host = host;
       return this;
     }
-    
+
     public Builder port(int port) {
       this.port = port;
       return this;
     }
-    
+
     public Builder config(DBConfig config) {
       this.config = config;
       return this;
     }
-    
+
     public RespServer build() {
       return new RespServer(new ClauDB(host, port, config));
     }

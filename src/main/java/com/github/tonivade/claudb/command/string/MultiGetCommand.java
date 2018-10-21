@@ -4,18 +4,17 @@
  */
 package com.github.tonivade.claudb.command.string;
 
-import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.collection.List;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @ReadOnly
 @Command("mget")
@@ -24,7 +23,7 @@ public class MultiGetCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    List<DatabaseValue> result = List.ofAll(request.getParams())
+    ImmutableList<DatabaseValue> result = ImmutableList.from(request.getParams())
         .map(DatabaseKey::safeKey)
         .filter(key -> db.isType(key, DataType.STRING))
         .map(db::get);

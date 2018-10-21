@@ -4,18 +4,10 @@
  */
 package com.github.tonivade.claudb.command;
 
+import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
-import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 
-import java.util.Optional;
-
-import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.command.ServerContext;
-import com.github.tonivade.resp.command.Session;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.TransactionState;
@@ -25,6 +17,13 @@ import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.command.annotation.TxIgnore;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
+import com.github.tonivade.purefun.type.Option;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.command.Session;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 public class DBCommandWrapper implements RespCommand {
 
@@ -103,7 +102,7 @@ public class DBCommandWrapper implements RespCommand {
     return getTransactionState(request.getSession()).isPresent();
   }
 
-  private Optional<TransactionState> getTransactionState(Session session) {
+  private Option<TransactionState> getTransactionState(Session session) {
     return session.getValue("tx");
   }
 
@@ -121,11 +120,11 @@ public class DBCommandWrapper implements RespCommand {
     return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Optional<DBServerState> serverState(ServerContext server) {
+  private Option<DBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  private Optional<DBSessionState> sessionState(Session session) {
+  private Option<DBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 

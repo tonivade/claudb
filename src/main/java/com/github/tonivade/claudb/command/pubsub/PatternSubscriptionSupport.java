@@ -6,24 +6,18 @@ package com.github.tonivade.claudb.command.pubsub;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static java.util.stream.Collectors.toMap;
 
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
-
-import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.glob.GlobPattern;
-
-import io.vavr.Tuple2;
-import io.vavr.collection.HashSet;
-import io.vavr.collection.Set;
+import com.github.tonivade.purefun.Matcher1;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableMap;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
   String PSUBSCRIPTION_PREFIX = "psubscription:";
@@ -36,34 +30,27 @@ public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
   default void removePatternSubscription(Database admin, String sessionId, SafeString channel) {
     removeSubscription(PSUBSCRIPTION_PREFIX, admin, sessionId, channel);
   }
-  
-  default Set<Entry<String, Set<SafeString>>> getPatternSubscriptions(Database admin, String channel) {
-    return getPatternSubscriptions(admin).entrySet().stream()
-        .filter(subscriptionApplyTo(channel))
-        .collect(HashSet.collector());
+
+  default ImmutableSet<Tuple2<String, ImmutableSet<SafeString>>> getPatternSubscriptions(Database admin, String channel) {
+    return getPatternSubscriptions(admin).entries().filter(subscriptionApplyTo(channel));
   }
-  
-  default Map<String, Set<SafeString>> getPatternSubscriptions(Database admin) {
-    return admin.entrySet()
+
+  default ImmutableMap<String, ImmutableSet<SafeString>> getPatternSubscriptions(Database admin) {
+    return ImmutableMap.from(admin.entrySet()
         .filter(PatternSubscriptionSupport::isPatternSubscription)
-        .map(PatternSubscriptionSupport::toPatternEntry)
-        .collect(toMap(Entry::getKey, Entry::getValue));
+        .map(PatternSubscriptionSupport::toPatternEntry));
   }
 
   default int patternPublish(DBServerContext server, String channel, SafeString message) {
     int count = 0;
-    for (Entry<String, Set<SafeString>> entry : getPatternSubscriptions(server.getAdminDatabase(), channel)) {
-      count += publish(server, entry.getValue(), toPatternMessage(entry.getKey(), channel, message));
+    for (Tuple2<String, ImmutableSet<SafeString>> entry : getPatternSubscriptions(server.getAdminDatabase(), channel)) {
+      count += publish(server, entry.get2(), toPatternMessage(entry.get1(), channel, message));
     }
     return count;
   }
 
-  static Entry<String, Set<SafeString>> toPatternEntry(Tuple2<DatabaseKey, DatabaseValue> entry) {
-    return entry(toPattern(entry._1()), entry._2().getSet());
-  }
-
-  static Entry<String, Set<SafeString>> entry(String pattern, Set<SafeString> subscriptions) {
-    return new AbstractMap.SimpleEntry<>(pattern, subscriptions);
+  static Tuple2<String, ImmutableSet<SafeString>> toPatternEntry(Tuple2<DatabaseKey, DatabaseValue> entry) {
+    return entry.map(PatternSubscriptionSupport::toPattern, DatabaseValue::getSet);
   }
 
   static String toPattern(DatabaseKey key) {
@@ -71,14 +58,14 @@ public interface PatternSubscriptionSupport extends BaseSubscriptionSupport {
   }
 
   static boolean isPatternSubscription(Tuple2<DatabaseKey, DatabaseValue> entry) {
-    return entry._1().getValue().toString().startsWith(PSUBSCRIPTION_PREFIX);
+    return entry.get1().getValue().toString().startsWith(PSUBSCRIPTION_PREFIX);
   }
 
   static RedisToken toPatternMessage(String pattern, String channel, SafeString message) {
     return array(string(PMESSAGE), string(pattern), string(channel), string(message));
   }
 
-  static Predicate<Entry<String, Set<SafeString>>> subscriptionApplyTo(String channel) {
-    return entry -> new GlobPattern(entry.getKey()).match(channel);
+  static Matcher1<Tuple2<String, ImmutableSet<SafeString>>> subscriptionApplyTo(String channel) {
+    return entry -> new GlobPattern(entry.get1()).match(channel);
   }
 }

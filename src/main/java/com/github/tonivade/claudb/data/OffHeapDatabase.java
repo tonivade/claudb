@@ -9,15 +9,17 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import org.caffinitas.ohc.CloseableIterator;
 import org.caffinitas.ohc.OHCache;
 
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
-import io.vavr.collection.List;
-import io.vavr.collection.Seq;
-import io.vavr.collection.Set;
+import com.github.tonivade.purefun.Tuple;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
 
 public class OffHeapDatabase implements Database {
 
@@ -73,8 +75,8 @@ public class OffHeapDatabase implements Database {
   }
 
   @Override
-  public Set<DatabaseKey> keySet() {
-    HashSet<DatabaseKey> keys = new HashSet<>();
+  public ImmutableSet<DatabaseKey> keySet() {
+    Set<DatabaseKey> keys = new HashSet<>();
     try (CloseableIterator<DatabaseKey> iterator = cache.keyIterator()) {
       while(iterator.hasNext()) {
         keys.add(iterator.next());
@@ -82,20 +84,20 @@ public class OffHeapDatabase implements Database {
     } catch(IOException e) {
       throw new UncheckedIOException(e);
     }
-    return io.vavr.collection.HashSet.ofAll(keys);
+    return ImmutableSet.from(keys);
   }
 
   @Override
-  public Seq<DatabaseValue> values() {
-    LinkedList<DatabaseValue> values = new LinkedList<>();
+  public Sequence<DatabaseValue> values() {
+    List<DatabaseValue> values = new LinkedList<>();
     for (DatabaseKey key : keySet()) {
       values.add(cache.get(key));
     }
-    return List.ofAll(values);
+    return ImmutableList.from(values);
   }
 
   @Override
-  public Set<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
-    return keySet().map(key -> Tuple.of(key, get(key))).toSet();
+  public ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
+    return keySet().map(key -> Tuple.of(key, get(key)));
   }
 }

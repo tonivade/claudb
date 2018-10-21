@@ -4,32 +4,28 @@
  */
 package com.github.tonivade.claudb.command.string;
 
+import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
-import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
-import static com.github.tonivade.claudb.data.DatabaseValue.string;
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static io.vavr.Predicates.instanceOf;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
-import java.util.Optional;
 
+import com.github.tonivade.claudb.command.DBCommand;
+import com.github.tonivade.claudb.data.Database;
+import com.github.tonivade.claudb.data.DatabaseKey;
+import com.github.tonivade.claudb.data.DatabaseValue;
+import com.github.tonivade.purefun.Matcher1;
+import com.github.tonivade.purefun.Pattern1;
+import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.command.DBCommand;
-import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.claudb.data.DatabaseKey;
-import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.control.Try;
 
 @Command("set")
 @ParamLength(2)
@@ -37,7 +33,7 @@ public class SetCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    return Try.of(() -> parse(request))
+    return com.github.tonivade.purefun.type.Try.of(() -> parse(request))
         .map(params -> onSuccess(db, request, params))
         .recover(this::onFailure)
         .get();
@@ -58,10 +54,14 @@ public class SetCommand implements DBCommand {
   }
 
   private RedisToken onFailure(Throwable e) {
-    return Match(e)
-        .of(Case($(instanceOf(SyntaxException.class)), t -> error("syntax error")),
-            Case($(instanceOf(NumberFormatException.class)), f -> error("value is not an integer or out of range")),
-            Case($(), t -> error("error: " + e.getMessage())));
+    return Pattern1.<Throwable, RedisToken>build()
+        .when(Matcher1.instanceOf(SyntaxException.class))
+          .returns(error("sytax error"))
+        .when(Matcher1.instanceOf(SyntaxException.class))
+          .returns(error("value is not an integer or out of range"))
+        .otherwise()
+          .returns(error("error: " + e.getMessage()))
+        .apply(e);
   }
 
   private DatabaseValue saveValue(Database db, Parameters params, DatabaseKey key, DatabaseValue value) {
@@ -134,8 +134,8 @@ public class SetCommand implements DBCommand {
     return string.equalsIgnoreCase(option.toString());
   }
 
-  private Optional<Integer> parseTtl(Request request, int i) {
-    Optional<SafeString> ttlOption = request.getOptionalParam(i);
+  private Option<Integer> parseTtl(Request request, int i) {
+    Option<SafeString> ttlOption = request.getOptionalParam(i);
     return ttlOption.map(SafeString::toString).map(Integer::parseInt);
   }
 

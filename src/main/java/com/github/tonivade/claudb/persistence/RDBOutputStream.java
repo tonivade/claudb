@@ -4,8 +4,8 @@
  */
 package com.github.tonivade.claudb.persistence;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.persistence.ByteUtils.toByteArray;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -15,16 +15,15 @@ import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.zip.CheckedOutputStream;
 
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-
-import io.vavr.Tuple2;
-import io.vavr.collection.List;
-import io.vavr.collection.Map;
-import io.vavr.collection.Set;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.purefun.data.ImmutableMap;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBOutputStream {
 
@@ -63,7 +62,7 @@ public class RDBOutputStream {
 
   public void dabatase(Database db) throws IOException {
     for (Tuple2<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
-      value(entry._1(), entry._2());
+      value(entry.get1(), entry.get2());
     }
   }
 
@@ -139,22 +138,22 @@ public class RDBOutputStream {
     string(String.valueOf(value));
   }
 
-  private void list(List<SafeString> value) throws IOException {
+  private void list(ImmutableList<SafeString> value) throws IOException {
     length(value.size());
     for (SafeString item : value) {
       string(item);
     }
   }
 
-  private void hash(Map<SafeString, SafeString> value) throws IOException {
+  private void hash(ImmutableMap<SafeString, SafeString> value) throws IOException {
     length(value.size());
-    for (Tuple2<SafeString, SafeString> entry : value) {
-      string(entry._1());
-      string(entry._2());
+    for (Tuple2<SafeString, SafeString> entry : value.entries()) {
+      string(entry.get1());
+      string(entry.get2());
     }
   }
 
-  private void set(Set<SafeString> value) throws IOException {
+  private void set(ImmutableSet<SafeString> value) throws IOException {
     length(value.size());
     for (SafeString item : value) {
       string(item);

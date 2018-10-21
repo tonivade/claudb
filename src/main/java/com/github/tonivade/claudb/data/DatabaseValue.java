@@ -4,12 +4,8 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static com.github.tonivade.equalizer.Equalizer.equalizer;
+import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static io.vavr.Predicates.instanceOf;
 import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -29,16 +25,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.github.tonivade.purefun.Pattern1;
+import com.github.tonivade.purefun.Tuple;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.purefun.data.ImmutableMap;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
+import com.github.tonivade.purefun.typeclasses.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
-
-import io.vavr.Tuple;
-import io.vavr.Tuple2;
-import io.vavr.collection.LinkedHashMap;
-import io.vavr.collection.LinkedHashSet;
-import io.vavr.collection.List;
-import io.vavr.collection.Map;
-import io.vavr.collection.Set;
-import io.vavr.collection.Traversable;
 
 public class DatabaseValue implements Serializable {
 
@@ -70,39 +65,45 @@ public class DatabaseValue implements Serializable {
   public DataType getType() {
     return type;
   }
-  
+
   public SafeString getString() {
     requiredType(DataType.STRING);
     return getValue();
   }
-  
-  public List<SafeString> getList() {
+
+  public ImmutableList<SafeString> getList() {
     requiredType(DataType.LIST);
     return getValue();
   }
 
-  public Set<SafeString> getSet() {
+  public ImmutableSet<SafeString> getSet() {
     requiredType(DataType.SET);
     return getValue();
   }
-  
+
   public NavigableSet<Entry<Double, SafeString>> getSortedSet() {
     requiredType(DataType.ZSET);
     return getValue();
   }
-  
-  public Map<SafeString, SafeString> getHash() {
+
+  public ImmutableMap<SafeString, SafeString> getHash() {
     requiredType(DataType.HASH);
     return getValue();
   }
-  
+
   public int size() {
-    return Match(value).of(Case($(instanceOf(Set.class)), Set::size),
-                           Case($(instanceOf(List.class)), List::size),
-                           Case($(instanceOf(Collection.class)), Collection::size),
-                           Case($(instanceOf(Map.class)), Map::size),
-                           Case($(instanceOf(SafeString.class)), 1),
-                           Case($(), other -> 0));
+    return Pattern1.<Object, Integer>build()
+        .when(instanceOf(Collection.class))
+          .then(collection -> ((Collection<?>) collection).size())
+        .when(instanceOf(Sequence.class))
+          .then(sequence -> ((Sequence<?>) sequence).size())
+        .when(instanceOf(ImmutableMap.class))
+          .then(map -> ((ImmutableMap<?, ?>) map).size())
+        .when(instanceOf(SafeString.class))
+          .returns(1)
+        .otherwise()
+          .returns(0)
+        .apply(this);
   }
 
   public Instant getExpiredAt() {
@@ -149,7 +150,7 @@ public class DatabaseValue implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return equalizer(this)
+    return Equal.of(this)
         .append((one, other) -> Objects.equals(one.type, other.type))
         .append((one, other) -> Objects.equals(one.value, other.value))
         .applyTo(obj);
@@ -168,56 +169,58 @@ public class DatabaseValue implements Serializable {
     return new DatabaseValue(DataType.STRING, value);
   }
 
-  public static DatabaseValue list(Traversable<SafeString> values) {
-    return new DatabaseValue(DataType.LIST, requireNonNull(values).toList());
+  public static DatabaseValue list(Sequence<SafeString> values) {
+    return new DatabaseValue(DataType.LIST, values.asList());
   }
 
   public static DatabaseValue list(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.LIST, requireNonNull(values).stream().collect(List.collector()));
+    return new DatabaseValue(DataType.LIST, ImmutableList.of(requireNonNull(values).stream()));
   }
 
   public static DatabaseValue list(SafeString... values) {
-    return new DatabaseValue(DataType.LIST, Stream.of(values).collect(List.collector()));
+    return new DatabaseValue(DataType.LIST, ImmutableList.of(Stream.of(values)));
   }
-  
-  public static DatabaseValue set(Traversable<SafeString> values) {
-    return new DatabaseValue(DataType.SET, requireNonNull(values).toLinkedSet());
+
+  public static DatabaseValue set(Sequence<SafeString> values) {
+    return new DatabaseValue(DataType.SET, values.asSet());
   }
 
   public static DatabaseValue set(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.SET, 
-        requireNonNull(values).stream().collect(LinkedHashSet.collector()));
+    return new DatabaseValue(DataType.SET, ImmutableSet.of(requireNonNull(values).stream()));
   }
 
   public static DatabaseValue set(SafeString... values) {
-    return new DatabaseValue(DataType.SET, Stream.of(values).collect(LinkedHashSet.collector()));
+    return new DatabaseValue(DataType.SET, ImmutableSet.of(Stream.of(values)));
   }
 
   public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
     return new DatabaseValue(DataType.ZSET,
-        requireNonNull(values).stream().collect(collectingAndThen(toSortedSet(), 
+        requireNonNull(values).stream().collect(collectingAndThen(toSortedSet(),
                                                                   Collections::unmodifiableNavigableSet)));
   }
 
   @SafeVarargs
   public static DatabaseValue zset(Entry<Double, SafeString>... values) {
     return new DatabaseValue(DataType.ZSET,
-        Stream.of(values).collect(collectingAndThen(toSortedSet(), 
+        Stream.of(values).collect(collectingAndThen(toSortedSet(),
                                                     Collections::unmodifiableNavigableSet)));
   }
 
-  public static DatabaseValue hash(Collection<Tuple2<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH, requireNonNull(values).stream().collect(LinkedHashMap.collector()));
+  public static DatabaseValue hash(ImmutableMap<SafeString, SafeString> values) {
+    return new DatabaseValue(DataType.HASH, values);
   }
 
-  public static DatabaseValue hash(Traversable<Tuple2<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH, requireNonNull(values).toLinkedMap(Tuple2::_1, Tuple2::_2));
+  public static DatabaseValue hash(Collection<Tuple2<SafeString, SafeString>> values) {
+    return new DatabaseValue(DataType.HASH, ImmutableMap.from(requireNonNull(values).stream()));
+  }
+
+  public static DatabaseValue hash(Sequence<Tuple2<SafeString, SafeString>> values) {
+    return new DatabaseValue(DataType.HASH, ImmutableMap.from(requireNonNull(values).stream()));
   }
 
   @SafeVarargs
   public static DatabaseValue hash(Tuple2<SafeString, SafeString>... values) {
-    return new DatabaseValue(DataType.HASH,
-        Stream.of(values).collect(LinkedHashMap.collector()));
+    return new DatabaseValue(DataType.HASH, ImmutableMap.from(Stream.of(values)));
   }
 
   public static DatabaseValue bitset(int... ones) {
@@ -256,7 +259,7 @@ public class DatabaseValue implements Serializable {
   private <T> T getValue() {
     return (T) value;
   }
-  
+
   private void requiredType(DataType type) {
     if (this.type != type) {
       throw new IllegalStateException("invalid type: " + type);

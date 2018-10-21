@@ -6,18 +6,17 @@ package com.github.tonivade.claudb.command.list;
 
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 
-import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
-
-import io.vavr.collection.List;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 
 @ReadOnly
 @Command("llen")
@@ -27,7 +26,7 @@ public class ListLengthCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    List<SafeString> list = db.getList(request.getParam(0));
+    ImmutableList<SafeString> list = db.getList(request.getParam(0));
     return integer(list.size());
   }
 }
