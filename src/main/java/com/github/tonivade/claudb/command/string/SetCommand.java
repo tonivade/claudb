@@ -6,6 +6,7 @@ package com.github.tonivade.claudb.command.string;
 
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
+import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
@@ -18,7 +19,6 @@ import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Matcher1;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
@@ -55,9 +55,9 @@ public class SetCommand implements DBCommand {
 
   private RedisToken onFailure(Throwable e) {
     return Pattern1.<Throwable, RedisToken>build()
-        .when(Matcher1.instanceOf(SyntaxException.class))
-          .returns(error("sytax error"))
-        .when(Matcher1.instanceOf(SyntaxException.class))
+        .when(instanceOf(SyntaxException.class))
+          .returns(error("syntax error"))
+        .when(instanceOf(NumberFormatException.class))
           .returns(error("value is not an integer or out of range"))
         .otherwise()
           .returns(error("error: " + e.getMessage()))

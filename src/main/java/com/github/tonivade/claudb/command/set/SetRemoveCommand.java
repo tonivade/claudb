@@ -35,9 +35,9 @@ public class SetRemoveCommand implements DBCommand {
     List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
         (oldValue, newValue) -> {
-          ImmutableSet<SafeString> merge = oldValue.getSet();
-          items.removeAll(merge).forEach(removed::add);
-          return set(merge.removeAll(items));
+          ImmutableSet<SafeString> oldSet = oldValue.getSet();
+          oldSet.intersection(items.asSet()).stream().forEach(removed::add);
+          return set(oldSet.removeAll(items));
         });
 
     return integer(removed.size());

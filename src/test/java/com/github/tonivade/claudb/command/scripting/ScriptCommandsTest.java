@@ -4,23 +4,22 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
+import static com.github.tonivade.claudb.data.DatabaseValue.entry;
+import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static com.github.tonivade.claudb.data.DatabaseValue.entry;
-import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
-import java.util.Optional;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
+import com.github.tonivade.purefun.type.Option;
 
 @CommandUnderTest(ScriptCommands.class)
 public class ScriptCommandsTest {
@@ -36,7 +35,7 @@ public class ScriptCommandsTest {
         .execute()
         .assertThat(string(sha1sum));
 
-    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Optional.of(safeString("return nil"))));
+    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Option.some(safeString("return nil"))));
   }
 
   @Test
@@ -54,7 +53,7 @@ public class ScriptCommandsTest {
         .execute()
         .assertThat(responseOk());
 
-    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Optional.empty()));
+    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Option.none()));
   }
 
   @Test

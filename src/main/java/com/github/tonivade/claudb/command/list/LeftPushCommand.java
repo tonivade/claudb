@@ -26,7 +26,7 @@ public class LeftPushCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    ImmutableList<SafeString> values = request.getParams().asList().tail();
+    ImmutableList<SafeString> values = request.getParams().asList().tail().reverse();
 
     DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
         (oldValue, newValue) -> list(newValue.getList().appendAll(oldValue.getList())));

@@ -103,7 +103,7 @@ public class DatabaseValue implements Serializable {
           .returns(1)
         .otherwise()
           .returns(0)
-        .apply(this);
+        .apply(this.value);
   }
 
   public Instant getExpiredAt() {

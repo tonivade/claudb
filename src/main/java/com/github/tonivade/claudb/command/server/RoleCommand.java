@@ -18,7 +18,6 @@ import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
@@ -49,7 +48,7 @@ public class RoleCommand implements DBCommand {
 
   private ImmutableList<RedisToken> slaves(Database adminDatabase) {
     DatabaseValue value = adminDatabase.getOrDefault(safeKey("slaves"), DatabaseValue.EMPTY_SET);
-    ImmutableSet<SafeString> set = value.getSet();
+    ImmutableList<SafeString> set = value.getSet().asList().sort(SafeString::compareTo);
     return set.map(SafeString::toString)
         .map(slave -> slave.split(":"))
         .map(slave -> array(string(slave[0]), string(slave[1]), string("0"))).asList();

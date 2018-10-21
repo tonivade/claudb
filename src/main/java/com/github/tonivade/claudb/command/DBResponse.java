@@ -59,9 +59,9 @@ class DBResponse {
   private static RedisToken parseToken(Object value) {
     return Pattern1.<Object, RedisToken>build()
         .when(instanceOf(Integer.class))
-          .then(integer -> RedisToken.integer((int) integer))
+          .then(integer -> RedisToken.integer((Integer) integer))
         .when(instanceOf(Boolean.class))
-          .then(bool -> RedisToken.integer((boolean) bool))
+          .then(bool -> RedisToken.integer((Boolean) bool))
         .when(instanceOf(String.class))
           .then(string -> RedisToken.string((String) string))
         .when(instanceOf(Double.class))
