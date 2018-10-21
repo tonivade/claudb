@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +53,6 @@ public class DatabaseValue implements Serializable {
   public static final DatabaseValue NULL = null;
 
   private transient DataType type;
-
   private transient Object value;
   private transient Instant expiredAt;
 
@@ -299,7 +297,7 @@ public class DatabaseValue implements Serializable {
   private Object serializableValue() {
     return Pattern1.build()
         .when(is(DataType.STRING))
-          .returns(this.value)
+          .then(value -> this.<SafeString>getValue())
         .when(is(DataType.LIST))
           .then(value -> this.<ImmutableList<SafeString>>getValue().toList())
         .when(is(DataType.SET))
@@ -307,7 +305,7 @@ public class DatabaseValue implements Serializable {
         .when(is(DataType.HASH))
           .then(value -> this.<ImmutableMap<SafeString, SafeString>>getValue().toMap())
         .when(is(DataType.ZSET))
-          .then(value -> this.<NavigableMap<Double, SafeString>>getValue())
+          .then(value -> this.<NavigableSet<Entry<Double, SafeString>>>getValue())
         .apply(this.type);
   }
 }

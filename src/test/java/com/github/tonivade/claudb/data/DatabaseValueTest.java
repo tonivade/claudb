@@ -79,7 +79,7 @@ public class DatabaseValueTest {
   }
 
   @Test
-  public void listSerializableTest() throws IOException, ClassNotFoundException {
+  public void serializableTest() throws IOException, ClassNotFoundException {
     verifySerializable(list(safeString("hello world!")));
     verifySerializable(set(safeString("hello world!")));
     verifySerializable(hash(entry(safeString("key"), safeString("value"))));
@@ -91,6 +91,7 @@ public class DatabaseValueTest {
     ByteArrayOutputStream array = new ByteArrayOutputStream();
     ObjectOutputStream output = new ObjectOutputStream(array);
     output.writeObject(value);
+    output.flush();
 
     ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(array.toByteArray()));
     assertThat(value, equalTo(input.readObject()));
