@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.claudb.data;
 
+import static java.util.Objects.requireNonNull;
+
 public enum DataType {
   STRING("string"),
   LIST("list"),
@@ -15,7 +17,7 @@ public enum DataType {
   private final String text;
 
   private DataType(String text) {
-    this.text = text;
+    this.text = requireNonNull(text);
   }
 
   public String text() {

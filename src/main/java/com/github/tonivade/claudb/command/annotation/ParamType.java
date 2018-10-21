@@ -17,6 +17,5 @@ import com.github.tonivade.claudb.data.DataType;
 @Documented
 public @interface ParamType {
 
-    DataType value();
-
+  DataType value();
 }

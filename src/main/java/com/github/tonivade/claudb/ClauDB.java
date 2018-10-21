@@ -4,18 +4,16 @@
  */
 package com.github.tonivade.claudb;
 
+import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.String.valueOf;
-import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +27,7 @@ import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
+import com.github.tonivade.purefun.data.ImmutableArray;
 import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.RespServerContext;
@@ -47,8 +46,8 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
   private DatabaseCleaner cleaner;
-  private Optional<PersistenceManager> persistence;
-  private Optional<NotificationManager> notifications;
+  private Option<PersistenceManager> persistence;
+  private Option<NotificationManager> notifications;
 
   private final DBConfig config;
 
@@ -216,11 +215,9 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private RedisToken requestToArray(Request request) {
-    List<RedisToken> array = new LinkedList<>();
-    array.add(currentDbToken(request));
-    array.add(commandToken(request));
-    array.addAll(paramTokens(request));
-    return RedisToken.array(array);
+    return RedisToken.array(listOf(currentDbToken(request))
+        .append(commandToken(request))
+        .appendAll(paramTokens(request)));
   }
 
   private RedisToken commandToken(Request request) {
@@ -235,8 +232,8 @@ public class ClauDB extends RespServerContext implements DBServerContext {
     return getSessionState(request.getSession()).getCurrentDB();
   }
 
-  private List<RedisToken> paramTokens(Request request) {
-    return request.getParams().stream().map(RedisToken::string).collect(toList());
+  private ImmutableArray<RedisToken> paramTokens(Request request) {
+    return request.getParams().map(RedisToken::string);
   }
 
   private DBSessionState getSessionState(Session session) {
@@ -279,17 +276,17 @@ public class ClauDB extends RespServerContext implements DBServerContext {
 
   private void initNotifications() {
     if (config.isNotificationsActive()) {
-      this.notifications = Optional.of(new NotificationManager(this));
+      this.notifications = Option.some(new NotificationManager(this));
     } else {
-      this.notifications = Optional.empty();
+      this.notifications = Option.none();
     }
   }
 
   private void initPersistence() {
     if (config.isPersistenceActive()) {
-      this.persistence = Optional.of(new PersistenceManager(this, config));
+      this.persistence = Option.some(new PersistenceManager(this, config));
     } else {
-      this.persistence = Optional.empty();
+      this.persistence = Option.none();
     }
   }
 

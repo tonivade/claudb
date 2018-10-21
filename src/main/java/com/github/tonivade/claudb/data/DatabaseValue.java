@@ -5,12 +5,16 @@
 package com.github.tonivade.claudb.data;
 
 import static com.github.tonivade.purefun.Matcher1.instanceOf;
+import static com.github.tonivade.purefun.Matcher1.is;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -18,7 +22,9 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -47,10 +53,10 @@ public class DatabaseValue implements Serializable {
 
   public static final DatabaseValue NULL = null;
 
-  private final DataType type;
+  private transient DataType type;
 
-  private final Object value;
-  private final Instant expiredAt;
+  private transient Object value;
+  private transient Instant expiredAt;
 
   private DatabaseValue(DataType type, Object value) {
     this(type, value, null);
@@ -264,5 +270,44 @@ public class DatabaseValue implements Serializable {
     if (this.type != type) {
       throw new IllegalStateException("invalid type: " + type);
     }
+  }
+
+  private void writeObject(ObjectOutputStream out) throws IOException {
+    out.writeObject(this.type);
+    out.writeObject(serializableValue());
+    out.writeObject(this.expiredAt);
+  }
+
+  private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
+    this.type = (DataType) input.readObject();
+    Object object = input.readObject();
+    this.value = Pattern1.build()
+        .when(is(DataType.STRING))
+          .returns(object)
+        .when(is(DataType.LIST))
+          .then(value -> ImmutableList.from((Collection<?>) object))
+        .when(is(DataType.SET))
+          .then(value -> ImmutableSet.from((Collection<?>) object))
+        .when(is(DataType.HASH))
+          .then(value -> ImmutableMap.from((Map<?, ?>) object))
+        .when(is(DataType.ZSET))
+          .returns(object)
+        .apply(this.type);
+    this.expiredAt = (Instant) input.readObject();
+  }
+
+  private Object serializableValue() {
+    return Pattern1.build()
+        .when(is(DataType.STRING))
+          .returns(this.value)
+        .when(is(DataType.LIST))
+          .then(value -> this.<ImmutableList<SafeString>>getValue().toList())
+        .when(is(DataType.SET))
+          .then(value -> this.<ImmutableSet<SafeString>>getValue().toSet())
+        .when(is(DataType.HASH))
+          .then(value -> this.<ImmutableMap<SafeString, SafeString>>getValue().toMap())
+        .when(is(DataType.ZSET))
+          .then(value -> this.<NavigableMap<Double, SafeString>>getValue())
+        .apply(this.type);
   }
 }
