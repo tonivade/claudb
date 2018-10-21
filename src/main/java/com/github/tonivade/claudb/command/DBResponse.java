@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.claudb.command;
 
+import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static java.util.stream.Collectors.toList;
@@ -14,7 +15,6 @@ import java.util.NavigableSet;
 import java.util.stream.Stream;
 
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Matcher1;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.data.ImmutableMap;
@@ -58,19 +58,19 @@ class DBResponse {
 
   private static RedisToken parseToken(Object value) {
     return Pattern1.<Object, RedisToken>build()
-        .when(Matcher1.instanceOf(Integer.class))
+        .when(instanceOf(Integer.class))
           .then(integer -> RedisToken.integer((int) integer))
-        .when(Matcher1.instanceOf(Boolean.class))
+        .when(instanceOf(Boolean.class))
           .then(bool -> RedisToken.integer((boolean) bool))
-        .when(Matcher1.instanceOf(String.class))
+        .when(instanceOf(String.class))
           .then(string -> RedisToken.string((String) string))
-        .when(Matcher1.instanceOf(Double.class))
+        .when(instanceOf(Double.class))
           .then(double_ -> RedisToken.string(double_.toString()))
-        .when(Matcher1.instanceOf(SafeString.class))
+        .when(instanceOf(SafeString.class))
           .then(string -> RedisToken.string((SafeString) string))
-        .when(Matcher1.instanceOf(DatabaseValue.class))
+        .when(instanceOf(DatabaseValue.class))
           .then(value_ -> DBResponse.convertValue((DatabaseValue) value_))
-        .when(Matcher1.instanceOf(RedisToken.class))
+        .when(instanceOf(RedisToken.class))
           .then(token -> (RedisToken) token)
         .otherwise()
           .returns(nullString())

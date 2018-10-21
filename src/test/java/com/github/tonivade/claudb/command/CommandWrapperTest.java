@@ -55,6 +55,7 @@ public class CommandWrapperTest {
     when(request.getServerContext()).thenReturn(server);
     when(request.getCommand()).thenReturn("test");
     when(session.getValue("state")).thenReturn(Option.some(sessionState));
+    when(session.getValue("tx")).thenReturn(Option.none());
     when(server.getValue("state")).thenReturn(Option.some(serverState));
     when(sessionState.getCurrentDB()).thenReturn(1);
     when(serverState.getDatabase(1)).thenReturn(db);

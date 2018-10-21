@@ -174,11 +174,11 @@ public class DatabaseValue implements Serializable {
   }
 
   public static DatabaseValue list(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.LIST, ImmutableList.of(requireNonNull(values).stream()));
+    return new DatabaseValue(DataType.LIST, ImmutableList.from(requireNonNull(values).stream()));
   }
 
   public static DatabaseValue list(SafeString... values) {
-    return new DatabaseValue(DataType.LIST, ImmutableList.of(Stream.of(values)));
+    return new DatabaseValue(DataType.LIST, ImmutableList.from(Stream.of(values)));
   }
 
   public static DatabaseValue set(Sequence<SafeString> values) {
@@ -186,11 +186,11 @@ public class DatabaseValue implements Serializable {
   }
 
   public static DatabaseValue set(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.SET, ImmutableSet.of(requireNonNull(values).stream()));
+    return new DatabaseValue(DataType.SET, ImmutableSet.from(requireNonNull(values).stream()));
   }
 
   public static DatabaseValue set(SafeString... values) {
-    return new DatabaseValue(DataType.SET, ImmutableSet.of(Stream.of(values)));
+    return new DatabaseValue(DataType.SET, ImmutableSet.from(Stream.of(values)));
   }
 
   public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {

@@ -2,7 +2,6 @@
  * Copyright (c) 2015-2018, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-
 package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
@@ -11,8 +10,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.Optional;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
@@ -93,6 +90,8 @@ public class CommandRule implements TestRule {
         when(request.getSession()).thenReturn(session);
         when(session.getId()).thenReturn("localhost:12345");
         when(session.getValue("state")).thenReturn(Option.some(sessionState));
+        when(session.getValue("tx")).thenReturn(Option.none());
+        when(session.removeValue("tx")).thenReturn(Option.none());
         when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
         when(server.isMaster()).thenReturn(true);
         when(server.getValue("state")).thenReturn(Option.some(serverState));
@@ -148,9 +147,9 @@ public class CommandRule implements TestRule {
       when(request.getOptionalParam(anyInt())).thenAnswer(invocation -> {
         Integer param = (Integer) invocation.getArguments()[0];
         if (param < params.length) {
-          return Optional.of(safeString(params[param]));
+          return Option.some(safeString(params[param]));
         }
-        return Optional.empty();
+        return Option.none();
       });
     }
     return this;
