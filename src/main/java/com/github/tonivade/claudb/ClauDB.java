@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +27,7 @@ import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
 import com.github.tonivade.purefun.data.ImmutableArray;
+import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.RespServerContext;
@@ -97,8 +97,8 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   @Override
-  public List<RedisToken> getCommandsToReplicate() {
-    return executeOn(Observable.<List<RedisToken>>create(observable -> {
+  public ImmutableList<RedisToken> getCommandsToReplicate() {
+    return executeOn(Observable.<ImmutableList<RedisToken>>create(observable -> {
       observable.onNext(getState().getCommandsToReplicate());
       observable.onComplete();
     })).blockingFirst();

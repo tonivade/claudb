@@ -42,7 +42,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseValue implements Serializable {
 
-  private static final long serialVersionUID = -1001729166107392343L;
+  private static final long serialVersionUID = -5178953336530559139L;
 
   public static final DatabaseValue EMPTY_STRING = string("");
   public static final DatabaseValue EMPTY_LIST = list();
@@ -61,8 +61,8 @@ public class DatabaseValue implements Serializable {
   }
 
   private DatabaseValue(DataType type, Object value, Instant expiredAt) {
-    this.type = type;
-    this.value = value;
+    this.type = requireNonNull(type);
+    this.value = requireNonNull(value);
     this.expiredAt = expiredAt;
   }
 
@@ -297,15 +297,15 @@ public class DatabaseValue implements Serializable {
   private Object serializableValue() {
     return Pattern1.build()
         .when(is(DataType.STRING))
-          .then(value -> this.<SafeString>getValue())
+          .then(value -> this.getString())
         .when(is(DataType.LIST))
-          .then(value -> this.<ImmutableList<SafeString>>getValue().toList())
+          .then(value -> this.getList().toList())
         .when(is(DataType.SET))
-          .then(value -> this.<ImmutableSet<SafeString>>getValue().toSet())
+          .then(value -> this.getSet().toSet())
         .when(is(DataType.HASH))
-          .then(value -> this.<ImmutableMap<SafeString, SafeString>>getValue().toMap())
+          .then(value -> this.getHash().toMap())
         .when(is(DataType.ZSET))
-          .then(value -> this.<NavigableSet<Entry<Double, SafeString>>>getValue())
+          .then(value -> this.getSortedSet())
         .apply(this.type);
   }
 }

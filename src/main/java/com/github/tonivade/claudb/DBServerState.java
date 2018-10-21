@@ -27,6 +27,7 @@ import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.persistence.RDBInputStream;
 import com.github.tonivade.claudb.persistence.RDBOutputStream;
+import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.purefun.type.Option;
@@ -143,8 +144,8 @@ public class DBServerState {
     });
   }
 
-  public List<RedisToken> getCommandsToReplicate() {
-    List<RedisToken> list = new LinkedList<>(queue);
+  public ImmutableList<RedisToken> getCommandsToReplicate() {
+    ImmutableList<RedisToken> list = ImmutableList.from(queue);
     queue.clear();
     return list;
   }

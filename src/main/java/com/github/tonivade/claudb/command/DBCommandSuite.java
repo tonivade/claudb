@@ -192,5 +192,4 @@ public class DBCommandSuite extends CommandSuite {
   public boolean isReadOnly(String command) {
     return COMMAND_BLACK_LIST.contains(command) || isPresent(command, ReadOnly.class);
   }
-
 }

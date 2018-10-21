@@ -34,7 +34,7 @@ public class DBCommandProcessor {
   private final Session session;
 
   public DBCommandProcessor(DBServerContext server) {
-    this(server,  new DefaultSession("dummy", null));
+    this(server, new DefaultSession("dummy", null));
   }
 
   public DBCommandProcessor(DBServerContext server, Session session) {
@@ -65,5 +65,4 @@ public class DBCommandProcessor {
         .onString(StringRedisToken::getValue).build();
     return ImmutableArray.from(visit(request.stream(), visitor));
   }
-
 }

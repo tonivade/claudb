@@ -4,11 +4,11 @@
  */
 package com.github.tonivade.claudb;
 
-import static java.util.Collections.unmodifiableSet;
-
 import java.util.HashSet;
 import java.util.Set;
 
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class DBSessionState {
@@ -25,8 +25,8 @@ public class DBSessionState {
     this.db = db;
   }
 
-  public Set<SafeString> getSubscriptions() {
-    return unmodifiableSet(subscriptions);
+  public Sequence<SafeString> getSubscriptions() {
+    return ImmutableSet.from(subscriptions);
   }
 
   public void addSubscription(SafeString channel) {

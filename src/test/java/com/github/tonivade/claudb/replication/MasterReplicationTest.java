@@ -4,10 +4,10 @@
  */
 package com.github.tonivade.claudb.replication;
 
+import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static java.util.Arrays.asList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.timeout;
@@ -39,7 +39,7 @@ public class MasterReplicationTest {
 
   @Test
   public void testReplication()  {
-    when(server.getCommandsToReplicate()).thenReturn(asList(request()));
+    when(server.getCommandsToReplicate()).thenReturn(listOf(request()));
     when(server.getValue("state")).thenReturn(Option.some(serverState));
 
     master.addSlave("slave:1");
@@ -54,5 +54,4 @@ public class MasterReplicationTest {
   private RedisToken request() {
     return array(integer(0), string("set"), string("a"), string("b"));
   }
-
 }
