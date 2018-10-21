@@ -4,10 +4,7 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static io.vavr.Predicates.instanceOf;
+import static com.github.tonivade.purefun.Matcher1.instanceOf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +16,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 
+import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.IntegerRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.StatusRedisToken;
@@ -60,11 +58,18 @@ public class RedisBinding extends VarArgFunction {
   }
 
   private LuaValue convert(RedisToken token) {
-    return Match(token).of(Case($(instanceOf(StringRedisToken.class)), this::toLuaString),
-                           Case($(instanceOf(StatusRedisToken.class)), this::toLuaString),
-                           Case($(instanceOf(ArrayRedisToken.class)), this::toLuaTable),
-                           Case($(instanceOf(IntegerRedisToken.class)), this::toLuaNumber),
-                           Case($(instanceOf(UnknownRedisToken.class)), this::toLuaString));
+    return Pattern1.<RedisToken, LuaValue>build()
+        .when(instanceOf(StringRedisToken.class))
+          .then(string -> toLuaString((StringRedisToken) string))
+        .when(instanceOf(StatusRedisToken.class))
+          .then(status -> toLuaString((StatusRedisToken) status))
+        .when(instanceOf(ArrayRedisToken.class))
+          .then(array -> toLuaTable((ArrayRedisToken) array))
+        .when(instanceOf(IntegerRedisToken.class))
+          .then(integer -> toLuaNumber((IntegerRedisToken) integer))
+        .when(instanceOf(UnknownRedisToken.class))
+          .then(unknown -> toLuaString((UnknownRedisToken) unknown))
+        .apply(token);
   }
 
   private LuaInteger toLuaNumber(IntegerRedisToken value) {

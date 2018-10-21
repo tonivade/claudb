@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
-import static java.util.Arrays.asList;
+import static com.github.tonivade.purefun.data.Sequence.arrayOf;
 
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
@@ -33,6 +33,6 @@ public class RedisLibrary {
   }
 
   private Request createRequest(SafeString commandName, SafeString... params) {
-    return new DefaultRequest(context, session, commandName, asList(params));
+    return new DefaultRequest(context, session, commandName, arrayOf(params));
   }
 }
