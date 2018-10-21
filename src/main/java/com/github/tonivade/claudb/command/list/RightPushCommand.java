@@ -27,7 +27,7 @@ public class RightPushCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    ImmutableList<SafeString> values = ImmutableList.from(request.getParams()).tail();
+    ImmutableList<SafeString> values = request.getParams().asList().tail();
 
     DatabaseValue result = db.merge(safeKey(request.getParam(0)), list(values),
         (oldValue, newValue) -> list(oldValue.getList().appendAll(newValue.getList())));
