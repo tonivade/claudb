@@ -14,19 +14,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.resp.annotation.Command;
-import com.github.tonivade.resp.annotation.ParamLength;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.Session;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.DBSessionState;
@@ -34,6 +27,12 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
+import com.github.tonivade.purefun.type.Option;
+import com.github.tonivade.resp.annotation.Command;
+import com.github.tonivade.resp.annotation.ParamLength;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.Session;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {
@@ -55,8 +54,8 @@ public class CommandWrapperTest {
     when(request.getSession()).thenReturn(session);
     when(request.getServerContext()).thenReturn(server);
     when(request.getCommand()).thenReturn("test");
-    when(session.getValue("state")).thenReturn(Optional.of(sessionState));
-    when(server.getValue("state")).thenReturn(Optional.of(serverState));
+    when(session.getValue("state")).thenReturn(Option.some(sessionState));
+    when(server.getValue("state")).thenReturn(Option.some(serverState));
     when(sessionState.getCurrentDB()).thenReturn(1);
     when(serverState.getDatabase(1)).thenReturn(db);
   }

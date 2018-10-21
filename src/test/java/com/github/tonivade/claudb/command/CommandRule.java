@@ -5,9 +5,8 @@
 
 package com.github.tonivade.claudb.command;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -23,11 +22,6 @@ import org.junit.runners.model.Statement;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.command.ServerContext;
-import com.github.tonivade.resp.command.Session;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.DBSessionState;
@@ -35,6 +29,14 @@ import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.purefun.data.ImmutableArray;
+import com.github.tonivade.purefun.type.Option;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.command.Session;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class CommandRule implements TestRule {
 
@@ -90,10 +92,10 @@ public class CommandRule implements TestRule {
         when(request.getServerContext()).thenReturn(server);
         when(request.getSession()).thenReturn(session);
         when(session.getId()).thenReturn("localhost:12345");
-        when(session.getValue("state")).thenReturn(Optional.of(sessionState));
+        when(session.getValue("state")).thenReturn(Option.some(sessionState));
         when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
         when(server.isMaster()).thenReturn(true);
-        when(server.getValue("state")).thenReturn(Optional.of(serverState));
+        when(server.getValue("state")).thenReturn(Option.some(serverState));
 
         MockitoAnnotations.initMocks(target);
 
@@ -137,7 +139,7 @@ public class CommandRule implements TestRule {
 
   public CommandRule withParams(String ... params) {
     if (params != null) {
-      when(request.getParams()).thenReturn(safeAsList(params));
+      when(request.getParams()).thenReturn(ImmutableArray.of(params).map(SafeString::safeString));
       int i = 0;
       for (String param : params) {
         when(request.getParam(i++)).thenReturn(safeString(param));

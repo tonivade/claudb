@@ -6,15 +6,14 @@ package com.github.tonivade.claudb.command.transaction;
 
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
+import com.github.tonivade.purefun.type.Option;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @CommandUnderTest(MultiCommand.class)
 public class MultiCommandTest {
@@ -30,7 +29,7 @@ public class MultiCommandTest {
 
   @Test
   public void executeWithActiveTransaction()  {
-    when(rule.getSession().getValue("tx")).thenReturn(Optional.of(new TransactionState()));
+    when(rule.getSession().getValue("tx")).thenReturn(Option.some(new TransactionState()));
 
     rule.execute()
     .assertThat(RedisToken.error("ERR MULTI calls can not be nested"));

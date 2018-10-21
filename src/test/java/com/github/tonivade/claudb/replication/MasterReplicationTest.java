@@ -14,18 +14,17 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Optional;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.purefun.type.Option;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
@@ -41,7 +40,7 @@ public class MasterReplicationTest {
   @Test
   public void testReplication()  {
     when(server.getCommandsToReplicate()).thenReturn(asList(request()));
-    when(server.getValue("state")).thenReturn(Optional.of(serverState));
+    when(server.getValue("state")).thenReturn(Option.some(serverState));
 
     master.addSlave("slave:1");
     master.addSlave("slave:2");
