@@ -10,6 +10,7 @@ import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 import com.github.tonivade.claudb.command.DBCommand;
@@ -34,7 +35,7 @@ public class SetRandomMemberCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    LinkedList<SafeString> random = new LinkedList<>();
+    List<SafeString> random = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_SET,
         (oldValue, newValue) -> {
           ImmutableArray<SafeString> merge = oldValue.getSet().asArray();

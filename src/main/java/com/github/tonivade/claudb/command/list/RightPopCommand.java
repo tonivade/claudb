@@ -10,6 +10,7 @@ import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
@@ -30,7 +31,7 @@ public class RightPopCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    LinkedList<SafeString> removed = new LinkedList<>();
+    List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
           ImmutableList<SafeString> list = oldValue.getList();
