@@ -182,8 +182,8 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.3.0/claudb-1.3.0-all.jar
-    $ java -jar claudb-1.3.0-all.jar
+    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.4.0/claudb-1.4.0-all.jar
+    $ java -jar claudb-1.4.0-all.jar
 
 or using [jrun](https://github.com/ctrueden/jrun) utility
 
@@ -206,12 +206,12 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>claudb</artifactId>
-        <version>1.3.0</version>
+        <version>1.4.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:claudb:1.3.0'
+    compile 'com.github.tonivade:claudb:1.4.0'
 
 Or embed in your source code
 
