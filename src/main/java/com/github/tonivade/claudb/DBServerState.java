@@ -5,6 +5,7 @@
 package com.github.tonivade.claudb;
 
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
+import static com.github.tonivade.claudb.data.DatabaseValue.EMPTY_HASH;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.claudb.data.DatabaseValue.set;
@@ -120,7 +121,7 @@ public class DBServerState {
   }
 
   public Option<SafeString> getScript(SafeString sha1) {
-    DatabaseValue value = admin.getOrDefault(SCRIPTS_KEY, DatabaseValue.EMPTY_HASH);
+    DatabaseValue value = admin.getOrDefault(SCRIPTS_KEY, EMPTY_HASH);
     return value.getHash().get(sha1);
   }
 

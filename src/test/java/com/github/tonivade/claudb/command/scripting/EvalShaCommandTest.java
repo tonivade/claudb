@@ -4,12 +4,11 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
-import static com.github.tonivade.resp.protocol.RedisToken.nullString;
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
-
-import java.util.NoSuchElementException;
+import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,10 +22,11 @@ public class EvalShaCommandTest {
   @Rule
   public final CommandRule rule = new CommandRule(this);
 
-  @Test(expected = NoSuchElementException.class)
+  @Test
   public void testNotExistingScript() {
     rule.withParams("notExists", "0")
-        .execute();
+        .execute()
+        .assertThat(error("NOSCRIPT No matching script. Please use EVAL"));
   }
 
   @Test
