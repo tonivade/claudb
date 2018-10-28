@@ -30,11 +30,11 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class LuaInterpreter {
+public final class LuaInterpreter {
 
   private RedisBinding redis;
 
-  public LuaInterpreter(RedisBinding binding) {
+  protected LuaInterpreter(RedisBinding binding) {
     this.redis = binding;
   }
 
@@ -84,8 +84,7 @@ public class LuaInterpreter {
 
   private RedisToken convertLuaTable(LuaTable value) {
     List<RedisToken> tokens = new ArrayList<>();
-    for (LuaValue key : value.keys())
-    {
+    for (LuaValue key : value.keys()) {
       tokens.add(convert(value.get(key)));
     }
     return array(tokens);
