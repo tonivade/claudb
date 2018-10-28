@@ -4,8 +4,8 @@
  */
 package com.github.tonivade.claudb.command.set;
 
-import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.isSet;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,10 +20,18 @@ public class SetAddCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void testExecute()  {
+  public void addOneValue()  {
     rule.withParams("key", "value")
-    .execute()
-    .assertValue("key", isSet("value"))
-    .assertThat(integer(1));
+      .execute()
+      .assertValue("key", isSet("value"))
+      .assertThat(integer(1));
+  }
+
+  @Test
+  public void addMultipleValues()  {
+    rule.withParams("key", "value1", "value2", "value3")
+      .execute()
+      .assertValue("key", isSet("value1", "value2", "value3"))
+      .assertThat(integer(3));
   }
 }
