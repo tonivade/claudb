@@ -31,7 +31,7 @@ public class ScriptCommandsTest {
 
   @Test
   public void load() {
-    rule.withParams("load", "return nil")
+    rule.withParams("LOAD", "return nil")
         .execute()
         .assertThat(string(sha1sum));
 

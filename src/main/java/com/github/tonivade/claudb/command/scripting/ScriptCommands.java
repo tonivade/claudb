@@ -68,6 +68,6 @@ public class ScriptCommands implements DBCommand {
   }
 
   private Matcher1<Request> isCommand(String command) {
-    return request -> request.getParam(0).equals(safeString(command));
+    return request -> request.getParam(0).toString().toLowerCase().equals(command);
   }
 }
