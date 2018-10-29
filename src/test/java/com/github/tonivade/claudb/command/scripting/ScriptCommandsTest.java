@@ -27,7 +27,7 @@ public class ScriptCommandsTest {
   @Rule
   public final CommandRule rule = new CommandRule(this);
 
-  private final String sha1sum = "79CEFB99366D8809D2E903C5F36F50C2B731913F";
+  private final String sha1sum = "79cefb99366d8809d2e903c5f36f50c2b731913f";
 
   @Test
   public void load() {

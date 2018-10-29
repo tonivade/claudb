@@ -46,10 +46,11 @@ public class ScriptCommands implements DBCommand {
 
   private RedisToken load(Request request) {
     SafeString script = request.getParam(1);
-    String sha1 = Try.of(() -> digest(script)).get();
-    DBServerState server = getServerState(request.getServerContext());
-    server.saveScript(safeString(sha1), script);
-    return RedisToken.string(sha1);
+    return Try.of(() -> digest(script)).map(sha1 -> {
+      DBServerState server = getServerState(request.getServerContext());
+      server.saveScript(safeString(sha1), script);
+      return RedisToken.string(sha1);
+    }).orElse(RedisToken.error("ERR cannot generate sha1 sum for script: " + script));
   }
 
   private RedisToken exists(Request request) {
@@ -64,7 +65,7 @@ public class ScriptCommands implements DBCommand {
 
   private String digest(SafeString script) throws NoSuchAlgorithmException {
     MessageDigest digest = MessageDigest.getInstance("SHA-1");
-    return new SafeString(digest.digest(script.getBytes())).toHexString();
+    return new SafeString(digest.digest(script.getBytes())).toHexString().toLowerCase();
   }
 
   private Matcher1<Request> isCommand(String command) {
