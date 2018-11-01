@@ -7,6 +7,7 @@ package com.github.tonivade.claudb.persistence;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -44,7 +45,6 @@ import com.github.tonivade.resp.protocol.RedisToken;
 public class PersistenceManagerTest {
 
   private static final String COMMAND = "*4\r\n$1\r\n0\r\n$3\r\nset\r\n$1\r\na\r\n$1\r\n1\r\n";
-  private static final String DEFAULT_CHARSET = "UTF-8";
   private static final String REDO_FILE = "redo.aof";
   private static final String DUMP_FILE = "dump.rdb";
 
@@ -86,9 +86,7 @@ public class PersistenceManagerTest {
 
   @Test
   public void testStart() throws IOException {
-    RespCommand cmd = mock(RespCommand.class);
-    when(server.getCommand("select")).thenReturn(cmd);
-    when(server.getCommand("set")).thenReturn(cmd);
+    RespCommand cmd = stubCommand();
 
     writeRDB();
     writeAOF();
@@ -127,7 +125,7 @@ public class PersistenceManagerTest {
 
   private void writeRDB() {
     try (FileOutputStream out = new FileOutputStream(DUMP_FILE)) {
-      out.write("Test".getBytes(DEFAULT_CHARSET));
+      out.write("Test".getBytes(UTF_8));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -135,7 +133,7 @@ public class PersistenceManagerTest {
 
   private void writeAOF() {
     try (FileOutputStream out = new FileOutputStream(REDO_FILE)) {
-      out.write(COMMAND.getBytes(DEFAULT_CHARSET));
+      out.write(COMMAND.getBytes(UTF_8));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -147,7 +145,7 @@ public class PersistenceManagerTest {
       byte[] buffer = new byte[1024];
       int readed = in.read(buffer);
       if (readed > -1) {
-        str = new String(buffer, 0, readed, DEFAULT_CHARSET);
+        str = new String(buffer, 0, readed, UTF_8);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -163,9 +161,15 @@ public class PersistenceManagerTest {
     @Override
     public Void answer(InvocationOnMock invocation) throws Throwable {
       OutputStream output = (OutputStream) invocation.getArguments()[0];
-      output.write(fromHexString("524544495330303033FE00FF77DE0394AC9D23EA").getBytes());
+      output.write(fromHexString("524544495330303033fe00ff77de0394ac9d23ea").getBytes());
       return null;
     }
   }
 
+  private RespCommand stubCommand() {
+    RespCommand cmd = mock(RespCommand.class);
+    when(server.getCommand("select")).thenReturn(cmd);
+    when(server.getCommand("set")).thenReturn(cmd);
+    return cmd;
+  }
 }

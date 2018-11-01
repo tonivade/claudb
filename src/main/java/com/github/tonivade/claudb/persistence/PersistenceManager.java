@@ -112,8 +112,7 @@ public class PersistenceManager {
           }
           LOGGER.info("command: {}", token);
 
-          ArrayRedisToken array = (ArrayRedisToken) token;
-          processCommand(array);
+          processCommand((ArrayRedisToken) token);
         }
       } catch (IOException e) {
         LOGGER.error("error reading AOF file", e);
