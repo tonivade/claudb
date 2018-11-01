@@ -5,6 +5,7 @@
 package com.github.tonivade.claudb;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Stream;
@@ -16,7 +17,8 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
 public class Server {
-  public static void main(String[] args) throws Exception {
+
+  public static void main(String[] args) throws IOException {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<Void> verbose = parser.accepts("V", "verbose");
@@ -35,14 +37,14 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
-      DBConfig config = parseConfig(options.has(persist), 
-                                    options.has(offHeap), 
+      DBConfig config = parseConfig(options.has(persist),
+                                    options.has(offHeap),
                                     options.has(notifications));
-     
+
       readBanner().forEach(System.out::println);
-      
+
       System.setProperty("root-level", options.has(verbose) ? "DEBUG": "INFO");
-      
+
       RespServer server = ClauDB.builder().host(optionHost).port(optionPort).config(config).build();
       Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
       server.start();

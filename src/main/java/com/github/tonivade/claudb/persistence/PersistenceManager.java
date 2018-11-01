@@ -21,6 +21,9 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tonivade.claudb.DBConfig;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.command.DBCommandProcessor;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisParser;
 import com.github.tonivade.resp.protocol.RedisSerializer;
@@ -28,9 +31,6 @@ import com.github.tonivade.resp.protocol.RedisSource;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.DBConfig;
-import com.github.tonivade.claudb.DBServerContext;
-import com.github.tonivade.claudb.command.DBCommandProcessor;
 
 public class PersistenceManager {
 
@@ -97,13 +97,14 @@ public class PersistenceManager {
     File file = new File(redoFile);
     if (file.exists()) {
       try (FileInputStream redo = new FileInputStream(file)) {
-        RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new InputStreamRedisSource(redo));
+        RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new RedisSourceInputStream(redo));
 
         while (true) {
           RedisToken token = parse.parse();
           if (token.getType() == RedisTokenType.UNKNOWN) {
             break;
           }
+          LOGGER.info("command: {}", token);
           processor.processCommand((ArrayRedisToken) token);
         }
       } catch (IOException e) {
@@ -154,57 +155,57 @@ public class PersistenceManager {
       LOGGER.error("error writing to AOF file", e);
     }
   }
+}
 
-  private static class InputStreamRedisSource implements RedisSource {
+class RedisSourceInputStream implements RedisSource {
 
-    private final InputStream stream;
+  private final InputStream input;
 
-    public InputStreamRedisSource(InputStream stream) {
-      super();
-      this.stream = stream;
-    }
+  RedisSourceInputStream(InputStream input) {
+    this.input = input;
+  }
 
-    @Override
-    public SafeString readLine() {
-      try {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        boolean cr = false;
-        while (true) {
-          int read = stream.read();
+  @Override
+  public SafeString readLine() {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      boolean cr = false;
+      while (true) {
+        int read = input.read();
 
-          if (read == -1) {
-            // end of stream
-            break;
-          }
-
-          if (read == '\r') {
-            cr = true;
-          } else if (cr && read == '\n') {
-            break;
-          } else {
-            cr = false;
-
-            baos.write(read);
-          }
+        if (read == -1) {
+          // end of stream
+          break;
         }
-        return new SafeString(baos.toByteArray());
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
-      }
-    }
 
-    @Override
-    public SafeString readString(int size) {
-      try {
-        byte[] buffer = new byte[size];
-        int readed = stream.read(buffer);
-        if (readed > -1) {
-          return new SafeString(wrap(buffer, 0, readed));
+        if (read == '\r') {
+          cr = true;
+        } else if (cr && read == '\n') {
+          break;
+        } else {
+          cr = false;
+
+          baos.write(read);
         }
-        return null;
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
       }
+      return new SafeString(baos.toByteArray());
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @Override
+  public SafeString readString(int size) {
+    try {
+      byte[] buffer = new byte[size];
+      int readed = input.read(buffer);
+      if (readed > -1) {
+        input.skip(2);
+        return new SafeString(wrap(buffer, 0, readed));
+      }
+      return null;
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }

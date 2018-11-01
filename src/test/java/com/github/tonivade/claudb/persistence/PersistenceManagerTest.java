@@ -32,16 +32,17 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.DBConfig;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
 
+  private static final String PING_CMD = "*1\r\n$4\r\nPING\r\n";
   private static final String DEFAULT_CHARSET = "UTF-8";
   private static final String REDO_FILE = "redo.aof";
   private static final String DUMP_FILE = "dump.rdb";
@@ -107,7 +108,7 @@ public class PersistenceManagerTest {
 
     Thread.sleep(1000);
 
-    assertThat(readAOF(), is("*1\r\n$4\r\nPING\r\n"));
+    assertThat(readAOF(), is(PING_CMD));
   }
 
   private void deleteFiles() {
@@ -134,7 +135,7 @@ public class PersistenceManagerTest {
 
   private void writeAOF() {
     try (FileOutputStream out = new FileOutputStream(REDO_FILE)) {
-      out.write("*1\r\n$4\r\nPING\r\n".getBytes(DEFAULT_CHARSET));
+      out.write(PING_CMD.getBytes(DEFAULT_CHARSET));
     } catch (IOException e) {
       e.printStackTrace();
     }
