@@ -4,15 +4,16 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
 
-  private static final String PING_CMD = "*1\r\n$4\r\nPING\r\n";
+  private static final String COMMAND = "*4\r\n$1\r\n0\r\n$3\r\nset\r\n$1\r\na\r\n$1\r\n1\r\n";
   private static final String DEFAULT_CHARSET = "UTF-8";
   private static final String REDO_FILE = "redo.aof";
   private static final String DUMP_FILE = "dump.rdb";
@@ -53,13 +54,13 @@ public class PersistenceManagerTest {
   private PersistenceManager manager;
 
   @Before
-  public void setUp()  {
+  public void setUp() {
     this.manager = new PersistenceManager(server, DBConfig.builder().withPersistence().build());
     deleteFiles();
   }
 
   @After
-  public void tearDown()  {
+  public void tearDown() {
     deleteFiles();
   }
 
@@ -70,9 +71,7 @@ public class PersistenceManagerTest {
     manager.run();
 
     RDBInputStream input = new RDBInputStream(new FileInputStream(DUMP_FILE));
-
     Map<Integer, Map<DatabaseKey, DatabaseValue>> databases = input.parse();
-
     assertThat(databases, notNullValue());
   }
 
@@ -88,7 +87,8 @@ public class PersistenceManagerTest {
   @Test
   public void testStart() throws IOException {
     RespCommand cmd = mock(RespCommand.class);
-    when(server.getCommand(anyString())).thenReturn(cmd);
+    when(server.getCommand("select")).thenReturn(cmd);
+    when(server.getCommand("set")).thenReturn(cmd);
 
     writeRDB();
     writeAOF();
@@ -96,7 +96,7 @@ public class PersistenceManagerTest {
     manager.start();
 
     verify(server).importRDB(any());
-    verify(cmd).execute(any());
+    verify(cmd, times(2)).execute(any());
 
     assertThat(new File(REDO_FILE).exists(), is(true));
   }
@@ -104,11 +104,11 @@ public class PersistenceManagerTest {
   @Test
   public void testAppend() throws InterruptedException {
     manager.start();
-    manager.append(pingCommand());
+    manager.append(setCommand());
 
     Thread.sleep(1000);
 
-    assertThat(readAOF(), is(PING_CMD));
+    assertThat(readAOF(), is(COMMAND));
   }
 
   private void deleteFiles() {
@@ -135,7 +135,7 @@ public class PersistenceManagerTest {
 
   private void writeAOF() {
     try (FileOutputStream out = new FileOutputStream(REDO_FILE)) {
-      out.write(PING_CMD.getBytes(DEFAULT_CHARSET));
+      out.write(COMMAND.getBytes(DEFAULT_CHARSET));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -155,8 +155,8 @@ public class PersistenceManagerTest {
     return str;
   }
 
-  private RedisToken pingCommand() {
-    return RedisToken.array(string("PING"));
+  private RedisToken setCommand() {
+    return array(string("0"), string("set"), string("a"), string("1"));
   }
 
   private static class ExportRDB implements Answer<Void> {

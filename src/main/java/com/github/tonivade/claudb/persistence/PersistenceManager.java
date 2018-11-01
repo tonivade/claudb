@@ -4,7 +4,10 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.nio.ByteBuffer.wrap;
+import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,7 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.claudb.DBConfig;
 import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.command.DBCommandProcessor;
+import com.github.tonivade.resp.command.DefaultSession;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisParser;
 import com.github.tonivade.resp.protocol.RedisSerializer;
@@ -52,7 +58,7 @@ public class PersistenceManager {
     this.dumpFile = config.getRdbFile();
     this.redoFile = config.getAofFile();
     this.syncPeriod = config.getSyncPeriod();
-    this.processor = new DBCommandProcessor(server);
+    this.processor = new DBCommandProcessor(server, newDummySession());
   }
 
   public void start() {
@@ -105,12 +111,19 @@ public class PersistenceManager {
             break;
           }
           LOGGER.info("command: {}", token);
-          processor.processCommand((ArrayRedisToken) token);
+
+          ArrayRedisToken array = (ArrayRedisToken) token;
+          processCommand(array);
         }
       } catch (IOException e) {
         LOGGER.error("error reading AOF file", e);
       }
     }
+  }
+
+  private void processCommand(ArrayRedisToken array) {
+    processor.processCommand((ArrayRedisToken) selectCommand(array));
+    processor.processCommand((ArrayRedisToken) command(array));
   }
 
   private void createRedo() {
@@ -154,6 +167,20 @@ public class PersistenceManager {
     } catch (IOException e) {
       LOGGER.error("error writing to AOF file", e);
     }
+  }
+
+  private RedisToken selectCommand(ArrayRedisToken token) {
+    return array(string("select"), token.getValue().stream().findFirst().orElse(string("0")));
+  }
+
+  private RedisToken command(ArrayRedisToken token) {
+    return array(token.getValue().stream().skip(1).collect(toList()));
+  }
+
+  private Session newDummySession() {
+    DefaultSession session = new DefaultSession("dummy", null);
+    session.putValue("state", new DBSessionState());
+    return session;
   }
 }
 
