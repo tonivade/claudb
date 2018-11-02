@@ -4,15 +4,17 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -32,17 +34,17 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.DBConfig;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceManagerTest {
 
-  private static final String DEFAULT_CHARSET = "UTF-8";
+  private static final String COMMAND = "*4\r\n$1\r\n0\r\n$3\r\nset\r\n$1\r\na\r\n$1\r\n1\r\n";
   private static final String REDO_FILE = "redo.aof";
   private static final String DUMP_FILE = "dump.rdb";
 
@@ -52,13 +54,13 @@ public class PersistenceManagerTest {
   private PersistenceManager manager;
 
   @Before
-  public void setUp()  {
+  public void setUp() {
     this.manager = new PersistenceManager(server, DBConfig.builder().withPersistence().build());
     deleteFiles();
   }
 
   @After
-  public void tearDown()  {
+  public void tearDown() {
     deleteFiles();
   }
 
@@ -69,9 +71,7 @@ public class PersistenceManagerTest {
     manager.run();
 
     RDBInputStream input = new RDBInputStream(new FileInputStream(DUMP_FILE));
-
     Map<Integer, Map<DatabaseKey, DatabaseValue>> databases = input.parse();
-
     assertThat(databases, notNullValue());
   }
 
@@ -86,8 +86,7 @@ public class PersistenceManagerTest {
 
   @Test
   public void testStart() throws IOException {
-    RespCommand cmd = mock(RespCommand.class);
-    when(server.getCommand(anyString())).thenReturn(cmd);
+    RespCommand cmd = stubCommand();
 
     writeRDB();
     writeAOF();
@@ -95,7 +94,7 @@ public class PersistenceManagerTest {
     manager.start();
 
     verify(server).importRDB(any());
-    verify(cmd).execute(any());
+    verify(cmd, times(2)).execute(any());
 
     assertThat(new File(REDO_FILE).exists(), is(true));
   }
@@ -103,11 +102,11 @@ public class PersistenceManagerTest {
   @Test
   public void testAppend() throws InterruptedException {
     manager.start();
-    manager.append(pingCommand());
+    manager.append(setCommand());
 
     Thread.sleep(1000);
 
-    assertThat(readAOF(), is("*1\r\n$4\r\nPING\r\n"));
+    assertThat(readAOF(), is(COMMAND));
   }
 
   private void deleteFiles() {
@@ -126,7 +125,7 @@ public class PersistenceManagerTest {
 
   private void writeRDB() {
     try (FileOutputStream out = new FileOutputStream(DUMP_FILE)) {
-      out.write("Test".getBytes(DEFAULT_CHARSET));
+      out.write("Test".getBytes(UTF_8));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -134,7 +133,7 @@ public class PersistenceManagerTest {
 
   private void writeAOF() {
     try (FileOutputStream out = new FileOutputStream(REDO_FILE)) {
-      out.write("*1\r\n$4\r\nPING\r\n".getBytes(DEFAULT_CHARSET));
+      out.write(COMMAND.getBytes(UTF_8));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -146,7 +145,7 @@ public class PersistenceManagerTest {
       byte[] buffer = new byte[1024];
       int readed = in.read(buffer);
       if (readed > -1) {
-        str = new String(buffer, 0, readed, DEFAULT_CHARSET);
+        str = new String(buffer, 0, readed, UTF_8);
       }
     } catch (IOException e) {
       e.printStackTrace();
@@ -154,17 +153,23 @@ public class PersistenceManagerTest {
     return str;
   }
 
-  private RedisToken pingCommand() {
-    return RedisToken.array(string("PING"));
+  private RedisToken setCommand() {
+    return array(string("0"), string("set"), string("a"), string("1"));
   }
 
   private static class ExportRDB implements Answer<Void> {
     @Override
     public Void answer(InvocationOnMock invocation) throws Throwable {
       OutputStream output = (OutputStream) invocation.getArguments()[0];
-      output.write(fromHexString("524544495330303033FE00FF77DE0394AC9D23EA").getBytes());
+      output.write(fromHexString("524544495330303033fe00ff77de0394ac9d23ea").getBytes());
       return null;
     }
   }
 
+  private RespCommand stubCommand() {
+    RespCommand cmd = mock(RespCommand.class);
+    when(server.getCommand("select")).thenReturn(cmd);
+    when(server.getCommand("set")).thenReturn(cmd);
+    return cmd;
+  }
 }

@@ -4,7 +4,10 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.nio.ByteBuffer.wrap;
+import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -21,6 +24,12 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tonivade.claudb.DBConfig;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.DBSessionState;
+import com.github.tonivade.claudb.command.DBCommandProcessor;
+import com.github.tonivade.resp.command.DefaultSession;
+import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisParser;
 import com.github.tonivade.resp.protocol.RedisSerializer;
@@ -28,9 +37,6 @@ import com.github.tonivade.resp.protocol.RedisSource;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.DBConfig;
-import com.github.tonivade.claudb.DBServerContext;
-import com.github.tonivade.claudb.command.DBCommandProcessor;
 
 public class PersistenceManager {
 
@@ -52,7 +58,7 @@ public class PersistenceManager {
     this.dumpFile = config.getRdbFile();
     this.redoFile = config.getAofFile();
     this.syncPeriod = config.getSyncPeriod();
-    this.processor = new DBCommandProcessor(server);
+    this.processor = new DBCommandProcessor(server, newDummySession());
   }
 
   public void start() {
@@ -97,19 +103,26 @@ public class PersistenceManager {
     File file = new File(redoFile);
     if (file.exists()) {
       try (FileInputStream redo = new FileInputStream(file)) {
-        RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new InputStreamRedisSource(redo));
+        RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new RedisSourceInputStream(redo));
 
         while (true) {
           RedisToken token = parse.parse();
           if (token.getType() == RedisTokenType.UNKNOWN) {
             break;
           }
-          processor.processCommand((ArrayRedisToken) token);
+          LOGGER.info("command: {}", token);
+
+          processCommand((ArrayRedisToken) token);
         }
       } catch (IOException e) {
         LOGGER.error("error reading AOF file", e);
       }
     }
+  }
+
+  private void processCommand(ArrayRedisToken array) {
+    processor.processCommand((ArrayRedisToken) selectCommand(array));
+    processor.processCommand((ArrayRedisToken) command(array));
   }
 
   private void createRedo() {
@@ -155,56 +168,69 @@ public class PersistenceManager {
     }
   }
 
-  private static class InputStreamRedisSource implements RedisSource {
+  private RedisToken selectCommand(ArrayRedisToken token) {
+    return array(string("select"), token.getValue().stream().findFirst().orElse(string("0")));
+  }
 
-    private final InputStream stream;
+  private RedisToken command(ArrayRedisToken token) {
+    return array(token.getValue().stream().skip(1).collect(toList()));
+  }
 
-    public InputStreamRedisSource(InputStream stream) {
-      super();
-      this.stream = stream;
-    }
+  private Session newDummySession() {
+    DefaultSession session = new DefaultSession("dummy", null);
+    session.putValue("state", new DBSessionState());
+    return session;
+  }
+}
 
-    @Override
-    public SafeString readLine() {
-      try {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        boolean cr = false;
-        while (true) {
-          int read = stream.read();
+class RedisSourceInputStream implements RedisSource {
 
-          if (read == -1) {
-            // end of stream
-            break;
-          }
+  private final InputStream input;
 
-          if (read == '\r') {
-            cr = true;
-          } else if (cr && read == '\n') {
-            break;
-          } else {
-            cr = false;
+  RedisSourceInputStream(InputStream input) {
+    this.input = input;
+  }
 
-            baos.write(read);
-          }
+  @Override
+  public SafeString readLine() {
+    try {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      boolean cr = false;
+      while (true) {
+        int read = input.read();
+
+        if (read == -1) {
+          // end of stream
+          break;
         }
-        return new SafeString(baos.toByteArray());
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
-      }
-    }
 
-    @Override
-    public SafeString readString(int size) {
-      try {
-        byte[] buffer = new byte[size];
-        int readed = stream.read(buffer);
-        if (readed > -1) {
-          return new SafeString(wrap(buffer, 0, readed));
+        if (read == '\r') {
+          cr = true;
+        } else if (cr && read == '\n') {
+          break;
+        } else {
+          cr = false;
+
+          baos.write(read);
         }
-        return null;
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
       }
+      return new SafeString(baos.toByteArray());
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
+  @Override
+  public SafeString readString(int size) {
+    try {
+      byte[] buffer = new byte[size + 2];
+      int readed = input.read(buffer);
+      if (readed > -1) {
+        return new SafeString(wrap(buffer, 0, readed - 2));
+      }
+      return null;
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }
