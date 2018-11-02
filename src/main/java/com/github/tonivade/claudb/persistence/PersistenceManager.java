@@ -106,7 +106,7 @@ public class PersistenceManager {
         RedisParser parse = new RedisParser(MAX_FRAME_SIZE, new RedisSourceInputStream(redo));
 
         while (true) {
-          RedisToken token = parse.parse();
+          RedisToken token = parse.next();
           if (token.getType() == RedisTokenType.UNKNOWN) {
             break;
           }
@@ -189,6 +189,15 @@ class RedisSourceInputStream implements RedisSource {
 
   RedisSourceInputStream(InputStream input) {
     this.input = input;
+  }
+
+  @Override
+  public int available() {
+    try {
+      return input.available();
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 
   @Override

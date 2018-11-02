@@ -72,7 +72,7 @@ public class RedisSourceInputStreamTest {
   private List<RedisToken> readTokens(RedisParser parser) {
     List<RedisToken> tokens = new LinkedList<>();
     while (true) {
-      RedisToken token = parser.parse();
+      RedisToken token = parser.next();
       if (token.getType() == UNKNOWN) {
         break;
       }

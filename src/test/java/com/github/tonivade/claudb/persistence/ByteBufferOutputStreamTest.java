@@ -21,9 +21,9 @@ public class ByteBufferOutputStreamTest {
     ByteBufferOutputStream out =  new ByteBufferOutputStream(10);
 
     out.write(9);
-    out.write(fromHexString("486F6C61206D756E646F21").getBytes());
+    out.write(fromHexString("486f6c61206d756e646f21").getBytes());
 
-    assertThat(new SafeString(out.toByteArray()).toHexString(), is("09486F6C61206D756E646F21"));
+    assertThat(new SafeString(out.toByteArray()).toHexString(), is("09486f6c61206d756e646f21"));
 
     out.close();
   }

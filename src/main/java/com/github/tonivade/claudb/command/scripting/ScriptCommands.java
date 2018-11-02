@@ -65,7 +65,7 @@ public class ScriptCommands implements DBCommand {
 
   private String digest(SafeString script) throws NoSuchAlgorithmException {
     MessageDigest digest = MessageDigest.getInstance("SHA-1");
-    return new SafeString(digest.digest(script.getBytes())).toHexString().toLowerCase();
+    return new SafeString(digest.digest(script.getBytes())).toHexString();
   }
 
   private Matcher1<Request> isCommand(String command) {

@@ -4,12 +4,12 @@
  */
 package com.github.tonivade.claudb.replication;
 
-import static com.github.tonivade.resp.protocol.RedisToken.array;
-import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
+import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -28,13 +28,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.github.tonivade.claudb.ClauDBRule;
+import com.github.tonivade.claudb.DBServerContext;
+import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.SafeString;
-import com.github.tonivade.claudb.ClauDBRule;
-import com.github.tonivade.claudb.DBServerContext;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SlaveReplicationTest {
@@ -93,7 +93,7 @@ public class SlaveReplicationTest {
     int readed = stream.read(buffer);
 
     assertThat(readed, is(buffer.length));
-    assertThat(new SafeString(buffer).toHexString(), equalTo("524544495330303036FF224AF218835A1E69"));
+    assertThat(new SafeString(buffer).toHexString(), equalTo("524544495330303036ff224af218835a1e69"));
   }
 
   private void verifyStateUpdated() {

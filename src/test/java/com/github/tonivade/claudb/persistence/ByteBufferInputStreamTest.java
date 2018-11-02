@@ -26,7 +26,7 @@ public class ByteBufferInputStreamTest {
     int readed = in.read(array);
 
     assertThat(readed, is(array.length));
-    assertThat(new SafeString(array).toHexString(), is("486F6C61206D756E646F21"));
+    assertThat(new SafeString(array).toHexString(), is("486f6c61206d756e646f21"));
 
     in.close();
   }

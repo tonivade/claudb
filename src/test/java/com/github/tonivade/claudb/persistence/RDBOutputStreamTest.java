@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.persistence;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.list;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.score;
@@ -13,6 +12,7 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -22,11 +22,11 @@ import java.time.Instant;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.SafeString;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBOutputStreamTest {
 
@@ -45,7 +45,7 @@ public class RDBOutputStreamTest {
     out.select(0);
     out.end();
 
-    assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE00FF77DE0394AC9D23EA"));
+    assertThat(toHexString(baos.toByteArray()), is("524544495330303033fe00ff77de0394ac9d23ea"));
   }
 
   @Test
@@ -59,7 +59,7 @@ public class RDBOutputStreamTest {
   public void testStringTtl() throws IOException  {
     out.dabatase(database().add(new DatabaseKey(safeString("a")), string("test").expiredAt(Instant.ofEpochMilli(1L))).build());
 
-    assertThat(toHexString(baos.toByteArray()), is("FC00000000000000010001610474657374"));
+    assertThat(toHexString(baos.toByteArray()), is("fc00000000000000010001610474657374"));
   }
 
   @Test
@@ -80,7 +80,7 @@ public class RDBOutputStreamTest {
   public void testSortedSet() throws IOException  {
     out.dabatase(database().add(safeKey("a"), zset(score(1.0, "test"))).build());
 
-    assertThat(toHexString(baos.toByteArray()), is("03016101047465737403312E30"));
+    assertThat(toHexString(baos.toByteArray()), is("03016101047465737403312e30"));
   }
 
   @Test
@@ -107,7 +107,7 @@ public class RDBOutputStreamTest {
     out.dabatase(database().add(new DatabaseKey(safeString("a")), string("test").expiredAt(Instant.ofEpochMilli(1L))).build());
     out.end();
 
-    assertThat(toHexString(baos.toByteArray()), is("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));
+    assertThat(toHexString(baos.toByteArray()), is("524544495330303033fe000001610474657374fe01010161010474657374fe02020161010474657374fe0303016101047465737403312e30fe040401610101310474657374fe05fc00000000000000010001610474657374ffa9d1f09c463a7043"));
   }
 
   private String toHexString(byte[] byteArray) {
