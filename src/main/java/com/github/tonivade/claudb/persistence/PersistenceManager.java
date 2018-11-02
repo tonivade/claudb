@@ -223,11 +223,10 @@ class RedisSourceInputStream implements RedisSource {
   @Override
   public SafeString readString(int size) {
     try {
-      byte[] buffer = new byte[size];
+      byte[] buffer = new byte[size + 2];
       int readed = input.read(buffer);
       if (readed > -1) {
-        input.skip(2);
-        return new SafeString(wrap(buffer, 0, readed));
+        return new SafeString(wrap(buffer, 0, readed - 2));
       }
       return null;
     } catch (IOException e) {
