@@ -9,7 +9,6 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import java.time.Instant;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
-import java.util.Set;
 import java.util.function.BiFunction;
 
 import com.github.tonivade.purefun.Tuple2;
@@ -87,9 +86,7 @@ public interface Database {
 
   default DatabaseValue getOrDefault(DatabaseKey key, DatabaseValue defaultValue) {
     DatabaseValue value = get(key);
-    return (value != null || containsKey(key))
-        ? value
-        : defaultValue;
+    return (value != null || containsKey(key)) ? value : defaultValue;
   }
 
   default boolean isType(DatabaseKey key, DataType type) {
@@ -111,9 +108,9 @@ public interface Database {
     putAll(value);
   }
 
-  default Set<DatabaseKey> evictableKeys(Instant now) {
+  default ImmutableSet<DatabaseKey> evictableKeys(Instant now) {
     return entrySet()
         .filter(entry -> entry.get2().isExpired(now))
-        .map(Tuple2::get1).toSet();
+        .map(Tuple2::get1);
   }
 }

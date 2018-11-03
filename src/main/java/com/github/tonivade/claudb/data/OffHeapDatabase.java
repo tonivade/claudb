@@ -78,7 +78,7 @@ public class OffHeapDatabase implements Database {
   public ImmutableSet<DatabaseKey> keySet() {
     Set<DatabaseKey> keys = new HashSet<>();
     try (CloseableIterator<DatabaseKey> iterator = cache.keyIterator()) {
-      while(iterator.hasNext()) {
+      while (iterator.hasNext()) {
         keys.add(iterator.next());
       }
     } catch(IOException e) {
