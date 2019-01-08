@@ -111,8 +111,7 @@ public class EvalCommandTest {
   }
 
   @Test
-  public void testExecuteScript()
-  {
+  public void testExecuteScript() {
     rule.withCommand("keys", request -> array(string("key1"), string("value1"), string("key2"), string("value2")))
         .withCommand("del", request -> integer(true))
         .withParams("local keys = redis.call('keys', '*region*') for i,k in ipairs(keys) do local res = redis.call('del', k) end", "0")

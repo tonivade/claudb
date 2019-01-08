@@ -31,11 +31,11 @@ public interface DBCommand {
   }
 
   default DBServerState getServerState(ServerContext server) {
-    return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState(server).getOrElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   default DBSessionState getSessionState(Session session) {
-    return sessionState(session).orElseThrow(() -> new IllegalStateException("missiong session state"));
+    return sessionState(session).getOrElseThrow(() -> new IllegalStateException("missiong session state"));
   }
 
   default Option<DBServerState> serverState(ServerContext server) {

@@ -113,11 +113,11 @@ public class DBCommandWrapper implements RespCommand {
   }
 
   private DBServerState getServerState(ServerContext server) {
-    return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState(server).getOrElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   private DBSessionState getSessionState(Session session) {
-    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
+    return sessionState(session).getOrElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
   private Option<DBServerState> serverState(ServerContext server) {

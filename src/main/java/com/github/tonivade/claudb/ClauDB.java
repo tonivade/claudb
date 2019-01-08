@@ -237,7 +237,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private DBSessionState getSessionState(Session session) {
-    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
+    return sessionState(session).getOrElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
   private Option<DBSessionState> sessionState(Session session) {
@@ -245,7 +245,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private DBServerState getState() {
-    return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState().getOrElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   private Option<DBServerState> serverState() {

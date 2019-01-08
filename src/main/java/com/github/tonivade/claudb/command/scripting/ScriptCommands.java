@@ -50,7 +50,7 @@ public class ScriptCommands implements DBCommand {
       DBServerState server = getServerState(request.getServerContext());
       server.saveScript(safeString(sha1), script);
       return RedisToken.string(sha1);
-    }).orElse(RedisToken.error("ERR cannot generate sha1 sum for script: " + script));
+    }).getOrElse(RedisToken.error("ERR cannot generate sha1 sum for script: " + script));
   }
 
   private RedisToken exists(Request request) {

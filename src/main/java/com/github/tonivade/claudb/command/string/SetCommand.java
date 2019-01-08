@@ -104,14 +104,14 @@ public class SetCommand implements DBCommand {
           }
           parameters.ttl = parseTtl(request, ++i)
               .map(Duration::ofSeconds)
-              .orElseThrow(SyntaxException::new);
+              .getOrElseThrow(SyntaxException::new);
         } else if (match("PX", option)) {
           if (parameters.ttl != null) {
             throw new SyntaxException();
           }
           parameters.ttl = parseTtl(request, ++i)
               .map(Duration::ofMillis)
-              .orElseThrow(SyntaxException::new);
+              .getOrElseThrow(SyntaxException::new);
         } else if (match("NX", option)) {
           if (parameters.ifExists) {
             throw new SyntaxException();

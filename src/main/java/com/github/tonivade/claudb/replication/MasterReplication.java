@@ -106,7 +106,7 @@ public class MasterReplication implements Runnable {
   }
 
   private DBServerState getServerState() {
-    return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState().getOrElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   private Option<DBServerState> serverState() {

@@ -23,7 +23,7 @@ abstract class AbstractEvalCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     return script(request).map(script -> execute(request, script))
-        .orElse(error("NOSCRIPT No matching script. Please use EVAL"));
+        .getOrElse(error("NOSCRIPT No matching script. Please use EVAL"));
   }
 
   private RedisToken execute(Request request, SafeString script) {

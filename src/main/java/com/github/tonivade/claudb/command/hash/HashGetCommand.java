@@ -27,6 +27,6 @@ public class HashGetCommand implements DBCommand {
     ImmutableMap<SafeString, SafeString> map = db.getHash(request.getParam(0));
     return map.get(request.getParam(1))
         .map(RedisToken::string)
-        .orElse(RedisToken::nullString);
+        .getOrElse(RedisToken::nullString);
   }
 }
