@@ -9,7 +9,7 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.github.tonivade.purefun.typeclasses.Equal;
+import com.github.tonivade.purefun.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {

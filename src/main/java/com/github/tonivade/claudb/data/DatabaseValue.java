@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import com.github.tonivade.purefun.Equal;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.purefun.Tuple;
 import com.github.tonivade.purefun.Tuple2;
@@ -32,7 +33,6 @@ import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.purefun.data.Sequence;
-import com.github.tonivade.purefun.typeclasses.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseValue implements Serializable {

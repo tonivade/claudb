@@ -8,7 +8,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
 
-import com.github.tonivade.purefun.typeclasses.Equal;
+import com.github.tonivade.purefun.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public abstract class Event {
