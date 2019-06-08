@@ -6,7 +6,7 @@ apply plugin: 'me.champeau.gradle.jmh'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'claudb'
-version = '1.6.0-SNAPSHOT'
+version = '1.5.1'
 
 buildscript {
   repositories {
@@ -68,7 +68,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.github.tonivade:resp-server:0.14.0-SNAPSHOT'
+  compile 'com.github.tonivade:resp-server:0.14.0'
   compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
   compile 'org.luaj:luaj-jse:3.0.1'
   compile 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
