@@ -206,12 +206,12 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>claudb</artifactId>
-        <version>1.5.0</version>
+        <version>1.5.1</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:claudb:1.5.0'
+    compile 'com.github.tonivade:claudb:1.5.1'
 
 Or embed in your source code
 
