@@ -6,7 +6,7 @@ apply plugin: 'me.champeau.gradle.jmh'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'claudb'
-version = '1.5.2'
+version = '1.6.0-SNAPSHOT'
 
 buildscript {
   repositories {
