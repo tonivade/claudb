@@ -228,6 +228,11 @@ Or embed in your source code
 - Clustering?
 - Geo Commands
 
+## Thanks
+
+<!--[![Jetbrains logo](pics/jetbrains.png)](https://www.jetbrains.com?from=claudb)-->
+<a href="https://www.jetbrains.com?from=claudb"><img src="pics/jetbrains.png" alt="Jetbrains logo" height="100"/></a>
+
 ## Continuous Integration
 
 [![Build Status](https://travis-ci.org/tonivade/claudb.svg?branch=master)](https://travis-ci.org/tonivade/claudb) 
