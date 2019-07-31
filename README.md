@@ -182,8 +182,8 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.5.0/claudb-1.5.0-all.jar
-    $ java -jar claudb-1.5.0-all.jar
+    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.5.1/claudb-1.5.1-all.jar
+    $ java -jar claudb-1.5.1-all.jar
 
 or using [jrun](https://github.com/ctrueden/jrun) utility
 
@@ -230,7 +230,6 @@ Or embed in your source code
 
 ## Thanks
 
-<!--[![Jetbrains logo](pics/jetbrains.png)](https://www.jetbrains.com?from=claudb)-->
 <a href="https://www.jetbrains.com?from=claudb"><img src="pics/jetbrains.png" alt="Jetbrains logo" height="100"/></a>
 
 ## Continuous Integration
