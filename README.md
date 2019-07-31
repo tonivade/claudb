@@ -59,6 +59,8 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - HGET
     - HKEYS
     - HLEN
+    - HMGET
+    - HMSET
     - HSET
     - HVALS
 - List
