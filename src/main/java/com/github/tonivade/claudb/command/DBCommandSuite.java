@@ -19,6 +19,8 @@ import com.github.tonivade.claudb.command.hash.HashGetAllCommand;
 import com.github.tonivade.claudb.command.hash.HashGetCommand;
 import com.github.tonivade.claudb.command.hash.HashKeysCommand;
 import com.github.tonivade.claudb.command.hash.HashLengthCommand;
+import com.github.tonivade.claudb.command.hash.HashMultiGetCommand;
+import com.github.tonivade.claudb.command.hash.HashMultiSetCommand;
 import com.github.tonivade.claudb.command.hash.HashSetCommand;
 import com.github.tonivade.claudb.command.hash.HashValuesCommand;
 import com.github.tonivade.claudb.command.key.DeleteCommand;
@@ -140,6 +142,8 @@ public class DBCommandSuite extends CommandSuite {
     addCommand(HashDeleteCommand.class);
     addCommand(HashKeysCommand.class);
     addCommand(HashLengthCommand.class);
+    addCommand(HashMultiGetCommand.class);
+    addCommand(HashMultiSetCommand.class);
     addCommand(HashValuesCommand.class);
 
     // list
