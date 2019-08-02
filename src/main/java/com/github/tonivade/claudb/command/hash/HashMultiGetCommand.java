@@ -4,6 +4,9 @@
  */
 package com.github.tonivade.claudb.command.hash;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
@@ -17,12 +20,9 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ReadOnly
 @Command("hmget")
-@ParamLength(3)
+@ParamLength(2)
 @ParamType(DataType.HASH)
 public class HashMultiGetCommand implements DBCommand {
 
