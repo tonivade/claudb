@@ -149,10 +149,10 @@ public class DatabaseValue implements Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return Equal.of(this)
-        .append((one, other) -> Objects.equals(one.type, other.type))
-        .append((one, other) -> Objects.equals(one.value, other.value))
-        .applyTo(obj);
+    return Equal.<DatabaseValue>of()
+        .comparing(v -> v.type)
+        .comparing(v -> v.value)
+        .applyTo(this, obj);
   }
 
   @Override

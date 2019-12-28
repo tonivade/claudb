@@ -38,9 +38,9 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return Equal.of(this)
-        .append((one, other) -> Objects.equals(one.value, other.value))
-        .applyTo(obj);
+    return Equal.<DatabaseKey>of()
+        .comparing(k -> k.value)
+        .applyTo(this, obj);
   }
 
   @Override

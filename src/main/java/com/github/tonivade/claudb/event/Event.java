@@ -39,11 +39,11 @@ public abstract class Event {
 
   @Override
   public boolean equals(Object obj) {
-    return Equal.of(this)
-         .append((o1, o2) -> Objects.equals(o1.command, o2.command))
-         .append((o1, o2) -> Objects.equals(o1.key, o2.key))
-         .append((o1, o2) -> Objects.equals(o1.schema, o2.schema))
-         .applyTo(obj);
+    return Equal.<Event>of()
+         .comparing(e -> e.command)
+         .comparing(e -> e.key)
+         .comparing(e -> e.schema)
+         .applyTo(this, obj);
   }
 
   @Override
