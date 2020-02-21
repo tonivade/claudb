@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
 
+import io.reactivex.rxjava3.core.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,6 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-
-import io.reactivex.Observable;
 
 public class ClauDB extends RespServerContext implements DBServerContext {
 
