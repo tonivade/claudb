@@ -73,7 +73,7 @@ dependencies {
   compile 'org.luaj:luaj-jse:3.0.1'
   compile 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
   compile 'de.ruedigermoeller:fst:2.57'
-  testCompile 'redis.clients:jedis:2.9.0'
+  testCompile 'redis.clients:jedis:2.9.3'
   testCompile 'junit:junit:4.12'
   testCompile 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
   testCompile 'org.junit.vintage:junit-vintage-engine:5.5.2'
