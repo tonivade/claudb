@@ -16,7 +16,7 @@ public enum DataType {
 
   private final String text;
 
-  private DataType(String text) {
+  DataType(String text) {
     this.text = requireNonNull(text);
   }
 

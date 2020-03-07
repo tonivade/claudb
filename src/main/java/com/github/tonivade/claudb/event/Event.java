@@ -12,6 +12,12 @@ import com.github.tonivade.purefun.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public abstract class Event {
+
+  private static final Equal<Event> EQUAL = Equal.<Event>of()
+      .comparing(e -> e.command)
+      .comparing(e -> e.key)
+      .comparing(e -> e.schema);
+
   private SafeString command;
   private SafeString key;
   private int schema;
@@ -39,11 +45,7 @@ public abstract class Event {
 
   @Override
   public boolean equals(Object obj) {
-    return Equal.<Event>of()
-         .comparing(e -> e.command)
-         .comparing(e -> e.key)
-         .comparing(e -> e.schema)
-         .applyTo(this, obj);
+    return EQUAL.applyTo(this, obj);
   }
 
   @Override

@@ -9,7 +9,7 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
@@ -27,11 +27,9 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBOutputStream {
 
-  private static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-
   private static final byte[] REDIS = safeString("REDIS").getBytes();
 
-  private static final int TTL_MILISECONDS = 0xFC;
+  private static final int TTL_MILLISECONDS = 0xFC;
   private static final int END_OF_STREAM = 0xFF;
   private static final int SELECT = 0xFE;
 
@@ -52,7 +50,7 @@ public class RDBOutputStream {
     for (int i = sb.length(); i < Integer.BYTES; i++) {
       sb.insert(0, '0');
     }
-    return sb.toString().getBytes(DEFAULT_CHARSET);
+    return sb.toString().getBytes(StandardCharsets.UTF_8);
   }
 
   public void select(int db) throws IOException {
@@ -75,7 +73,7 @@ public class RDBOutputStream {
 
   private void expiredAt(Instant expiredAt) throws IOException {
     if (expiredAt != null) {
-      out.write(TTL_MILISECONDS);
+      out.write(TTL_MILLISECONDS);
       out.write(ByteUtils.toByteArray(expiredAt.toEpochMilli()));
     }
   }

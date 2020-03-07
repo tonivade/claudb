@@ -15,6 +15,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
 
   private static final long serialVersionUID = 7710472090270782053L;
+  private static final Equal<DatabaseKey> EQUAL = Equal.<DatabaseKey>of().comparing(k -> k.value);
 
   private final SafeString value;
 
@@ -38,9 +39,7 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
 
   @Override
   public boolean equals(Object obj) {
-    return Equal.<DatabaseKey>of()
-        .comparing(k -> k.value)
-        .applyTo(this, obj);
+    return EQUAL.applyTo(this, obj);
   }
 
   @Override

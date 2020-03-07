@@ -47,7 +47,7 @@ public class RDBInputStream {
   private static final int LIST = 0x01;
   private static final int STRING = 0x00;
 
-  private static final int TTL_MILISECONDS = 0xFC;
+  private static final int TTL_MILLISECONDS = 0xFC;
   private static final int TTL_SECONDS = 0xFD;
   private static final int SELECT = 0xFE;
   private static final int END_OF_STREAM = 0xFF;
@@ -83,7 +83,7 @@ public class RDBInputStream {
       case TTL_SECONDS:
         expireTime = parseTimeSeconds();
         break;
-      case TTL_MILISECONDS:
+      case TTL_MILLISECONDS:
         expireTime = parseTimeMillis();
         break;
       case STRING:
