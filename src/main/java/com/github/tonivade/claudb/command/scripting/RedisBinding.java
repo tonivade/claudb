@@ -72,8 +72,11 @@ public class RedisBinding extends VarArgFunction {
         .apply(token);
   }
 
-  private LuaInteger toLuaNumber(IntegerRedisToken value) {
+  private LuaValue toLuaNumber(IntegerRedisToken value) {
     Integer integer = value.getValue();
+    if (integer == null) {
+      return LuaValue.NIL;
+    }
     return LuaInteger.valueOf(integer);
   }
 
@@ -86,18 +89,27 @@ public class RedisBinding extends VarArgFunction {
     return table;
   }
 
-  private LuaString toLuaString(StringRedisToken value) {
+  private LuaValue toLuaString(StringRedisToken value) {
     SafeString string = value.getValue();
+    if (string == null) {
+      return LuaValue.NIL;
+    }
     return LuaString.valueOf(string.getBytes());
   }
 
-  private LuaString toLuaString(StatusRedisToken value) {
+  private LuaValue toLuaString(StatusRedisToken value) {
     String string = value.getValue();
+    if (string == null) {
+      return LuaValue.NIL;
+    }
     return LuaString.valueOf(string);
   }
 
-  private LuaString toLuaString(UnknownRedisToken value) {
+  private LuaValue toLuaString(UnknownRedisToken value) {
     SafeString string = value.getValue();
+    if (string == null) {
+      return LuaValue.NIL;
+    }
     return LuaString.valueOf(string.getBytes());
   }
 }

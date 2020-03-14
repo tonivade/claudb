@@ -4,13 +4,17 @@
  */
 package com.github.tonivade.claudb;
 
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -79,17 +83,38 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testEval()
-  {
+  public void testEval() {
     execute(jedis -> assertThat(jedis.eval("return 1"), equalTo(1L)));
   }
 
   @Test
-  public void testEvalScript()
-  {
+  public void testEvalScript() {
     String script = "local keys = redis.call('keys', '*region*') "
         + "for i,k in ipairs(keys) do local res = redis.call('del', k) end";
     execute(jedis -> assertThat(jedis.eval(script), nullValue()));
+  }
+
+  @Test
+  public void testBugNotExist() {
+    String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
+
+    execute(jedis -> {
+      jedis.del("key");
+      Object eval = jedis.eval(script, singletonList("key"), singletonList("value"));
+      assertThat(eval, equalTo(0L));
+    });
+  }
+
+  @Test
+  public void testNotExist() {
+    String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
+
+    execute(jedis -> {
+      jedis.set("key", "value");
+      Object eval = jedis.eval(script, singletonList("key"), singletonList("value"));
+      assertThat(eval, equalTo(1L));
+      assertThat(jedis.exists("key"), is(false));
+    });
   }
 
   private void execute(Consumer<Jedis> action) {
