@@ -68,7 +68,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.github.tonivade:resp-server:0.16.0-SNAPSHOT'
+  compile 'com.github.tonivade:resp-server:0.16.0'
   compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
   compile 'org.luaj:luaj-jse:3.0.1'
   compile 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
