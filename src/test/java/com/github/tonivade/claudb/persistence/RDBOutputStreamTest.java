@@ -14,9 +14,12 @@ import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 
 import org.junit.Before;
@@ -53,6 +56,32 @@ public class RDBOutputStreamTest {
     out.dabatase(database().add(safeKey("a"), string("test")).build());
 
     assertThat(toHexString(baos.toByteArray()), is("0001610474657374"));
+  }
+
+  @Test
+  public void testBigString() throws IOException {
+    out.dabatase(database().add(safeKey("a"), string("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest")).build());
+
+    assertThat(toHexString(baos.toByteArray()), startsWith("0001614064"));
+  }
+
+  @Test
+  public void testLargeString() throws IOException {
+    out.dabatase(database().add(safeKey("a"), string(readFile("README.md"))).build());
+
+    assertThat(toHexString(baos.toByteArray()), startsWith("00016157c5"));
+  }
+
+  @Test
+  public void testVeryLargeString() throws IOException {
+    SafeString file = readFile("README.md");
+    SafeString result = SafeString.EMPTY_STRING;
+    for (int i = 0; i < 10; i++) {
+      result = SafeString.append(result, file);
+    }
+    out.dabatase(database().add(safeKey("a"), string(result)).build());
+
+    assertThat(toHexString(baos.toByteArray()), startsWith("000161800000edb2"));
   }
 
   @Test
@@ -114,15 +143,19 @@ public class RDBOutputStreamTest {
     return new SafeString(byteArray).toHexString();
   }
 
-  public static DatabaseBuiler database() {
-    return new DatabaseBuiler();
+  private static DatabaseBuilder database() {
+    return new DatabaseBuilder();
   }
 
-  private static class DatabaseBuiler {
+  private static SafeString readFile(String name) throws IOException {
+    return new SafeString(Files.readAllBytes(Paths.get(name)));
+  }
+
+  private static class DatabaseBuilder {
 
     private final Database db = new OnHeapDatabaseFactory().create("test");
 
-    public DatabaseBuiler add(DatabaseKey key, DatabaseValue value) {
+    public DatabaseBuilder add(DatabaseKey key, DatabaseValue value) {
       db.put(key, value);
       return this;
     }
@@ -131,5 +164,4 @@ public class RDBOutputStreamTest {
       return db;
     }
   }
-
 }

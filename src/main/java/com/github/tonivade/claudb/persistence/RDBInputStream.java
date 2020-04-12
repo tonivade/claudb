@@ -38,9 +38,6 @@ public class RDBInputStream {
 
   private static final long TO_MILLIS = 1000L;
 
-  private static final int TWO_BYTES_LENGTH = 0x4000;
-  private static final int ONE_BYTE_LENGTH = 0x40;
-
   private static final int HASH = 0x04;
   private static final int SORTED_SET = 0x03;
   private static final int SET = 0x02;
@@ -138,7 +135,7 @@ public class RDBInputStream {
     long readed = parseChecksum();
 
     if (calculated != readed) {
-      throw new IOException("invalid checksum");
+      throw new IOException("invalid checksum: " + readed);
     }
   }
 
@@ -216,10 +213,10 @@ public class RDBInputStream {
 
   private int readLength() throws IOException {
     int length = in.read();
-    if (length < ONE_BYTE_LENGTH) {
+    if (length < 0x40) {
       // 1 byte: 00XXXXXX
       return length;
-    } else if (length < TWO_BYTES_LENGTH) {
+    } else if (length < 0x80) {
       // 2 bytes: 01XXXXXX XXXXXXXX
       int next = in.read();
       return readLength(length, next);
@@ -254,5 +251,4 @@ public class RDBInputStream {
     }
     return array;
   }
-
 }

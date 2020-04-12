@@ -114,7 +114,10 @@ public class RDBOutputStream {
       out.write(length);
     } else if (length < 0x4000) {
       // 2 bytes: 01XXXXXX XXXXXXXX
-      out.write(0x4000 & length);
+      int b1 = length >> 8;
+      int b2 = length & 0xFF;
+      out.write(0x40 | b1);
+      out.write(b2);
     } else {
       // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
       out.write(0x80);

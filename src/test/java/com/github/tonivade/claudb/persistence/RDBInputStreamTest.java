@@ -38,6 +38,17 @@ public class RDBInputStreamTest {
   }
 
   @Test
+  public void testBig() throws IOException {
+    RDBInputStream in = new RDBInputStream(array("524544495330303033FE00000161406474657374746573747465737474657374746573747465737474657374746573747465737474657374746573747465737474657374746573747465737474657374746573747465737474657374746573747465737474657374746573747465737474657374FFC56EDB43146A8431"));
+
+    Map<Integer, Map<DatabaseKey, DatabaseValue>> databases = in.parse();
+
+    assertThat(databases.size(), is(1));
+
+    assertDB(databases.get(0), string("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"));
+  }
+
+  @Test
   public void testAll() throws IOException {
     RDBInputStream in = new RDBInputStream(array("524544495330303033FE000001610474657374FE01010161010474657374FE02020161010474657374FE0303016101047465737403312E30FE040401610101310474657374FE05FC00000000000000010001610474657374FFA9D1F09C463A7043"));
 
@@ -62,5 +73,4 @@ public class RDBInputStreamTest {
   private InputStream array(String string) {
     return new ByteBufferInputStream(fromHexString(string).getBytes());
   }
-
 }
