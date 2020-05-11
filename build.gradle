@@ -3,6 +3,7 @@ apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'com.bmuschko.nexus'
 apply plugin: 'me.champeau.gradle.jmh'
+apply plugin: 'org.mikeneck.graalvm-native-image'
 
 group = 'com.github.tonivade'
 archivesBaseName = 'claudb'
@@ -20,6 +21,7 @@ buildscript {
   dependencies {
     classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     classpath "me.champeau.gradle:jmh-gradle-plugin:0.4.5"
+    classpath "gradle.plugin.org.mikeneck:graalvm-native-image-plugin:0.5.0"
   }
 }
 
@@ -152,6 +154,19 @@ nexus {
   sign = true
   repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
   snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+}
+
+nativeImage {
+  graalVmHome = System.getenv("HOME") + "/.sdkman/candidates/java/19.3.1.r11-grl"
+  mainClass = "com.github.tonivade.claudb.Server"
+  executableName = "claudb"
+  arguments(
+          '--verbose',
+          '-H:+TraceClassInitialization',
+          '--report-unsupported-elements-at-runtime',
+          '--initialize-at-build-time',
+          '--no-fallback'
+  )
 }
 
 task copyToLib(type: Copy) {
