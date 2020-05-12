@@ -6,10 +6,8 @@ package com.github.tonivade.claudb.persistence;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.util.Objects;
 
 public class ByteBufferInputStream extends InputStream {
 
