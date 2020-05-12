@@ -4,20 +4,22 @@
  */
 package com.github.tonivade.claudb.data;
 
-import java.time.Instant;
-import java.util.Map;
-
 import com.github.tonivade.purefun.Tuple;
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.purefun.data.Sequence;
+
+import java.time.Instant;
+import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
 
 public class OnHeapDatabase implements Database {
 
   private final Map<DatabaseKey, DatabaseValue> cache;
 
   public OnHeapDatabase(Map<DatabaseKey, DatabaseValue> cache) {
-    this.cache = cache;
+    this.cache = requireNonNull(cache);
   }
 
   @Override

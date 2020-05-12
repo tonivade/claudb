@@ -4,6 +4,14 @@
  */
 package com.github.tonivade.claudb.data;
 
+import com.github.tonivade.purefun.Tuple;
+import com.github.tonivade.purefun.Tuple2;
+import com.github.tonivade.purefun.data.ImmutableList;
+import com.github.tonivade.purefun.data.ImmutableSet;
+import com.github.tonivade.purefun.data.Sequence;
+import org.caffinitas.ohc.CloseableIterator;
+import org.caffinitas.ohc.OHCache;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Instant;
@@ -12,21 +20,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.caffinitas.ohc.CloseableIterator;
-import org.caffinitas.ohc.OHCache;
-
-import com.github.tonivade.purefun.Tuple;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableSet;
-import com.github.tonivade.purefun.data.Sequence;
+import static java.util.Objects.requireNonNull;
 
 public class OffHeapDatabase implements Database {
 
-  private OHCache<DatabaseKey, DatabaseValue> cache;
+  private final OHCache<DatabaseKey, DatabaseValue> cache;
 
   public OffHeapDatabase(OHCache<DatabaseKey, DatabaseValue> cache) {
-    this.cache = cache;
+    this.cache = requireNonNull(cache);
   }
 
   @Override
