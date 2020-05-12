@@ -6,6 +6,7 @@ package com.github.tonivade.claudb.persistence;
 
 import static com.github.tonivade.claudb.persistence.ByteUtils.toByteArray;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,8 +37,7 @@ public class RDBOutputStream {
   private final CheckedOutputStream out;
 
   public RDBOutputStream(OutputStream out) {
-    super();
-    this.out = new CheckedOutputStream(out, new CRC64());
+    this.out = new CheckedOutputStream(requireNonNull(out), new CRC64());
   }
 
   public void preamble(int version) throws IOException {

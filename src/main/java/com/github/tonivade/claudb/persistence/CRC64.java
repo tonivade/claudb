@@ -10,7 +10,7 @@ public class CRC64 implements Checksum {
 
   private static final int LOOKUPTABLE_SIZE = 256;
   private static final long POLY64REV = 0xC96C5795D7870F42L;
-  private static final long LOOKUPTABLE[] = new long[LOOKUPTABLE_SIZE];
+  private static final long[] LOOKUPTABLE = new long[LOOKUPTABLE_SIZE];
 
   private long crc = -1;
 

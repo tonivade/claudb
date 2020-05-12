@@ -12,8 +12,7 @@ public class ByteBufferOutputStream extends OutputStream {
 
   private static final int DEFAULT_CAPACITY = 1024;
 
-  private int growing;
-
+  private final int growing;
   private ByteBuffer buffer;
 
   public ByteBufferOutputStream() {
@@ -30,13 +29,13 @@ public class ByteBufferOutputStream extends OutputStream {
   }
 
   @Override
-  public void write(int b) throws IOException {
+  public void write(int b) {
     ensureCapacity(1);
     buffer.put((byte) b);
   }
 
   @Override
-  public void write(byte[] b, int off, int len) throws IOException {
+  public void write(byte[] b, int off, int len) {
     ensureCapacity(len);
     buffer.put(b, off, len);
   }

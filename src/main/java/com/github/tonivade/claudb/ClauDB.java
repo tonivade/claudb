@@ -9,7 +9,6 @@ import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.String.valueOf;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
@@ -122,7 +121,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   @Override
-  public void exportRDB(OutputStream output) throws IOException {
+  public void exportRDB(OutputStream output) {
     executeOn(Observable.create(observable -> {
       getState().exportRDB(output);
       observable.onComplete();
@@ -130,7 +129,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   @Override
-  public void importRDB(InputStream input) throws IOException {
+  public void importRDB(InputStream input) {
     executeOn(Observable.create(observable -> {
       getState().importRDB(input);
       observable.onComplete();
@@ -290,7 +289,7 @@ public class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private DatabaseFactory initFactory() {
-    DatabaseFactory factory = null;
+    DatabaseFactory factory;
     if (config.isOffHeapActive()) {
       factory = new OffHeapDatabaseFactory();
     } else {

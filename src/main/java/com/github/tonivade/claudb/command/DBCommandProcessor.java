@@ -6,6 +6,7 @@ package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.visit;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
@@ -38,8 +39,8 @@ public class DBCommandProcessor {
   }
 
   public DBCommandProcessor(DBServerContext server, Session session) {
-    this.server = server;
-    this.session = session;
+    this.server = requireNonNull(server);
+    this.session = requireNonNull(session);
   }
 
   public void processCommand(ArrayRedisToken token) {

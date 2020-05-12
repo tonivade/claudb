@@ -55,10 +55,9 @@ public class Client implements RespCallback {
   public static void main(String[] args) throws Exception {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
-    OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
-        .defaultsTo(ClauDB.DEFAULT_HOST);
-    OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
-        .defaultsTo(ClauDB.DEFAULT_PORT);
+    OptionSpec<String> host = parser.accepts("h", "host")
+            .withRequiredArg().defaultsTo(ClauDB.DEFAULT_HOST);
+    OptionSpec<String> port = parser.accepts("p", "port").withRequiredArg();
 
     OptionSet options = parser.parse(args);
 
@@ -92,7 +91,7 @@ public class Client implements RespCallback {
     System.out.print(PROMPT);
   }
 
-  private static int parsePort(Integer optionPort) {
-    return optionPort != null ? optionPort : DBServerContext.DEFAULT_PORT;
+  private static int parsePort(String optionPort) {
+    return optionPort != null ? Integer.parseInt(optionPort) : DBServerContext.DEFAULT_PORT;
   }
 }

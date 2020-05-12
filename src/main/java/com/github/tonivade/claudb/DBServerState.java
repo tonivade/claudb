@@ -134,15 +134,13 @@ public class DBServerState {
   }
 
   public void addSlave(String id) {
-    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
-      return set(oldValue.getSet().appendAll(newValue.getSet()));
-    });
+    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)),
+            (oldValue, newValue) -> set(oldValue.getSet().appendAll(newValue.getSet())));
   }
 
   public void removeSlave(String id) {
-    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)), (oldValue, newValue) -> {
-      return set(oldValue.getSet().difference(newValue.getSet()));
-    });
+    getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)),
+            (oldValue, newValue) -> set(oldValue.getSet().difference(newValue.getSet())));
   }
 
   public ImmutableList<RedisToken> getCommandsToReplicate() {

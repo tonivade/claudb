@@ -5,6 +5,7 @@
 package com.github.tonivade.claudb.command.scripting;
 
 import static com.github.tonivade.purefun.data.Sequence.arrayOf;
+import static java.util.Objects.requireNonNull;
 
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
@@ -16,12 +17,12 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class RedisLibrary {
 
-  private ServerContext context;
-  private Session session;
+  private final ServerContext context;
+  private final Session session;
 
   public RedisLibrary(ServerContext context, Session session) {
-    this.context = context;
-    this.session = session;
+    this.context = requireNonNull(context);
+    this.session = requireNonNull(session);
   }
 
   public RedisToken call(SafeString commandName, SafeString... params) {

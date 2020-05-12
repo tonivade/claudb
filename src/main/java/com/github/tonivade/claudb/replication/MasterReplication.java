@@ -6,10 +6,12 @@ package com.github.tonivade.claudb.replication;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +39,7 @@ public class MasterReplication implements Runnable {
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
   public MasterReplication(DBServerContext server) {
-    this.server = server;
+    this.server = requireNonNull(server);
   }
 
   public void start() {

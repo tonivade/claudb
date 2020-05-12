@@ -14,6 +14,7 @@ import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.claudb.persistence.ByteUtils.byteArrayToInt;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.time.Instant.ofEpochMilli;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,7 +57,7 @@ public class RDBInputStream {
   private final CheckedInputStream in;
 
   public RDBInputStream(InputStream in) {
-    this.in = new CheckedInputStream(in, new CRC64());
+    this.in = new CheckedInputStream(requireNonNull(in), new CRC64());
   }
 
   public Map<Integer, Map<DatabaseKey, DatabaseValue>> parse() throws IOException {

@@ -14,8 +14,8 @@ import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public interface BaseSubscriptionSupport
-{
+public interface BaseSubscriptionSupport {
+
   default void addSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
     admin.merge(safeKey(suffix + channel), set(safeString(sessionId)),
         (oldValue, newValue) -> set(oldValue.getSet().appendAll(newValue.getSet())));

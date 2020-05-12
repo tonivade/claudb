@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class GlobPattern {
   
-  private Pattern pattern;
+  private final Pattern pattern;
   
   public GlobPattern(String pattern) {
     this.pattern = compile(convertGlobToRegEx(pattern));
@@ -24,7 +24,7 @@ public class GlobPattern {
    * taken from
    * http://stackoverflow.com/questions/1247772/is-there-an-equivalent-of-java-util-regex-for-glob-type-patterns
    */
-  private final String convertGlobToRegEx(String line) {
+  private String convertGlobToRegEx(String line) {
     int strLen = line.length();
     StringBuilder sb = new StringBuilder(strLen);
     boolean escaping = false;

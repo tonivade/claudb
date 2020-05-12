@@ -11,9 +11,11 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static java.lang.String.valueOf;
+import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +48,8 @@ public class SlaveReplication implements RespCallback {
   private final int port;
 
   public SlaveReplication(DBServerContext server, Session session, String host, int port) {
-    this.server = server;
-    this.host = host;
+    this.server = requireNonNull(server);
+    this.host = requireNonNull(host);
     this.port = port;
     this.client = new RespClient(host, port, this);
     this.processor = new DBCommandProcessor(server, session);

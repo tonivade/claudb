@@ -7,6 +7,7 @@ package com.github.tonivade.claudb.persistence;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.nio.ByteBuffer.wrap;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayOutputStream;
@@ -54,7 +55,7 @@ public class PersistenceManager {
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
   public PersistenceManager(DBServerContext server, DBConfig config) {
-    this.server = server;
+    this.server = requireNonNull(server);
     this.dumpFile = config.getRdbFile();
     this.redoFile = config.getAofFile();
     this.syncPeriod = config.getSyncPeriod();
@@ -188,7 +189,7 @@ class RedisSourceInputStream implements RedisSource {
   private final InputStream input;
 
   RedisSourceInputStream(InputStream input) {
-    this.input = input;
+    this.input = requireNonNull(input);
   }
 
   @Override
@@ -233,9 +234,9 @@ class RedisSourceInputStream implements RedisSource {
   public SafeString readString(int size) {
     try {
       byte[] buffer = new byte[size + 2];
-      int readed = input.read(buffer);
-      if (readed > -1) {
-        return new SafeString(wrap(buffer, 0, readed - 2));
+      int red = input.read(buffer);
+      if (red > -1) {
+        return new SafeString(wrap(buffer, 0, red - 2));
       }
       return null;
     } catch (IOException e) {

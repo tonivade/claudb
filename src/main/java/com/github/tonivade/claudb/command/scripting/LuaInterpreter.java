@@ -11,6 +11,7 @@ import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.lang.String.valueOf;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,10 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public final class LuaInterpreter {
 
-  private RedisBinding redis;
+  private final RedisBinding redis;
 
   protected LuaInterpreter(RedisBinding binding) {
-    this.redis = binding;
+    this.redis = requireNonNull(binding);
   }
 
   public static LuaInterpreter buildFor(Request request) {
@@ -111,7 +112,7 @@ public final class LuaInterpreter {
   }
 
   private RedisToken convertBoolean(Boolean value) {
-    return value.booleanValue() ? integer(1) : nullString();
+    return value ? integer(1) : nullString();
   }
 
   private RedisToken convertUnknown(Object value) {

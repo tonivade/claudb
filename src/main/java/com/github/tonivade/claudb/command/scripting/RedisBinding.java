@@ -5,6 +5,7 @@
 package com.github.tonivade.claudb.command.scripting;
 
 import static com.github.tonivade.purefun.Matcher1.instanceOf;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,10 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class RedisBinding extends VarArgFunction {
 
-  private RedisLibrary redis;
+  private final RedisLibrary redis;
 
   public RedisBinding(RedisLibrary redis) {
-    this.redis = redis;
+    this.redis = requireNonNull(redis);
   }
 
   @Override
@@ -45,7 +46,7 @@ public class RedisBinding extends VarArgFunction {
         params.add(toSafeString(args.checkstring(i + 1)));
       }
     }
-    return params.stream().toArray(SafeString[]::new);
+    return params.toArray(new SafeString[0]);
   }
 
   private SafeString readCommand(Varargs args) {

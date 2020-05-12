@@ -4,20 +4,23 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.Objects;
 
 public class ByteBufferInputStream extends InputStream {
 
-  private ByteBuffer buffer;
+  private final ByteBuffer buffer;
 
   public ByteBufferInputStream(byte[] array) {
-    this.buffer = ByteBuffer.wrap(array);
+    this.buffer = ByteBuffer.wrap(requireNonNull(array));
   }
 
   @Override
-  public int read() throws IOException {
+  public int read() {
     if (!buffer.hasRemaining()) {
       return -1;
     }
@@ -25,14 +28,14 @@ public class ByteBufferInputStream extends InputStream {
   }
 
   @Override
-  public int read(byte[] b, int off, int len) throws IOException {
+  public int read(byte[] b, int off, int len) {
     int available = Math.min(len, buffer.remaining());
     buffer.get(b, off, available);
     return available;
   }
 
   @Override
-  public int available() throws IOException {
+  public int available() {
     return buffer.remaining();
   }
 }

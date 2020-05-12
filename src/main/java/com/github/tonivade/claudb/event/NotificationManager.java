@@ -4,6 +4,9 @@
  */
 package com.github.tonivade.claudb.event;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,7 +19,7 @@ public class NotificationManager implements PatternSubscriptionSupport {
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public NotificationManager(DBServerContext server) {
-    this.server = server;
+    this.server = requireNonNull(server);
   }
 
   public void start() {
