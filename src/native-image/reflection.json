@@ -1,0 +1,662 @@
+[
+  {
+    "name": "com.github.tonivade.claudb.command.transaction.DiscardCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.transaction.MultiCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.transaction.ExecCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetIncrementByCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetRangeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetRemoveCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetAddCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetCardinalityCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetRangeByScoreCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetReverseRangeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.InfoCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.FlushDBCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.SyncCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.RoleCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.DatabaseSizeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.SlaveOfCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.SelectCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.MultiSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.GetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.DecrementCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.StringLengthCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.MultiGetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.SetExpiredCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.IncrementByCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.SetIfNotExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.GetSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.SetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.MultiSetIfNotExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.IncrementCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.DecrementByCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.AppendCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashDeleteCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashValuesCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashGetAllCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashGetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashMultiSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashLengthCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashMultiGetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashKeysCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.bitset.SetBitCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.bitset.GetBitCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.bitset.BitCountCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.PatternUnsubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.SubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.PublishCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.UnsubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.PatternSubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.CommandWrapper",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.CommandWrapper",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.CommandWrapper",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetRandomMemberCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetAddCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetMembersCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetCardinalityCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetIsMembersCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetDifferenceCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetUnionCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetPopCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetRemoveCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetIntersectionCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.LeftPopCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.RightPopCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.LeftPushCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.RightPushCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListLengthCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListIndexCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListRangeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.scripting.ScriptCommands",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.scripting.EvalCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.scripting.EvalShaCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.PersistCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.ExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.KeysCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.TimeToLiveMillisCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.ExpireCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.TypeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.RenameCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.DeleteCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.TimeToLiveSecondsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.transaction.ExecCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.transaction.MultiCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.transaction.DiscardCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetRemoveCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetReverseRangeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetIncrementByCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetCardinalityCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetAddCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetRangeByScoreCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.zset.SortedSetRangeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.RoleCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.SelectCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.SlaveOfCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.FlushDBCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.SyncCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.InfoCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.server.DatabaseSizeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.DecrementCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.MultiSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.MultiSetIfNotExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.IncrementByCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.GetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.SetIfNotExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.MultiGetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.SetExpiredCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.StringLengthCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.GetSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.DecrementByCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.SetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.IncrementCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.string.AppendCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashGetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashDeleteCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashGetAllCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashMultiGetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashKeysCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashValuesCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashLengthCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.hash.HashMultiSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.bitset.GetBitCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.bitset.BitCountCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.bitset.SetBitCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.PatternUnsubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.PatternSubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.PublishCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.SubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.pubsub.UnsubscribeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetPopCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetUnionCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetMembersCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetIsMemberCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetAddCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetCardinalityCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetDifferenceCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetRandomMemberCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetIntersectionCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.set.SetRemoveCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListSetCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.RightPushCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListLengthCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.RightPopCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListRangeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.LeftPushCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.LeftPopCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.list.ListIndexCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.scripting.ScriptCommands",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.scripting.EvalCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.scripting.EvalShaCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.TimeToLiveMillisCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.RenameCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.TimeToLiveSecondsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.KeysCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.ExpireCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.TypeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.DeleteCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.PersistCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.claudb.command.key.ExistsCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.resp.command.server.TimeCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.resp.command.server.QuitCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.resp.command.server.PingCommand",
+    "allDeclaredConstructors": true
+  },
+  {
+    "name": "com.github.tonivade.resp.command.server.EchoCommand",
+    "allDeclaredConstructors": true
+  }
+]

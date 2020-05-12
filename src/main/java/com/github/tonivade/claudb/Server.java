@@ -25,10 +25,9 @@ public class Server {
     OptionSpec<Void> persist = parser.accepts("P", "persistence (experimental)");
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
-    OptionSpec<String> host = parser.accepts("h", "host").withRequiredArg().ofType(String.class)
-        .defaultsTo(ClauDB.DEFAULT_HOST);
-    OptionSpec<Integer> port = parser.accepts("p", "port").withRequiredArg().ofType(Integer.class)
-        .defaultsTo(ClauDB.DEFAULT_PORT);
+    OptionSpec<String> host = parser.accepts("h", "host")
+        .withRequiredArg().defaultsTo(DBServerContext.DEFAULT_HOST);
+    OptionSpec<String> port = parser.accepts("p", "port").withRequiredArg();
 
     OptionSet options = parser.parse(args);
 
@@ -51,14 +50,13 @@ public class Server {
     }
   }
 
-  private static Stream<String> readBanner()
-  {
+  private static Stream<String> readBanner() {
     InputStream banner = Server.class.getResourceAsStream("/banner.txt");
     return new BufferedReader(new InputStreamReader(banner)).lines();
   }
 
-  private static int parsePort(Integer optionPort) {
-    return optionPort != null ? optionPort : DBServerContext.DEFAULT_PORT;
+  private static int parsePort(String optionPort) {
+    return optionPort != null ? Integer.parseInt(optionPort) : DBServerContext.DEFAULT_PORT;
   }
 
   private static DBConfig parseConfig(boolean persist, boolean offHeap, boolean notifications) {
