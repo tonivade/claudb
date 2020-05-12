@@ -4,27 +4,16 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseValue.score;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Collections.unmodifiableSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
-import org.nustaq.serialization.FSTConfiguration;
-
-import com.github.tonivade.resp.protocol.SafeString;
 
 public class SortedSetTest {
-
-  private static final FSTConfiguration FST = FSTConfiguration.createDefaultConfiguration();
-  
-  static {
-    FST.registerClass(SortedSet.class);
-    FST.registerClass(SafeString.class);
-  }
 
   @Test
   public void testSet() {
@@ -90,23 +79,5 @@ public class SortedSetTest {
     assertThat(set.tailSet(score(3, safeString(""))).first(), is(score(3.0, safeString("c"))));
 
     assertThat(set.headSet(score(4, safeString(""))).last(), is(score(3.0, safeString("c"))));
-  }
-  
-  @Test
-  public void testSerialization() {
-    SortedSet set = new SortedSet();
-    set.add(score(1, safeString("a")));
-    set.add(score(2, safeString("b")));
-    set.add(score(3, safeString("c")));
-    set.add(score(4, safeString("d")));
-    set.add(score(5, safeString("e")));
-    set.add(score(6, safeString("f")));
-    set.add(score(7, safeString("g")));
-    set.add(score(8, safeString("h")));
-    set.add(score(9, safeString("i")));
-    
-    SortedSet deserializedSet = (SortedSet) FST.asObject(FST.asByteArray(set));
-    
-    assertThat(deserializedSet, equalTo(set));
   }
 }
