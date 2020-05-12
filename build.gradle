@@ -166,8 +166,7 @@ nativeImage {
           '--initialize-at-build-time',
           '--no-fallback',
           '--allow-incomplete-classpath',
-          '-H:IncludeResources=banner.txt',
-          '-H:ReflectionConfigurationFiles=src/native-image/reflection.json'
+          '-H:IncludeResources=banner.txt'
   )
 }
 

@@ -14,7 +14,6 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
 
@@ -49,7 +48,7 @@ public class EvalCommandTest {
   public void testExecuteString() {
     rule.withParams("return 'hello'", "0")
         .execute()
-        .assertThat(RedisToken.string("hello"));
+        .assertThat(string("hello"));
   }
 
   @Test
