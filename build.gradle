@@ -166,7 +166,9 @@ nativeImage {
           '--initialize-at-build-time',
           '--no-fallback',
           '--allow-incomplete-classpath',
-          '-H:IncludeResources=banner.txt'
+          '-H:IncludeResources=banner.txt',
+          '-H:IncludeResources=logback.xml',
+          '-H:IncludeResourceBundles=joptsimple.HelpFormatterMessages'
   )
 }
 
