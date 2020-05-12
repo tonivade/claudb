@@ -69,7 +69,7 @@ public class RDBOutputStreamTest {
   public void testLargeString() throws IOException {
     out.dabatase(database().add(safeKey("a"), string(readFile("README.md"))).build());
 
-    assertThat(toHexString(baos.toByteArray()), startsWith("00016157c5"));
+    assertThat(toHexString(baos.toByteArray()), startsWith("0001615984"));
   }
 
   @Test
@@ -81,7 +81,7 @@ public class RDBOutputStreamTest {
     }
     out.dabatase(database().add(safeKey("a"), string(result)).build());
 
-    assertThat(toHexString(baos.toByteArray()), startsWith("000161800000edb2"));
+    assertThat(toHexString(baos.toByteArray()), startsWith("000161800000ff28"));
   }
 
   @Test
