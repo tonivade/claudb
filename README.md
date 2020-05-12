@@ -17,127 +17,127 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 
 <details>
     <summary>Server</summary>
-    - FLUSHDB
-    - INFO
-    - TIME
-    - SYNC
-    - SLAVEOF
-    - ROLE
+- FLUSHDB
+- INFO
+- TIME
+- SYNC
+- SLAVEOF
+- ROLE
 </details>
 
 <details>
     <summary>Connection</summary>
-    - ECHO
-    - PING
-    - QUIT
-    - SELECT
+- ECHO
+- PING
+- QUIT
+- SELECT
 </details>
 
 <details>
     <summary>Key</summary>
-    - DEL
-    - EXISTS
-    - KEYS
-    - RENAME
-    - TYPE
-    - EXPIRE
-    - PERSIST
-    - TTL
-    - PTTL
+- DEL
+- EXISTS
+- KEYS
+- RENAME
+- TYPE
+- EXPIRE
+- PERSIST
+- TTL
+- PTTL
 </details>
 
 <details>
     <summary>String</summary>
-    - APPEND
-    - DECRBY
-    - DECR
-    - GET
-    - GETSET
-    - INCRBY
-    - INCR
-    - MGET
-    - MSET
-    - MSETNX
-    - SET (with NX, PX, NX and XX options)
-    - SETEX
-    - SETNX
-    - STRLEN
+- APPEND
+- DECRBY
+- DECR
+- GET
+- GETSET
+- INCRBY
+- INCR
+- MGET
+- MSET
+- MSETNX
+- SET (with NX, PX, NX and XX options)
+- SETEX
+- SETNX
+- STRLEN
 </details>
 
 <details>
     <summary>Hash</summary>
-    - HDEL
-    - HEXISTS
-    - HGETALL
-    - HGET
-    - HKEYS
-    - HLEN
-    - HMGET
-    - HMSET
-    - HSET
-    - HVALS
+- HDEL
+- HEXISTS
+- HGETALL
+- HGET
+- HKEYS
+- HLEN
+- HMGET
+- HMSET
+- HSET
+- HVALS
 </details>
 
 <details>
     <summary>List</summary>
-    - LPOP
-    - LPUSH
-    - LINDEX
-    - LLEN
-    - LRANGE
-    - LSET
-    - RPOP
-    - RPUSH
+- LPOP
+- LPUSH
+- LINDEX
+- LLEN
+- LRANGE
+- LSET
+- RPOP
+- RPUSH
 </details>
 
 <details>
     <summary>Set</summary>
-    - SADD
-    - SCARD
-    - SDIFF
-    - SINTER
-    - SISMEMBER
-    - SMEMBERS
-    - SPOP
-    - SRANDMEMBER
-    - SREM
-    - SUNION
+- SADD
+- SCARD
+- SDIFF
+- SINTER
+- SISMEMBER
+- SMEMBERS
+- SPOP
+- SRANDMEMBER
+- SREM
+- SUNION
 </details>
 
 <details>
     <summary>Sorted Set</summary>
-    - ZADD
-    - ZCARD
-    - ZRANGEBYSCORE
-    - ZRANGE
-    - ZREM
-    - ZREVRANGE
-    - ZINCRBY
+- ZADD
+- ZCARD
+- ZRANGEBYSCORE
+- ZRANGE
+- ZREM
+- ZREVRANGE
+- ZINCRBY
 </details>
 
 <details>
     <summary>Pub/Sub</summary>
-    - SUBSCRIBE
-    - UNSUBSCRIBE
-    - PSUBSCRIBE
-    - PUNSUBSCRIBE
-    - PUBLISH
+- SUBSCRIBE
+- UNSUBSCRIBE
+- PSUBSCRIBE
+- PUNSUBSCRIBE
+- PUBLISH
 </details>
 
 <details>
     <summary>Transactions</summary>
-    - MULTI
-    - EXEC
-    - DISCARD
+- MULTI
+- EXEC
+- DISCARD
 </details>
 
 <details>
     <summary>Scripting</summary>
-    - EVAL
-    - EVALSHA
-    - SCRIPT LOAD
-    - SCRIPT EXISTS
-    - SCRIPT FLUSH
+- EVAL
+- EVALSHA
+- SCRIPT LOAD
+- SCRIPT EXISTS
+- SCRIPT FLUSH
 </details>
 
 ## Design
