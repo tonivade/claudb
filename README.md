@@ -15,19 +15,26 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 
 ## Implemented commands
 
-- Server
+<details>
+    <summary>Server</summary>
     - FLUSHDB
     - INFO
     - TIME
     - SYNC
     - SLAVEOF
     - ROLE
-- Connection
+</details>
+
+<details>
+    <summary>Connection</summary>
     - ECHO
     - PING
     - QUIT
     - SELECT
-- Key
+</details>
+
+<details>
+    <summary>Key</summary>
     - DEL
     - EXISTS
     - KEYS
@@ -37,7 +44,10 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - PERSIST
     - TTL
     - PTTL
-- String
+</details>
+
+<details>
+    <summary>String</summary>
     - APPEND
     - DECRBY
     - DECR
@@ -52,7 +62,10 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - SETEX
     - SETNX
     - STRLEN
-- Hash
+</details>
+
+<details>
+    <summary>Hash</summary>
     - HDEL
     - HEXISTS
     - HGETALL
@@ -63,7 +76,10 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - HMSET
     - HSET
     - HVALS
-- List
+</details>
+
+<details>
+    <summary>List</summary>
     - LPOP
     - LPUSH
     - LINDEX
@@ -72,7 +88,10 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - LSET
     - RPOP
     - RPUSH
-- Set
+</details>
+
+<details>
+    <summary>Set</summary>
     - SADD
     - SCARD
     - SDIFF
@@ -83,7 +102,10 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - SRANDMEMBER
     - SREM
     - SUNION
-- Sorted Set
+</details>
+
+<details>
+    <summary>Sorted Set</summary>
     - ZADD
     - ZCARD
     - ZRANGEBYSCORE
@@ -91,22 +113,32 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
     - ZREM
     - ZREVRANGE
     - ZINCRBY
-- Pub/Sub
+</details>
+
+<details>
+    <summary>Pub/Sub</summary>
     - SUBSCRIBE
     - UNSUBSCRIBE
     - PSUBSCRIBE
     - PUNSUBSCRIBE
     - PUBLISH
-- Transactions
+</details>
+
+<details>
+    <summary>Transactions</summary>
     - MULTI
     - EXEC
     - DISCARD
- - Scripting
+</details>
+
+<details>
+    <summary>Scripting</summary>
     - EVAL
     - EVALSHA
     - SCRIPT LOAD
     - SCRIPT EXISTS
     - SCRIPT FLUSH
+</details>
 
 ## Design
 
@@ -221,6 +253,16 @@ Or embed in your source code
     RespServer server = ClauDB.builder().host("localhost").port(7081).build();
     server.start(); 
 ```
+
+## Native Image
+
+Now is possible to generate a native image thanks to graalvm. You can generate one with this command:
+
+```shell
+$ ./gradlew clean nativeImage
+```
+
+Some features are not available like lua runtime and offheap memory.
 
 ## TODO
 
