@@ -17,24 +17,29 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 
 <details>
     <summary>Server</summary>
+    
 - FLUSHDB
 - INFO
 - TIME
 - SYNC
 - SLAVEOF
 - ROLE
+
 </details>
 
 <details>
     <summary>Connection</summary>
+    
 - ECHO
 - PING
 - QUIT
 - SELECT
+
 </details>
 
 <details>
     <summary>Key</summary>
+    
 - DEL
 - EXISTS
 - KEYS
@@ -44,10 +49,12 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - PERSIST
 - TTL
 - PTTL
+
 </details>
 
 <details>
     <summary>String</summary>
+    
 - APPEND
 - DECRBY
 - DECR
@@ -62,10 +69,12 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - SETEX
 - SETNX
 - STRLEN
+
 </details>
 
 <details>
     <summary>Hash</summary>
+    
 - HDEL
 - HEXISTS
 - HGETALL
@@ -76,10 +85,12 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - HMSET
 - HSET
 - HVALS
+
 </details>
 
 <details>
     <summary>List</summary>
+    
 - LPOP
 - LPUSH
 - LINDEX
@@ -88,10 +99,12 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - LSET
 - RPOP
 - RPUSH
+
 </details>
 
 <details>
     <summary>Set</summary>
+    
 - SADD
 - SCARD
 - SDIFF
@@ -102,10 +115,12 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - SRANDMEMBER
 - SREM
 - SUNION
+
 </details>
 
 <details>
     <summary>Sorted Set</summary>
+    
 - ZADD
 - ZCARD
 - ZRANGEBYSCORE
@@ -113,31 +128,38 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - ZREM
 - ZREVRANGE
 - ZINCRBY
+
 </details>
 
 <details>
     <summary>Pub/Sub</summary>
+    
 - SUBSCRIBE
 - UNSUBSCRIBE
 - PSUBSCRIBE
 - PUNSUBSCRIBE
 - PUBLISH
+
 </details>
 
 <details>
     <summary>Transactions</summary>
+    
 - MULTI
 - EXEC
 - DISCARD
+
 </details>
 
 <details>
     <summary>Scripting</summary>
+    
 - EVAL
 - EVALSHA
 - SCRIPT LOAD
 - SCRIPT EXISTS
 - SCRIPT FLUSH
+
 </details>
 
 ## Design
