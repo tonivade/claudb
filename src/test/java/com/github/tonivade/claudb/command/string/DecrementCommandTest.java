@@ -7,11 +7,9 @@ package com.github.tonivade.claudb.command.string;
 
 import org.junit.Rule;
 import org.junit.Test;
-
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
-import com.github.tonivade.claudb.command.string.DecrementCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @CommandUnderTest(DecrementCommand.class)
 public class DecrementCommandTest {

@@ -8,10 +8,8 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
-
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.Sequence;
 

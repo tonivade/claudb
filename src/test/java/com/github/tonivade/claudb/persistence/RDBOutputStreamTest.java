@@ -15,7 +15,7 @@ import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -7,17 +7,12 @@ package com.github.tonivade.claudb;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Consumer;
-
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 

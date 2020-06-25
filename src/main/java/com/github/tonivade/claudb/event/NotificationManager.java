@@ -5,11 +5,8 @@
 package com.github.tonivade.claudb.event;
 
 import static java.util.Objects.requireNonNull;
-
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.command.pubsub.PatternSubscriptionSupport;
 

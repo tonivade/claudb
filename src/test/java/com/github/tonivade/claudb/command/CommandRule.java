@@ -10,15 +10,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import org.hamcrest.Matcher;
-import org.junit.Assert;
+import org.hamcrest.MatcherAssert;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.DBSessionState;
@@ -166,7 +164,7 @@ public class CommandRule implements TestRule {
   }
 
   private void assertValue(Database database, DatabaseKey key, Matcher<DatabaseValue> matcher) {
-    Assert.assertThat(database.get(key), matcher);
+    MatcherAssert.assertThat(database.get(key), matcher);
   }
 
   public CommandRule assertThat(RedisToken token) {
@@ -175,7 +173,7 @@ public class CommandRule implements TestRule {
   }
 
   public CommandRule assertThat(Matcher<? super RedisToken> matcher) {
-    Assert.assertThat(this.response, matcher);
+    MatcherAssert.assertThat(response, matcher);
     return this;
   }
 

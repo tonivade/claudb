@@ -11,7 +11,7 @@ import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.Test;
 

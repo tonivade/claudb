@@ -3,7 +3,7 @@ package com.github.tonivade.claudb.command.scripting;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.luaj.vm2.LuaValue.valueOf;
 import static org.luaj.vm2.LuaValue.varargsOf;
 import static org.mockito.Mockito.when;

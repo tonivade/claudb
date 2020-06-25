@@ -8,7 +8,7 @@ import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;

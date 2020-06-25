@@ -8,14 +8,11 @@ package com.github.tonivade.claudb.command.zset;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.score;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static org.hamcrest.CoreMatchers.is;
-
 import org.junit.Rule;
 import org.junit.Test;
-
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
-import com.github.tonivade.claudb.command.zset.SortedSetAddCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @CommandUnderTest(SortedSetAddCommand.class)
 public class SortedSetAddCommandTest {

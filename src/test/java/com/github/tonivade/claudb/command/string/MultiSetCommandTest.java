@@ -7,15 +7,12 @@ package com.github.tonivade.claudb.command.string;
 
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Rule;
 import org.junit.Test;
-
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
-import com.github.tonivade.claudb.command.string.MultiSetCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @CommandUnderTest(MultiSetCommand.class)
 public class MultiSetCommandTest {

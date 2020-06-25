@@ -6,7 +6,7 @@ package com.github.tonivade.claudb.persistence;
 
 import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.IOException;
 

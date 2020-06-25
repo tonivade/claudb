@@ -9,7 +9,6 @@ import static com.github.tonivade.claudb.data.DatabaseValue.list;
 import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
-
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.AbstractMap;
@@ -17,17 +16,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-
+import org.caffinitas.ohc.CacheSerializer;
+import org.caffinitas.ohc.Eviction;
+import org.caffinitas.ohc.OHCache;
+import org.caffinitas.ohc.OHCacheBuilder;
 import com.github.tonivade.purefun.Tuple;
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.SafeString;
-import org.caffinitas.ohc.CacheSerializer;
-import org.caffinitas.ohc.Eviction;
-import org.caffinitas.ohc.OHCache;
-import org.caffinitas.ohc.OHCacheBuilder;
 
 public class OffHeapDatabaseFactory implements DatabaseFactory {
 
@@ -152,8 +150,9 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
             sortedSet.add(new AbstractMap.SimpleEntry<>(readScore(buf), readString(buf)));
           }
           return withExpireAt(buf, zset(sortedSet));
+        default:
+          throw new IllegalStateException();
       }
-      throw new IllegalStateException();
     }
 
     @Override
@@ -191,8 +190,9 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
             sortedSetSize += scoreSize() + stringSize(entry.getValue());
           }
           return sortedSetSize + ttlSize(value.getExpiredAt());
+        default:
+          throw new IllegalStateException();
       }
-      throw new IllegalStateException();
     }
 
     private DatabaseValue withExpireAt(ByteBuffer buf, DatabaseValue value) {

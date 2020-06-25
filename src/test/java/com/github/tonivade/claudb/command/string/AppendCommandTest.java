@@ -5,14 +5,11 @@
 package com.github.tonivade.claudb.command.string;
 
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
-
 import org.junit.Rule;
 import org.junit.Test;
-
-import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
-import com.github.tonivade.claudb.command.string.AppendCommand;
+import com.github.tonivade.resp.protocol.RedisToken;
 
 @CommandUnderTest(AppendCommand.class)
 public class AppendCommandTest {

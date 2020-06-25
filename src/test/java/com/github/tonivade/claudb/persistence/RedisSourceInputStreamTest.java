@@ -9,7 +9,7 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.RedisTokenType.UNKNOWN;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.contains;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

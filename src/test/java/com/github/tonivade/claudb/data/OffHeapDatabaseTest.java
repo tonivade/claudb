@@ -6,12 +6,10 @@ package com.github.tonivade.claudb.data;
 
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import com.github.tonivade.purefun.Tuple;
 import com.github.tonivade.purefun.Tuple2;
 
