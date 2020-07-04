@@ -15,95 +15,152 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 
 ## Implemented commands
 
-- Server
-    - FLUSHDB
-    - INFO
-    - TIME
-    - SYNC
-    - SLAVEOF
-    - ROLE
-- Connection
-    - ECHO
-    - PING
-    - QUIT
-    - SELECT
-- Key
-    - DEL
-    - EXISTS
-    - KEYS
-    - RENAME
-    - TYPE
-    - EXPIRE
-    - PERSIST
-    - TTL
-    - PTTL
-- String
-    - APPEND
-    - DECRBY
-    - DECR
-    - GET
-    - GETSET
-    - INCRBY
-    - INCR
-    - MGET
-    - MSET
-    - MSETNX
-    - SET (with NX, PX, NX and XX options)
-    - SETEX
-    - SETNX
-    - STRLEN
-- Hash
-    - HDEL
-    - HEXISTS
-    - HGETALL
-    - HGET
-    - HKEYS
-    - HLEN
-    - HSET
-    - HVALS
-- List
-    - LPOP
-    - LPUSH
-    - LINDEX
-    - LLEN
-    - LRANGE
-    - LSET
-    - RPOP
-    - RPUSH
-- Set
-    - SADD
-    - SCARD
-    - SDIFF
-    - SINTER
-    - SISMEMBER
-    - SMEMBERS
-    - SPOP
-    - SRANDMEMBER
-    - SREM
-    - SUNION
-- Sorted Set
-    - ZADD
-    - ZCARD
-    - ZRANGEBYSCORE
-    - ZRANGE
-    - ZREM
-    - ZREVRANGE
-- Pub/Sub
-    - SUBSCRIBE
-    - UNSUBSCRIBE
-    - PSUBSCRIBE
-    - PUNSUBSCRIBE
-    - PUBLISH
-- Transactions
-    - MULTI
-    - EXEC
-    - DISCARD
- - Scripting
-    - EVAL
-    - EVALSHA
-    - SCRIPT LOAD
-    - SCRIPT EXISTS
-    - SCRIPT FLUSH
+<details>
+    <summary>Server</summary>
+    
+- FLUSHDB
+- INFO
+- TIME
+- SYNC
+- SLAVEOF
+- ROLE
+
+</details>
+
+<details>
+    <summary>Connection</summary>
+    
+- ECHO
+- PING
+- QUIT
+- SELECT
+
+</details>
+
+<details>
+    <summary>Key</summary>
+    
+- DEL
+- EXISTS
+- KEYS
+- RENAME
+- TYPE
+- EXPIRE
+- PERSIST
+- TTL
+- PTTL
+
+</details>
+
+<details>
+    <summary>String</summary>
+    
+- APPEND
+- DECRBY
+- DECR
+- GET
+- GETSET
+- INCRBY
+- INCR
+- MGET
+- MSET
+- MSETNX
+- SET (with NX, PX, NX and XX options)
+- SETEX
+- SETNX
+- STRLEN
+
+</details>
+
+<details>
+    <summary>Hash</summary>
+    
+- HDEL
+- HEXISTS
+- HGETALL
+- HGET
+- HKEYS
+- HLEN
+- HMGET
+- HMSET
+- HSET
+- HVALS
+
+</details>
+
+<details>
+    <summary>List</summary>
+    
+- LPOP
+- LPUSH
+- LINDEX
+- LLEN
+- LRANGE
+- LSET
+- RPOP
+- RPUSH
+
+</details>
+
+<details>
+    <summary>Set</summary>
+    
+- SADD
+- SCARD
+- SDIFF
+- SINTER
+- SISMEMBER
+- SMEMBERS
+- SPOP
+- SRANDMEMBER
+- SREM
+- SUNION
+
+</details>
+
+<details>
+    <summary>Sorted Set</summary>
+    
+- ZADD
+- ZCARD
+- ZRANGEBYSCORE
+- ZRANGE
+- ZREM
+- ZREVRANGE
+- ZINCRBY
+
+</details>
+
+<details>
+    <summary>Pub/Sub</summary>
+    
+- SUBSCRIBE
+- UNSUBSCRIBE
+- PSUBSCRIBE
+- PUNSUBSCRIBE
+- PUBLISH
+
+</details>
+
+<details>
+    <summary>Transactions</summary>
+    
+- MULTI
+- EXEC
+- DISCARD
+
+</details>
+
+<details>
+    <summary>Scripting</summary>
+    
+- EVAL
+- EVALSHA
+- SCRIPT LOAD
+- SCRIPT EXISTS
+- SCRIPT FLUSH
+
+</details>
 
 ## Design
 
@@ -181,7 +238,8 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ java -jar claudb-all.jar
+    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.7.0/claudb-1.7.0-all.jar
+    $ java -jar claudb-1.7.0-all.jar
 
 or using [jrun](https://github.com/ctrueden/jrun) utility
 
@@ -204,12 +262,29 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>claudb</artifactId>
-        <version>1.0.0</version>
+        <version>1.7.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:claudb:1.0.0'
+    compile 'com.github.tonivade:claudb:1.7.0'
+
+Or embed in your source code
+
+```java
+    RespServer server = ClauDB.builder().host("localhost").port(7081).build();
+    server.start(); 
+```
+
+## Native Image
+
+Now is possible to generate a native image thanks to graalvm. You can generate one with this command:
+
+```shell
+$ ./gradlew clean nativeImage
+```
+
+Some features are not available like lua runtime and offheap memory.
 
 ## TODO
 
@@ -219,13 +294,16 @@ Or gradle
 - Clustering?
 - Geo Commands
 
+## Thanks
+
+<a href="https://www.jetbrains.com?from=claudb"><img src="pics/jetbrains.png" alt="Jetbrains logo" height="100"/></a>
+
 ## Continuous Integration
 
 [![Build Status](https://travis-ci.org/tonivade/claudb.svg?branch=master)](https://travis-ci.org/tonivade/claudb) 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
-[![Dependency Status](https://www.versioneye.com/user/projects/59c2cea60fb24f021cc89446/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/59c2cea60fb24f021cc89446)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb) [![Join the chat at https://gitter.im/tonivade-claudb/room](https://badges.gitter.im/tonivade-claudb/room.svg)](https://gitter.im/tonivade-claudb/room?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## LICENSE
 
