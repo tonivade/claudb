@@ -21,7 +21,7 @@ buildscript {
   dependencies {
     classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     classpath "me.champeau.gradle:jmh-gradle-plugin:0.5.0"
-    classpath "gradle.plugin.org.mikeneck:graalvm-native-image-plugin:0.7.1"
+    classpath "gradle.plugin.org.mikeneck:graalvm-native-image-plugin:0.8.0"
   }
 }
 
