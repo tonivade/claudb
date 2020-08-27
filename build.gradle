@@ -81,7 +81,7 @@ dependencies {
   testCompile 'org.mockito:mockito-core:3.5.7'
   testCompile 'org.hamcrest:hamcrest-library:2.2'
   jmh 'org.openjdk.jmh:jmh-core:1.25.1'
-  jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.25'
+  jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.25.1'
 }
 
 compileJava {  
