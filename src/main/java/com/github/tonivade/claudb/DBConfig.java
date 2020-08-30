@@ -32,20 +32,20 @@ public class DBConfig {
     this.persistenceActive = persistenceActive;
   }
 
-  public void setNotificationsActive(boolean notificationsActive) {
-    this.notificationsActive = notificationsActive;
-  }
-
   public boolean isNotificationsActive() {
     return notificationsActive;
   }
 
-  public void setOffHeapActive(boolean offHeapActive) {
-    this.offHeapActive = offHeapActive;
+  public void setNotificationsActive(boolean notificationsActive) {
+    this.notificationsActive = notificationsActive;
   }
 
   public boolean isOffHeapActive() {
     return offHeapActive;
+  }
+
+  public void setOffHeapActive(boolean offHeapActive) {
+    this.offHeapActive = offHeapActive;
   }
 
   public String getRdbFile() {
@@ -93,7 +93,8 @@ public class DBConfig {
   }
 
   public static class Builder {
-    private DBConfig config = new DBConfig();
+
+    private final DBConfig config = new DBConfig();
 
     public Builder withoutPersistence() {
       config.setPersistenceActive(false);

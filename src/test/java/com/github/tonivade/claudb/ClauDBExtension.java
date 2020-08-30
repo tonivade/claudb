@@ -15,7 +15,7 @@ public class ClauDBExtension implements BeforeAllCallback, AfterAllCallback {
   private final RespServer server;
   
   public ClauDBExtension() {
-    this.server = ClauDB.builder().build();
+    this.server = new RespServer(new ClauDB());
   }
 
   @Override

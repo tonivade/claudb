@@ -58,8 +58,11 @@ public class ExecCommandTest {
   private void givenExistingTransaction() {
     TransactionState transaction = createTransaction();
 
-    when(rule.getSession().getValue("tx")).thenReturn(Option.some(transaction), Option.none());
-    when(rule.getSession().removeValue("tx")).thenReturn(Option.some(transaction));
+    when(rule.getSession().getValue("tx"))
+      .thenReturn(Option.some(transaction))
+      .thenReturn(Option.none());
+    when(rule.getSession().removeValue("tx"))
+      .thenReturn(Option.some(transaction));
   }
 
   private TransactionState createTransaction() {

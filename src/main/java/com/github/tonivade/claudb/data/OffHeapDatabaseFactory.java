@@ -110,6 +110,7 @@ public class OffHeapDatabaseFactory implements DatabaseFactory {
           }
           break;
         case NONE:
+        default:
           throw new IllegalStateException();
       }
       writeExpireAt(buf, value);
