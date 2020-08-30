@@ -1,4 +1,4 @@
-apply plugin: 'java-library'
+apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'com.bmuschko.nexus'
@@ -70,16 +70,16 @@ repositories {
 }
 
 dependencies {
-  api 'com.github.tonivade:resp-server:0.17.0-SNAPSHOT'
-  api 'net.sf.jopt-simple:jopt-simple:5.0.4'
-  implementation 'org.luaj:luaj-jse:3.0.1'
-  implementation 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
-  testImplementation 'redis.clients:jedis:3.3.0'
-  testImplementation 'junit:junit:4.13'
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-  testImplementation 'org.junit.vintage:junit-vintage-engine:5.6.2'
-  testImplementation 'org.mockito:mockito-core:3.5.7'
-  testImplementation 'org.hamcrest:hamcrest-library:2.2'
+  compile 'com.github.tonivade:resp-server:0.17.0-SNAPSHOT'
+  compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
+  compile 'org.luaj:luaj-jse:3.0.1'
+  compile 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
+  testCompile 'redis.clients:jedis:3.3.0'
+  testCompile 'junit:junit:4.13'
+  testCompile 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+  testCompile 'org.junit.vintage:junit-vintage-engine:5.6.2'
+  testCompile 'org.mockito:mockito-core:3.5.7'
+  testCompile 'org.hamcrest:hamcrest-library:2.2'
   jmh 'org.openjdk.jmh:jmh-core:1.25.1'
   jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.25.1'
 }
