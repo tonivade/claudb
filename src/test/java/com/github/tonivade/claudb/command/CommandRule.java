@@ -38,7 +38,7 @@ public class CommandRule implements TestRule {
   private Request request;
   private DBServerContext server;
   private Session session;
-  private DBCommand command;
+  private DBCommand dbCommand;
 
   private final Object target;
 
@@ -94,13 +94,13 @@ public class CommandRule implements TestRule {
         when(server.isMaster()).thenReturn(true);
         when(server.getValue("state")).thenReturn(Option.some(serverState));
 
-        MockitoAnnotations.initMocks(target);
+        try (AutoCloseable openMocks = MockitoAnnotations.openMocks(target)) {
+          dbCommand = target.getClass().getAnnotation(CommandUnderTest.class).value().newInstance();
 
-        command = target.getClass().getAnnotation(CommandUnderTest.class).value().newInstance();
+          base.evaluate();
 
-        base.evaluate();
-
-        getDatabase().clear();
+          getDatabase().clear();
+        }
       }
     };
   }
@@ -130,7 +130,7 @@ public class CommandRule implements TestRule {
   }
 
   public CommandRule execute() {
-    response = new DBCommandWrapper(command).execute(request);
+    response = new DBCommandWrapper(dbCommand).execute(request);
     return this;
   }
 

@@ -6,6 +6,7 @@
 package com.github.tonivade.claudb;
 
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
+import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.time.Instant;
@@ -23,11 +24,11 @@ import com.github.tonivade.resp.protocol.SafeString;
 public class DatabaseValueMatchers {
 
   public static DatabaseValue list(String ... strings) {
-    return DatabaseValue.list(SafeString.safeAsList(strings));
+    return DatabaseValue.list(safeAsList(strings));
   }
 
   public static DatabaseValue set(String ... strings) {
-    return DatabaseValue.set(SafeString.safeAsList(strings));
+    return DatabaseValue.set(safeAsList(strings));
   }
 
   public static Tuple2<SafeString, SafeString> entry(String key, String value) {

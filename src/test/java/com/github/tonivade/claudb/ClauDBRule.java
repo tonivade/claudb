@@ -10,7 +10,7 @@ import org.junit.runners.model.Statement;
 
 import com.github.tonivade.resp.RespServer;
 
-public class ClauDBRule  implements TestRule {
+public class ClauDBRule implements TestRule {
 
   private final RespServer server;
 
