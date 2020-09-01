@@ -294,10 +294,6 @@ Some features are not available like lua runtime and offheap memory.
 - Clustering?
 - Geo Commands
 
-## Thanks
-
-<a href="https://www.jetbrains.com?from=claudb"><img src="pics/jetbrains.png" alt="Jetbrains logo" height="100"/></a>
-
 ## Continuous Integration
 
 [![Build Status](https://travis-ci.org/tonivade/claudb.svg?branch=master)](https://travis-ci.org/tonivade/claudb) 
