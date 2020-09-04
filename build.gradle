@@ -80,7 +80,7 @@ dependencies {
   testCompile 'org.junit.vintage:junit-vintage-engine:5.6.2'
   testCompile 'org.mockito:mockito-core:3.5.10'
   testCompile 'org.hamcrest:hamcrest-library:2.2'
-  jmh 'org.openjdk.jmh:jmh-core:1.25.1'
+  jmh 'org.openjdk.jmh:jmh-core:1.25.2'
   jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.25.2'
 }
 
