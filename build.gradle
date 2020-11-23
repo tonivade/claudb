@@ -156,12 +156,11 @@ nexus {
 }
 
 nativeImage {
-  graalVmHome = System.getenv("HOME") + "/.sdkman/candidates/java/20.1.0.r8-grl"
+  graalVmHome = System.getenv("HOME") + "/.sdkman/candidates/java/20.3.0.r8-grl"
   mainClass = "com.github.tonivade.claudb.Server"
   executableName = "claudb"
   arguments(
           '--verbose',
-          '-H:+TraceClassInitialization',
           '--report-unsupported-elements-at-runtime',
           '--initialize-at-build-time',
           '--no-fallback',
