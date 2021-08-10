@@ -302,6 +302,10 @@ Some features are not available like lua runtime and offheap memory.
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
 [![Join the chat at https://gitter.im/tonivade/claudb](https://badges.gitter.im/tonivade/claudb.svg)](https://gitter.im/tonivade/claudb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/tonivade/claudb.svg)](https://starchart.cc/tonivade/claudb)
+
 ## LICENSE
 
 ClauDB is released under MIT License
