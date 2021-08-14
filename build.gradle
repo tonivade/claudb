@@ -61,16 +61,10 @@ repositories {
   maven {
     url = 'https://oss.sonatype.org/content/repositories/snapshots'
   }
-  maven {
-    url = "http://dl.bintray.com/typesafe/maven-releases" 
-  }
-  maven { 
-    url = "https://jitpack.io"
-  }
 }
 
 dependencies {
-  compile 'com.github.tonivade:resp-server:0.17.0'
+  compile 'com.github.tonivade:resp-server:0.18.0'
   compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
   compile 'org.luaj:luaj-jse:3.0.1'
   compile 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
