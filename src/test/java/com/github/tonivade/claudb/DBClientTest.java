@@ -37,13 +37,13 @@ public class DBClientTest {
 
     client.send(array(string("ping")));
 
-    verify(callback, timeout(2000)).onMessage(captor.capture());
+    verify(callback, timeout(5000)).onMessage(captor.capture());
 
     assertThat(captor.getValue(), equalTo(status("PONG")));
 
     client.stop();
 
-    verify(callback, timeout(2000)).onDisconnect();
+    verify(callback, timeout(5000)).onDisconnect();
   }
 
 }
