@@ -67,14 +67,14 @@ public class RDBOutputStreamTest {
 
   @Test
   public void testLargeString() throws IOException {
-    out.dabatase(database().add(safeKey("a"), string(readFile("README.md"))).build());
+    out.dabatase(database().add(safeKey("a"), string(readFile("../README.md"))).build());
 
     assertThat(toHexString(baos.toByteArray()), startsWith("0001615a59"));
   }
 
   @Test
   public void testVeryLargeString() throws IOException {
-    SafeString file = readFile("README.md");
+    SafeString file = readFile("../README.md");
     SafeString result = SafeString.EMPTY_STRING;
     for (int i = 0; i < 10; i++) {
       result = SafeString.append(result, file);
@@ -85,7 +85,7 @@ public class RDBOutputStreamTest {
   }
 
   @Test
-  public void testStringTtl() throws IOException  {
+  public void testStringTtl() throws IOException {
     out.dabatase(database().add(new DatabaseKey(safeString("a")), string("test").expiredAt(Instant.ofEpochMilli(1L))).build());
 
     assertThat(toHexString(baos.toByteArray()), is("fc00000000000000010001610474657374"));
