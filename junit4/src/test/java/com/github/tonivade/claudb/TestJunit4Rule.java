@@ -18,7 +18,7 @@ public class TestJunit4Rule {
   
   @Test
   public void testRule() {
-    try (Jedis jedis = new Jedis(rule.getHost(), rule.getPort())) {
+    try (Jedis jedis = new Jedis(rule.getHost(), rule.getPort(), 1000 * 60)) {
       assertEquals("PONG", jedis.ping());
     }
   }

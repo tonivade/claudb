@@ -16,7 +16,7 @@ class TestJunit5Extension {
   
   @Test
   void testExtension(ClauDB claudb) {
-    try (Jedis jedis = new Jedis(claudb.getHost(), claudb.getPort())) {
+    try (Jedis jedis = new Jedis(claudb.getHost(), claudb.getPort(), 1000 * 60)) {
       assertEquals("PONG", jedis.ping());
     }
   }
