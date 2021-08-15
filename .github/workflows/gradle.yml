@@ -23,7 +23,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew clean build jacocoFullReport
+      run: ./gradlew build jacocoTestReport
+    - name: Build with Jacoco Full report
+      run: ./gradlew jacocoFullReport
     - name: Codacy Coverage Reporter
       uses: codacy/codacy-coverage-reporter-action@v1
       with:
