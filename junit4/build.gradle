@@ -1,18 +1,3 @@
-test {
-  useJUnitPlatform()
-
-  jacoco {
-    destinationFile = file("${buildDir}/jacoco/test.exec")
-  }
-}
-
-jacocoTestReport {
-  reports {
-    xml.enabled = true
-    html.enabled = true
-    xml.destination file("${buildDir}/reports/jacoco/report.xml")
-  }
-} 
 
 dependencies {
   api project(':claudb-lib')
