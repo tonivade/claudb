@@ -30,6 +30,7 @@ dependencies {
   api 'org.luaj:luaj-jse:3.0.1'
   api 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
   runtimeOnly 'ch.qos.logback:logback-classic:1.2.5'
+  testImplementation project(":claudb-junit5")
   testImplementation 'redis.clients:jedis:3.6.3'
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
