@@ -1,6 +1,5 @@
 plugins {
   id "me.champeau.gradle.jmh" version "0.5.3"
-  id 'org.mikeneck.graalvm-native-image' version '1.4.1'
 }
 
 jmh {
@@ -26,20 +25,8 @@ jacocoTestReport {
   }
 } 
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-  mavenLocal()
-  mavenCentral()
-  maven {
-    url = 'https://oss.sonatype.org/content/repositories/snapshots'
-  }
-}
-
 dependencies {
   api 'com.github.tonivade:resp-server:0.19.0-SNAPSHOT'
-  api 'net.sf.jopt-simple:jopt-simple:5.0.4'
   api 'org.luaj:luaj-jse:3.0.1'
   api 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
   runtimeOnly 'ch.qos.logback:logback-classic:1.2.5'
@@ -52,44 +39,3 @@ dependencies {
   jmh 'org.openjdk.jmh:jmh-core:1.33'
   jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
 }
-
-processResources {
-  filesMatching('**/banner.txt') {
-    filter {
-      it.replace('@version@', version)
-    }
-  }
-}
-
-task fatJar(type: Jar, dependsOn: compileJava) {
-  manifest { 
-    attributes "Main-Class": "com.github.tonivade.claudb.Server"
-  }
-  classifier = "all"
-  from { 
-    configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } 
-    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } 
-  }
-  with jar
-}
-
-artifacts {
-  archives fatJar
-}
-
-nativeImage {
-  graalVmHome = System.getenv("HOME") + "/.sdkman/candidates/java/20.3.0.r8-grl"
-  mainClass = "com.github.tonivade.claudb.Server"
-  executableName = "claudb"
-  arguments(
-          '--verbose',
-          '--report-unsupported-elements-at-runtime',
-          '--initialize-at-build-time',
-          '--no-fallback',
-          '--allow-incomplete-classpath',
-          '-H:IncludeResources=banner.txt',
-          '-H:IncludeResources=logback.xml',
-          '-H:IncludeResourceBundles=joptsimple.HelpFormatterMessages'
-  )
-}
-
