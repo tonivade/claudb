@@ -4,13 +4,11 @@
  */
 package com.github.tonivade.claudb;
 
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.rules.ExternalResource;
 
 import com.github.tonivade.resp.RespServer;
 
-public class ClauDBRule implements TestRule {
+public class ClauDBRule extends ExternalResource {
 
   private final RespServer server;
 
@@ -25,19 +23,14 @@ public class ClauDBRule implements TestRule {
   public ClauDBRule(String host, int port, DBConfig config) {
     this.server = ClauDB.builder().host(host).port(port).config(config).build();
   }
-
+  
   @Override
-  public Statement apply(Statement base, Description description) {
-    return new Statement() {
-      @Override
-      public void evaluate() throws Throwable {
-        try {
-          server.start();
-          base.evaluate();
-        } finally {
-          server.stop();
-        }
-      }
-    };
+  protected void before() throws Throwable {
+    server.start();
+  }
+  
+  @Override
+  protected void after() {
+    server.stop();
   }
 }
