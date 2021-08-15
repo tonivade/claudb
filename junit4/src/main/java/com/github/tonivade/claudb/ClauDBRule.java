@@ -10,6 +10,7 @@ import com.github.tonivade.resp.RespServer;
 
 public class ClauDBRule extends ExternalResource {
 
+  private final ClauDB claudb;
   private final RespServer server;
 
   public ClauDBRule() {
@@ -21,7 +22,16 @@ public class ClauDBRule extends ExternalResource {
   }
 
   public ClauDBRule(String host, int port, DBConfig config) {
-    this.server = ClauDB.builder().host(host).port(port).config(config).build();
+    this.claudb = new ClauDB(host, port, config);
+    this.server = new RespServer(claudb);
+  }
+  
+  public String getHost() {
+    return claudb.getHost();
+  }
+  
+  public int getPort() {
+    return claudb.getPort();
   }
   
   @Override

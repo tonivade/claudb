@@ -37,7 +37,7 @@ import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 
-public class ClauDB extends RespServerContext implements DBServerContext {
+public final class ClauDB extends RespServerContext implements DBServerContext {
 
   private static final String STATE = "state";
 
