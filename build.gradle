@@ -1,173 +1,147 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'jacoco'
-apply plugin: 'com.bmuschko.nexus'
-apply plugin: 'me.champeau.gradle.jmh'
-apply plugin: 'org.mikeneck.graalvm-native-image'
-
-group = 'com.github.tonivade'
-archivesBaseName = 'claudb'
-version = '1.9.0-SNAPSHOT'
-
-buildscript {
-  repositories {
-    mavenCentral()
-    jcenter()
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-
-  dependencies {
-    classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
-    classpath "me.champeau.gradle:jmh-gradle-plugin:0.5.3"
-    classpath "gradle.plugin.org.mikeneck:graalvm-native-image-plugin:1.4.1"
-  }
+plugins {
+  id 'java-library'
+  id 'jacoco'
+  id 'maven-publish'
+  id 'signing'
+  id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
 }
 
-jacoco {
-  toolVersion = '0.8.5'
-}
+allprojects {
+  apply plugin: 'java-library'
+  apply plugin: 'jacoco'
+  apply plugin: 'maven-publish'
+  apply plugin: 'signing'
 
-test {
-  useJUnitPlatform()
+  group = 'com.github.tonivade'
+  version = '2.0-SNAPSHOT'
+  
+  ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
   jacoco {
-    destinationFile = file("${buildDir}/jacoco/test.exec")
+    toolVersion = '0.8.6'
+  }
+
+  sourceCompatibility = '1.8'
+  targetCompatibility = '1.8'
+
+  repositories {
+    mavenLocal() 
+    mavenCentral()
+    maven {
+      url = 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+  }
+
+  test {
+    useJUnitPlatform()
+
+    jacoco {
+      destinationFile = file("${buildDir}/jacoco/test.exec")
+    }
+  }
+
+  jacocoTestReport {
+    reports {
+      xml.enabled = true
+      html.enabled = true
+      xml.destination file("${buildDir}/reports/jacoco/report.xml")
+    }
+  } 
+}
+
+subprojects {
+  publishing {
+    publications {
+      mavenJava(MavenPublication) {
+      
+        if (project.name == 'claudb-lib') {
+          artifactId = 'claudb'
+        }
+        
+        from components.java
+        
+        pom {
+          name = 'ClauDB'
+          description = 'ClauDB is a REDIS implementation in Java'
+          url = 'https://github.com/tonivade/claudb'
+          inceptionYear = '2015'
+
+          scm {
+            url = 'https://github.com/tonivade/claudb'
+            connection = 'scm:https://github.com/tonivade/claudb.git'
+            developerConnection = 'scm:git://github.com/tonivade/claudb.git'
+          }
+
+          licenses {
+            license {
+              name = 'The MIT License (MIT)'
+              url = 'https://github.com/tonivade/claudb/blob/master/LICENSE'
+              distribution = 'repo'
+            }
+          }
+
+          developers {
+            developer {
+              id = 'tonivade'
+              name = 'Antonio Muñoz'
+              email = 'antoniogmc@gmail.com'
+            }
+          }
+        }
+      }
+    }
+  }
+
+  signing {
+    sign publishing.publications.mavenJava
+  }
+  
+  tasks.withType(Sign) {
+    onlyIf { isReleaseVersion }
   }
 }
 
-jmh {
-  duplicateClassesStrategy = 'warn'
-  threads = 5
-  iterations = 10
-  warmupIterations = 1
+nexusPublishing {
+  repositories {
+    sonatype {
+      
+      stagingProfileId = '19a96b937cdb5'
+      
+      username = project.findProperty('nexusUsername')  
+      password = project.findProperty('nexusPassword')
+    }
+  }
+  
+  clientTimeout = Duration.ofSeconds(300)
+  connectTimeout = Duration.ofSeconds(60)
+
+  transitionCheckOptions {
+    maxRetries.set(40)
+    delayBetween.set(java.time.Duration.ofMillis(3000))
+  }
 }
 
-jacocoTestReport {
+def publishedProjects = subprojects.findAll()
+
+task jacocoFullReport(type: JacocoReport, group: 'Coverage reports', dependsOn: jacocoTestReport) {
+  description = 'Generates an aggregate report from all subprojects'
+
+  dependsOn(publishedProjects.test)
+
+  additionalSourceDirs.from = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+  sourceDirectories.from = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+  classDirectories.from = files(publishedProjects.sourceSets.main.output)
+  executionData.from = files(publishedProjects.jacocoTestReport.executionData).findAll { it.exists() }
+
   reports {
-    xml.enabled = true
     html.enabled = true
+    xml.enabled = true
     xml.destination file("${buildDir}/reports/jacoco/report.xml")
   }
-} 
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-  mavenLocal()
-  mavenCentral()
-  maven {
-    url = 'https://oss.sonatype.org/content/repositories/snapshots'
-  }
 }
 
-dependencies {
-  compile 'com.github.tonivade:resp-server:0.19.0-SNAPSHOT'
-  compile 'net.sf.jopt-simple:jopt-simple:5.0.4'
-  compile 'org.luaj:luaj-jse:3.0.1'
-  compile 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
-  runtime 'ch.qos.logback:logback-classic:1.2.5'
-  testCompile 'redis.clients:jedis:3.6.3'
-  testCompile 'junit:junit:4.13.2'
-  testCompile 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
-  testCompile 'org.junit.vintage:junit-vintage-engine:5.7.2'
-  testCompile 'org.mockito:mockito-core:3.11.2'
-  testCompile 'org.hamcrest:hamcrest-library:2.2'
-  jmh 'org.openjdk.jmh:jmh-core:1.33'
-  jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
-}
+task fullTestReport(type: TestReport, group: 'Html Report with all the tests', dependsOn: check) {
+  destinationDir = file("$buildDir/reports/allTests")
 
-compileJava {  
-  options.fork = true
-  options.forkOptions.executable = "javac"
-}
-
-processResources {
-  filesMatching('**/banner.txt') {
-    filter {
-      it.replace('@version@', version)
-    }
-  }
-}
-
-task fatJar(type: Jar) {
-  manifest { 
-    attributes "Main-Class": "com.github.tonivade.claudb.Server"
-  }
-  classifier = "all"
-  from { 
-    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } 
-    configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) } 
-  }
-  with jar
-}
-
-modifyPom {
-  project {
-    name 'ClauDB'
-    description 'ClauDB is a REDIS implementation in Java'
-    url 'https://github.com/tonivade/claudb'
-    inceptionYear '2015'
-
-    scm {
-      url 'https://github.com/tonivade/claudb'
-      connection 'scm:https://github.com/tonivade/claudb.git'
-      developerConnection 'scm:git://github.com/tonivade/claudb.git'
-    }
-
-    licenses {
-      license {
-        name 'The MIT License (MIT)'
-        url 'https://github.com/tonivade/claudb/blob/master/LICENSE'
-        distribution 'repo'
-      }
-    }
-
-    developers {
-      developer {
-        id 'tonivade'
-        name 'Antonio Muñoz'
-        email 'antoniogmc@gmail.com'
-      }
-    }
-  }
-}
-
-artifacts {
-  archives fatJar
-}
-
-extraArchive {
-  sources = true
-  tests = false
-  javadoc = true
-}
-
-nexus {
-  sign = true
-  repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
-  snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
-}
-
-nativeImage {
-  graalVmHome = System.getenv("HOME") + "/.sdkman/candidates/java/20.3.0.r8-grl"
-  mainClass = "com.github.tonivade.claudb.Server"
-  executableName = "claudb"
-  arguments(
-          '--verbose',
-          '--report-unsupported-elements-at-runtime',
-          '--initialize-at-build-time',
-          '--no-fallback',
-          '--allow-incomplete-classpath',
-          '-H:IncludeResources=banner.txt',
-          '-H:IncludeResources=logback.xml',
-          '-H:IncludeResourceBundles=joptsimple.HelpFormatterMessages'
-  )
-}
-
-task copyToLib(type: Copy) {
-  into "$buildDir/output/lib"
-  from configurations.runtime
+  reportOn subprojects*.test
 }

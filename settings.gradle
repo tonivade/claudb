@@ -1,0 +1,6 @@
+rootProject.name = "claudb-parent"
+
+include "lib", "app", "junit4", "junit5"
+
+rootProject.children.each { it.name = "claudb-" + it.name }
+

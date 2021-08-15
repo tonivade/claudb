@@ -1,0 +1,7 @@
+
+dependencies {
+  api project(':claudb-lib')
+  api "org.junit.jupiter:junit-jupiter-engine:5.7.2"
+  api "org.junit.platform:junit-platform-runner:1.7.2"
+  testImplementation 'redis.clients:jedis:3.6.3'
+}
