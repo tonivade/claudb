@@ -7,11 +7,13 @@ package com.github.tonivade.claudb;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+
+import java.util.function.IntSupplier;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,11 +27,11 @@ import com.github.tonivade.resp.protocol.RedisToken;
 public class DBClientTest {
 
   @Test
-  public void testClient() {
+  public void testClient(IntSupplier serverPort) {
     ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
-    RespClient client = new RespClient(DBServerContext.DEFAULT_HOST, DBServerContext.DEFAULT_PORT, callback);
+    RespClient client = new RespClient(DBServerContext.DEFAULT_HOST, serverPort.getAsInt(), callback);
 
     client.start();
 
