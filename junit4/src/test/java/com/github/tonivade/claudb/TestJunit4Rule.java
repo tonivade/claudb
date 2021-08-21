@@ -14,7 +14,7 @@ import redis.clients.jedis.Jedis;
 public class TestJunit4Rule {
   
   @Rule
-  public ClauDBRule rule = new ClauDBRule();
+  public ClauDBRule rule = ClauDBRule.randomPort();
   
   @Test
   public void testRule() {

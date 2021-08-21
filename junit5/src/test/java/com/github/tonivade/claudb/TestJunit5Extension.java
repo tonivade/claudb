@@ -4,7 +4,9 @@
  */
 package com.github.tonivade.claudb;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.function.IntSupplier;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +17,8 @@ import redis.clients.jedis.Jedis;
 class TestJunit5Extension {
   
   @Test
-  void testExtension(ClauDB claudb) {
-    try (Jedis jedis = new Jedis(claudb.getHost(), claudb.getPort(), 1000 * 60)) {
+  void testExtension(IntSupplier serverPort) {
+    try (Jedis jedis = new Jedis("localhost", serverPort.getAsInt(), 1000 * 60)) {
       assertEquals("PONG", jedis.ping());
     }
   }

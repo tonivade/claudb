@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.claudb;
 
+import java.util.function.IntSupplier;
+
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -15,12 +17,10 @@ import com.github.tonivade.resp.RespServer;
 
 public class ClauDBExtension implements BeforeAllCallback, AfterAllCallback, ParameterResolver {
   
-  private final ClauDB claudb;
   private final RespServer server;
   
   public ClauDBExtension() {
-    this.claudb = new ClauDB();
-    this.server = new RespServer(claudb);
+    this.server = ClauDB.builder().randomPort().build();
   }
 
   @Override
@@ -36,13 +36,17 @@ public class ClauDBExtension implements BeforeAllCallback, AfterAllCallback, Par
   @Override
   public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
       throws ParameterResolutionException {
-    return claudb;
+    return serverPort();
   }
 
   @Override
   public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
       throws ParameterResolutionException {
     Class<?> type = parameterContext.getParameter().getType();
-    return ClauDB.class.equals(type);
+    return IntSupplier.class.equals(type);
+  }
+
+  private IntSupplier serverPort() {
+    return server::getPort;
   }
 }

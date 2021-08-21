@@ -9,11 +9,12 @@ import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.String.valueOf;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.time.Instant;
 
-import io.reactivex.rxjava3.core.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
+import com.github.tonivade.purefun.Recoverable;
 import com.github.tonivade.purefun.data.ImmutableArray;
 import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.type.Option;
@@ -36,6 +38,8 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
+
+import io.reactivex.rxjava3.core.Observable;
 
 public final class ClauDB extends RespServerContext implements DBServerContext {
 
@@ -310,7 +314,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     }
   }
 
-  public static class Builder {
+  public static class Builder implements Recoverable {
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
     private DBConfig config = DBConfig.builder().build();
@@ -322,6 +326,16 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
     public Builder port(int port) {
       this.port = port;
+      return this;
+    }
+    
+    public Builder randomPort() {
+      try (ServerSocket socket = new ServerSocket(0)) {
+        socket.setReuseAddress(true);
+        this.port = socket.getLocalPort();
+      } catch (IOException e) {
+        return sneakyThrow(e);
+      }
       return this;
     }
 

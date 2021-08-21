@@ -40,7 +40,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 public class SlaveReplicationTest {
 
   @Rule
-  public final ClauDBRule rule = new ClauDBRule();
+  public final ClauDBRule rule = ClauDBRule.randomPort();
 
   @Mock
   private DBServerContext context;
@@ -57,7 +57,7 @@ public class SlaveReplicationTest {
   public void testReplication() throws IOException  {
     when(context.getAdminDatabase()).thenReturn(new OnHeapDatabaseFactory().create("test"));
 
-    SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
+    SlaveReplication slave = new SlaveReplication(context, session, rule.getHost(), rule.getPort());
 
     slave.start();
 
@@ -69,7 +69,7 @@ public class SlaveReplicationTest {
   public void testProcessCommand()  {
     when(context.getCommand("PING")).thenReturn(command);
 
-    SlaveReplication slave = new SlaveReplication(context, session, "localhost", 7081);
+    SlaveReplication slave = new SlaveReplication(context, session, rule.getHost(), rule.getPort());
 
     slave.onMessage(array(string("PING")));
 
@@ -98,8 +98,8 @@ public class SlaveReplicationTest {
 
   private void verifyStateUpdated() {
     assertThat(context.getAdminDatabase().get(safeKey("master")),
-               equalTo(hash(entry(safeString("host"), safeString("localhost")),
-                            entry(safeString("port"), safeString("7081")),
+               equalTo(hash(entry(safeString("host"), safeString(rule.getHost())),
+                            entry(safeString("port"), safeString(String.valueOf(rule.getPort()))),
                             entry(safeString("state"), safeString("connected")))));
   }
 }

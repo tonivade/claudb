@@ -17,14 +17,14 @@ import com.github.tonivade.claudb.command.CommandUnderTest;
 public class SlaveOfCommandTest {
 
   @Rule
-  public final ClauDBRule server = new ClauDBRule("localhost", 34241);
+  public final ClauDBRule server = ClauDBRule.randomPort();
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
 
   @Test
   public void testExecute()  {
-    rule.withParams("localhost", "34241")
+    rule.withParams(server.getHost(), String.valueOf(server.getPort()))
     .execute()
     .assertThat(RedisToken.status("OK"));
   }
