@@ -238,12 +238,12 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ wget http://repo1.maven.org/maven2/com/github/tonivade/claudb/1.8.1/claudb-1.8.1-all.jar
+    $ wget https://repo1.maven.org/maven2/com/github/tonivade/claudb/1.8.1/claudb-1.8.1-all.jar
     $ java -jar claudb-1.8.1-all.jar
 
-or using [jrun](https://github.com/ctrueden/jrun) utility
+or using [jgo](https://github.com/scijava/jgo) utility
 
-    $ jrun com.github.tonivade:claudb:com.github.tonivade.claudb.Server
+    $ jgo com.github.tonivade:claudb:1.8.1:com.github.tonivade.claudb.Server
     
 Parameters:
 
