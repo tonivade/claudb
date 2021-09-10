@@ -5,7 +5,7 @@ plugins {
 dependencies {
   api project(":claudb-lib")
   api 'net.sf.jopt-simple:jopt-simple:5.0.4'
-  implementation 'ch.qos.logback:logback-classic:1.2.5'
+  implementation 'ch.qos.logback:logback-classic:1.2.6'
 }
 
 processResources {
