@@ -13,7 +13,7 @@ dependencies {
   api 'com.github.tonivade:resp-server:0.20.0-SNAPSHOT'
   api 'org.luaj:luaj-jse:3.0.1'
   api 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.5'
+  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.6'
   testImplementation project(":claudb-junit4")
   testImplementation project(":claudb-junit5")
   testImplementation 'redis.clients:jedis:3.7.0'
