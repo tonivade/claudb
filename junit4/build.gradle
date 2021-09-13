@@ -3,5 +3,5 @@ dependencies {
   api project(':claudb-lib')
   api 'junit:junit:4.13.2'
   testImplementation 'redis.clients:jedis:3.7.0'
-  testImplementation 'org.junit.vintage:junit-vintage-engine:5.7.2'
+  testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.0'
 }
