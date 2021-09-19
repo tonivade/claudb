@@ -10,18 +10,18 @@ jmh {
 }
 
 dependencies {
-  api 'com.github.tonivade:resp-server:0.20.0-SNAPSHOT'
-  api 'org.luaj:luaj-jse:3.0.1'
-  api 'org.caffinitas.ohc:ohc-core-j8:0.6.1'
-  testRuntimeOnly 'ch.qos.logback:logback-classic:1.2.6'
-  testImplementation project(":claudb-junit4")
-  testImplementation project(":claudb-junit5")
-  testImplementation 'redis.clients:jedis:3.7.0'
-  testImplementation 'junit:junit:4.13.2'
-  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.0'
-  testImplementation 'org.junit.vintage:junit-vintage-engine:5.8.0'
-  testImplementation 'org.mockito:mockito-core:3.12.4'
-  testImplementation 'org.hamcrest:hamcrest-library:2.2'
-  jmh 'org.openjdk.jmh:jmh-core:1.33'
-  jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.33'
+  api libs.respServer
+  api libs.luaj
+  api libs.ohcCore
+  testRuntimeOnly libs.logbackClassic
+  testImplementation projects.claudbJunit4
+  testImplementation projects.claudbJunit5
+  testImplementation libs.jedis
+  testImplementation libs.junit
+  testImplementation libs.junitJupiter
+  testImplementation libs.junitVintage
+  testImplementation libs.mockitoCore
+  testImplementation libs.hamcrest
+  jmh libs.jmhCore
+  jmh libs.jmhGenerator
 }
