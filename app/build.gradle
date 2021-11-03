@@ -21,6 +21,7 @@ task fatJar(type: Jar, dependsOn: compileJava) {
     attributes "Main-Class": "com.github.tonivade.claudb.Server"
   }
   classifier = "all"
+  duplicatesStrategy = "warn"
   from { 
     configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } 
   }
