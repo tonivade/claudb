@@ -1,4 +1,3 @@
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "claudb-parent"
@@ -10,22 +9,22 @@ rootProject.children.each { it.name = "claudb-" + it.name }
 dependencyResolutionManagement {
   versionCatalogs {
     libs {
-      alias('joptSimple').to("net.sf.jopt-simple:jopt-simple:$joptVersion")
-      alias('logbackClassic').to("ch.qos.logback:logback-classic:$logbackVersion")
-      alias('jedis').to("redis.clients:jedis:$jedisVersion")
-      alias('hamcrest').to("org.hamcrest:hamcrest-library:$hamcrestVersion")
-      alias('respServer').to("com.github.tonivade:resp-server:$respServerVersion")
-      alias('luaj').to("org.luaj:luaj-jse:$luajVersion")
-      alias('ohcCore').to("org.caffinitas.ohc:ohc-core-j8:$ohcVersion")
+      library('joptSimple', "net.sf.jopt-simple:jopt-simple:$joptVersion")
+      library('logbackClassic', "ch.qos.logback:logback-classic:$logbackVersion")
+      library('jedis', "redis.clients:jedis:$jedisVersion")
+      library('hamcrest', "org.hamcrest:hamcrest-library:$hamcrestVersion")
+      library('respServer', "com.github.tonivade:resp-server:$respServerVersion")
+      library('luaj', "org.luaj:luaj-jse:$luajVersion")
+      library('ohcCore', "org.caffinitas.ohc:ohc-core-j8:$ohcVersion")
 
-      alias('junitJupiter').to("org.junit.jupiter:junit-jupiter-engine:$junitEngineVersion")
-      alias('junitVintage').to("org.junit.vintage:junit-vintage-engine:$junitEngineVersion")
-      alias('junitRunner').to("org.junit.platform:junit-platform-runner:$junitPlatformVersion")
-      alias('junit').to("junit:junit:$junitVersion")
-      alias('mockitoCore').to("org.mockito:mockito-core:$mockitoVersion")
+      library('junitJupiter', "org.junit.jupiter:junit-jupiter-engine:$junitEngineVersion")
+      library('junitVintage', "org.junit.vintage:junit-vintage-engine:$junitEngineVersion")
+      library('junitRunner', "org.junit.platform:junit-platform-runner:$junitPlatformVersion")
+      library('junit', "junit:junit:$junitVersion")
+      library('mockitoCore', "org.mockito:mockito-core:$mockitoVersion")
 
-      alias('jmhCore').to("org.openjdk.jmh:jmh-core:$jmhVersion")
-      alias('jmhGenerator').to("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
+      library('jmhCore', "org.openjdk.jmh:jmh-core:$jmhVersion")
+      library('jmhGenerator', "org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     }
   }
 }

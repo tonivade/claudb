@@ -1,9 +1,36 @@
 plugins {
   id 'java-library'
-  id 'jacoco'
+  id 'jacoco-report-aggregation'
+  id 'test-report-aggregation'
   id 'maven-publish'
   id 'signing'
   id 'io.github.gradle-nexus.publish-plugin' version "${nexusVersion}"
+}
+
+dependencies {
+  jacocoAggregation projects.claudbApp
+  jacocoAggregation projects.claudbJunit4
+  jacocoAggregation projects.claudbJunit5
+
+  testReportAggregation projects.claudbApp
+  testReportAggregation projects.claudbJunit4
+  testReportAggregation projects.claudbJunit5
+}
+
+reporting {
+  reports {
+    testCodeCoverageReport(JacocoCoverageReport) {
+      testType = TestSuiteType.UNIT_TEST
+    }
+    testAggregateTestReport(AggregateTestReport) {
+      testType = TestSuiteType.UNIT_TEST
+    }
+  }
+}
+
+tasks.named('check') {
+  dependsOn tasks.named('testCodeCoverageReport', JacocoReport)
+  dependsOn tasks.named('testAggregateTestReport', TestReport)
 }
 
 allprojects {
@@ -118,29 +145,4 @@ nexusPublishing {
     maxRetries.set(40)
     delayBetween.set(java.time.Duration.ofMillis(3000))
   }
-}
-
-def publishedProjects = subprojects.findAll()
-
-task jacocoFullReport(type: JacocoReport, group: 'Coverage reports', dependsOn: jacocoTestReport) {
-  description = 'Generates an aggregate report from all subprojects'
-
-  dependsOn(publishedProjects.test)
-
-  additionalSourceDirs.from = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-  sourceDirectories.from = files(publishedProjects.sourceSets.main.allSource.srcDirs)
-  classDirectories.from = files(publishedProjects.sourceSets.main.output)
-  executionData.from = files(publishedProjects.jacocoTestReport.executionData).findAll { it.exists() }
-
-  reports {
-    html.required = true
-    xml.required = true
-    xml.destination file("${buildDir}/reports/jacoco/report.xml")
-  }
-}
-
-task fullTestReport(type: TestReport, group: 'Html Report with all the tests', dependsOn: check) {
-  destinationDir = file("$buildDir/reports/allTests")
-
-  reportOn subprojects*.test
 }
