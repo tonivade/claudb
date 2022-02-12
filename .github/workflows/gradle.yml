@@ -23,11 +23,9 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build jacocoTestReport
-    - name: Build with Jacoco Full report
-      run: ./gradlew jacocoFullReport
+      run: ./gradlew build
     - name: Codacy Coverage Reporter
       uses: codacy/codacy-coverage-reporter-action@v1
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        coverage-reports: build/reports/jacoco/report.xml
+        coverage-reports: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
