@@ -16,30 +16,28 @@ public class ClauDBExtension implements BeforeAllCallback, AfterAllCallback {
   
   @Override
   public void beforeAll(ExtensionContext context) throws Exception {
-    Class<?> testClass = context.getTestClass().orElseThrow();
+    Class<?> testClass = context.getTestClass().get();
 
     Field[] declaredFields = testClass.getDeclaredFields();
     for (Field field : declaredFields) {
-      if (field.trySetAccessible()) {
-        Object value = field.get(null);
-        if (value instanceof RespServer) {
-          ((RespServer) value).start();
-        }
+      field.setAccessible(true);
+      Object value = field.get(null);
+      if (value instanceof RespServer) {
+        ((RespServer) value).start();
       }
     }
   }
   
   @Override
   public void afterAll(ExtensionContext context) throws Exception {
-    Class<?> testClass = context.getTestClass().orElseThrow();
+    Class<?> testClass = context.getTestClass().get();
 
     Field[] declaredFields = testClass.getDeclaredFields();
     for (Field field : declaredFields) {
-      if (field.trySetAccessible()) {
-        Object value = field.get(null);
-        if (value instanceof RespServer) {
-          ((RespServer) value).stop();
-        }
+      field.setAccessible(true);
+      Object value = field.get(null);
+      if (value instanceof RespServer) {
+        ((RespServer) value).stop();
       }
     }
   }

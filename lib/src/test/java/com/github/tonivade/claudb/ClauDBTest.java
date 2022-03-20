@@ -12,21 +12,19 @@ import static org.hamcrest.Matchers.is;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import com.github.tonivade.claudb.junit5.ClauDBExtension;
-
+import com.github.tonivade.resp.RespServer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-@ExtendWith(ClauDBExtension.class)
+@com.github.tonivade.claudb.junit5.ClauDBTest
 public class ClauDBTest {
+  
+  static RespServer server = ClauDB.builder().randomPort().build();
 
   @Test
-  public void testCommands(IntSupplier serverPort) {
-    execute(serverPort, jedis -> {
+  public void testCommands() {
+    execute(jedis -> {
       assertThat(jedis.ping(), equalTo("PONG"));
       assertThat(jedis.echo("Hi!"), equalTo("Hi!"));
       assertThat(jedis.set("a", "1"), equalTo("OK"));
@@ -46,8 +44,8 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testPipeline(IntSupplier serverPort) {
-    execute(serverPort, jedis -> {
+  public void testPipeline() {
+    execute(jedis -> {
       Pipeline p = jedis.pipelined();
       p.ping();
       p.echo("Hi!");
@@ -83,22 +81,22 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testEval(IntSupplier serverPort) {
-    execute(serverPort, jedis -> assertThat(jedis.eval("return 1"), equalTo(1L)));
+  public void testEval() {
+    execute(jedis -> assertThat(jedis.eval("return 1"), equalTo(1L)));
   }
 
   @Test
-  public void testEvalScript(IntSupplier serverPort) {
+  public void testEvalScript() {
     String script = "local keys = redis.call('keys', '*region*') "
         + "for i,k in ipairs(keys) do local res = redis.call('del', k) end";
-    execute(serverPort, jedis -> assertThat(jedis.eval(script), nullValue()));
+    execute(jedis -> assertThat(jedis.eval(script), nullValue()));
   }
 
   @Test
-  public void testBugNotExist(IntSupplier serverPort) {
+  public void testBugNotExist() {
     String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
 
-    execute(serverPort, jedis -> {
+    execute(jedis -> {
       jedis.del("key");
       Object eval = jedis.eval(script, singletonList("key"), singletonList("value"));
       assertThat(eval, equalTo(0L));
@@ -106,10 +104,10 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testNotExist(IntSupplier serverPort) {
+  public void testNotExist() {
     String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
 
-    execute(serverPort, jedis -> {
+    execute(jedis -> {
       jedis.set("key", "value");
       Object eval = jedis.eval(script, singletonList("key"), singletonList("value"));
       assertThat(eval, equalTo(1L));
@@ -117,13 +115,13 @@ public class ClauDBTest {
     });
   }
 
-  private void execute(IntSupplier serverPort, Consumer<Jedis> action) {
-    try (Jedis jedis = createClientConnection(serverPort)) {
+  private void execute(Consumer<Jedis> action) {
+    try (Jedis jedis = createClientConnection()) {
       action.accept(jedis);
     }
   }
 
-  private Jedis createClientConnection(IntSupplier serverPort) {
-    return new Jedis(DBServerContext.DEFAULT_HOST, serverPort.getAsInt(), 10000);
+  private Jedis createClientConnection() {
+    return new Jedis(DBServerContext.DEFAULT_HOST, server.getPort(), 10000);
   }
 }

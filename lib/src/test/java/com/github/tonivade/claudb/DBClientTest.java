@@ -12,27 +12,24 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
-
-import java.util.function.IntSupplier;
-
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-
-import com.github.tonivade.claudb.junit5.ClauDBExtension;
 import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
+import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.protocol.RedisToken;
 
-@ExtendWith(ClauDBExtension.class)
+@com.github.tonivade.claudb.junit5.ClauDBTest
 public class DBClientTest {
+  
+  static RespServer server = ClauDB.builder().randomPort().build();
 
   @Test
-  public void testClient(IntSupplier serverPort) {
+  public void testClient() {
     ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
-    RespClient client = new RespClient(DBServerContext.DEFAULT_HOST, serverPort.getAsInt(), callback);
+    RespClient client = new RespClient(DBServerContext.DEFAULT_HOST, server.getPort(), callback);
 
     client.start();
 

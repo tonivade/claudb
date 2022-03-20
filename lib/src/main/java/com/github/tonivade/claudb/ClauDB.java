@@ -26,7 +26,6 @@ import com.github.tonivade.claudb.data.OffHeapDatabaseFactory;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
-import com.github.tonivade.claudb.junit5.ClauDBTest;
 import com.github.tonivade.claudb.persistence.PersistenceManager;
 import com.github.tonivade.purefun.Recoverable;
 import com.github.tonivade.purefun.data.ImmutableArray;
