@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static com.github.tonivade.resp.protocol.RedisSerializer.encodeToken;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.nio.ByteBuffer.wrap;
@@ -33,7 +34,6 @@ import com.github.tonivade.resp.command.DefaultSession;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.RedisParser;
-import com.github.tonivade.resp.protocol.RedisSerializer;
 import com.github.tonivade.resp.protocol.RedisSource;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
@@ -159,11 +159,10 @@ public class PersistenceManager {
 
   private void appendRedo(RedisToken command) {
     try {
-      RedisSerializer serializer = new RedisSerializer();
-      byte[] buffer = serializer.encodeToken(command);
+      byte[] buffer = encodeToken(command);
       output.write(buffer);
       output.flush();
-      LOGGER.debug("new command: " + command);
+      LOGGER.debug("new command: {}", command);
     } catch (IOException e) {
       LOGGER.error("error writing to AOF file", e);
     }
