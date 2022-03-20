@@ -9,9 +9,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.claudb.ClauDBRule;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
+import com.github.tonivade.claudb.junit4.ClauDBRule;
 
 @CommandUnderTest(SlaveOfCommand.class)
 public class SlaveOfCommandTest {

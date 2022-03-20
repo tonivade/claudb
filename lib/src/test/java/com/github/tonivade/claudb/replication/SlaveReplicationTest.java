@@ -28,9 +28,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.claudb.ClauDBRule;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.junit4.ClauDBRule;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;

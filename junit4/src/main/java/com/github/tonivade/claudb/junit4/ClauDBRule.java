@@ -2,12 +2,13 @@
  * Copyright (c) 2015-2022, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-package com.github.tonivade.claudb;
+package com.github.tonivade.claudb.junit4;
 
 import static com.github.tonivade.purefun.Precondition.checkNonNull;
 
 import org.junit.rules.ExternalResource;
 
+import com.github.tonivade.claudb.ClauDB;
 import com.github.tonivade.resp.RespServer;
 
 public class ClauDBRule extends ExternalResource {
