@@ -15,7 +15,7 @@ dependencyResolutionManagement {
       library('hamcrest', "org.hamcrest:hamcrest-library:$hamcrestVersion")
       library('respServer', "com.github.tonivade:resp-server:$respServerVersion")
       library('luaj', "org.luaj:luaj-jse:$luajVersion")
-      library('ohcCore', "org.caffinitas.ohc:ohc-core-j8:$ohcVersion")
+      library('ohcCore', "org.caffinitas.ohc:ohc-core:$ohcVersion")
 
       library('junitJupiter', "org.junit.jupiter:junit-jupiter-engine:$junitEngineVersion")
       library('junitVintage', "org.junit.vintage:junit-vintage-engine:$junitEngineVersion")
