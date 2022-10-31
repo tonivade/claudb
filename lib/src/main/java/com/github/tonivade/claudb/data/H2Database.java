@@ -25,8 +25,8 @@ public class H2Database implements Database {
 
   private final MVStore store;
 
-  public H2Database(String name) {
-    this.store = new MVStore.Builder().fileName(name).autoCommitDisabled().open();
+  public H2Database() {
+    this.store = new MVStore.Builder().autoCommitDisabled().open();
   }
 
   @Override

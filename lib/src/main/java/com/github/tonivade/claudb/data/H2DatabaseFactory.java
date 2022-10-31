@@ -4,7 +4,7 @@ public class H2DatabaseFactory implements DatabaseFactory {
 
   @Override
   public Database create(String name) {
-    return new H2Database("/tmp/" + name + ".db");
+    return new H2Database();
   }
 
   @Override

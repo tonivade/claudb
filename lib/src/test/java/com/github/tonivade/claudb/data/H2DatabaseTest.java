@@ -12,16 +12,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import org.junit.Test;
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.Sequence;
-import java.io.File;
 import java.io.IOException;
 
 public class H2DatabaseTest {
 
   @Test
   public void testDatabase() throws IOException  {
-    File createTempFile = File.createTempFile("test", ".db");
-    createTempFile.deleteOnExit();
-    Database database = new H2Database(createTempFile.getAbsolutePath());
+    Database database = new H2Database();
 
     database.put(safeKey("a"), string("value"));
 
