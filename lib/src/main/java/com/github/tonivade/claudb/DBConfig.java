@@ -17,6 +17,7 @@ public class DBConfig {
   private boolean persistenceActive;
   private boolean notificationsActive;
   private boolean offHeapActive;
+  private boolean h2StorageActive;
 
   private String rdbFile;
   private String aofFile;
@@ -46,6 +47,14 @@ public class DBConfig {
 
   public void setOffHeapActive(boolean offHeapActive) {
     this.offHeapActive = offHeapActive;
+  }
+
+  public boolean isH2StorageActive() {
+    return h2StorageActive;
+  }
+
+  public void setH2StorageActive(boolean h2StorageActive) {
+    this.h2StorageActive = h2StorageActive;
   }
 
   public String getRdbFile() {
@@ -110,6 +119,11 @@ public class DBConfig {
 
     public Builder withOffHeapCache() {
       config.setOffHeapActive(true);
+      return this;
+    }
+
+    public Builder withH2Storage() {
+      config.setH2StorageActive(true);
       return this;
     }
 

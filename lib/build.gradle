@@ -13,6 +13,7 @@ dependencies {
   api libs.respServer
   api libs.luaj
   api libs.ohcCore
+  api libs.h2
   testRuntimeOnly libs.logbackClassic
   testImplementation projects.claudbJunit4
   testImplementation projects.claudbJunit5

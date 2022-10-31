@@ -8,20 +8,11 @@ import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.String.valueOf;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.time.Instant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.tonivade.claudb.command.DBCommandSuite;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseCleaner;
 import com.github.tonivade.claudb.data.DatabaseFactory;
+import com.github.tonivade.claudb.data.H2DatabaseFactory;
 import com.github.tonivade.claudb.data.OffHeapDatabaseFactory;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
@@ -38,7 +29,13 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.reactivex.rxjava3.core.Observable;
 
 public final class ClauDB extends RespServerContext implements DBServerContext {
@@ -296,6 +293,8 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     DatabaseFactory factory;
     if (config.isOffHeapActive()) {
       factory = new OffHeapDatabaseFactory();
+    } else if (config.isH2StorageActive()) {
+      factory = new H2DatabaseFactory();
     } else {
       factory = new OnHeapDatabaseFactory();
     }
@@ -328,7 +327,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       this.port = port;
       return this;
     }
-    
+
     public Builder randomPort() {
       try (ServerSocket socket = new ServerSocket(0)) {
         socket.setReuseAddress(true);

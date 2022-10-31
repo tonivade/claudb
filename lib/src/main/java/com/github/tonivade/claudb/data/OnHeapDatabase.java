@@ -28,11 +28,6 @@ public class OnHeapDatabase implements Database {
   }
 
   @Override
-  public boolean isEmpty() {
-    return cache.isEmpty();
-  }
-
-  @Override
   public boolean containsKey(DatabaseKey key) {
     return cache.containsKey(key);
   }

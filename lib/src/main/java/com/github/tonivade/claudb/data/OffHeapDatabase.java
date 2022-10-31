@@ -36,11 +36,6 @@ public class OffHeapDatabase implements Database {
   }
 
   @Override
-  public boolean isEmpty() {
-    return cache.size() == 0;
-  }
-
-  @Override
   public boolean containsKey(DatabaseKey key) {
     return cache.containsKey(key);
   }
