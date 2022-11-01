@@ -9,16 +9,19 @@ import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.IOException;
+
 import org.junit.Test;
+
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.Sequence;
-import java.io.IOException;
 
 public class H2DatabaseTest {
 
   @Test
   public void testDatabase() throws IOException  {
-    Database database = new H2Database();
+    Database database = new H2DatabaseFactory().create("db1");
 
     database.put(safeKey("a"), string("value"));
 

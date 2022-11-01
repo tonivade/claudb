@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2015-2022, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.claudb.data;
+
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
+
+import java.nio.ByteBuffer;
+import java.time.Instant;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableSet;
+
+import org.h2.mvstore.MVMap;
+import org.h2.mvstore.WriteBuffer;
+import org.h2.mvstore.type.BasicDataType;
 
 import com.github.tonivade.purefun.Tuple;
 import com.github.tonivade.purefun.Tuple2;
@@ -7,92 +25,69 @@ import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.protocol.SafeString;
-import java.nio.ByteBuffer;
-import java.time.Instant;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableSet;
-import org.h2.mvstore.MVMap;
-import org.h2.mvstore.MVStore;
-import org.h2.mvstore.WriteBuffer;
-import org.h2.mvstore.type.BasicDataType;
 
 public class H2Database implements Database {
 
-  private static final DatabaseBuilder BUILDER = new DatabaseBuilder();
+  private final MVMap<DatabaseKey, DatabaseValue> map;
 
-  private final MVStore store;
-
-  public H2Database() {
-    this.store = new MVStore.Builder().autoCommitDisabled().open();
+  public H2Database(MVMap<DatabaseKey, DatabaseValue> map) {
+    this.map = checkNonNull(map);
   }
 
   @Override
   public int size() {
-    return getMap().size();
+    return map.size();
   }
 
   @Override
   public boolean containsKey(DatabaseKey key) {
-    return getMap().containsKey(key);
+    return map.containsKey(key);
   }
 
   @Override
   public DatabaseValue get(DatabaseKey key) {
-    MVMap<DatabaseKey, DatabaseValue> data = getMap();
+    MVMap<DatabaseKey, DatabaseValue> data = map;
     DatabaseValue value = data.get(key);
     if (value != null) {
       if (!value.isExpired(Instant.now())) {
         return value;
       }
       data.remove(key);
-      store.commit();
     }
     return null;
   }
 
   @Override
   public DatabaseValue put(DatabaseKey key, DatabaseValue value) {
-    DatabaseValue result = getMap().put(key, value);
-    store.commit();
-    return result;
+    return map.put(key, value);
   }
 
   @Override
   public DatabaseValue remove(DatabaseKey key) {
-    DatabaseValue result = getMap().remove(key);
-    store.commit();
-    return result;
+    return map.remove(key);
   }
 
   @Override
   public void clear() {
-    getMap().clear();
-    store.commit();
+    map.clear();
   }
 
   @Override
   public ImmutableSet<DatabaseKey> keySet() {
-    return ImmutableSet.from(getMap().keySet());
+    return ImmutableSet.from(map.keySet());
   }
 
   @Override
   public Sequence<DatabaseValue> values() {
-    return ImmutableList.from(getMap().values());
+    return ImmutableList.from(map.values());
   }
 
   @Override
   public ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
-    return ImmutableSet.from(getMap().entrySet()).map(Tuple::from);
+    return ImmutableSet.from(map.entrySet()).map(Tuple::from);
   }
 
-  private MVMap<DatabaseKey, DatabaseValue> getMap() {
-    return store.openMap("data", BUILDER);
-  }
-
-  private static final class DatabaseBuilder extends MVMap.Builder<DatabaseKey, DatabaseValue> {
+  static final class DatabaseBuilder extends MVMap.Builder<DatabaseKey, DatabaseValue> {
 
     public DatabaseBuilder() {
       setKeyType(new DatabaseKeyType());
