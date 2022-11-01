@@ -6,7 +6,7 @@ package com.github.tonivade.claudb.persistence;
 
 import java.util.zip.Checksum;
 
-public class CRC64 implements Checksum {
+public final class CRC64 implements Checksum {
 
   private static final int LOOKUPTABLE_SIZE = 256;
   private static final long POLY64REV = 0xC96C5795D7870F42L;

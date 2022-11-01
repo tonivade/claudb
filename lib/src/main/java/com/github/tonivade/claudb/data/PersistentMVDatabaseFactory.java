@@ -6,15 +6,15 @@ package com.github.tonivade.claudb.data;
 
 import org.h2.mvstore.MVStore;
 
-public class H2DatabaseFactory implements DatabaseFactory {
+public class PersistentMVDatabaseFactory implements DatabaseFactory {
 
-  private static final H2Database.DatabaseBuilder BUILDER = new H2Database.DatabaseBuilder();
-  
-  private MVStore store = new MVStore.Builder().fileName("/tmp/claudb.db").open();
+  private static final MVDatabase.DatabaseBuilder BUILDER = new MVDatabase.DatabaseBuilder();
+
+  private final MVStore store = new MVStore.Builder().fileName("./claudb.db").open();
 
   @Override
   public Database create(String name) {
-    return new H2Database(store.openMap(name, BUILDER));
+    return new MVDatabase(store.openMap(name, BUILDER));
   }
 
   @Override

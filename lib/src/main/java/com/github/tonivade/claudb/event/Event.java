@@ -18,11 +18,11 @@ public abstract class Event {
       .comparing(e -> e.key)
       .comparing(e -> e.schema);
 
-  private SafeString command;
-  private SafeString key;
-  private int schema;
+  private final SafeString command;
+  private final SafeString key;
+  private final int schema;
 
-  public Event(SafeString command, SafeString key, int schema) {
+  protected Event(SafeString command, SafeString key, int schema) {
     this.command = requireNonNull(command);
     this.key = requireNonNull(key);
     this.schema = schema;

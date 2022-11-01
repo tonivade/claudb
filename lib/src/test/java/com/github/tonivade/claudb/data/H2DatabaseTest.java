@@ -21,7 +21,7 @@ public class H2DatabaseTest {
 
   @Test
   public void testDatabase() throws IOException  {
-    Database database = new H2DatabaseFactory().create("db1");
+    Database database = new OnHeapMVDatabaseFactory().create("db1");
 
     database.put(safeKey("a"), string("value"));
 

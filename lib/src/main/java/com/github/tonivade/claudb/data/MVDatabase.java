@@ -4,6 +4,11 @@
  */
 package com.github.tonivade.claudb.data;
 
+import static com.github.tonivade.claudb.data.DatabaseValue.hash;
+import static com.github.tonivade.claudb.data.DatabaseValue.list;
+import static com.github.tonivade.claudb.data.DatabaseValue.set;
+import static com.github.tonivade.claudb.data.DatabaseValue.string;
+import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.purefun.Precondition.checkNonNull;
 
 import java.nio.ByteBuffer;
@@ -26,11 +31,11 @@ import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class H2Database implements Database {
+public class MVDatabase implements Database {
 
   private final MVMap<DatabaseKey, DatabaseValue> map;
 
-  public H2Database(MVMap<DatabaseKey, DatabaseValue> map) {
+  public MVDatabase(MVMap<DatabaseKey, DatabaseValue> map) {
     this.map = checkNonNull(map);
   }
 
@@ -221,35 +226,35 @@ public class H2Database implements Database {
       switch (type) {
         case STRING:
           SafeString safeString = readString(buff);
-          return withExpireAt(buff, DatabaseValue.string(safeString));
+          return withExpireAt(buff, string(safeString));
         case HASH:
           int length = readLength(buff);
-          List<Tuple2<SafeString, SafeString>> entries = new ArrayList<>();
+          List<Tuple2<SafeString, SafeString>> entries = new ArrayList<>(length);
           for (int i = 0; i < length; i++) {
             entries.add(Tuple.of(readString(buff), readString(buff)));
           }
-          return withExpireAt(buff, DatabaseValue.hash(entries));
+          return withExpireAt(buff, hash(entries));
         case LIST:
           int listLength = readLength(buff);
-          List<SafeString> list = new ArrayList<>();
+          List<SafeString> list = new ArrayList<>(listLength);
           for (int i = 0; i < listLength; i++) {
             list.add(readString(buff));
           }
-          return withExpireAt(buff, DatabaseValue.list(list));
+          return withExpireAt(buff, list(list));
         case SET:
           int setLength = readLength(buff);
-          List<SafeString> set = new ArrayList<>();
+          List<SafeString> set = new ArrayList<>(setLength);
           for (int i = 0; i < setLength; i++) {
             set.add(readString(buff));
           }
-          return withExpireAt(buff, DatabaseValue.set(set));
+          return withExpireAt(buff, set(set));
         case ZSET:
           int sortedSetLength = readLength(buff);
-          List<Map.Entry<Double, SafeString>> sortedSet = new ArrayList<>();
+          List<Map.Entry<Double, SafeString>> sortedSet = new ArrayList<>(sortedSetLength);
           for (int i = 0; i < sortedSetLength; i++) {
             sortedSet.add(new AbstractMap.SimpleEntry<>(readScore(buff), readString(buff)));
           }
-          return withExpireAt(buff, DatabaseValue.zset(sortedSet));
+          return withExpireAt(buff, zset(sortedSet));
         default:
           throw new IllegalStateException();
       }

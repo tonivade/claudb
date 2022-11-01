@@ -12,12 +12,12 @@ import com.github.tonivade.claudb.command.DBCommandSuite;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseCleaner;
 import com.github.tonivade.claudb.data.DatabaseFactory;
-import com.github.tonivade.claudb.data.H2DatabaseFactory;
-import com.github.tonivade.claudb.data.OffHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OffHeapMVDatabaseFactory;
 import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
+import com.github.tonivade.claudb.data.PersistentMVDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
-import com.github.tonivade.claudb.persistence.PersistenceManager;
 import com.github.tonivade.purefun.Recoverable;
 import com.github.tonivade.purefun.data.ImmutableArray;
 import com.github.tonivade.purefun.data.ImmutableList;
@@ -45,7 +45,6 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
   private DatabaseCleaner cleaner;
-  private Option<PersistenceManager> persistence;
   private Option<NotificationManager> notifications;
 
   private final DBConfig config;
@@ -75,20 +74,17 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
     getState().setMaster(true);
 
-    persistence.ifPresent(PersistenceManager::start);
     notifications.ifPresent(NotificationManager::start);
     cleaner.start();
   }
 
   @Override
   public void stop() {
-    persistence.ifPresent(PersistenceManager::stop);
     notifications.ifPresent(NotificationManager::stop);
     cleaner.stop();
 
     getState().clear();
 
-    persistence = null;
     notifications = null;
     cleaner = null;
 
@@ -182,7 +178,6 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       if (hasSlaves()) {
         getState().append(array);
       }
-      persistence.ifPresent(manager -> manager.append(array));
     }
   }
 
@@ -264,7 +259,6 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
     putValue(STATE, new DBServerState(factory, config.getNumDatabases()));
 
-    initPersistence();
     initNotifications();
     initCleaner();
   }
@@ -281,20 +275,14 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     }
   }
 
-  private void initPersistence() {
-    if (config.isPersistenceActive()) {
-      this.persistence = Option.some(new PersistenceManager(this, config));
-    } else {
-      this.persistence = Option.none();
-    }
-  }
-
   private DatabaseFactory initFactory() {
     DatabaseFactory factory;
     if (config.isOffHeapActive()) {
-      factory = new OffHeapDatabaseFactory();
+      factory = new OffHeapMVDatabaseFactory();
+    } else if (config.isPersistenceActive()) {
+      factory = new PersistentMVDatabaseFactory();
     } else if (config.isH2StorageActive()) {
-      factory = new H2DatabaseFactory();
+      factory = new OnHeapMVDatabaseFactory();
     } else {
       factory = new OnHeapDatabaseFactory();
     }
