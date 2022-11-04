@@ -176,8 +176,10 @@ about.
 
 Now only implements a subset of REDIS commands, but is usable.
 
-ClauDB also supports persistence compatible with REDIS, RDB dumps and AOF journal. It can create
-compatible RDB files you can load in a REDIS server.
+~~ClauDB also supports persistence compatible with REDIS, RDB dumps and AOF journal. It can create
+compatible RDB files you can load in a REDIS server.~~
+
+ClauDB also supports persistence and offheap memory based on H2 [MVStore](http://www.h2database.com/html/mvstore.html).
 
 Now ClauDB support master/slave replication, a master can have multiple slaves, but at the moment
 slaves can't have slaves.
