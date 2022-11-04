@@ -26,7 +26,7 @@ import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
 import com.github.tonivade.purefun.data.ImmutableArray;
 import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.command.Request;
@@ -45,7 +45,7 @@ public class CommandRule implements TestRule {
 
   private final Object target;
 
-  private final DBServerState serverState = new DBServerState(new OnHeapDatabaseFactory(), 1);
+  private final DBServerState serverState = new DBServerState(new OnHeapMVDatabaseFactory(), 1);
   private final DBSessionState sessionState = new DBSessionState();
 
   private RedisToken response;

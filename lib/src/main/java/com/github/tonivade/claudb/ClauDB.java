@@ -13,7 +13,6 @@ import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseCleaner;
 import com.github.tonivade.claudb.data.DatabaseFactory;
 import com.github.tonivade.claudb.data.OffHeapMVDatabaseFactory;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
 import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
 import com.github.tonivade.claudb.data.PersistentMVDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
@@ -281,10 +280,8 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       factory = new OffHeapMVDatabaseFactory();
     } else if (config.isPersistenceActive()) {
       factory = new PersistentMVDatabaseFactory();
-    } else if (config.isH2StorageActive()) {
-      factory = new OnHeapMVDatabaseFactory();
     } else {
-      factory = new OnHeapDatabaseFactory();
+      factory = new OnHeapMVDatabaseFactory();
     }
     return factory;
   }

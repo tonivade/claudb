@@ -11,8 +11,8 @@ import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,7 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.claudb.DBServerContext;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
 import com.github.tonivade.claudb.junit4.ClauDBRule;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
@@ -55,7 +55,7 @@ public class SlaveReplicationTest {
 
   @Test
   public void testReplication() throws IOException  {
-    when(context.getAdminDatabase()).thenReturn(new OnHeapDatabaseFactory().create("test"));
+    when(context.getAdminDatabase()).thenReturn(new OnHeapMVDatabaseFactory().create("test"));
 
     SlaveReplication slave = new SlaveReplication(context, session, rule.getHost(), rule.getPort());
 

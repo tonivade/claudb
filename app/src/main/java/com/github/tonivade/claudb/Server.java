@@ -24,7 +24,6 @@ public class Server {
     OptionSpec<Void> verbose = parser.accepts("V", "verbose");
     OptionSpec<Void> persist = parser.accepts("P", "persistence (experimental)");
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
-    OptionSpec<Void> h2Storage = parser.accepts("2", "h2 storage (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host")
         .withRequiredArg().defaultsTo(DBServerContext.DEFAULT_HOST);
@@ -39,7 +38,6 @@ public class Server {
       int optionPort = parsePort(options.valueOf(port));
       DBConfig config = parseConfig(options.has(persist),
                                     options.has(offHeap),
-                                    options.has(h2Storage),
                                     options.has(notifications));
 
       readBanner().forEach(System.out::println);
@@ -61,16 +59,13 @@ public class Server {
     return optionPort != null ? Integer.parseInt(optionPort) : DBServerContext.DEFAULT_PORT;
   }
 
-  private static DBConfig parseConfig(boolean persist, boolean offHeap, boolean h2Storage, boolean notifications) {
+  private static DBConfig parseConfig(boolean persist, boolean offHeap, boolean notifications) {
     DBConfig.Builder builder = DBConfig.builder();
     if (persist) {
       builder.withPersistence();
     }
     if (offHeap) {
       builder.withOffHeapCache();
-    }
-    if (h2Storage) {
-      builder.withH2Storage();
     }
     if (notifications) {
       builder.withNotifications();
