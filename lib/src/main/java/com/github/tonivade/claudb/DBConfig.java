@@ -6,11 +6,8 @@ package com.github.tonivade.claudb;
 
 public class DBConfig {
 
-  private static final int DEFAULT_SYNC_PERIOD = 60;
   private static final int DEFAULT_CLEAN_PERIOD = 30;
   private static final int DEFAULT_DATABASES = 10;
-  private static final String DUMP_FILE = "dump.rdb";
-  private static final String REDO_FILE = "redo.aof";
 
   private int numDatabases = DEFAULT_DATABASES;
 
@@ -18,10 +15,6 @@ public class DBConfig {
   private boolean notificationsActive;
   private boolean offHeapActive;
 
-  private String rdbFile;
-  private String aofFile;
-
-  private int syncPeriod = DEFAULT_SYNC_PERIOD;
   private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
 
   public boolean isPersistenceActive() {
@@ -46,30 +39,6 @@ public class DBConfig {
 
   public void setOffHeapActive(boolean offHeapActive) {
     this.offHeapActive = offHeapActive;
-  }
-
-  public String getRdbFile() {
-    return rdbFile;
-  }
-
-  public void setRdbFile(String rdbFile) {
-    this.rdbFile = rdbFile;
-  }
-
-  public String getAofFile() {
-    return aofFile;
-  }
-
-  public void setAofFile(String aofFile) {
-    this.aofFile = aofFile;
-  }
-
-  public int getSyncPeriod() {
-    return syncPeriod;
-  }
-
-  public void setSyncPeriod(int syncPeriod) {
-    this.syncPeriod = syncPeriod;
   }
 
   public int getNumDatabases() {
@@ -103,8 +72,6 @@ public class DBConfig {
 
     public Builder withPersistence() {
       config.setPersistenceActive(true);
-      config.setRdbFile(DUMP_FILE);
-      config.setAofFile(REDO_FILE);
       return this;
     }
 

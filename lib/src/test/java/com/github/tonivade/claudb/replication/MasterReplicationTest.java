@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
 import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.protocol.RedisToken;
 
@@ -35,7 +35,7 @@ public class MasterReplicationTest {
   @InjectMocks
   private MasterReplication master;
 
-  private final DBServerState serverState = new DBServerState(new OnHeapDatabaseFactory(), 1);
+  private final DBServerState serverState = new DBServerState(new OnHeapMVDatabaseFactory(), 1);
 
   @Test
   public void testReplication()  {

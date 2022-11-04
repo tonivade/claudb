@@ -8,25 +8,15 @@ import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.String.valueOf;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.ServerSocket;
-import java.time.Instant;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.tonivade.claudb.command.DBCommandSuite;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseCleaner;
 import com.github.tonivade.claudb.data.DatabaseFactory;
-import com.github.tonivade.claudb.data.OffHeapDatabaseFactory;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OffHeapMVDatabaseFactory;
+import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
+import com.github.tonivade.claudb.data.PersistentMVDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
-import com.github.tonivade.claudb.persistence.PersistenceManager;
 import com.github.tonivade.purefun.Recoverable;
 import com.github.tonivade.purefun.data.ImmutableArray;
 import com.github.tonivade.purefun.data.ImmutableList;
@@ -38,7 +28,13 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.time.Instant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import io.reactivex.rxjava3.core.Observable;
 
 public final class ClauDB extends RespServerContext implements DBServerContext {
@@ -48,7 +44,6 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
   private DatabaseCleaner cleaner;
-  private Option<PersistenceManager> persistence;
   private Option<NotificationManager> notifications;
 
   private final DBConfig config;
@@ -78,20 +73,17 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
     getState().setMaster(true);
 
-    persistence.ifPresent(PersistenceManager::start);
     notifications.ifPresent(NotificationManager::start);
     cleaner.start();
   }
 
   @Override
   public void stop() {
-    persistence.ifPresent(PersistenceManager::stop);
     notifications.ifPresent(NotificationManager::stop);
     cleaner.stop();
 
     getState().clear();
 
-    persistence = null;
     notifications = null;
     cleaner = null;
 
@@ -185,7 +177,6 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       if (hasSlaves()) {
         getState().append(array);
       }
-      persistence.ifPresent(manager -> manager.append(array));
     }
   }
 
@@ -267,7 +258,6 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
     putValue(STATE, new DBServerState(factory, config.getNumDatabases()));
 
-    initPersistence();
     initNotifications();
     initCleaner();
   }
@@ -284,20 +274,14 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     }
   }
 
-  private void initPersistence() {
-    if (config.isPersistenceActive()) {
-      this.persistence = Option.some(new PersistenceManager(this, config));
-    } else {
-      this.persistence = Option.none();
-    }
-  }
-
   private DatabaseFactory initFactory() {
     DatabaseFactory factory;
     if (config.isOffHeapActive()) {
-      factory = new OffHeapDatabaseFactory();
+      factory = new OffHeapMVDatabaseFactory();
+    } else if (config.isPersistenceActive()) {
+      factory = new PersistentMVDatabaseFactory();
     } else {
-      factory = new OnHeapDatabaseFactory();
+      factory = new OnHeapMVDatabaseFactory();
     }
     return factory;
   }
@@ -328,7 +312,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       this.port = port;
       return this;
     }
-    
+
     public Builder randomPort() {
       try (ServerSocket socket = new ServerSocket(0)) {
         socket.setReuseAddress(true);

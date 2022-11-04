@@ -14,8 +14,8 @@ import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ import org.junit.Test;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.claudb.data.OnHeapDatabaseFactory;
+import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBOutputStreamTest {
@@ -69,7 +69,7 @@ public class RDBOutputStreamTest {
   public void testLargeString() throws IOException {
     out.dabatase(database().add(safeKey("a"), string(readFile("../README.md"))).build());
 
-    assertThat(toHexString(baos.toByteArray()), startsWith("0001615a5c"));
+    assertThat(toHexString(baos.toByteArray()), startsWith("0001615ad9"));
   }
 
   @Test
@@ -81,7 +81,7 @@ public class RDBOutputStreamTest {
     }
     out.dabatase(database().add(safeKey("a"), string(result)).build());
 
-    assertThat(toHexString(baos.toByteArray()), startsWith("0001618000010798"));
+    assertThat(toHexString(baos.toByteArray()), startsWith("0001618000010c7a"));
   }
 
   @Test
@@ -153,7 +153,7 @@ public class RDBOutputStreamTest {
 
   private static class DatabaseBuilder {
 
-    private final Database db = new OnHeapDatabaseFactory().create("test");
+    private final Database db = new OnHeapMVDatabaseFactory().create("test");
 
     public DatabaseBuilder add(DatabaseKey key, DatabaseValue value) {
       db.put(key, value);

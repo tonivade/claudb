@@ -9,8 +9,7 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import java.time.Instant;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
-import java.util.function.BiFunction;
-
+import java.util.function.BinaryOperator;
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.purefun.data.ImmutableMap;
@@ -22,7 +21,9 @@ public interface Database {
 
   int size();
 
-  boolean isEmpty();
+  default boolean isEmpty() {
+    return size() == 0;
+  }
 
   boolean containsKey(DatabaseKey key);
 
@@ -73,7 +74,7 @@ public interface Database {
   }
 
   default DatabaseValue merge(DatabaseKey key, DatabaseValue value,
-      BiFunction<DatabaseValue, DatabaseValue, DatabaseValue> remappingFunction) {
+      BinaryOperator<DatabaseValue> remappingFunction) {
     DatabaseValue oldValue = get(key);
     DatabaseValue newValue = oldValue == null ? value : remappingFunction.apply(oldValue, value);
     if(newValue == null) {

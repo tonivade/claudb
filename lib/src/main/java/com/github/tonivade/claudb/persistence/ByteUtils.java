@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.persistence;
 
-public class ByteUtils {
+public final class ByteUtils {
 
   public static byte[] toByteArray(long value) {
     byte[] b = new byte[Long.BYTES];
