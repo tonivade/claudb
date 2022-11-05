@@ -72,12 +72,7 @@ public final class ByteUtils {
       return ((length & 0x3F) << 8) | (next & 0xFF);
     } else {
       // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-      byte[] array = new byte[4];
-      array[0] = (byte) read.getAsInt();
-      array[1] = (byte) read.getAsInt();
-      array[2] = (byte) read.getAsInt();
-      array[3] = (byte) read.getAsInt();
-      return byteArrayToInt(array);
+      return byteArrayToInt(new byte[] { (byte) read.getAsInt(), (byte) read.getAsInt(), (byte) read.getAsInt(), (byte) read.getAsInt() });
     }
   }
 }

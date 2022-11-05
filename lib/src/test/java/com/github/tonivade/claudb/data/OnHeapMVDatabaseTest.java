@@ -20,7 +20,7 @@ import com.github.tonivade.purefun.data.Sequence;
 public class OnHeapMVDatabaseTest {
 
   @Test
-  public void testDatabase() throws IOException  {
+  public void testDatabase() throws IOException {
     Database database = new OnHeapMVDatabaseFactory().create("db1");
 
     database.put(safeKey("a"), string("value"));

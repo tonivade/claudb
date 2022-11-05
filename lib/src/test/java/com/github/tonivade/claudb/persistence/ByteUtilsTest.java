@@ -1,9 +1,9 @@
 package com.github.tonivade.claudb.persistence;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import java.nio.ByteBuffer;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -41,14 +41,14 @@ class ByteUtilsTest {
   }
 
   static IntStream intValues() {
-    return IntStream.generate(() -> ThreadLocalRandom.current().nextInt()).limit(100);
+    return IntStream.generate(() -> current().nextInt()).limit(100);
   }
 
   static IntStream lengthValues() {
-    return IntStream.generate(() -> Math.abs(ThreadLocalRandom.current().nextInt())).limit(100);
+    return IntStream.generate(() -> Math.abs(current().nextInt())).limit(100);
   }
 
   static LongStream longValues() {
-    return LongStream.generate(() -> ThreadLocalRandom.current().nextLong()).limit(100);
+    return LongStream.generate(() -> current().nextLong()).limit(100);
   }
 }

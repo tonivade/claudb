@@ -52,13 +52,12 @@ public class MVDatabase implements Database {
 
   @Override
   public DatabaseValue get(DatabaseKey key) {
-    MVMap<DatabaseKey, DatabaseValue> data = map;
-    DatabaseValue value = data.get(key);
+    DatabaseValue value = map.get(key);
     if (value != null) {
       if (!value.isExpired(Instant.now())) {
         return value;
       }
-      data.remove(key);
+      map.remove(key);
     }
     return null;
   }
@@ -145,7 +144,7 @@ public class MVDatabase implements Database {
           return typeSize() + stringSize(string) + ttlSize(value.getExpiredAt());
         case HASH:
           ImmutableMap<SafeString, SafeString> hash = value.getHash();
-          int hashSize = typeSize() + lengthSize();
+          int hashSize = typeSize() + lengthSize(hash.size());
           for (Tuple2<SafeString, SafeString> entry : hash.entries()) {
             hashSize += stringSize(entry.get1());
             hashSize += stringSize(entry.get2());
@@ -153,21 +152,21 @@ public class MVDatabase implements Database {
           return hashSize + ttlSize(value.getExpiredAt());
         case LIST:
           ImmutableList<SafeString> list = value.getList();
-          int listSize = typeSize() + lengthSize();
+          int listSize = typeSize() + lengthSize(list.size());
           for (SafeString safeString : list) {
             listSize += stringSize(safeString);
           }
           return listSize + ttlSize(value.getExpiredAt());
         case SET:
           ImmutableSet<SafeString> set = value.getSet();
-          int setSize = typeSize() + lengthSize();
+          int setSize = typeSize() + lengthSize(set.size());
           for (SafeString safeString : set) {
             setSize += stringSize(safeString);
           }
           return setSize + ttlSize(value.getExpiredAt());
         case ZSET:
           NavigableSet<Map.Entry<Double, SafeString>> sortedSet = value.getSortedSet();
-          int sortedSetSize = typeSize() + lengthSize();
+          int sortedSetSize = typeSize() + lengthSize(sortedSet.size());
           for (Map.Entry<Double, SafeString> entry : sortedSet) {
             sortedSetSize += scoreSize() + stringSize(entry.getValue());
           }
@@ -332,11 +331,16 @@ public class MVDatabase implements Database {
   }
 
   private static int stringSize(SafeString string) {
-    return lengthSize() + string.length();
+    return lengthSize(string.length()) + string.length();
   }
 
-  private static int lengthSize() {
-    return Integer.BYTES;
+  private static int lengthSize(int length) {
+    if (length < 0x40) {
+      return 1;
+    } else if (length < 0x4000) {
+      return 2;
+    }
+    return 1 + Integer.BYTES;
   }
 
   private static int ttlSize(Instant instant) {
