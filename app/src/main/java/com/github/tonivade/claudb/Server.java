@@ -17,11 +17,13 @@ import joptsimple.OptionSpec;
 
 public class Server {
 
+  private static final String DEFAULT_FILENAME = "./claudb.data";
+
   public static void main(String[] args) throws IOException {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<Void> verbose = parser.accepts("V", "verbose");
-    OptionSpec<String> persist = parser.accepts("P", "persistence (experimental)").withRequiredArg();
+    OptionSpec<String> persist = parser.accepts("P", "persistence (experimental)").withOptionalArg().defaultsTo(DEFAULT_FILENAME);
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host")
