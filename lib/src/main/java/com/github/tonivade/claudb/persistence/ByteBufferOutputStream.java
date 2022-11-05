@@ -7,6 +7,8 @@ package com.github.tonivade.claudb.persistence;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
+import com.github.tonivade.resp.protocol.SafeString;
+
 public class ByteBufferOutputStream extends OutputStream {
 
   private static final int DEFAULT_CAPACITY = 1024;
@@ -47,6 +49,12 @@ public class ByteBufferOutputStream extends OutputStream {
 
   private ByteBuffer growBuffer(int len) {
     return ByteBuffer.allocate(buffer.capacity() + Math.max(len, growing));
+  }
+  
+  public SafeString toSafeString() {
+    ByteBuffer duplicate = buffer.duplicate();
+    duplicate.flip();
+    return new SafeString(duplicate);
   }
 
   public byte[] toByteArray() {

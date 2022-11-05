@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.persistence;
 
-import static java.util.Objects.requireNonNull;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -14,7 +14,11 @@ public class ByteBufferInputStream extends InputStream {
   private final ByteBuffer buffer;
 
   public ByteBufferInputStream(byte[] array) {
-    this.buffer = ByteBuffer.wrap(requireNonNull(array));
+    this(ByteBuffer.wrap(checkNonNull(array)));
+  }
+  
+  public ByteBufferInputStream(ByteBuffer buffer) {
+    this.buffer = checkNonNull(buffer);
   }
 
   @Override

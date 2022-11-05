@@ -39,6 +39,11 @@ public class SlaveReplication implements RespCallback {
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
 
   private static final String SYNC_COMMAND = "SYNC";
+  
+  enum State {
+    CONNECTED,
+    DISCONNECTED
+  }
 
   private final RespClient client;
   private final DBServerContext server;
@@ -57,7 +62,7 @@ public class SlaveReplication implements RespCallback {
   public void start() {
     client.start();
     server.setMaster(false);
-    server.getAdminDatabase().put(MASTER_KEY, createState(false));
+    server.getAdminDatabase().put(MASTER_KEY, createState(State.DISCONNECTED));
   }
 
   public void stop() {
@@ -69,13 +74,13 @@ public class SlaveReplication implements RespCallback {
   public void onConnect() {
     LOGGER.info("Connected with master");
     client.send(array(string(SYNC_COMMAND)));
-    server.getAdminDatabase().put(MASTER_KEY, createState(true));
+    server.getAdminDatabase().put(MASTER_KEY, createState(State.CONNECTED));
   }
 
   @Override
   public void onDisconnect() {
     LOGGER.info("Disconnected from master");
-    server.getAdminDatabase().put(MASTER_KEY, createState(false));
+    server.getAdminDatabase().put(MASTER_KEY, createState(State.DISCONNECTED));
   }
 
   @Override
@@ -102,12 +107,12 @@ public class SlaveReplication implements RespCallback {
   }
 
   private InputStream toStream(SafeString value) {
-    return new ByteBufferInputStream(value.getBytes());
+    return new ByteBufferInputStream(value.getBuffer());
   }
 
-  private DatabaseValue createState(boolean connected) {
+  private DatabaseValue createState(State state) {
     return hash(entry(safeString("host"), safeString(host)),
                 entry(safeString("port"), safeString(valueOf(port))),
-                entry(safeString("state"), safeString(connected ? "connected" : "disconnected")));
+                entry(safeString("state"), safeString(state.name().toLowerCase())));
   }
 }

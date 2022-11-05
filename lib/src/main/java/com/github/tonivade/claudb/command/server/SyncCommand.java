@@ -42,7 +42,7 @@ public class SyncCommand implements DBCommand {
 
       master.addSlave(request.getSession().getId());
 
-      return string(new SafeString(output.toByteArray()));
+      return string(output.toSafeString());
     } catch (IOException e) {
       return error("ERROR replication error");
     }
