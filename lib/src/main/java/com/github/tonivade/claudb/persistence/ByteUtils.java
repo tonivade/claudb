@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import java.util.function.IntSupplier;
+
 public final class ByteUtils {
 
   public static byte[] toByteArray(long value) {
@@ -38,5 +40,44 @@ public final class ByteUtils {
         (array[2] & 0xFF) << 8 |
         (array[1] & 0xFF) << 16 |
         (array[0] & 0xFF) << 24;
+  }
+
+  public static byte[] lengthToByteArray(int length) {
+    if (length < 0x40) {
+      // 1 byte: 00XXXXXX
+      return new byte[] { (byte) length };
+    } else if (length < 0x4000) {
+      // 2 bytes: 01XXXXXX XXXXXXXX
+      int b1 = length >> 8;
+      int b2 = length & 0xFF;
+      return new byte[] { (byte) (0x40 | b1), (byte) b2 };
+    } else {
+      // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+      byte[] array = toByteArray(length);
+      byte[] result = new byte[5];
+      result[0] = (byte) 0x80;
+      System.arraycopy(array, 0, result, 1, array.length);
+      return result;
+    }
+  }
+
+  public static int byteArrayToLength(IntSupplier read) {
+    int length = read.getAsInt();
+    if (length < 0x40) {
+      // 1 byte: 00XXXXXX
+      return length;
+    } else if (length < 0x80) {
+      // 2 bytes: 01XXXXXX XXXXXXXX
+      int next = read.getAsInt();
+      return ((length & 0x3F) << 8) | (next & 0xFF);
+    } else {
+      // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
+      byte[] array = new byte[4];
+      array[0] = (byte) read.getAsInt();
+      array[1] = (byte) read.getAsInt();
+      array[2] = (byte) read.getAsInt();
+      array[3] = (byte) read.getAsInt();
+      return byteArrayToInt(array);
+    }
   }
 }

@@ -23,6 +23,7 @@ import org.h2.mvstore.MVMap;
 import org.h2.mvstore.WriteBuffer;
 import org.h2.mvstore.type.BasicDataType;
 
+import com.github.tonivade.claudb.persistence.ByteUtils;
 import com.github.tonivade.purefun.Tuple;
 import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.purefun.data.ImmutableList;
@@ -278,7 +279,7 @@ public class MVDatabase implements Database {
   }
 
   private static void writeLength(WriteBuffer buf, int length) {
-    buf.putInt(length);
+    buf.put(ByteUtils.lengthToByteArray(length));
   }
 
   private static void writeScore(WriteBuffer buf, double score) {
@@ -303,7 +304,7 @@ public class MVDatabase implements Database {
   }
 
   private static int readLength(ByteBuffer buf) {
-    return buf.getInt();
+    return ByteUtils.byteArrayToLength(buf::get);
   }
 
   private static double readScore(ByteBuffer buf) {

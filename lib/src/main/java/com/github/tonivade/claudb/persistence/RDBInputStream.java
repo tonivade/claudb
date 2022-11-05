@@ -11,17 +11,17 @@ import static com.github.tonivade.claudb.data.DatabaseValue.score;
 import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
-import static com.github.tonivade.claudb.persistence.ByteUtils.byteArrayToInt;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.time.Instant.ofEpochMilli;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -105,7 +105,6 @@ public class RDBInputStream {
         expireTime = null;
         break;
       case END_OF_STREAM:
-        // end of stream
         end = true;
         db = null;
         expireTime = null;
@@ -121,13 +120,11 @@ public class RDBInputStream {
   }
 
   private long parseTimeSeconds() throws IOException {
-    byte[] seconds = read(Integer.BYTES);
-    return ByteUtils.byteArrayToInt(seconds) * TO_MILLIS;
+    return ByteUtils.byteArrayToInt(read(Integer.BYTES)) * TO_MILLIS;
   }
 
   private long parseTimeMillis() throws IOException {
-    byte[] millis = read(Long.BYTES);
-    return ByteUtils.byteArrayToLong(millis);
+    return ByteUtils.byteArrayToLong(read(Long.BYTES));
   }
 
   private void verifyChecksum() throws IOException {
@@ -166,7 +163,7 @@ public class RDBInputStream {
 
   private DatabaseValue readList(Long expireTime) throws IOException {
     int size = readLength();
-    List<SafeString> list = new LinkedList<>();
+    List<SafeString> list = new ArrayList<>(size);
     for (int i = 0; i < size; i++) {
       list.add(readSafeString());
     }
@@ -213,22 +210,17 @@ public class RDBInputStream {
   }
 
   private int readLength() throws IOException {
-    int length = in.read();
-    if (length < 0x40) {
-      // 1 byte: 00XXXXXX
-      return length;
-    } else if (length < 0x80) {
-      // 2 bytes: 01XXXXXX XXXXXXXX
-      int next = in.read();
-      return readLength(length, next);
-    } else {
-      // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-      return byteArrayToInt(read(Integer.BYTES));
+    try {
+      return ByteUtils.byteArrayToLength(() -> {
+        try {
+          return in.read();
+        } catch (IOException e) {
+          throw new UncheckedIOException(e);
+        }
+      });
+    } catch (UncheckedIOException e) {
+      throw e.getCause();
     }
-  }
-
-  private int readLength(int length, int next) {
-    return ((length & 0x3F) << 8) | (next & 0xFF);
   }
 
   private SafeString readSafeString() throws IOException {

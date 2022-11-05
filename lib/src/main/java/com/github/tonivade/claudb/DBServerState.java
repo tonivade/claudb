@@ -37,8 +37,6 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public class DBServerState {
 
-  private static final int RDB_VERSION = 6;
-
   private static final SafeString SLAVES = safeString("slaves");
   private static final DatabaseKey SLAVES_KEY = safeKey("slaves");
   private static final DatabaseKey SCRIPTS_KEY = safeKey("scripts");
@@ -89,16 +87,7 @@ public class DBServerState {
   }
 
   public void exportRDB(OutputStream output) throws IOException {
-    RDBOutputStream rdb = new RDBOutputStream(output);
-    rdb.preamble(RDB_VERSION);
-    for (int i = 0; i < databases.size(); i++) {
-      Database db = databases.get(i);
-      if (!db.isEmpty()) {
-        rdb.select(i);
-        rdb.dabatase(db);
-      }
-    }
-    rdb.end();
+    new RDBOutputStream(output).write(databases);
   }
 
   public void importRDB(InputStream input) throws IOException {

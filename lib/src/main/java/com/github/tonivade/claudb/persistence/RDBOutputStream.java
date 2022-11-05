@@ -4,14 +4,16 @@
  */
 package com.github.tonivade.claudb.persistence;
 
+import static com.github.tonivade.claudb.persistence.ByteUtils.lengthToByteArray;
 import static com.github.tonivade.claudb.persistence.ByteUtils.toByteArray;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.zip.CheckedOutputStream;
@@ -29,6 +31,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 public class RDBOutputStream {
 
   private static final byte[] REDIS = safeString("REDIS").getBytes();
+  private static final int RDB_VERSION = 6;
 
   private static final int TTL_MILLISECONDS = 0xFC;
   private static final int END_OF_STREAM = 0xFF;
@@ -37,15 +40,27 @@ public class RDBOutputStream {
   private final CheckedOutputStream out;
 
   public RDBOutputStream(OutputStream out) {
-    this.out = new CheckedOutputStream(requireNonNull(out), new CRC64());
+    this.out = new CheckedOutputStream(checkNonNull(out), new CRC64());
+  }
+  
+  public void write(List<Database> databases) throws IOException {
+    preamble(RDB_VERSION);
+    for (int i = 0; i < databases.size(); i++) {
+      Database db = databases.get(i);
+      if (!db.isEmpty()) {
+        select(i);
+        dabatase(db);
+      }
+    }
+    end();
   }
 
-  public void preamble(int version) throws IOException {
+  void preamble(int version) throws IOException {
     out.write(REDIS);
     out.write(version(version));
   }
 
-  private byte[] version(int version) {
+  byte[] version(int version) {
     StringBuilder sb = new StringBuilder(String.valueOf(version));
     for (int i = sb.length(); i < Integer.BYTES; i++) {
       sb.insert(0, '0');
@@ -53,12 +68,12 @@ public class RDBOutputStream {
     return sb.toString().getBytes(StandardCharsets.UTF_8);
   }
 
-  public void select(int db) throws IOException {
+  void select(int db) throws IOException {
     out.write(SELECT);
     length(db);
   }
 
-  public void dabatase(Database db) throws IOException {
+  void dabatase(Database db) throws IOException {
     for (Tuple2<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
       value(entry.get1(), entry.get2());
     }
@@ -109,20 +124,7 @@ public class RDBOutputStream {
   }
 
   private void length(int length) throws IOException {
-    if (length < 0x40) {
-      // 1 byte: 00XXXXXX
-      out.write(length);
-    } else if (length < 0x4000) {
-      // 2 bytes: 01XXXXXX XXXXXXXX
-      int b1 = length >> 8;
-      int b2 = length & 0xFF;
-      out.write(0x40 | b1);
-      out.write(b2);
-    } else {
-      // 5 bytes: 10...... XXXXXXXX XXXXXXXX XXXXXXXX XXXXXXXX
-      out.write(0x80);
-      out.write(toByteArray(length));
-    }
+    out.write(lengthToByteArray(length));
   }
 
   private void string(String value) throws IOException {
@@ -169,7 +171,7 @@ public class RDBOutputStream {
     }
   }
 
-  public void end() throws IOException {
+  void end() throws IOException {
     out.write(END_OF_STREAM);
     out.write(toByteArray(out.getChecksum().getValue()));
     out.flush();

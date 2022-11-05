@@ -143,15 +143,15 @@ public class RDBOutputStreamTest {
     return new SafeString(byteArray).toHexString();
   }
 
-  private static DatabaseBuilder database() {
+  static DatabaseBuilder database() {
     return new DatabaseBuilder();
   }
 
-  private static SafeString readFile(String name) throws IOException {
+  static SafeString readFile(String name) throws IOException {
     return new SafeString(Files.readAllBytes(Paths.get(name)));
   }
 
-  private static class DatabaseBuilder {
+  static class DatabaseBuilder {
 
     private final Database db = new OnHeapMVDatabaseFactory().create("test");
 

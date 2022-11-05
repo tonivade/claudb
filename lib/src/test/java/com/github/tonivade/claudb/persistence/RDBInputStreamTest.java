@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.persistence;
 
-import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.entry;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.list;
 import static com.github.tonivade.claudb.DatabaseValueMatchers.score;
@@ -13,10 +12,16 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
+import static com.github.tonivade.claudb.persistence.RDBOutputStreamTest.database;
+import static com.github.tonivade.claudb.persistence.RDBOutputStreamTest.readFile;
+import static com.github.tonivade.resp.protocol.SafeString.fromHexString;
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -25,6 +30,7 @@ import org.junit.Test;
 
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
+import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBInputStreamTest {
 
@@ -46,6 +52,25 @@ public class RDBInputStreamTest {
     assertThat(databases.size(), is(1));
 
     assertDB(databases.get(0), string("testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest"));
+  }
+
+  @Test
+  public void testLarge() throws IOException {
+    SafeString file = readFile("../README.md");
+    SafeString result = SafeString.EMPTY_STRING;
+    for (int i = 0; i < 10; i++) {
+      result = SafeString.append(result, file);
+    }
+    ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+    RDBOutputStream out = new RDBOutputStream(byteArray); 
+    out.write(asList(database().add(safeKey("a"), string(result)).build()));
+    RDBInputStream in = new RDBInputStream(new ByteArrayInputStream(byteArray.toByteArray()));
+
+    Map<Integer, Map<DatabaseKey, DatabaseValue>> databases = in.parse();
+
+    assertThat(databases.size(), is(1));
+
+    assertDB(databases.get(0), string(result));
   }
 
   @Test
