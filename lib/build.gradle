@@ -19,6 +19,7 @@ dependencies {
   testImplementation libs.jedis
   testImplementation libs.junit
   testImplementation libs.junitJupiter
+  testImplementation libs.junitParams
   testImplementation libs.junitVintage
   testImplementation libs.mockitoCore
   testImplementation libs.hamcrest

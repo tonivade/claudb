@@ -19,6 +19,7 @@ dependencyResolutionManagement {
       library('h2', "com.h2database:h2-mvstore:$h2Version")
 
       library('junitJupiter', "org.junit.jupiter:junit-jupiter-engine:$junitEngineVersion")
+      library('junitParams', "org.junit.jupiter:junit-jupiter-params:$junitEngineVersion")
       library('junitVintage', "org.junit.vintage:junit-vintage-engine:$junitEngineVersion")
       library('junitRunner', "org.junit.platform:junit-platform-runner:$junitPlatformVersion")
       library('junit', "junit:junit:$junitVersion")

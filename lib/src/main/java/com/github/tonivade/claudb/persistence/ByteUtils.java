@@ -62,7 +62,7 @@ public final class ByteUtils {
   }
 
   public static int byteArrayToLength(IntSupplier read) {
-    int length = read.getAsInt();
+    int length = read.getAsInt() & 0xFF;
     if (length < 0x40) {
       // 1 byte: 00XXXXXX
       return length;
