@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Stream;
-
 import com.github.tonivade.resp.RespServer;
 
 import joptsimple.OptionParser;
@@ -22,7 +21,7 @@ public class Server {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<Void> verbose = parser.accepts("V", "verbose");
-    OptionSpec<Void> persist = parser.accepts("P", "persistence (experimental)");
+    OptionSpec<String> persist = parser.accepts("P", "persistence (experimental)").withRequiredArg();
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host")
@@ -36,9 +35,7 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = parsePort(options.valueOf(port));
-      DBConfig config = parseConfig(options.has(persist),
-                                    options.has(offHeap),
-                                    options.has(notifications));
+      DBConfig.Builder config = parseConfig(options, persist, offHeap, notifications);
 
       readBanner().forEach(System.out::println);
 
@@ -59,17 +56,17 @@ public class Server {
     return optionPort != null ? Integer.parseInt(optionPort) : DBServerContext.DEFAULT_PORT;
   }
 
-  private static DBConfig parseConfig(boolean persist, boolean offHeap, boolean notifications) {
+  private static DBConfig.Builder parseConfig(OptionSet options, OptionSpec<String> persist, OptionSpec<Void> offHeap, OptionSpec<Void> notifications) {
     DBConfig.Builder builder = DBConfig.builder();
-    if (persist) {
-      builder.withPersistence();
+    if (options.has(persist)) {
+      builder.withPersistence(options.valueOf(persist));
     }
-    if (offHeap) {
+    if (options.has(offHeap)) {
       builder.withOffHeapCache();
     }
-    if (notifications) {
+    if (options.has(notifications)) {
       builder.withNotifications();
     }
-    return builder.build();
+    return builder;
   }
 }

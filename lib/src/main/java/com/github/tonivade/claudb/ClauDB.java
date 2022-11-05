@@ -279,7 +279,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     if (config.isOffHeapActive()) {
       factory = new OffHeapMVDatabaseFactory();
     } else if (config.isPersistenceActive()) {
-      factory = new PersistentMVDatabaseFactory();
+      factory = new PersistentMVDatabaseFactory(config.getFileName());
     } else {
       factory = new OnHeapMVDatabaseFactory();
     }
@@ -299,9 +299,10 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   public static class Builder implements Recoverable {
+
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
-    private DBConfig config = DBConfig.builder().build();
+    private DBConfig.Builder config = DBConfig.builder();
 
     public Builder host(String host) {
       this.host = host;
@@ -323,13 +324,33 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       return this;
     }
 
-    public Builder config(DBConfig config) {
+    public Builder withoutPersistence() {
+      config.withoutPersistence();
+      return this;
+    }
+
+    public Builder withPersistence(String fileName) {
+      config.withPersistence(fileName);
+      return this;
+    }
+
+    public Builder withOffHeapCache() {
+      config.withOffHeapCache();
+      return this;
+    }
+
+    public Builder withNotifications() {
+      config.withNotifications();
+      return this;
+    }
+
+    public Builder config(DBConfig.Builder config) {
       this.config = config;
       return this;
     }
 
     public RespServer build() {
-      return new RespServer(new ClauDB(host, port, config));
+      return new RespServer(new ClauDB(host, port, config.build()));
     }
   }
 }

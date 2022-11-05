@@ -10,7 +10,11 @@ public class PersistentMVDatabaseFactory implements DatabaseFactory {
 
   private static final MVDatabase.DatabaseBuilder BUILDER = new MVDatabase.DatabaseBuilder();
 
-  private final MVStore store = new MVStore.Builder().fileName("./claudb.db").open();
+  private final MVStore store;
+
+  public PersistentMVDatabaseFactory(String fileName) {
+    store = new MVStore.Builder().fileName(fileName).open();
+  }
 
   @Override
   public Database create(String name) {

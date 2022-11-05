@@ -15,6 +15,8 @@ public class DBConfig {
   private boolean notificationsActive;
   private boolean offHeapActive;
 
+  private String fileName;
+
   private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
 
   public boolean isPersistenceActive() {
@@ -57,6 +59,14 @@ public class DBConfig {
     this.cleanPeriod = cleanPeriod;
   }
 
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
+
+  public String getFileName() {
+    return fileName;
+  }
+
   public static Builder builder() {
     return new Builder();
   }
@@ -70,8 +80,9 @@ public class DBConfig {
       return this;
     }
 
-    public Builder withPersistence() {
+    public Builder withPersistence(String fileName) {
       config.setPersistenceActive(true);
+      config.setFileName(fileName);
       return this;
     }
 
