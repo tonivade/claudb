@@ -2,6 +2,7 @@ package com.github.tonivade.claudb.persistence;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import java.nio.ByteBuffer;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -33,8 +34,10 @@ class ByteUtilsTest {
   void lengthToArray(int x) {
     byte[] array = ByteUtils.lengthToByteArray(x);
     int y = ByteUtils.byteArrayToLength(IntStream.range(0, array.length).map(i -> array[i]).iterator()::next);
+    int z = ByteUtils.byteArrayToLength(ByteBuffer.wrap(array)::get);
 
     assertThat(x, equalTo(y));
+    assertThat(x, equalTo(z));
   }
 
   static IntStream intValues() {

@@ -270,7 +270,7 @@ public class MVDatabase implements Database {
   }
 
   private static void writeString(WriteBuffer buf, SafeString safeString) {
-    buf.putInt(safeString.length());
+    writeLength(buf, safeString.length());
     buf.put(safeString.getBytes());
   }
 
