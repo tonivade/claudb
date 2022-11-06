@@ -6,15 +6,13 @@ package com.github.tonivade.claudb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 import com.github.tonivade.purefun.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
+public class DatabaseKey implements Comparable<DatabaseKey> {
 
-  private static final long serialVersionUID = 7710472090270782053L;
   private static final Equal<DatabaseKey> EQUAL = Equal.<DatabaseKey>of().comparing(k -> k.value);
 
   private final SafeString value;
@@ -53,5 +51,9 @@ public class DatabaseKey implements Comparable<DatabaseKey>, Serializable {
 
   public static DatabaseKey safeKey(String str) {
     return safeKey(safeString(str));
+  }
+
+  public static DatabaseKey safeKey(byte[] array) {
+    return safeKey(new SafeString(array));
   }
 }

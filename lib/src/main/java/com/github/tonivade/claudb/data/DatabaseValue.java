@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
 
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
@@ -35,9 +34,7 @@ import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class DatabaseValue implements Serializable {
-
-  private static final long serialVersionUID = -5178953336530559139L;
+public class DatabaseValue {
 
   public static final DatabaseValue EMPTY_STRING = string("");
   public static final DatabaseValue EMPTY_LIST = list();
@@ -157,6 +154,10 @@ public class DatabaseValue implements Serializable {
   @Override
   public String toString() {
     return "DatabaseValue [type=" + type + ", value=" + value + "]";
+  }
+
+  public static DatabaseValue string(byte[] array) {
+    return string(new SafeString(array));
   }
 
   public static DatabaseValue string(String value) {
