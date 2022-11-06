@@ -23,6 +23,8 @@ public class PersistentMVDatabaseFactory implements DatabaseFactory {
 
   @Override
   public void clear() {
+    store.compactMoveChunks();
+    
     store.close();
   }
 }
