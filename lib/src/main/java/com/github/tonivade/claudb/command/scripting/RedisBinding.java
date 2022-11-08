@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
-import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
@@ -60,16 +59,16 @@ public class RedisBinding extends VarArgFunction {
 
   private LuaValue convert(RedisToken token) {
     return Pattern1.<RedisToken, LuaValue>build()
-        .when(instanceOf(StringRedisToken.class))
-          .then(string -> toLuaString((StringRedisToken) string))
-        .when(instanceOf(StatusRedisToken.class))
-          .then(status -> toLuaString((StatusRedisToken) status))
-        .when(instanceOf(ArrayRedisToken.class))
-          .then(array -> toLuaTable((ArrayRedisToken) array))
-        .when(instanceOf(IntegerRedisToken.class))
-          .then(integer -> toLuaNumber((IntegerRedisToken) integer))
-        .when(instanceOf(UnknownRedisToken.class))
-          .then(unknown -> toLuaString((UnknownRedisToken) unknown))
+        .when(StringRedisToken.class)
+          .then(this::toLuaString)
+        .when(StatusRedisToken.class)
+          .then(this::toLuaString)
+        .when(ArrayRedisToken.class)
+          .then(this::toLuaTable)
+        .when(IntegerRedisToken.class)
+          .then(this::toLuaNumber)
+        .when(UnknownRedisToken.class)
+          .then(this::toLuaString)
         .apply(token);
   }
 

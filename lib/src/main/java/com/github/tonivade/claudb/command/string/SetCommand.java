@@ -6,7 +6,6 @@ package com.github.tonivade.claudb.command.string;
 
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
-import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
@@ -55,9 +54,9 @@ public class SetCommand implements DBCommand {
 
   private RedisToken onFailure(Throwable e) {
     return Pattern1.<Throwable, RedisToken>build()
-        .when(instanceOf(SyntaxException.class))
+        .when(SyntaxException.class)
           .returns(error("syntax error"))
-        .when(instanceOf(NumberFormatException.class))
+        .when(NumberFormatException.class)
           .returns(error("value is not an integer or out of range"))
         .otherwise()
           .returns(error("error: " + e.getMessage()))

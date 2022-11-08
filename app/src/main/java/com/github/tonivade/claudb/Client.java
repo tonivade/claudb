@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.claudb;
 
+import static com.github.tonivade.resp.protocol.RedisToken.status;
+
 import java.util.Scanner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -15,6 +17,7 @@ import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -31,12 +34,12 @@ public class Client implements RespCallback {
 
   @Override
   public void onConnect() {
-    System.out.println("connected!");
+    responses.add(status("connected!"));
   }
 
   @Override
   public void onDisconnect() {
-    System.out.println("disconnected!");
+    responses.add(status("disconnected!"));
   }
 
   @Override
@@ -56,10 +59,21 @@ public class Client implements RespCallback {
     OptionParser parser = new OptionParser();
     OptionSpec<Void> help = parser.accepts("help", "print help");
     OptionSpec<String> host = parser.accepts("h", "host")
-            .withRequiredArg().defaultsTo(ClauDB.DEFAULT_HOST);
-    OptionSpec<String> port = parser.accepts("p", "port").withRequiredArg();
+            .withRequiredArg()
+            .defaultsTo(ClauDB.DEFAULT_HOST);
+    OptionSpec<Integer> port = parser.accepts("p", "port")
+        .withRequiredArg()
+        .ofType(Integer.class)
+        .defaultsTo(DBServerContext.DEFAULT_PORT);
 
-    OptionSet options = parser.parse(args);
+    OptionSet options;
+    try {
+      options = parser.parse(args);
+    } catch (OptionException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      System.out.println();
+      options = parser.parse("--help");
+    }
 
     if (options.has(help)) {
       parser.printHelpOn(System.out);
@@ -67,10 +81,11 @@ public class Client implements RespCallback {
       Client callback = new Client();
 
       String optionHost = options.valueOf(host);
-      int optionPort = parsePort(options.valueOf(port));
+      int optionPort = options.valueOf(port);
       RespClient client = new RespClient(optionHost, optionPort, callback);
       client.start();
-
+      
+      System.out.println(callback.response());
       prompt();
       try (Scanner scanner = new Scanner(System.in, CHARSET_NAME)) {
         for (boolean quit = false; !quit && scanner.hasNextLine(); prompt()) {
@@ -89,9 +104,5 @@ public class Client implements RespCallback {
 
   private static void prompt() {
     System.out.print(PROMPT);
-  }
-
-  private static int parsePort(String optionPort) {
-    return optionPort != null ? Integer.parseInt(optionPort) : DBServerContext.DEFAULT_PORT;
   }
 }

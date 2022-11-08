@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
-import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
@@ -64,20 +63,20 @@ public final class LuaInterpreter {
 
   private RedisToken convert(Object result) {
     return Pattern1.<Object, RedisToken>build()
-        .when(instanceOf(LuaTable.class))
-          .then(table -> convertLuaTable((LuaTable) table))
-        .when(instanceOf(LuaNumber.class))
-          .then(number -> convertLuaNumber((LuaNumber) number))
-        .when(instanceOf(LuaBoolean.class))
-          .then(boolean_ -> convertLuaBoolean((LuaBoolean) boolean_))
-        .when(instanceOf(LuaString.class))
-          .then(string -> convertLuaString((LuaString) string))
-        .when(instanceOf(Number.class))
-          .then(number -> convertNumber((Number) number))
-        .when(instanceOf(String.class))
-          .then(string -> convertString((String) string))
-        .when(instanceOf(Boolean.class))
-          .then(boolean_ -> convertBoolean((Boolean) boolean_))
+        .when(LuaTable.class)
+          .then(this::convertLuaTable)
+        .when(LuaNumber.class)
+          .then(this::convertLuaNumber)
+        .when(LuaBoolean.class)
+          .then(this::convertLuaBoolean)
+        .when(LuaString.class)
+          .then(this::convertLuaString)
+        .when(Number.class)
+          .then(this::convertNumber)
+        .when(String.class)
+          .then(this::convertString)
+        .when(Boolean.class)
+          .then(this::convertBoolean)
         .otherwise()
           .then(this::convertUnknown)
         .apply(result);

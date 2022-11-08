@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.command;
 
-import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static java.util.stream.Collectors.toList;
@@ -58,20 +57,20 @@ class DBResponse {
 
   private static RedisToken parseToken(Object value) {
     return Pattern1.<Object, RedisToken>build()
-        .when(instanceOf(Integer.class))
-          .then(integer -> RedisToken.integer((Integer) integer))
-        .when(instanceOf(Boolean.class))
-          .then(bool -> RedisToken.integer((Boolean) bool))
-        .when(instanceOf(String.class))
-          .then(string -> RedisToken.string((String) string))
-        .when(instanceOf(Double.class))
-          .then(double_ -> RedisToken.string(double_.toString()))
-        .when(instanceOf(SafeString.class))
-          .then(string -> RedisToken.string((SafeString) string))
-        .when(instanceOf(DatabaseValue.class))
-          .then(value_ -> DBResponse.convertValue((DatabaseValue) value_))
-        .when(instanceOf(RedisToken.class))
-          .then(token -> (RedisToken) token)
+        .when(Integer.class)
+          .then(RedisToken::integer)
+        .when(Boolean.class)
+          .then(RedisToken::integer)
+        .when(String.class)
+          .then(RedisToken::string)
+        .when(Double.class)
+          .then(d -> RedisToken.string(d.toString()))
+        .when(SafeString.class)
+          .then(RedisToken::string)
+        .when(DatabaseValue.class)
+          .then(DBResponse::convertValue)
+        .when(RedisToken.class)
+          .then(token -> token)
         .otherwise()
           .returns(nullString())
         .apply(value);

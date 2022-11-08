@@ -29,8 +29,12 @@ public class Server {
     OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
     OptionSpec<String> host = parser.accepts("h", "host")
-        .withRequiredArg().defaultsTo(DBServerContext.DEFAULT_HOST);
-    OptionSpec<String> port = parser.accepts("p", "port").withRequiredArg();
+        .withRequiredArg()
+        .defaultsTo(DBServerContext.DEFAULT_HOST);
+    OptionSpec<Integer> port = parser.accepts("p", "port")
+        .withRequiredArg()
+        .ofType(Integer.class)
+        .defaultsTo(DBServerContext.DEFAULT_PORT);
 
     OptionSet options;
     try {
@@ -45,7 +49,7 @@ public class Server {
       parser.printHelpOn(System.out);
     } else {
       String optionHost = options.valueOf(host);
-      int optionPort = parsePort(options.valueOf(port));
+      int optionPort = options.valueOf(port);
       DBConfig.Builder config = parseConfig(options, persist, offHeap, notifications);
 
       readBanner().forEach(System.out::println);
@@ -61,10 +65,6 @@ public class Server {
   private static Stream<String> readBanner() {
     InputStream banner = Server.class.getResourceAsStream("/banner.txt");
     return new BufferedReader(new InputStreamReader(banner)).lines();
-  }
-
-  private static int parsePort(String optionPort) {
-    return optionPort != null ? Integer.parseInt(optionPort) : DBServerContext.DEFAULT_PORT;
   }
 
   private static DBConfig.Builder parseConfig(OptionSet options, OptionSpec<String> persist, OptionSpec<Void> offHeap, OptionSpec<Void> notifications) {

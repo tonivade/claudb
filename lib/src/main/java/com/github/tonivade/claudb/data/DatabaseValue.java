@@ -91,12 +91,12 @@ public class DatabaseValue {
 
   public int size() {
     return Pattern1.<Object, Integer>build()
-        .when(instanceOf(Collection.class))
-          .then(collection -> ((Collection<?>) collection).size())
-        .when(instanceOf(Sequence.class))
-          .then(sequence -> ((Sequence<?>) sequence).size())
-        .when(instanceOf(ImmutableMap.class))
-          .then(map -> ((ImmutableMap<?, ?>) map).size())
+        .when(Collection.class)
+          .then(Collection::size)
+        .when(Sequence.class)
+          .then(Sequence::size)
+        .when(ImmutableMap.class)
+          .then(ImmutableMap::size)
         .when(instanceOf(SafeString.class))
           .returns(1)
         .otherwise()
