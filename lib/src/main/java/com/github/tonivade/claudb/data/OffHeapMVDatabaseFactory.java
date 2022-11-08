@@ -11,7 +11,14 @@ public class OffHeapMVDatabaseFactory implements DatabaseFactory {
 
   private static final MVDatabase.DatabaseBuilder BUILDER = new MVDatabase.DatabaseBuilder();
 
-  private final MVStore store = new MVStore.Builder().adoptFileStore(new OffHeapStore()).open();
+  private final MVStore store;
+  
+  public OffHeapMVDatabaseFactory(int cacheConcurrency) {
+    store = new MVStore.Builder()
+        .adoptFileStore(new OffHeapStore())
+        .cacheConcurrency(cacheConcurrency)
+        .open();
+  }
 
   @Override
   public Database create(String name) {

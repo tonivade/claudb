@@ -55,8 +55,6 @@ abstract class DatabaseTest {
 
   @Test
   void isType() {
-    Database database = new OffHeapMVDatabaseFactory().create("db1");
-
     database.put(safeKey("key"), string("key"));
 
     assertThat(database.isType(safeKey("key"), DataType.STRING), is(true));

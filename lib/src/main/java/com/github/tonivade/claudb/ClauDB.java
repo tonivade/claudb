@@ -277,9 +277,9 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   private DatabaseFactory initFactory() {
     DatabaseFactory factory;
     if (config.isOffHeapActive()) {
-      factory = new OffHeapMVDatabaseFactory();
+      factory = new OffHeapMVDatabaseFactory(config.getCacheConcurrency());
     } else if (config.isPersistenceActive()) {
-      factory = new PersistentMVDatabaseFactory(config.getFileName());
+      factory = new PersistentMVDatabaseFactory(config.getFileName(), config.getCacheConcurrency());
     } else {
       factory = new OnHeapMVDatabaseFactory();
     }

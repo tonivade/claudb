@@ -12,8 +12,11 @@ public class PersistentMVDatabaseFactory implements DatabaseFactory {
 
   private final MVStore store;
 
-  public PersistentMVDatabaseFactory(String fileName) {
-    store = new MVStore.Builder().fileName(fileName).open();
+  public PersistentMVDatabaseFactory(String fileName, int cacheConcurrency) {
+    store = new MVStore.Builder()
+        .fileName(fileName)
+        .cacheConcurrency(cacheConcurrency)
+        .open();
   }
 
   @Override

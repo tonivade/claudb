@@ -10,7 +10,11 @@ public class OnHeapMVDatabaseFactory implements DatabaseFactory {
 
   private static final MVDatabase.DatabaseBuilder BUILDER = new MVDatabase.DatabaseBuilder();
 
-  private final MVStore store = new MVStore.Builder().open();
+  private final MVStore store;
+  
+  public OnHeapMVDatabaseFactory() {
+    store = new MVStore.Builder().open();
+  }
 
   @Override
   public Database create(String name) {

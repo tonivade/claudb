@@ -8,16 +8,17 @@ public class DBConfig {
 
   private static final int DEFAULT_CLEAN_PERIOD = 30;
   private static final int DEFAULT_DATABASES = 10;
+  private static final int DEFAULT_SEGMENTS = 16;
 
   private int numDatabases = DEFAULT_DATABASES;
+  private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
 
   private boolean persistenceActive;
   private boolean notificationsActive;
   private boolean offHeapActive;
 
   private String fileName;
-
-  private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
+  private int cacheConcurrency = DEFAULT_SEGMENTS;
 
   public boolean isPersistenceActive() {
     return persistenceActive;
@@ -65,6 +66,14 @@ public class DBConfig {
 
   public String getFileName() {
     return fileName;
+  }
+  
+  public void setCacheConcurrency(int cacheConcurrency) {
+    this.cacheConcurrency = cacheConcurrency;
+  }
+
+  public int getCacheConcurrency() {
+    return cacheConcurrency;
   }
 
   public static Builder builder() {

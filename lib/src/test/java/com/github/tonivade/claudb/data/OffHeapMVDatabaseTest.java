@@ -7,6 +7,6 @@ package com.github.tonivade.claudb.data;
 class OffHeapMVDatabaseTest extends DatabaseTest {
 
   public OffHeapMVDatabaseTest() {
-    super(new OffHeapMVDatabaseFactory().create("db"));
+    super(new OffHeapMVDatabaseFactory(2).create("db"));
   }
 }
