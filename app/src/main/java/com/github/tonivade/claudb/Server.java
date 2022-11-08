@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Stream;
+
 import com.github.tonivade.resp.RespServer;
 
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -30,7 +32,14 @@ public class Server {
         .withRequiredArg().defaultsTo(DBServerContext.DEFAULT_HOST);
     OptionSpec<String> port = parser.accepts("p", "port").withRequiredArg();
 
-    OptionSet options = parser.parse(args);
+    OptionSet options;
+    try {
+      options = parser.parse(args);
+    } catch (OptionException e) {
+      System.out.println("ERROR: " + e.getMessage());
+      System.out.println();
+      options = parser.parse("--help");
+    }
 
     if (options.has(help)) {
       parser.printHelpOn(System.out);
