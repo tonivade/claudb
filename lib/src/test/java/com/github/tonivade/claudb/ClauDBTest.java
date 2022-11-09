@@ -11,19 +11,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import java.util.Iterator;
 import java.util.function.Consumer;
-import java.util.function.IntSupplier;
 import org.junit.jupiter.api.Test;
 import com.github.tonivade.resp.RespServer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
 @com.github.tonivade.claudb.junit5.ClauDBTest
-public class ClauDBTest {
+class ClauDBTest {
   
   static RespServer server = ClauDB.builder().randomPort().build();
 
   @Test
-  public void testCommands() {
+  void testCommands() {
     execute(jedis -> {
       assertThat(jedis.ping(), equalTo("PONG"));
       assertThat(jedis.echo("Hi!"), equalTo("Hi!"));
@@ -44,7 +43,7 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testPipeline() {
+  void testPipeline() {
     execute(jedis -> {
       Pipeline p = jedis.pipelined();
       p.ping();
@@ -81,19 +80,19 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testEval() {
+  void testEval() {
     execute(jedis -> assertThat(jedis.eval("return 1"), equalTo(1L)));
   }
 
   @Test
-  public void testEvalScript() {
+  void testEvalScript() {
     String script = "local keys = redis.call('keys', '*region*') "
         + "for i,k in ipairs(keys) do local res = redis.call('del', k) end";
     execute(jedis -> assertThat(jedis.eval(script), nullValue()));
   }
 
   @Test
-  public void testBugNotExist() {
+  void testBugNotExist() {
     String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
 
     execute(jedis -> {
@@ -104,7 +103,7 @@ public class ClauDBTest {
   }
 
   @Test
-  public void testNotExist() {
+  void testNotExist() {
     String script = "if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
 
     execute(jedis -> {

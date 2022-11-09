@@ -10,12 +10,13 @@ import static java.util.Collections.unmodifiableSet;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import org.junit.Test;
 
-public class SortedSetTest {
+import org.junit.jupiter.api.Test;
+
+class SortedSetTest {
 
   @Test
-  public void testSet() {
+  void testSet() {
     SortedSet set = new SortedSet();
 
     assertThat(set.add(score(1, safeString("a"))), is(true));
@@ -37,7 +38,7 @@ public class SortedSetTest {
   }
 
   @Test
-  public void testEquals() {
+  void testEquals() {
     SortedSet setA = new SortedSet();
     setA.add(score(1, safeString("a")));
     setA.add(score(2, safeString("b")));
@@ -51,7 +52,7 @@ public class SortedSetTest {
   }
 
   @Test
-  public void testNotEquals() {
+  void testNotEquals() {
     SortedSet setA = new SortedSet();
     setA.add(score(1, safeString("a")));
 
@@ -63,7 +64,7 @@ public class SortedSetTest {
   }
 
   @Test
-  public void testScore() {
+  void testScore() {
     SortedSet set = new SortedSet();
     set.add(score(1, safeString("a")));
     set.add(score(2, safeString("b")));

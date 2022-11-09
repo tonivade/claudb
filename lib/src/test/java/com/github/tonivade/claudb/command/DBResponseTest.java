@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016-2022, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
+ * Distributed under the terms of the MIT License
+ */
 package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;

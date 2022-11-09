@@ -20,12 +20,12 @@ import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.protocol.RedisToken;
 
 @com.github.tonivade.claudb.junit5.ClauDBTest
-public class DBClientTest {
+class DBClientTest {
   
   static RespServer server = ClauDB.builder().randomPort().build();
 
   @Test
-  public void testClient() {
+  void testClient() {
     ArgumentCaptor<RedisToken> captor = ArgumentCaptor.forClass(RedisToken.class);
 
     RespCallback callback = mock(RespCallback.class);
