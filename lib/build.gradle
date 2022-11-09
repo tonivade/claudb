@@ -1,9 +1,9 @@
 plugins {
-  id "me.champeau.gradle.jmh" version "0.5.3"
+  id "me.champeau.jmh" version "0.6.8"
 }
 
 jmh {
-  duplicateClassesStrategy = 'warn'
+  duplicateClassesStrategy = DuplicatesStrategy.WARN
   threads = 5
   iterations = 10
   warmupIterations = 1

@@ -5,6 +5,7 @@ plugins {
   id 'maven-publish'
   id 'signing'
   id 'io.github.gradle-nexus.publish-plugin' version "${nexusVersion}"
+  id 'com.github.ben-manes.versions' version "$versionsVersion"
 }
 
 dependencies {
