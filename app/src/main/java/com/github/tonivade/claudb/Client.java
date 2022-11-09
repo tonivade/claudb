@@ -17,6 +17,7 @@ import com.github.tonivade.resp.RespCallback;
 import com.github.tonivade.resp.RespClient;
 import com.github.tonivade.resp.protocol.RedisToken;
 
+import joptsimple.BuiltinHelpFormatter;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -57,14 +58,17 @@ public class Client implements RespCallback {
 
   public static void main(String[] args) throws Exception {
     OptionParser parser = new OptionParser();
+    parser.formatHelpWith(new BuiltinHelpFormatter(100, 2));
     OptionSpec<Void> help = parser.accepts("help", "print help");
-    OptionSpec<String> host = parser.accepts("h", "host")
-            .withRequiredArg()
-            .defaultsTo(ClauDB.DEFAULT_HOST);
-    OptionSpec<Integer> port = parser.accepts("p", "port")
+    OptionSpec<String> host = parser.accepts("h", "server name")
+        .withRequiredArg()
+        .defaultsTo(DBServerContext.DEFAULT_HOST)
+        .describedAs("name");
+    OptionSpec<Integer> port = parser.accepts("p", "server port")
         .withRequiredArg()
         .ofType(Integer.class)
-        .defaultsTo(DBServerContext.DEFAULT_PORT);
+        .defaultsTo(DBServerContext.DEFAULT_PORT)
+        .describedAs("port");
 
     OptionSet options;
     try {

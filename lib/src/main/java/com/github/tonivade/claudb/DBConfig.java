@@ -6,9 +6,10 @@ package com.github.tonivade.claudb;
 
 public class DBConfig {
 
-  private static final int DEFAULT_CLEAN_PERIOD = 30;
-  private static final int DEFAULT_DATABASES = 10;
-  private static final int DEFAULT_SEGMENTS = 16;
+  public static final int DEFAULT_CLEAN_PERIOD = 30;
+  public static final int DEFAULT_DATABASES = 10;
+  public static final int DEFAULT_SEGMENTS = 16;
+  public static final String DEFAULT_FILENAME = "./claudb.data";
 
   private int numDatabases = DEFAULT_DATABASES;
   private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
@@ -17,7 +18,7 @@ public class DBConfig {
   private boolean notificationsActive;
   private boolean offHeapActive;
 
-  private String fileName;
+  private String fileName = DEFAULT_FILENAME;
   private int cacheConcurrency = DEFAULT_SEGMENTS;
 
   public boolean isPersistenceActive() {
@@ -86,6 +87,11 @@ public class DBConfig {
 
     public Builder withoutPersistence() {
       config.setPersistenceActive(false);
+      return this;
+    }
+
+    public Builder withPersistence() {
+      config.setPersistenceActive(true);
       return this;
     }
 

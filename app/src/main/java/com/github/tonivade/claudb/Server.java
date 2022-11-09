@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.claudb;
 
+import static com.github.tonivade.claudb.DBConfig.DEFAULT_FILENAME;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +14,7 @@ import java.util.stream.Stream;
 
 import com.github.tonivade.resp.RespServer;
 
+import joptsimple.BuiltinHelpFormatter;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -19,22 +22,26 @@ import joptsimple.OptionSpec;
 
 public class Server {
 
-  private static final String DEFAULT_FILENAME = "./claudb.data";
-
   public static void main(String[] args) throws IOException {
     OptionParser parser = new OptionParser();
+    parser.formatHelpWith(new BuiltinHelpFormatter(100, 2));
     OptionSpec<Void> help = parser.accepts("help", "print help");
-    OptionSpec<Void> verbose = parser.accepts("V", "verbose");
-    OptionSpec<String> persist = parser.accepts("P", "persistence (experimental)").withOptionalArg().defaultsTo(DEFAULT_FILENAME);
-    OptionSpec<Void> offHeap = parser.accepts("O", "off heap memory (experimental)");
-    OptionSpec<Void> notifications = parser.accepts("N", "keyspace notifications (experimental)");
-    OptionSpec<String> host = parser.accepts("h", "host")
+    OptionSpec<Void> verbose = parser.accepts("V", "verbose mode");
+    OptionSpec<String> persist = parser.accepts("P", "enable persistence (experimental)")
+        .withOptionalArg()
+        .defaultsTo(DEFAULT_FILENAME)
+        .describedAs("file name");
+    OptionSpec<Void> offHeap = parser.accepts("O", "enable off heap memory (experimental)");
+    OptionSpec<Void> notifications = parser.accepts("N", "enable keyspace notifications (experimental)");
+    OptionSpec<String> host = parser.accepts("h", "define listen host")
         .withRequiredArg()
-        .defaultsTo(DBServerContext.DEFAULT_HOST);
-    OptionSpec<Integer> port = parser.accepts("p", "port")
+        .defaultsTo(DBServerContext.DEFAULT_HOST)
+        .describedAs("host");
+    OptionSpec<Integer> port = parser.accepts("p", "define listen port")
         .withRequiredArg()
         .ofType(Integer.class)
-        .defaultsTo(DBServerContext.DEFAULT_PORT);
+        .defaultsTo(DBServerContext.DEFAULT_PORT)
+        .describedAs("port");
 
     OptionSet options;
     try {
