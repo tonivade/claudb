@@ -193,16 +193,16 @@ Performance is quite good, not as good as REDIS, but it's good enough for Java.
 This is ClauDB
 
     $ redis-benchmark -t set,get -h localhost -p 7081 -n 100000 -q
-    SET: 47664.44 requests per second
-    GET: 50226.02 requests per second
+    SET: 82576.38 requests per second, p50=0.303 msec
+    GET: 93896.71 requests per second, p50=0.287 msec
     
 And this is REDIS
 
     $ redis-benchmark -t set,get -h localhost -p 6379 -n 100000 -q
-    SET: 97656.24 requests per second
-    GET: 98716.68 requests per second
+    SET: 148148.14 requests per second, p50=0.167 msec
+    GET: 147710.48 requests per second, p50=0.175 msec
     
-In my laptop (intel core i5, with 4G of RAM)
+In my laptop (Intel Core i7-1065G7, with 32G of RAM, running linux)
 
 In the latest version, ClauDB includes an option to use an off heap memory cache. See usage section
 
@@ -224,7 +224,7 @@ Or if you have Gradle installed, just type
     
 Create all-in-one jar
 
-    $ gradle fatJar
+    $ ./gradlew fatJar
 
 ## DOCKER
 
@@ -249,16 +249,16 @@ or using [jgo](https://github.com/scijava/jgo) utility
     
 Parameters:
 
-    Option        Description
-    ------        -----------
-    --help        print help
-    -V            enable verbose log
-    -P            enable persistence (experimental)
-    -O            enable off heap memory (experimental)
-    -N            enable keyspace notifications (experimental)
-    -h <String>   host (default: localhost)
-    -p <Integer>  port (default: 7081) 
-    
+    Option                  Description
+    ------                  -----------
+    -N                      enable keyspace notifications (experimental)
+    -O                      enable off heap memory (experimental)
+    -P [String: file name]  enable persistence (experimental) (default: ./claudb.data)
+    -V                      verbose mode
+    -h <String: host>       define listen host (default: localhost)
+    --help                  print help
+    -p <Integer: port>      define listen port (default: 7081)
+
 Also you can use inside your project using Maven
 
     <dependency>
