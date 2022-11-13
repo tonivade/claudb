@@ -88,6 +88,11 @@ subprojects {
       
         if (project.name == 'claudb-lib') {
           artifactId = 'claudb'
+        } else if (project.name == 'claudb-app') {
+          artifact("${buildDir}/libs/claudb-app-${version}-all.jar") {
+            classifier = 'all'
+            extension = 'jar'
+          }
         }
         
         from components.java

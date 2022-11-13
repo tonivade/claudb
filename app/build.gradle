@@ -29,8 +29,8 @@ task fatJar(type: Jar, dependsOn: compileJava) {
   with jar
 }
 
-artifacts {
-  archives fatJar
+tasks.named('jar') {
+  dependsOn tasks.named('fatJar', Jar)
 }
 
 task downloadGraalvm(type: Download) {
