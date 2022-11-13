@@ -177,14 +177,25 @@ about.
 Now only implements a subset of REDIS commands, but is usable.
 
 ~~ClauDB also supports persistence compatible with REDIS, RDB dumps and AOF journal. It can create
-compatible RDB files you can load in a REDIS server.~~
-
-ClauDB also supports persistence and offheap memory based on H2 [MVStore](http://www.h2database.com/html/mvstore.html).
+compatible RDB files you can load in a REDIS server.~~ Removed since 2.0 version
 
 Now ClauDB support master/slave replication, a master can have multiple slaves, but at the moment
 slaves can't have slaves.
 
 Also implements partially the Pub/Sub subsystem.
+
+## Changes in 2.0 version
+
+The RDB file format support has been dropped and replaced with h2 [MVStore](http://www.h2database.com/html/mvstore.html).
+
+This allows ClauDB to have file persistence and off heap memory support.
+
+Another important change, now ClauDB has been splited in several subprojects:
+
+  - claudb-lib: implementation of the server and commands.
+  - claudb-app: command line application to run standalone server and client.
+  - claudb-junit4: implements a Junit4 compatible @Rule to use in junit4 based tests. [Example](https://github.com/tonivade/claudb/blob/master/junit4/src/test/java/com/github/tonivade/claudb/junit4/TestJunit4Rule.java)
+  - claudb-junit5: implements a Junit5 compatible extension to use in junit5 based tests. [Example](https://github.com/tonivade/claudb/blob/master/junit5/src/test/java/com/github/tonivade/claudb/junit5/TestJunit5Extension.java)
 
 ## Performance
 
@@ -203,8 +214,6 @@ And this is REDIS
     GET: 147710.48 requests per second, p50=0.175 msec
     
 In my laptop (Intel Core i7-1065G7, with 32G of RAM, running linux)
-
-In the latest version, ClauDB includes an option to use an off heap memory cache. See usage section
 
 ## BUILD
 
@@ -240,12 +249,12 @@ And then run the image
 
 You can start a new server listening in default port 7081.
 
-    $ wget https://repo1.maven.org/maven2/com/github/tonivade/claudb/1.8.1/claudb-1.8.1-all.jar
-    $ java -jar claudb-1.8.1-all.jar
+    $ wget https://repo1.maven.org/maven2/com/github/tonivade/claudb-app/2.0/claudb-app-2.0-all.jar
+    $ java -jar claudb-2.0-all.jar
 
 or using [jgo](https://github.com/scijava/jgo) utility
 
-    $ jgo com.github.tonivade:claudb:1.8.1:com.github.tonivade.claudb.Server
+    $ jgo com.github.tonivade:claudb-app:2.0:com.github.tonivade.claudb.Server
     
 Parameters:
 
@@ -264,12 +273,12 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>claudb</artifactId>
-        <version>1.8.1</version>
+        <version>2.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:claudb:1.8.1'
+    compile 'com.github.tonivade:claudb:2.0'
 
 Or embed in your source code
 
