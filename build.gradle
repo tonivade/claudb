@@ -44,6 +44,11 @@ allprojects {
   
   ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
+  java {
+    withJavadocJar()
+    withSourcesJar()
+  }
+
   jacoco {
     toolVersion = jacocoVersion
   }
