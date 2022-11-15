@@ -91,7 +91,7 @@ public class EvalCommandTest {
     rule.withCommand("ping", request -> status("PONG"))
         .withParams("return redis.call('ping')", "0")
         .execute()
-        .assertThat(string("PONG"));
+        .assertThat(status("PONG"));
   }
 
   @Test

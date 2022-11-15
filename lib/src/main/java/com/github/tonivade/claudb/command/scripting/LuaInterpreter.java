@@ -31,7 +31,7 @@ import org.luaj.vm2.script.LuajContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class LuaInterpreter {
+final class LuaInterpreter implements Interpreter {
 
   private static final Logger log = LoggerFactory.getLogger(LuaInterpreter.class);
 
@@ -41,10 +41,11 @@ public final class LuaInterpreter {
     this.redis = requireNonNull(binding);
   }
 
-  public static LuaInterpreter buildFor(Request request) {
+  static LuaInterpreter buildFor(Request request) {
     return new LuaInterpreter(createBinding(request));
   }
 
+  @Override
   public RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
@@ -75,7 +76,8 @@ public final class LuaInterpreter {
 
   private LuaValue createBinding(LuaRedisBinding redis) {
     LuaTable binding = LuaValue.tableOf();
-    binding.set("call", redis);
+    binding.set("call", redis.call());
+    binding.set("pcall", redis.pcall());
     return binding;
   }
 
@@ -104,6 +106,9 @@ public final class LuaInterpreter {
     List<RedisToken> tokens = new ArrayList<>();
     if (value.keyCount() == 1 && value.get("ok") != LuaValue.NIL) {
       return status(value.get("ok").checkjstring());
+    }
+    if (value.keyCount() == 1 && value.get("error") != LuaValue.NIL) {
+      return error(value.get("error").checkjstring());
     }
     for (LuaValue key : value.keys()) {
       tokens.add(convert(value.get(key)));

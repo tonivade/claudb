@@ -11,6 +11,10 @@ public class DBConfig {
   public static final int DEFAULT_SEGMENTS = 16;
   public static final String DEFAULT_FILENAME = "./claudb.data";
 
+  public enum Engine {
+    LUAJ, SCHEME
+  }
+
   private int numDatabases = DEFAULT_DATABASES;
   private int cleanPeriod = DEFAULT_CLEAN_PERIOD;
 
@@ -20,6 +24,8 @@ public class DBConfig {
 
   private String fileName = DEFAULT_FILENAME;
   private int cacheConcurrency = DEFAULT_SEGMENTS;
+
+  private Engine engine = Engine.LUAJ;
 
   public boolean isPersistenceActive() {
     return persistenceActive;
@@ -68,13 +74,21 @@ public class DBConfig {
   public String getFileName() {
     return fileName;
   }
-  
+
   public void setCacheConcurrency(int cacheConcurrency) {
     this.cacheConcurrency = cacheConcurrency;
   }
 
   public int getCacheConcurrency() {
     return cacheConcurrency;
+  }
+
+  public void setEngine(Engine engine) {
+    this.engine = engine;
+  }
+
+  public Engine getEngine() {
+    return engine;
   }
 
   public static Builder builder() {
@@ -108,6 +122,11 @@ public class DBConfig {
 
     public Builder withNotifications() {
       config.setNotificationsActive(true);
+      return this;
+    }
+
+    public Builder withEngine(Engine engine) {
+      config.setEngine(engine);
       return this;
     }
 

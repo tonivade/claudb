@@ -18,6 +18,7 @@ import org.luaj.vm2.lib.VarArgFunction;
 
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ErrorRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.IntegerRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.StatusRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
@@ -25,7 +26,10 @@ import com.github.tonivade.resp.protocol.AbstractRedisToken.UnknownRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class LuaRedisBinding extends VarArgFunction {
+public class LuaRedisBinding {
+
+  private static final String ERROR = "error";
+  private static final String OK = "ok";
 
   private final RedisLibrary redis;
 
@@ -33,9 +37,22 @@ public class LuaRedisBinding extends VarArgFunction {
     this.redis = requireNonNull(redis);
   }
 
-  @Override
-  public Varargs invoke(Varargs args) {
-    return convert(redis.call(readCommand(args), readArguments(args)));
+  public VarArgFunction call() {
+    return new VarArgFunction() {
+      @Override
+      public Varargs invoke(Varargs args) {
+        return convert(redis.call(readCommand(args), readArguments(args)));
+      }
+    };
+  }
+
+  public VarArgFunction pcall() {
+    return new VarArgFunction() {
+      @Override
+      public Varargs invoke(Varargs args) {
+        return convert(redis.pcall(readCommand(args), readArguments(args)));
+      }
+    };
   }
 
   private SafeString[] readArguments(Varargs args) {
@@ -66,6 +83,8 @@ public class LuaRedisBinding extends VarArgFunction {
           .then(this::toLuaTable)
         .when(IntegerRedisToken.class)
           .then(this::toLuaNumber)
+        .when(ErrorRedisToken.class)
+          .then(this::toLuaError)
         .when(UnknownRedisToken.class)
           .then(this::toLuaString)
         .apply(token);
@@ -102,7 +121,17 @@ public class LuaRedisBinding extends VarArgFunction {
       return LuaValue.NIL;
     }
     LuaTable table = LuaValue.tableOf();
-    table.set(LuaValue.valueOf("ok"), LuaValue.valueOf(string));
+    table.set(LuaValue.valueOf(OK), LuaValue.valueOf(string));
+    return table;
+  }
+
+  private LuaValue toLuaError(ErrorRedisToken value) {
+    String string = value.getValue();
+    if (string == null) {
+      return LuaValue.NIL;
+    }
+    LuaTable table = LuaValue.tableOf();
+    table.set(LuaValue.valueOf(ERROR), LuaValue.valueOf(string));
     return table;
   }
 

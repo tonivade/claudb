@@ -39,6 +39,7 @@ import io.reactivex.rxjava3.core.Observable;
 
 public final class ClauDB extends RespServerContext implements DBServerContext {
 
+  private static final String INTERPRETER = "interpreter";
   private static final String STATE = "state";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
@@ -257,6 +258,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     DatabaseFactory factory = initFactory();
 
     putValue(STATE, new DBServerState(factory, config.getNumDatabases()));
+    putValue(INTERPRETER, config.getEngine());
 
     initNotifications();
     initCleaner();

@@ -4,9 +4,10 @@
  */
 package com.github.tonivade.claudb.command.scripting;
 
-import static com.github.tonivade.purefun.Function1.fail;
 import static com.github.tonivade.purefun.Function1.identity;
+import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static java.util.Objects.requireNonNull;
 import com.github.tonivade.purefun.Pattern1;
@@ -22,7 +23,7 @@ import gnu.lists.FVector;
 import gnu.lists.GVector;
 import gnu.math.IntNum;
 
-public class SchemeInterpreter {
+class SchemeInterpreter implements Interpreter {
 
   private final SchemeRedisBinding redis;
 
@@ -30,15 +31,17 @@ public class SchemeInterpreter {
     this.redis = requireNonNull(redis);
   }
 
-  public static SchemeInterpreter buildFor(Request request) {
+  static SchemeInterpreter buildFor(Request request) {
     return new SchemeInterpreter(new SchemeRedisBinding(createLibrary(request)));
   }
 
+  @Override
   public RedisToken execute(SafeString script, List<SafeString> keys, List<SafeString> params) {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("scheme");
-      engine.put("call-redis", redis);
+      engine.put("call-redis", redis.call());
+      engine.put("pcall-redis", redis.pcall());
       engine.put("KEYS", toVector(keys));
       engine.put("ARGV", toVector(params));
       return convert(engine.eval(script.toString()));
@@ -52,21 +55,21 @@ public class SchemeInterpreter {
   }
 
   private RedisToken convert(Object eval) {
-    System.out.println(eval);
-    System.out.println(eval.getClass());
     return Pattern1.<Object, RedisToken>build()
       .when(SafeString.class)
         .then(RedisToken::string)
       .when(IntNum.class)
         .then(i -> RedisToken.integer(i.ival))
       .when(Boolean.class)
-        .then(b -> Boolean.TRUE.equals(b) ? RedisToken.integer(1) : nullString())
+        .then(b -> Boolean.TRUE.equals(b) ? integer(1) : nullString())
       .when(GVector.class)
         .then(this::toArray)
       .when(RedisToken.class)
         .then(identity())
       .otherwise()
-        .then(fail(IllegalArgumentException::new))
+        .then(x -> {
+          throw new IllegalArgumentException(x.getClass() + "=" + x);
+        })
       .apply(eval);
   }
 
@@ -75,7 +78,7 @@ public class SchemeInterpreter {
     for (Object object : vector) {
       tokens.add(convert(object));
     }
-    return RedisToken.array(tokens);
+    return array(tokens);
   }
 
   private static RedisLibrary createLibrary(Request request) {

@@ -5,6 +5,7 @@
 package com.github.tonivade.claudb.command.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
@@ -26,6 +27,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SchemeInterpreterTest {
+
   @Mock
   private RedisLibrary redis;
 
@@ -110,5 +112,16 @@ public class SchemeInterpreterTest {
                                            emptyList());
 
     assertThat(token, equalTo(string("hello")));
+  }
+
+  @Test
+  public void pcall() {
+    when(redis.pcall(safeString("echo"), safeString("hello"))).thenReturn(error("message"));
+
+    RedisToken token = interpreter.execute(safeString("(pcall-redis \"echo\" \"hello\")"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(error("message")));
   }
 }

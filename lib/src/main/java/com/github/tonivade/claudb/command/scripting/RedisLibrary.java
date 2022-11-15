@@ -29,6 +29,14 @@ public class RedisLibrary {
     return getCommand(commandName).execute(createRequest(commandName, params));
   }
 
+  public RedisToken pcall(SafeString commandName, SafeString... params) {
+    try {
+      return call(commandName, params);
+    } catch (Exception e) {
+      return RedisToken.error(e.getMessage());
+    }
+  }
+
   private RespCommand getCommand(SafeString commandName) {
     return context.getCommand(commandName.toString());
   }

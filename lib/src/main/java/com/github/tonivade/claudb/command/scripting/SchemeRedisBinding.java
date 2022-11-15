@@ -12,18 +12,30 @@ import java.util.List;
 import gnu.lists.IString;
 import gnu.mapping.ProcedureN;
 
-public class SchemeRedisBinding extends ProcedureN {
+public class SchemeRedisBinding {
 
   private final RedisLibrary redis;
 
   public SchemeRedisBinding(RedisLibrary redis) {
-    super("call-redis");
     this.redis = requireNonNull(redis);
   }
 
-  @Override
-  public Object applyN(Object[] args) throws Throwable {
-    return redis.call(readCommand(args), readArguments(args));
+  public ProcedureN call() {
+    return new ProcedureN() {
+      @Override
+      public Object applyN(Object[] args) {
+        return redis.call(readCommand(args), readArguments(args));
+      }
+    };
+  }
+
+  public ProcedureN pcall() {
+    return new ProcedureN() {
+      @Override
+      public Object applyN(Object[] args) {
+        return redis.pcall(readCommand(args), readArguments(args));
+      }
+    };
   }
 
   private SafeString readCommand(Object[] args) {
