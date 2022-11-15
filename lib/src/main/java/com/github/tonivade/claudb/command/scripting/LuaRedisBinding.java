@@ -61,7 +61,7 @@ public class LuaRedisBinding extends VarArgFunction {
         .when(StringRedisToken.class)
           .then(this::toLuaString)
         .when(StatusRedisToken.class)
-          .then(this::toLuaString)
+          .then(this::toLuaStatus)
         .when(ArrayRedisToken.class)
           .then(this::toLuaTable)
         .when(IntegerRedisToken.class)
@@ -96,12 +96,14 @@ public class LuaRedisBinding extends VarArgFunction {
     return LuaString.valueOf(string.getBytes());
   }
 
-  private LuaValue toLuaString(StatusRedisToken value) {
+  private LuaValue toLuaStatus(StatusRedisToken value) {
     String string = value.getValue();
     if (string == null) {
       return LuaValue.NIL;
     }
-    return LuaString.valueOf(string);
+    LuaTable table = LuaValue.tableOf();
+    table.set(LuaValue.valueOf("ok"), LuaValue.valueOf(string));
+    return table;
   }
 
   private LuaValue toLuaString(UnknownRedisToken value) {

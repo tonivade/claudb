@@ -8,29 +8,32 @@ import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.lang.String.valueOf;
 import static java.util.Objects.requireNonNull;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
-import org.luaj.vm2.LuaBoolean;
-import org.luaj.vm2.LuaNumber;
-import org.luaj.vm2.LuaString;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
-
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.ArrayList;
+import java.util.List;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import org.luaj.vm2.LuaBoolean;
+import org.luaj.vm2.LuaError;
+import org.luaj.vm2.LuaNumber;
+import org.luaj.vm2.LuaString;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.script.LuajContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LuaInterpreter {
+
+  private static final Logger log = LoggerFactory.getLogger(LuaInterpreter.class);
 
   private final LuaRedisBinding redis;
 
@@ -46,13 +49,28 @@ public final class LuaInterpreter {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("luaj");
+      engine.setContext(createContext());
       engine.put("redis", createBinding(redis));
       engine.put("KEYS", toArray(keys));
       engine.put("ARGV", toArray(params));
       return convert(engine.eval(script.toString()));
+    } catch (LuaError e) {
+      log.error("lua error", e);
+      return error(e.getMessage());
     } catch (ScriptException e) {
+      log.error("script error", e);
       return error(e.getMessage());
     }
+  }
+
+  private LuajContext createContext() {
+    LuajContext sandbox = new LuajContext();
+    sandbox.globals.set("package", LuaValue.NIL);
+    sandbox.globals.set("require", LuaValue.NIL);
+    sandbox.globals.set("io", LuaValue.NIL);
+    sandbox.globals.set("os", LuaValue.NIL);
+    sandbox.globals.set("luajava", LuaValue.NIL);
+    return sandbox;
   }
 
   private LuaValue createBinding(LuaRedisBinding redis) {
@@ -84,6 +102,9 @@ public final class LuaInterpreter {
 
   private RedisToken convertLuaTable(LuaTable value) {
     List<RedisToken> tokens = new ArrayList<>();
+    if (value.keyCount() == 1 && value.get("ok") != LuaValue.NIL) {
+      return status(value.get("ok").checkjstring());
+    }
     for (LuaValue key : value.keys()) {
       tokens.add(convert(value.get(key)));
     }

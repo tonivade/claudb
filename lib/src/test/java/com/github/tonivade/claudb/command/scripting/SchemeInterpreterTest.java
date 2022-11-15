@@ -17,7 +17,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -74,9 +73,8 @@ public class SchemeInterpreterTest {
   }
 
   @Test
-  @Ignore
   public void boolTrue() {
-    RedisToken token = interpreter.execute(safeString("true"),
+    RedisToken token = interpreter.execute(safeString("#true"),
                                            emptyList(),
                                            emptyList());
 
@@ -84,9 +82,8 @@ public class SchemeInterpreterTest {
   }
 
   @Test
-  @Ignore
   public void boolFalse() {
-    RedisToken token = interpreter.execute(safeString("false"),
+    RedisToken token = interpreter.execute(safeString("#false"),
                                            emptyList(),
                                            emptyList());
 

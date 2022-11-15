@@ -7,6 +7,7 @@ package com.github.tonivade.claudb.command.scripting;
 import static com.github.tonivade.purefun.Function1.fail;
 import static com.github.tonivade.purefun.Function1.identity;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
+import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static java.util.Objects.requireNonNull;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.command.Request;
@@ -58,6 +59,8 @@ public class SchemeInterpreter {
         .then(RedisToken::string)
       .when(IntNum.class)
         .then(i -> RedisToken.integer(i.ival))
+      .when(Boolean.class)
+        .then(b -> Boolean.TRUE.equals(b) ? RedisToken.integer(1) : nullString())
       .when(GVector.class)
         .then(this::toArray)
       .when(RedisToken.class)

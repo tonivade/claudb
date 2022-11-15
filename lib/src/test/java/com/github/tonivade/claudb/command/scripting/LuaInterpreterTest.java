@@ -13,15 +13,15 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ErrorRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,6 +34,17 @@ public class LuaInterpreterTest {
   @Before
   public void setUp() {
     interpreter = new LuaInterpreter(new LuaRedisBinding(redis));
+  }
+
+  @Test
+  public void sandbox() {
+    RedisToken token = interpreter.execute(safeString("local lines={}\n"
+      + "for line in io.lines('/etc/passwd') do\n"
+      + "table.insert(lines, line)\n"
+      + "end\n"
+      + "return lines"), emptyList(), emptyList());
+
+    assertThat(token, instanceOf(ErrorRedisToken.class));
   }
 
   @Test
