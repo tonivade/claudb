@@ -32,9 +32,9 @@ import com.github.tonivade.resp.protocol.SafeString;
 
 public final class LuaInterpreter {
 
-  private final RedisBinding redis;
+  private final LuaRedisBinding redis;
 
-  protected LuaInterpreter(RedisBinding binding) {
+  protected LuaInterpreter(LuaRedisBinding binding) {
     this.redis = requireNonNull(binding);
   }
 
@@ -55,8 +55,8 @@ public final class LuaInterpreter {
     }
   }
 
-  private LuaValue createBinding(RedisBinding redis) {
-    LuaTable binding = LuaTable.tableOf();
+  private LuaValue createBinding(LuaRedisBinding redis) {
+    LuaTable binding = LuaValue.tableOf();
     binding.set("call", redis);
     return binding;
   }
@@ -111,7 +111,7 @@ public final class LuaInterpreter {
   }
 
   private RedisToken convertBoolean(Boolean value) {
-    return value ? integer(1) : nullString();
+    return Boolean.TRUE.equals(value) ? integer(1) : nullString();
   }
 
   private RedisToken convertUnknown(Object value) {
@@ -122,8 +122,8 @@ public final class LuaInterpreter {
     return keys.stream().map(SafeString::toString).toArray(String[]::new);
   }
 
-  private static RedisBinding createBinding(Request request) {
-    return new RedisBinding(createLibrary(request));
+  private static LuaRedisBinding createBinding(Request request) {
+    return new LuaRedisBinding(createLibrary(request));
   }
 
   private static RedisLibrary createLibrary(Request request) {

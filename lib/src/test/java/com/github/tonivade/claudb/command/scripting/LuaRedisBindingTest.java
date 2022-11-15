@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RedisBindingTest {
+public class LuaRedisBindingTest {
   @Mock
   private RedisLibrary redis;
   @InjectMocks
-  private RedisBinding binding;
+  private LuaRedisBinding binding;
 
   @Test
   public void call() {

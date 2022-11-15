@@ -25,11 +25,11 @@ import com.github.tonivade.resp.protocol.AbstractRedisToken.UnknownRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
-public class RedisBinding extends VarArgFunction {
+public class LuaRedisBinding extends VarArgFunction {
 
   private final RedisLibrary redis;
 
-  public RedisBinding(RedisLibrary redis) {
+  public LuaRedisBinding(RedisLibrary redis) {
     this.redis = requireNonNull(redis);
   }
 
@@ -52,8 +52,7 @@ public class RedisBinding extends VarArgFunction {
     return toSafeString(args.checkstring(1));
   }
 
-  private SafeString toSafeString(LuaString value)
-  {
+  private SafeString toSafeString(LuaString value) {
     return new SafeString(value.m_bytes);
   }
 
