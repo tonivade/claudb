@@ -19,6 +19,7 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import joptsimple.util.EnumConverter;
 
 public class Server {
 
@@ -36,6 +37,7 @@ public class Server {
     OptionSpec<Engine> interpreter = parser.accepts("I", "enable interpreter (experimental)")
         .withOptionalArg()
         .ofType(Engine.class)
+        .withValuesConvertedBy(new EnumConverter<Engine>(Engine.class) {})
         .defaultsTo(Engine.NULL);
     OptionSpec<String> host = parser.accepts("h", "define listen host")
         .withRequiredArg()
