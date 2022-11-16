@@ -12,14 +12,16 @@ import static org.hamcrest.Matchers.is;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import org.junit.jupiter.api.Test;
+import com.github.tonivade.claudb.DBConfig.Engine;
+import com.github.tonivade.claudb.junit5.ClauDBTest;
 import com.github.tonivade.resp.RespServer;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
-@com.github.tonivade.claudb.junit5.ClauDBTest
-class ClauDBTest {
-  
-  static RespServer server = ClauDB.builder().randomPort().build();
+@ClauDBTest
+class ClauDBServerTest {
+
+  static RespServer server = ClauDB.builder().randomPort().withEngine(Engine.LUAJ).build();
 
   @Test
   void testCommands() {

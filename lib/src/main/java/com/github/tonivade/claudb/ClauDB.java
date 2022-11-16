@@ -346,6 +346,11 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
       return this;
     }
 
+    public Builder withEngine(DBConfig.Engine engine) {
+      config.withEngine(engine);
+      return this;
+    }
+
     public Builder config(DBConfig.Builder config) {
       this.config = config;
       return this;

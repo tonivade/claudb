@@ -40,12 +40,15 @@ abstract class AbstractEvalCommand implements DBCommand {
   }
 
   private Interpreter buildInterpreter(Request request) {
-    Engine engine = request.getServerContext().<Engine>getValue(INTERPRETER).getOrElse(Engine.LUAJ);
+    Engine engine = request.getServerContext().<Engine>getValue(INTERPRETER).getOrElse(Engine.NULL);
 
     if (engine == Engine.SCHEME) {
       return SchemeInterpreter.buildFor(request);
     }
-    return LuaInterpreter.buildFor(request);
+    if (engine == Engine.LUAJ) {
+      return LuaInterpreter.buildFor(request);
+    }
+    return Interpreter.nullEngine();
   }
 
   protected abstract Option<SafeString> script(Request request);

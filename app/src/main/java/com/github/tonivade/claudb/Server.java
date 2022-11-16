@@ -5,7 +5,7 @@
 package com.github.tonivade.claudb;
 
 import static com.github.tonivade.claudb.DBConfig.DEFAULT_FILENAME;
-
+import com.github.tonivade.claudb.DBConfig.Engine;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +33,10 @@ public class Server {
         .describedAs("file name");
     OptionSpec<Void> offHeap = parser.accepts("O", "enable off heap memory (experimental)");
     OptionSpec<Void> notifications = parser.accepts("N", "enable keyspace notifications (experimental)");
+    OptionSpec<Engine> interpreter = parser.accepts("I", "enable interpreter (experimental)")
+        .withOptionalArg()
+        .ofType(Engine.class)
+        .defaultsTo(Engine.NULL);
     OptionSpec<String> host = parser.accepts("h", "define listen host")
         .withRequiredArg()
         .defaultsTo(DBServerContext.DEFAULT_HOST)
@@ -57,7 +61,7 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = options.valueOf(port);
-      DBConfig.Builder config = parseConfig(options, persist, offHeap, notifications);
+      DBConfig.Builder config = parseConfig(options, persist, offHeap, notifications, interpreter);
 
       readBanner().forEach(System.out::println);
 
@@ -74,7 +78,7 @@ public class Server {
     return new BufferedReader(new InputStreamReader(banner)).lines();
   }
 
-  private static DBConfig.Builder parseConfig(OptionSet options, OptionSpec<String> persist, OptionSpec<Void> offHeap, OptionSpec<Void> notifications) {
+  private static DBConfig.Builder parseConfig(OptionSet options, OptionSpec<String> persist, OptionSpec<Void> offHeap, OptionSpec<Void> notifications, OptionSpec<Engine> interpreter) {
     DBConfig.Builder builder = DBConfig.builder();
     if (options.has(persist)) {
       builder.withPersistence(options.valueOf(persist));
@@ -84,6 +88,9 @@ public class Server {
     }
     if (options.has(notifications)) {
       builder.withNotifications();
+    }
+    if (options.has(interpreter)) {
+      builder.withEngine(options.valueOf(interpreter));
     }
     return builder;
   }

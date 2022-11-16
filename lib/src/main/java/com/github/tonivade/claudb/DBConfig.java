@@ -12,7 +12,7 @@ public class DBConfig {
   public static final String DEFAULT_FILENAME = "./claudb.data";
 
   public enum Engine {
-    LUAJ, SCHEME
+    LUAJ, SCHEME, NULL
   }
 
   private int numDatabases = DEFAULT_DATABASES;
@@ -25,7 +25,7 @@ public class DBConfig {
   private String fileName = DEFAULT_FILENAME;
   private int cacheConcurrency = DEFAULT_SEGMENTS;
 
-  private Engine engine = Engine.LUAJ;
+  private Engine engine = Engine.NULL;
 
   public boolean isPersistenceActive() {
     return persistenceActive;
