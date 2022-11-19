@@ -7,20 +7,17 @@ package com.github.tonivade.claudb.command.scripting;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static java.lang.Integer.parseInt;
 import static java.util.stream.Collectors.toList;
-
-import java.util.LinkedList;
-import java.util.List;
-import com.github.tonivade.claudb.DBConfig.Engine;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
+import com.github.tonivade.claudb.scripting.Interpreter;
 import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.LinkedList;
+import java.util.List;
 
 abstract class AbstractEvalCommand implements DBCommand {
-
-  private static final String INTERPRETER = "interpreter";
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -36,19 +33,7 @@ abstract class AbstractEvalCommand implements DBCommand {
     List<SafeString> params = request.getParams().stream().skip(2).collect(toList());
     List<SafeString> keys = readParams(numParams, params);
     List<SafeString> argv = readArguments(numParams, params);
-    return buildInterpreter(request).execute(script, keys, argv);
-  }
-
-  private Interpreter buildInterpreter(Request request) {
-    Engine engine = request.getServerContext().<Engine>getValue(INTERPRETER).getOrElse(Engine.NULL);
-
-    if (engine == Engine.SCHEME) {
-      return SchemeInterpreter.buildFor(request);
-    }
-    if (engine == Engine.LUAJ) {
-      return LuaInterpreter.buildFor(request);
-    }
-    return Interpreter.nullEngine();
+    return Interpreter.build(request).execute(script, keys, argv);
   }
 
   protected abstract Option<SafeString> script(Request request);
