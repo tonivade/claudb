@@ -5,6 +5,17 @@
 package com.github.tonivade.claudb.scripting;
 
 import static com.github.tonivade.purefun.Precondition.checkNonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.luaj.vm2.LuaInteger;
+import org.luaj.vm2.LuaString;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
+import org.luaj.vm2.lib.VarArgFunction;
+
 import com.github.tonivade.purefun.Function2;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
@@ -15,14 +26,6 @@ import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.UnknownRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import java.util.ArrayList;
-import java.util.List;
-import org.luaj.vm2.LuaInteger;
-import org.luaj.vm2.LuaString;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.VarArgFunction;
 
 public class LuaRedisBinding {
 

@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.claudb.scripting;
 
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
@@ -11,16 +12,14 @@ import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.lang.String.valueOf;
-import static java.util.Objects.requireNonNull;
-import com.github.tonivade.purefun.Pattern1;
-import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.protocol.RedisToken;
-import com.github.tonivade.resp.protocol.SafeString;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
 import org.luaj.vm2.LuaBoolean;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaNumber;
@@ -31,6 +30,11 @@ import org.luaj.vm2.script.LuajContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tonivade.purefun.Pattern1;
+import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
+
 final class LuaInterpreter implements Interpreter {
 
   private static final Logger log = LoggerFactory.getLogger(LuaInterpreter.class);
@@ -38,7 +42,7 @@ final class LuaInterpreter implements Interpreter {
   private final LuaRedisBinding redis;
 
   protected LuaInterpreter(LuaRedisBinding binding) {
-    this.redis = requireNonNull(binding);
+    this.redis = checkNonNull(binding);
   }
 
   static LuaInterpreter buildFor(Request request) {

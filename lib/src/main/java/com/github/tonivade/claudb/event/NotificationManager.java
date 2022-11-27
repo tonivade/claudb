@@ -4,9 +4,11 @@
  */
 package com.github.tonivade.claudb.event;
 
-import static java.util.Objects.requireNonNull;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.command.pubsub.PatternSubscriptionSupport;
 
@@ -16,7 +18,7 @@ public class NotificationManager implements PatternSubscriptionSupport {
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public NotificationManager(DBServerContext server) {
-    this.server = requireNonNull(server);
+    this.server = checkNonNull(server);
   }
 
   public void start() {

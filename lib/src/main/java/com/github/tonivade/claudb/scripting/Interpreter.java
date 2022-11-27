@@ -12,6 +12,7 @@ import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 import java.util.List;
 
+@FunctionalInterface
 public interface Interpreter {
 
   public static final String CONFIG = "config";

@@ -5,11 +5,14 @@
 package com.github.tonivade.claudb.scripting;
 
 import static com.github.tonivade.purefun.Precondition.checkNonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.tonivade.purefun.Function2;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.protocol.SafeString;
-import java.util.ArrayList;
-import java.util.List;
+
 import gnu.lists.IString;
 import gnu.mapping.ProcedureN;
 

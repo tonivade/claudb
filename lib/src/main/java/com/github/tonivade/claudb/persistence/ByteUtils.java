@@ -6,9 +6,9 @@ package com.github.tonivade.claudb.persistence;
 
 import java.util.function.IntSupplier;
 
-public final class ByteUtils {
+public class ByteUtils {
 
-  public static byte[] toByteArray(long value) {
+  static byte[] toByteArray(long value) {
     byte[] b = new byte[Long.BYTES];
     for (int i = 0; i < b.length; ++i) {
       b[i] = (byte) (value >> (Long.BYTES - i - 1 << 3));
@@ -16,7 +16,7 @@ public final class ByteUtils {
     return b;
   }
 
-  public static byte[] toByteArray(int value) {
+  static byte[] toByteArray(int value) {
     byte[] b = new byte[Integer.BYTES];
     for (int i = 0; i < b.length; ++i) {
       b[i] = (byte) (value >> (Integer.BYTES - i - 1 << 3));
@@ -24,7 +24,7 @@ public final class ByteUtils {
     return b;
   }
 
-  public static long byteArrayToLong(byte[] array) {
+  static long byteArrayToLong(byte[] array) {
     return ((long)array[7] & 0xFF) |
         ((long)(array[6] & 0xFF)) << 8 |
         ((long)(array[5] & 0xFF)) << 16 |
@@ -35,7 +35,7 @@ public final class ByteUtils {
         ((long)(array[0] & 0xFF)) << 56;
   }
 
-  public static int byteArrayToInt(byte[] array) {
+  static int byteArrayToInt(byte[] array) {
     return array[3] & 0xFF |
         (array[2] & 0xFF) << 8 |
         (array[1] & 0xFF) << 16 |

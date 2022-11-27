@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static java.util.Objects.requireNonNull;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 
 public enum DataType {
   STRING("string"),
@@ -17,7 +17,7 @@ public enum DataType {
   private final String text;
 
   DataType(String text) {
-    this.text = requireNonNull(text);
+    this.text = checkNonNull(text);
   }
 
   public String text() {

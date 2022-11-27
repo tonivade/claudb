@@ -4,6 +4,8 @@
  */
 package com.github.tonivade.claudb.data;
 
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
+
 import java.time.Instant;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,8 +27,8 @@ public class DatabaseCleaner {
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
   public DatabaseCleaner(DBServerContext server, DBConfig config) {
-    this.server = server;
-    this.config = config;
+    this.server = checkNonNull(server);
+    this.config = checkNonNull(config);
   }
 
   public void start() {

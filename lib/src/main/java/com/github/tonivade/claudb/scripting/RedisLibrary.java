@@ -4,8 +4,8 @@
  */
 package com.github.tonivade.claudb.scripting;
 
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static com.github.tonivade.purefun.data.Sequence.arrayOf;
-import static java.util.Objects.requireNonNull;
 
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
@@ -21,8 +21,8 @@ public class RedisLibrary {
   private final Session session;
 
   public RedisLibrary(ServerContext context, Session session) {
-    this.context = requireNonNull(context);
-    this.session = requireNonNull(session);
+    this.context = checkNonNull(context);
+    this.session = checkNonNull(session);
   }
 
   public RedisToken call(SafeString commandName, SafeString... params) {

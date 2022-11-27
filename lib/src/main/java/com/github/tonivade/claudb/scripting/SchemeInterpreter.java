@@ -5,30 +5,34 @@
 package com.github.tonivade.claudb.scripting;
 
 import static com.github.tonivade.purefun.Function1.identity;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
-import static java.util.Objects.requireNonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import java.util.ArrayList;
-import java.util.List;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+
 import gnu.lists.FVector;
 import gnu.lists.GVector;
 import gnu.math.IntNum;
 
 class SchemeInterpreter implements Interpreter {
 
-  private final SchemeRedisBinding redis;
+  private final SchemeRedisBinding binding;
 
-  protected SchemeInterpreter(SchemeRedisBinding redis) {
-    this.redis = requireNonNull(redis);
+  protected SchemeInterpreter(SchemeRedisBinding binding) {
+    this.binding = checkNonNull(binding);
   }
 
   static SchemeInterpreter buildFor(Request request) {
@@ -40,8 +44,8 @@ class SchemeInterpreter implements Interpreter {
     try {
       ScriptEngineManager manager = new ScriptEngineManager();
       ScriptEngine engine = manager.getEngineByName("scheme");
-      engine.put("call-redis", redis.call());
-      engine.put("pcall-redis", redis.pcall());
+      engine.put("call-redis", binding.call());
+      engine.put("pcall-redis", binding.pcall());
       engine.put("KEYS", toVector(keys));
       engine.put("ARGV", toVector(params));
       return convert(engine.eval(script.toString()));

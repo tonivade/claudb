@@ -10,6 +10,8 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
+import static com.github.tonivade.purefun.Precondition.checkNonEmpty;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static java.lang.String.valueOf;
 import static java.util.Objects.requireNonNull;
 
@@ -31,6 +33,7 @@ import com.github.tonivade.claudb.command.DBCommandProcessor;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.persistence.ByteBufferInputStream;
+import com.github.tonivade.purefun.Precondition;
 
 public class SlaveReplication implements RespCallback {
 
@@ -52,8 +55,8 @@ public class SlaveReplication implements RespCallback {
   private final int port;
 
   public SlaveReplication(DBServerContext server, Session session, String host, int port) {
-    this.server = requireNonNull(server);
-    this.host = requireNonNull(host);
+    this.server = checkNonNull(server);
+    this.host = checkNonEmpty(host);
     this.port = port;
     this.client = new RespClient(host, port, this);
     this.processor = new DBCommandProcessor(server, session);
