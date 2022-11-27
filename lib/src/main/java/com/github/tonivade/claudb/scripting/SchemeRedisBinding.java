@@ -4,7 +4,8 @@
  */
 package com.github.tonivade.claudb.scripting;
 
-import static java.util.Objects.requireNonNull;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import com.github.tonivade.purefun.Function2;
 import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.protocol.SafeString;
 import java.util.ArrayList;
@@ -17,49 +18,53 @@ public class SchemeRedisBinding {
   private final RedisLibrary redis;
 
   public SchemeRedisBinding(RedisLibrary redis) {
-    this.redis = requireNonNull(redis);
+    this.redis = checkNonNull(redis);
   }
 
   public ProcedureN call() {
-    return new ProcedureN() {
-      @Override
-      public Object applyN(Object[] args) {
-        return redis.call(readCommand(args), readArguments(args));
-      }
-    };
+    return new ProcedureImpl(redis::call);
   }
 
   public ProcedureN pcall() {
-    return new ProcedureN() {
-      @Override
-      public Object applyN(Object[] args) {
-        return redis.pcall(readCommand(args), readArguments(args));
-      }
-    };
+    return new ProcedureImpl(redis::pcall);
   }
 
-  private SafeString readCommand(Object[] args) {
-    return toSafeString(args[0]);
-  }
+  private static final class ProcedureImpl extends ProcedureN {
 
-  private SafeString[] readArguments(Object[] args) {
-    List<SafeString> params = new ArrayList<>();
-    if (args.length > 1) {
-      for (int i = 1; i < args.length; i++) {
-        params.add(toSafeString(args[i]));
-      }
+    private final Function2<SafeString, SafeString[], Object> task;
+
+    private ProcedureImpl(Function2<SafeString, SafeString[], Object> task) {
+      this.task = checkNonNull(task);
     }
-    return params.toArray(new SafeString[0]);
-  }
 
-  private SafeString toSafeString(Object object) {
-    return Pattern1.<Object, SafeString>build()
-      .when(IString.class)
-        .then(s -> SafeString.safeString(s.toString()))
-      .otherwise()
-        .then(x -> {
-          throw new IllegalArgumentException(x.getClass() + "=" + x);
-        })
-      .apply(object);
+    @Override
+    public Object applyN(Object[] args) {
+      return task.apply(readCommand(args), readArguments(args));
+    }
+
+    private SafeString readCommand(Object[] args) {
+      return toSafeString(args[0]);
+    }
+
+    private SafeString[] readArguments(Object[] args) {
+      List<SafeString> params = new ArrayList<>();
+      if (args.length > 1) {
+        for (int i = 1; i < args.length; i++) {
+          params.add(toSafeString(args[i]));
+        }
+      }
+      return params.toArray(new SafeString[0]);
+    }
+
+    private SafeString toSafeString(Object object) {
+      return Pattern1.<Object, SafeString>build()
+        .when(IString.class)
+          .then(s -> SafeString.safeString(s.toString()))
+        .otherwise()
+          .then(x -> {
+            throw new IllegalArgumentException(x.getClass() + "=" + x);
+          })
+        .apply(object);
+    }
   }
 }
