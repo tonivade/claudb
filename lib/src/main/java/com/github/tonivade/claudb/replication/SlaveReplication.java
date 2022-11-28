@@ -13,7 +13,6 @@ import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.purefun.Precondition.checkNonEmpty;
 import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static java.lang.String.valueOf;
-import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +32,6 @@ import com.github.tonivade.claudb.command.DBCommandProcessor;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.persistence.ByteBufferInputStream;
-import com.github.tonivade.purefun.Precondition;
 
 public class SlaveReplication implements RespCallback {
 
@@ -42,7 +40,7 @@ public class SlaveReplication implements RespCallback {
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
 
   private static final String SYNC_COMMAND = "SYNC";
-  
+
   enum State {
     CONNECTED,
     DISCONNECTED
