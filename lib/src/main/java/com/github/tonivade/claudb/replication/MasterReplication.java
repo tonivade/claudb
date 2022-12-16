@@ -4,9 +4,9 @@
  */
 package com.github.tonivade.claudb.replication;
 
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
 import java.util.LinkedList;
@@ -38,7 +38,7 @@ public class MasterReplication implements Runnable {
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
   public MasterReplication(DBServerContext server) {
-    this.server = requireNonNull(server);
+    this.server = checkNonNull(server);
   }
 
   public void start() {

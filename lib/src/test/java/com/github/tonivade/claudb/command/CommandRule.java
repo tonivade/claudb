@@ -19,7 +19,8 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-
+import com.github.tonivade.claudb.DBConfig;
+import com.github.tonivade.claudb.DBConfig.Engine;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.DBSessionState;
@@ -47,6 +48,7 @@ public class CommandRule implements TestRule {
 
   private final DBServerState serverState = new DBServerState(new OnHeapMVDatabaseFactory(), 1);
   private final DBSessionState sessionState = new DBSessionState();
+  private final DBConfig config = DBConfig.builder().withEngine(Engine.LUAJ).build();
 
   private RedisToken response;
 
@@ -94,10 +96,11 @@ public class CommandRule implements TestRule {
         when(session.getValue("state")).thenReturn(Option.some(sessionState));
         when(session.getValue("tx")).thenReturn(Option.none());
         when(session.removeValue("tx")).thenReturn(Option.none());
-        
+
         when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
         when(server.isMaster()).thenReturn(true);
         when(server.getValue("state")).thenReturn(Option.some(serverState));
+        when(server.getValue("config")).thenReturn(Option.some(config));
 
         try (AutoCloseable openMocks = MockitoAnnotations.openMocks(target)) {
           dbCommand = target.getClass().getAnnotation(CommandUnderTest.class).value().getDeclaredConstructor().newInstance();

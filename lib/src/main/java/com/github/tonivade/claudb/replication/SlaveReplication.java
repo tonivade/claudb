@@ -10,8 +10,9 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
+import static com.github.tonivade.purefun.Precondition.checkNonEmpty;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static java.lang.String.valueOf;
-import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ public class SlaveReplication implements RespCallback {
   private static final Logger LOGGER = LoggerFactory.getLogger(SlaveReplication.class);
 
   private static final String SYNC_COMMAND = "SYNC";
-  
+
   enum State {
     CONNECTED,
     DISCONNECTED
@@ -52,8 +53,8 @@ public class SlaveReplication implements RespCallback {
   private final int port;
 
   public SlaveReplication(DBServerContext server, Session session, String host, int port) {
-    this.server = requireNonNull(server);
-    this.host = requireNonNull(host);
+    this.server = checkNonNull(server);
+    this.host = checkNonEmpty(host);
     this.port = port;
     this.client = new RespClient(host, port, this);
     this.processor = new DBCommandProcessor(server, session);

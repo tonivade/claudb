@@ -2,9 +2,10 @@
  * Copyright (c) 2015-2022, Antonio Gabriel Muñoz Conejo <antoniogmc at gmail dot com>
  * Distributed under the terms of the MIT License
  */
-package com.github.tonivade.claudb.command.scripting;
+package com.github.tonivade.claudb.scripting;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
@@ -12,20 +13,21 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.Mockito.when;
-
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ErrorRedisToken;
+import com.github.tonivade.resp.protocol.RedisToken;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import com.github.tonivade.resp.protocol.RedisToken;
-
 @RunWith(MockitoJUnitRunner.class)
 public class LuaInterpreterTest {
+
   @Mock
   private RedisLibrary redis;
 
@@ -33,7 +35,18 @@ public class LuaInterpreterTest {
 
   @Before
   public void setUp() {
-    interpreter = new LuaInterpreter(new RedisBinding(redis));
+    interpreter = new LuaInterpreter(new LuaRedisBinding(redis));
+  }
+
+  @Test
+  public void sandbox() {
+    RedisToken token = interpreter.execute(safeString("local lines={}\n"
+      + "for line in io.lines('/etc/passwd') do\n"
+      + "table.insert(lines, line)\n"
+      + "end\n"
+      + "return lines"), emptyList(), emptyList());
+
+    assertThat(token, instanceOf(ErrorRedisToken.class));
   }
 
   @Test
@@ -98,7 +111,7 @@ public class LuaInterpreterTest {
                                            emptyList(),
                                            emptyList());
 
-    assertThat(token, equalTo(string("PONG")));
+    assertThat(token, equalTo(status("PONG")));
   }
 
   @Test
@@ -110,6 +123,17 @@ public class LuaInterpreterTest {
                                            emptyList());
 
     assertThat(token, equalTo(string("hello")));
+  }
+
+  @Test
+  public void pcall() {
+    when(redis.pcall(safeString("echo"), safeString("hello"))).thenReturn(error("message"));
+
+    RedisToken token = interpreter.execute(safeString("return redis.pcall('echo', 'hello')"),
+                                           emptyList(),
+                                           emptyList());
+
+    assertThat(token, equalTo(error("message")));
   }
 
 }

@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.event;
 
-import static java.util.Objects.requireNonNull;
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 
 import java.util.Objects;
 
@@ -23,8 +23,8 @@ public abstract class Event {
   private final int schema;
 
   protected Event(SafeString command, SafeString key, int schema) {
-    this.command = requireNonNull(command);
-    this.key = requireNonNull(key);
+    this.command = checkNonNull(command);
+    this.key = checkNonNull(key);
     this.schema = schema;
   }
 

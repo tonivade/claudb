@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.claudb;
 
+import static com.github.tonivade.purefun.Precondition.checkNonNull;
 import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -39,6 +40,7 @@ import io.reactivex.rxjava3.core.Observable;
 
 public final class ClauDB extends RespServerContext implements DBServerContext {
 
+  private static final String CONFIG = "config";
   private static final String STATE = "state";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
@@ -58,7 +60,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   public ClauDB(String host, int port, DBConfig config) {
     super(host, port, new DBCommandSuite(), new DBSessionListener());
-    this.config = config;
+    this.config = checkNonNull(config);
   }
 
   public static ClauDB.Builder builder() {
@@ -257,6 +259,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     DatabaseFactory factory = initFactory();
 
     putValue(STATE, new DBServerState(factory, config.getNumDatabases()));
+    putValue(CONFIG, config);
 
     initNotifications();
     initCleaner();
@@ -341,6 +344,11 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
     public Builder withNotifications() {
       config.withNotifications();
+      return this;
+    }
+
+    public Builder withEngine(DBConfig.Engine engine) {
+      config.withEngine(engine);
       return this;
     }
 
