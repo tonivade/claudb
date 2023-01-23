@@ -5,14 +5,12 @@
 package com.github.tonivade.claudb.command;
 
 import java.util.Collection;
-
+import java.util.Optional;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.Sequence;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
@@ -31,18 +29,18 @@ public interface DBCommand {
   }
 
   default DBServerState getServerState(ServerContext server) {
-    return serverState(server).getOrElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   default DBSessionState getSessionState(Session session) {
-    return sessionState(session).getOrElseThrow(() -> new IllegalStateException("missiong session state"));
+    return sessionState(session).orElseThrow(() -> new IllegalStateException("missiong session state"));
   }
 
-  default Option<DBServerState> serverState(ServerContext server) {
+  default Optional<DBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  default Option<DBSessionState> sessionState(Session session) {
+  default Optional<DBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 
@@ -52,9 +50,5 @@ public interface DBCommand {
 
   default RedisToken convert(Collection<?> list) {
     return DBResponse.convertArray(list);
-  }
-
-  default RedisToken convert(Sequence<?> list) {
-    return DBResponse.convertArray(list.asList().toList());
   }
 }

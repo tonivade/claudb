@@ -6,20 +6,18 @@ package com.github.tonivade.claudb.command;
 
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
+import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
-
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.NavigableSet;
-import java.util.stream.Stream;
-
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Pattern1;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.stream.Stream;
 
 class DBResponse {
 
@@ -28,16 +26,16 @@ class DBResponse {
       switch (value.getType()) {
       case STRING:
           SafeString string = value.getString();
-          return RedisToken.string(string);
+          return string(string);
       case HASH:
-          ImmutableMap<SafeString, SafeString> map = value.getHash();
-          return array(keyValueList(map).toList());
+          Map<SafeString, SafeString> map = value.getHash();
+          return array(keyValueList(map));
       case LIST:
-          ImmutableList<SafeString> list = value.getList();
-          return convertArray(list.toList());
+          List<SafeString> list = value.getList();
+          return convertArray(list);
       case SET:
-          ImmutableSet<SafeString> set = value.getSet();
-          return convertArray(set.toSet());
+          Set<SafeString> set = value.getSet();
+          return convertArray(set);
       case ZSET:
           NavigableSet<Entry<Double, SafeString>> zset = value.getSortedSet();
           return convertArray(serialize(zset));
@@ -56,30 +54,34 @@ class DBResponse {
   }
 
   private static RedisToken parseToken(Object value) {
-    return Pattern1.<Object, RedisToken>build()
-        .when(Integer.class)
-          .then(RedisToken::integer)
-        .when(Boolean.class)
-          .then(RedisToken::integer)
-        .when(String.class)
-          .then(RedisToken::string)
-        .when(Double.class)
-          .then(d -> RedisToken.string(d.toString()))
-        .when(SafeString.class)
-          .then(RedisToken::string)
-        .when(DatabaseValue.class)
-          .then(DBResponse::convertValue)
-        .when(RedisToken.class)
-          .then(token -> token)
-        .otherwise()
-          .returns(nullString())
-        .apply(value);
+    if (value instanceof Integer) {
+      return RedisToken.integer((Integer) value);
+    }
+    if (value instanceof Boolean) {
+      return RedisToken.integer((Boolean) value);
+    }
+    if (value instanceof String) {
+      return RedisToken.string((String) value);
+    }
+    if (value instanceof Double) {
+      return RedisToken.string(value.toString());
+    }
+    if (value instanceof SafeString) {
+      return RedisToken.string((SafeString) value);
+    }
+    if (value instanceof DatabaseValue) {
+      return convertValue((DatabaseValue) value);
+    }
+    if (value instanceof RedisToken) {
+      return (RedisToken) value;
+    }
+    return nullString();
   }
 
-  private static ImmutableList<RedisToken> keyValueList(ImmutableMap<SafeString, SafeString> map) {
-    return ImmutableList.from(map.entries().stream()
-        .flatMap(entry -> Stream.of(entry.get1(), entry.get2()))
-        .map(RedisToken::string));
+  private static List<RedisToken> keyValueList(Map<SafeString, SafeString> map) {
+    return map.entrySet().stream()
+        .flatMap(entry -> Stream.of(entry.getKey(), entry.getValue()))
+        .map(RedisToken::string).collect(toList());
   }
 
   private static Collection<?> serialize(NavigableSet<Entry<Double, SafeString>> set) {

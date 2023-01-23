@@ -6,7 +6,7 @@ package com.github.tonivade.claudb.persistence;
 
 import static com.github.tonivade.claudb.persistence.ByteUtils.lengthToByteArray;
 import static com.github.tonivade.claudb.persistence.ByteUtils.toByteArray;
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.io.IOException;
@@ -14,18 +14,16 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.zip.CheckedOutputStream;
 
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBOutputStream {
@@ -42,7 +40,7 @@ public class RDBOutputStream {
   public RDBOutputStream(OutputStream out) {
     this.out = new CheckedOutputStream(checkNonNull(out), new CRC64());
   }
-  
+
   public void write(List<Database> databases) throws IOException {
     preamble(RDB_VERSION);
     for (int i = 0; i < databases.size(); i++) {
@@ -74,8 +72,8 @@ public class RDBOutputStream {
   }
 
   void dabatase(Database db) throws IOException {
-    for (Tuple2<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
-      value(entry.get1(), entry.get2());
+    for (Map.Entry<DatabaseKey, DatabaseValue> entry : db.entrySet()) {
+      value(entry.getKey(), entry.getValue());
     }
   }
 
@@ -141,22 +139,22 @@ public class RDBOutputStream {
     string(String.valueOf(value));
   }
 
-  private void list(ImmutableList<SafeString> value) throws IOException {
+  private void list(List<SafeString> value) throws IOException {
     length(value.size());
     for (SafeString item : value) {
       string(item);
     }
   }
 
-  private void hash(ImmutableMap<SafeString, SafeString> value) throws IOException {
+  private void hash(Map<SafeString, SafeString> value) throws IOException {
     length(value.size());
-    for (Tuple2<SafeString, SafeString> entry : value.entries()) {
-      string(entry.get1());
-      string(entry.get2());
+    for (Map.Entry<SafeString, SafeString> entry : value.entrySet()) {
+      string(entry.getKey());
+      string(entry.getValue());
     }
   }
 
-  private void set(ImmutableSet<SafeString> value) throws IOException {
+  private void set(Set<SafeString> value) throws IOException {
     length(value.size());
     for (SafeString item : value) {
       string(item);

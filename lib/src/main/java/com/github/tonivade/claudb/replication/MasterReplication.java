@@ -4,13 +4,14 @@
  */
 package com.github.tonivade.claudb.replication;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisTokenVisitor;
 import com.github.tonivade.resp.protocol.RedisToken;
@@ -107,10 +107,10 @@ public class MasterReplication implements Runnable {
   }
 
   private DBServerState getServerState() {
-    return serverState().getOrElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private Option<DBServerState> serverState() {
+  private Optional<DBServerState> serverState() {
     return server.getValue("state");
   }
 }

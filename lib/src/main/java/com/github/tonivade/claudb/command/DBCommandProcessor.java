@@ -8,15 +8,12 @@ import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.visit;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-
+import java.util.Collection;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.tonivade.claudb.DBServerContext;
-import com.github.tonivade.purefun.data.ImmutableArray;
-import com.github.tonivade.purefun.data.Sequence;
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.DefaultSession;
 import com.github.tonivade.resp.command.Request;
@@ -44,7 +41,7 @@ public class DBCommandProcessor {
   }
 
   public void processCommand(ArrayRedisToken token) {
-    Sequence<RedisToken> array = token.getValue();
+    Collection<RedisToken> array = token.getValue();
     StringRedisToken commandToken = (StringRedisToken) array.stream().findFirst().orElse(nullString());
     List<RedisToken> paramTokens = array.stream().skip(1).collect(toList());
 
@@ -61,9 +58,9 @@ public class DBCommandProcessor {
     return new DefaultRequest(server, session, commandToken.getValue(), arrayToList(array));
   }
 
-  private ImmutableArray<SafeString> arrayToList(List<RedisToken> request) {
+  private List<SafeString> arrayToList(List<RedisToken> request) {
     RedisTokenVisitor<SafeString> visitor = RedisTokenVisitor.<SafeString>builder()
         .onString(StringRedisToken::getValue).build();
-    return ImmutableArray.from(visit(request.stream(), visitor));
+    return visit(request.stream(), visitor).collect(toList());
   }
 }

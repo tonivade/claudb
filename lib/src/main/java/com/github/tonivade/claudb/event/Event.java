@@ -4,12 +4,10 @@
  */
 package com.github.tonivade.claudb.event;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
-
-import java.util.Objects;
-
-import com.github.tonivade.purefun.Equal;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.resp.util.Equal;
+import java.util.Objects;
 
 public abstract class Event {
 

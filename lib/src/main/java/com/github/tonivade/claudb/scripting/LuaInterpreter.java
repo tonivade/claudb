@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.scripting;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
@@ -30,7 +30,6 @@ import org.luaj.vm2.script.LuajContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
@@ -86,24 +85,28 @@ final class LuaInterpreter implements Interpreter {
   }
 
   private RedisToken convert(Object result) {
-    return Pattern1.<Object, RedisToken>build()
-        .when(LuaTable.class)
-          .then(this::convertLuaTable)
-        .when(LuaNumber.class)
-          .then(this::convertLuaNumber)
-        .when(LuaBoolean.class)
-          .then(this::convertLuaBoolean)
-        .when(LuaString.class)
-          .then(this::convertLuaString)
-        .when(Number.class)
-          .then(this::convertNumber)
-        .when(String.class)
-          .then(this::convertString)
-        .when(Boolean.class)
-          .then(this::convertBoolean)
-        .otherwise()
-          .then(this::convertUnknown)
-        .apply(result);
+    if (result instanceof LuaTable) {
+      return convertLuaTable((LuaTable) result);
+    }
+    if (result instanceof LuaNumber) {
+      return convertLuaNumber((LuaNumber) result);
+    }
+    if (result instanceof LuaBoolean) {
+      return convertLuaBoolean((LuaBoolean) result);
+    }
+    if (result instanceof LuaString) {
+      return convertLuaString((LuaString) result);
+    }
+    if (result instanceof Number) {
+      return convertNumber((Number) result);
+    }
+    if (result instanceof String) {
+      return convertString((String) result);
+    }
+    if (result instanceof Boolean) {
+      return convertBoolean((Boolean) result);
+    }
+    return convertUnknown(result);
   }
 
   private RedisToken convertLuaTable(LuaTable value) {

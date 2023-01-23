@@ -4,22 +4,22 @@
  */
 package com.github.tonivade.claudb.command.key;
 
-import java.time.Instant;
-
+import static java.util.stream.Collectors.toSet;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.glob.GlobPattern;
-import com.github.tonivade.purefun.Matcher1;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.time.Instant;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
 
 @ReadOnly
 @Command("keys")
@@ -29,11 +29,12 @@ public class KeysCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     GlobPattern pattern = createPattern(request.getParam(0));
-    ImmutableSet<SafeString> keys = db.entrySet()
+    Set<SafeString> keys = db.entrySet().stream()
         .filter(matchPattern(pattern))
         .filter(filterExpired(Instant.now()).negate())
-        .map(Tuple2::get1)
-        .map(DatabaseKey::getValue);
+        .map(Map.Entry::getKey)
+        .map(DatabaseKey::getValue)
+        .collect(toSet());
     return convert(keys);
   }
 
@@ -41,11 +42,11 @@ public class KeysCommand implements DBCommand {
     return new GlobPattern(param.toString());
   }
 
-  private Matcher1<Tuple2<DatabaseKey, DatabaseValue>> filterExpired(Instant now) {
-    return entry -> entry.get2().isExpired(now);
+  private Predicate<Map.Entry<DatabaseKey, DatabaseValue>> filterExpired(Instant now) {
+    return entry -> entry.getValue().isExpired(now);
   }
 
-  private Matcher1<Tuple2<DatabaseKey, DatabaseValue>> matchPattern(GlobPattern pattern) {
-    return entry -> pattern.match(entry.get1().toString());
+  private Predicate<Map.Entry<DatabaseKey, DatabaseValue>> matchPattern(GlobPattern pattern) {
+    return entry -> pattern.match(entry.getKey().toString());
   }
 }

@@ -26,12 +26,12 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandWrapperTest {
@@ -53,9 +53,9 @@ public class CommandWrapperTest {
     when(request.getSession()).thenReturn(session);
     when(request.getServerContext()).thenReturn(server);
     when(request.getCommand()).thenReturn("test");
-    when(session.getValue("state")).thenReturn(Option.some(sessionState));
-    when(session.getValue("tx")).thenReturn(Option.none());
-    when(server.getValue("state")).thenReturn(Option.some(serverState));
+    when(session.getValue("state")).thenReturn(Optional.of(sessionState));
+    when(session.getValue("tx")).thenReturn(Optional.empty());
+    when(server.getValue("state")).thenReturn(Optional.of(serverState));
     when(sessionState.getCurrentDB()).thenReturn(1);
     when(serverState.getDatabase(1)).thenReturn(db);
   }

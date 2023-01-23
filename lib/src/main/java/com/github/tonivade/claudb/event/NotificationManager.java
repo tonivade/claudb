@@ -4,7 +4,7 @@
  */
 package com.github.tonivade.claudb.event;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

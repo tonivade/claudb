@@ -17,13 +17,13 @@ import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.command.annotation.TxIgnore;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
+import java.util.Optional;
 
 public class DBCommandWrapper implements RespCommand {
 
@@ -102,7 +102,7 @@ public class DBCommandWrapper implements RespCommand {
     return getTransactionState(request.getSession()).isPresent();
   }
 
-  private Option<TransactionState> getTransactionState(Session session) {
+  private Optional<TransactionState> getTransactionState(Session session) {
     return session.getValue("tx");
   }
 
@@ -113,18 +113,18 @@ public class DBCommandWrapper implements RespCommand {
   }
 
   private DBServerState getServerState(ServerContext server) {
-    return serverState(server).getOrElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
   private DBSessionState getSessionState(Session session) {
-    return sessionState(session).getOrElseThrow(() -> new IllegalStateException("missing session state"));
+    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Option<DBServerState> serverState(ServerContext server) {
+  private Optional<DBServerState> serverState(ServerContext server) {
     return server.getValue("state");
   }
 
-  private Option<DBSessionState> sessionState(Session session) {
+  private Optional<DBSessionState> sessionState(Session session) {
     return session.getValue("state");
   }
 

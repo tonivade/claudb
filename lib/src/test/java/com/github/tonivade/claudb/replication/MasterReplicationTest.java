@@ -4,7 +4,6 @@
  */
 package com.github.tonivade.claudb.replication;
 
-import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
@@ -23,8 +22,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.protocol.RedisToken;
+import java.util.Collections;
+import java.util.Optional;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MasterReplicationTest {
@@ -39,8 +39,8 @@ public class MasterReplicationTest {
 
   @Test
   public void testReplication()  {
-    when(server.getCommandsToReplicate()).thenReturn(listOf(request()));
-    when(server.getValue("state")).thenReturn(Option.some(serverState));
+    when(server.getCommandsToReplicate()).thenReturn(Collections.singletonList(request()));
+    when(server.getValue("state")).thenReturn(Optional.of(serverState));
 
     master.addSlave("slave:1");
     master.addSlave("slave:2");

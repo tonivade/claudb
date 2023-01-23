@@ -4,10 +4,9 @@
  */
 package com.github.tonivade.claudb;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
-import static com.github.tonivade.purefun.data.Sequence.listOf;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static java.lang.String.valueOf;
 import com.github.tonivade.claudb.command.DBCommandSuite;
 import com.github.tonivade.claudb.data.Database;
@@ -18,10 +17,6 @@ import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
 import com.github.tonivade.claudb.data.PersistentMVDatabaseFactory;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
-import com.github.tonivade.purefun.Recoverable;
-import com.github.tonivade.purefun.data.ImmutableArray;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.RespServer;
 import com.github.tonivade.resp.RespServerContext;
 import com.github.tonivade.resp.SessionListener;
@@ -29,11 +24,16 @@ import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.resp.util.Recoverable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.reactivex.rxjava3.core.Observable;
@@ -46,7 +46,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   private static final Logger LOGGER = LoggerFactory.getLogger(ClauDB.class);
 
   private DatabaseCleaner cleaner;
-  private Option<NotificationManager> notifications;
+  private Optional<NotificationManager> notifications;
 
   private final DBConfig config;
 
@@ -93,8 +93,8 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   @Override
-  public ImmutableList<RedisToken> getCommandsToReplicate() {
-    return executeOn(Observable.<ImmutableList<RedisToken>>create(observable -> {
+  public List<RedisToken> getCommandsToReplicate() {
+    return executeOn(Observable.<List<RedisToken>>create(observable -> {
       observable.onNext(getState().getCommandsToReplicate());
       observable.onComplete();
     })).blockingFirst();
@@ -210,9 +210,11 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   }
 
   private RedisToken requestToArray(Request request) {
-    return RedisToken.array(listOf(currentDbToken(request))
-        .append(commandToken(request))
-        .appendAll(paramTokens(request)));
+    List<RedisToken> list = new ArrayList<>();
+    list.add(currentDbToken(request));
+    list.add(commandToken(request));
+    list.addAll(paramTokens(request));
+    return RedisToken.array(list);
   }
 
   private RedisToken commandToken(Request request) {
@@ -227,23 +229,27 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
     return getSessionState(request.getSession()).getCurrentDB();
   }
 
-  private ImmutableArray<RedisToken> paramTokens(Request request) {
-    return request.getParams().map(RedisToken::string);
+  private List<RedisToken> paramTokens(Request request) {
+    List<RedisToken> list = new ArrayList<>();
+    for (SafeString string : request.getParams()) {
+      list.add(RedisToken.string(string));
+    }
+    return list;
   }
 
   private DBSessionState getSessionState(Session session) {
-    return sessionState(session).getOrElseThrow(() -> new IllegalStateException("missing session state"));
+    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
   }
 
-  private Option<DBSessionState> sessionState(Session session) {
+  private Optional<DBSessionState> sessionState(Session session) {
     return session.getValue(STATE);
   }
 
   private DBServerState getState() {
-    return serverState().getOrElseThrow(() -> new IllegalStateException("missing server state"));
+    return serverState().orElseThrow(() -> new IllegalStateException("missing server state"));
   }
 
-  private Option<DBServerState> serverState() {
+  private Optional<DBServerState> serverState() {
     return getValue(STATE);
   }
 
@@ -271,9 +277,9 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   private void initNotifications() {
     if (config.isNotificationsActive()) {
-      this.notifications = Option.some(new NotificationManager(this));
+      this.notifications = Optional.of(new NotificationManager(this));
     } else {
-      this.notifications = Option.none();
+      this.notifications = Optional.empty();
     }
   }
 

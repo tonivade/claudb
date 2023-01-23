@@ -10,11 +10,13 @@ import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableArray;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
+import com.github.tonivade.resp.protocol.SafeString;
+import java.util.ArrayList;
+import java.util.List;
 
 @ReadOnly
 @Command("mget")
@@ -23,10 +25,13 @@ public class MultiGetCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    ImmutableArray<DatabaseValue> result = request.getParams()
-        .map(DatabaseKey::safeKey)
-        .filter(key -> db.isType(key, DataType.STRING))
-        .map(db::get);
+    List<DatabaseValue> result = new ArrayList<>();
+    for (SafeString param : request.getParams()) {
+      DatabaseKey key = DatabaseKey.safeKey(param);
+      if (db.isType(key, DataType.STRING)) {
+        result.add(db.get(key));
+      }
+    }
     return convert(result);
   }
 }

@@ -9,6 +9,7 @@ import static com.github.tonivade.resp.protocol.SafeString.safeAsList;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.hamcrest.Matcher;
@@ -17,7 +18,6 @@ import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNull;
 
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseValueMatchers {
@@ -30,7 +30,7 @@ public class DatabaseValueMatchers {
     return DatabaseValue.set(safeAsList(strings));
   }
 
-  public static Tuple2<SafeString, SafeString> entry(String key, String value) {
+  public static Map.Entry<SafeString, SafeString> entry(String key, String value) {
     return DatabaseValue.entry(safeString(key), safeString(value));
   }
 

@@ -30,7 +30,6 @@ import java.util.zip.CheckedInputStream;
 
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Tuple2;
 import com.github.tonivade.resp.protocol.SafeString;
 
 public class RDBInputStream {
@@ -192,7 +191,7 @@ public class RDBInputStream {
 
   private DatabaseValue readHash(Long expireTime) throws IOException {
     int size = readLength();
-    Set<Tuple2<SafeString, SafeString>> entries = new LinkedHashSet<>();
+    Set<Map.Entry<SafeString, SafeString>> entries = new LinkedHashSet<>();
     for (int i = 0; i < size; i++) {
       entries.add(entry(readSafeString(), readSafeString()));
     }

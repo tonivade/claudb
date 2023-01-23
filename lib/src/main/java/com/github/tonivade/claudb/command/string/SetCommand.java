@@ -13,13 +13,11 @@ import static com.github.tonivade.resp.protocol.RedisToken.responseOk;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.TemporalAmount;
-
+import java.util.Optional;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Pattern1;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -32,16 +30,18 @@ public class SetCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    return com.github.tonivade.purefun.type.Try.of(() -> parse(request))
-        .map(params -> onSuccess(db, request, params))
-        .recover(this::onFailure)
-        .get();
-  }
-
-  private RedisToken onSuccess(Database db, Request request, Parameters parameters) {
-    DatabaseKey key = safeKey(request.getParam(0));
-    DatabaseValue value = parseValue(request, parameters);
-    return value.equals(saveValue(db, parameters, key, value)) ? responseOk() : nullString();
+    try {
+      Parameters parameters = parse(request);
+      DatabaseKey key = safeKey(request.getParam(0));
+      DatabaseValue value = parseValue(request, parameters);
+      return value.equals(saveValue(db, parameters, key, value)) ? responseOk() : nullString();
+    } catch(SyntaxException e) {
+      return error("syntax error");
+    } catch(NumberFormatException e) {
+      return error("value is not an integer or out of range");
+    } catch(RuntimeException e) {
+      return error("error: " + e.getMessage());
+    }
   }
 
   private DatabaseValue parseValue(Request request, Parameters parameters) {
@@ -50,17 +50,6 @@ public class SetCommand implements DBCommand {
       value = value.expiredAt(Instant.now().plus(parameters.ttl));
     }
     return value;
-  }
-
-  private RedisToken onFailure(Throwable e) {
-    return Pattern1.<Throwable, RedisToken>build()
-        .when(SyntaxException.class)
-          .returns(error("syntax error"))
-        .when(NumberFormatException.class)
-          .returns(error("value is not an integer or out of range"))
-        .otherwise()
-          .returns(error("error: " + e.getMessage()))
-        .apply(e);
   }
 
   private DatabaseValue saveValue(Database db, Parameters params, DatabaseKey key, DatabaseValue value) {
@@ -103,14 +92,14 @@ public class SetCommand implements DBCommand {
           }
           parameters.ttl = parseTtl(request, ++i)
               .map(Duration::ofSeconds)
-              .getOrElseThrow(SyntaxException::new);
+              .orElseThrow(SyntaxException::new);
         } else if (match("PX", option)) {
           if (parameters.ttl != null) {
             throw new SyntaxException();
           }
           parameters.ttl = parseTtl(request, ++i)
               .map(Duration::ofMillis)
-              .getOrElseThrow(SyntaxException::new);
+              .orElseThrow(SyntaxException::new);
         } else if (match("NX", option)) {
           if (parameters.ifExists) {
             throw new SyntaxException();
@@ -133,8 +122,8 @@ public class SetCommand implements DBCommand {
     return string.equalsIgnoreCase(option.toString());
   }
 
-  private Option<Integer> parseTtl(Request request, int i) {
-    Option<SafeString> ttlOption = request.getOptionalParam(i);
+  private Optional<Integer> parseTtl(Request request, int i) {
+    Optional<SafeString> ttlOption = request.getOptionalParam(i);
     return ttlOption.map(SafeString::toString).map(Integer::parseInt);
   }
 

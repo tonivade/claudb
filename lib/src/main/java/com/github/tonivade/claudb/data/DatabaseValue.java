@@ -4,35 +4,31 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static com.github.tonivade.purefun.Matcher1.instanceOf;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
-
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
+import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.resp.util.Equal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.BitSet;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-
-import com.github.tonivade.purefun.Equal;
-import com.github.tonivade.purefun.Pattern1;
-import com.github.tonivade.purefun.Tuple;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
-import com.github.tonivade.purefun.data.Sequence;
-import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseValue {
 
@@ -55,8 +51,8 @@ public class DatabaseValue {
   }
 
   private DatabaseValue(DataType type, Object value, Instant expiredAt) {
-    this.type = requireNonNull(type);
-    this.value = requireNonNull(value);
+    this.type = checkNonNull(type);
+    this.value = checkNonNull(value);
     this.expiredAt = expiredAt;
   }
 
@@ -69,12 +65,12 @@ public class DatabaseValue {
     return getValue();
   }
 
-  public ImmutableList<SafeString> getList() {
+  public List<SafeString> getList() {
     requiredType(DataType.LIST);
     return getValue();
   }
 
-  public ImmutableSet<SafeString> getSet() {
+  public Set<SafeString> getSet() {
     requiredType(DataType.SET);
     return getValue();
   }
@@ -84,24 +80,22 @@ public class DatabaseValue {
     return getValue();
   }
 
-  public ImmutableMap<SafeString, SafeString> getHash() {
+  public Map<SafeString, SafeString> getHash() {
     requiredType(DataType.HASH);
     return getValue();
   }
 
   public int size() {
-    return Pattern1.<Object, Integer>build()
-        .when(Collection.class)
-          .then(Collection::size)
-        .when(Sequence.class)
-          .then(Sequence::size)
-        .when(ImmutableMap.class)
-          .then(ImmutableMap::size)
-        .when(instanceOf(SafeString.class))
-          .returns(1)
-        .otherwise()
-          .returns(0)
-        .apply(this.value);
+    if (value instanceof Collection) {
+      return ((Collection<?>) value).size();
+    }
+    if (value instanceof Map) {
+      return ((Map<?, ?>) value).size();
+    }
+    if (value instanceof SafeString) {
+      return 1;
+    }
+    return 0;
   }
 
   public Instant getExpiredAt() {
@@ -168,58 +162,42 @@ public class DatabaseValue {
     return new DatabaseValue(DataType.STRING, value);
   }
 
-  public static DatabaseValue list(Sequence<SafeString> values) {
-    return new DatabaseValue(DataType.LIST, values.asList());
-  }
-
   public static DatabaseValue list(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.LIST, ImmutableList.from(requireNonNull(values).stream()));
+    return new DatabaseValue(DataType.LIST, values.stream().collect(toList()));
   }
 
   public static DatabaseValue list(SafeString... values) {
-    return new DatabaseValue(DataType.LIST, ImmutableList.from(Stream.of(values)));
-  }
-
-  public static DatabaseValue set(Sequence<SafeString> values) {
-    return new DatabaseValue(DataType.SET, values.asSet());
+    return new DatabaseValue(DataType.LIST, Stream.of(values).collect(toList()));
   }
 
   public static DatabaseValue set(Collection<SafeString> values) {
-    return new DatabaseValue(DataType.SET, ImmutableSet.from(requireNonNull(values).stream()));
+    return new DatabaseValue(DataType.SET, values.stream().collect(toSet()));
   }
 
   public static DatabaseValue set(SafeString... values) {
-    return new DatabaseValue(DataType.SET, ImmutableSet.from(Stream.of(values)));
+    return new DatabaseValue(DataType.SET, Stream.of(values).collect(toSet()));
   }
 
   public static DatabaseValue zset(Collection<Entry<Double, SafeString>> values) {
-    return new DatabaseValue(DataType.ZSET,
-        requireNonNull(values).stream().collect(collectingAndThen(toSortedSet(),
-                                                                  Collections::unmodifiableNavigableSet)));
+    return new DatabaseValue(DataType.ZSET, values.stream().collect(toSortedSet()));
   }
 
   @SafeVarargs
   public static DatabaseValue zset(Entry<Double, SafeString>... values) {
-    return new DatabaseValue(DataType.ZSET,
-        Stream.of(values).collect(collectingAndThen(toSortedSet(),
-                                                    Collections::unmodifiableNavigableSet)));
+    return new DatabaseValue(DataType.ZSET, Stream.of(values).collect(toSortedSet()));
   }
 
-  public static DatabaseValue hash(ImmutableMap<SafeString, SafeString> values) {
-    return new DatabaseValue(DataType.HASH, values);
+  public static DatabaseValue hash(Map<SafeString, SafeString> values) {
+    return new DatabaseValue(DataType.HASH, requireNonNull(values));
   }
 
-  public static DatabaseValue hash(Collection<Tuple2<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH, ImmutableMap.from(requireNonNull(values).stream()));
-  }
-
-  public static DatabaseValue hash(Sequence<Tuple2<SafeString, SafeString>> values) {
-    return new DatabaseValue(DataType.HASH, ImmutableMap.from(requireNonNull(values).stream()));
+  public static DatabaseValue hash(Collection<Map.Entry<SafeString, SafeString>> values) {
+    return new DatabaseValue(DataType.HASH, values.stream().collect(toMap(Map.Entry::getKey, Map.Entry::getValue)));
   }
 
   @SafeVarargs
-  public static DatabaseValue hash(Tuple2<SafeString, SafeString>... values) {
-    return new DatabaseValue(DataType.HASH, ImmutableMap.from(Stream.of(values)));
+  public static DatabaseValue hash(Map.Entry<SafeString, SafeString>... values) {
+    return new DatabaseValue(DataType.HASH, Stream.of(values).collect(toMap(Map.Entry::getKey, Map.Entry::getValue)));
   }
 
   public static DatabaseValue bitset(int... ones) {
@@ -230,8 +208,8 @@ public class DatabaseValue {
     return new DatabaseValue(DataType.STRING, new SafeString(bitSet.toByteArray()));
   }
 
-  public static Tuple2<SafeString, SafeString> entry(SafeString key, SafeString value) {
-    return Tuple.of(key, value);
+  public static Map.Entry<SafeString, SafeString> entry(SafeString key, SafeString value) {
+    return new AbstractMap.SimpleEntry<>(key, value);
   }
 
   public static Entry<Double, SafeString> score(double score, SafeString value) {

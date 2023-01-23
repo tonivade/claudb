@@ -7,6 +7,7 @@ package com.github.tonivade.claudb.command;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
@@ -28,14 +29,14 @@ import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.data.OnHeapMVDatabaseFactory;
-import com.github.tonivade.purefun.data.ImmutableArray;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class CommandRule implements TestRule {
 
@@ -93,14 +94,14 @@ public class CommandRule implements TestRule {
         when(request.getSession()).thenReturn(session);
 
         when(session.getId()).thenReturn("localhost:12345");
-        when(session.getValue("state")).thenReturn(Option.some(sessionState));
-        when(session.getValue("tx")).thenReturn(Option.none());
-        when(session.removeValue("tx")).thenReturn(Option.none());
+        when(session.getValue("state")).thenReturn(Optional.of(sessionState));
+        when(session.getValue("tx")).thenReturn(Optional.empty());
+        when(session.removeValue("tx")).thenReturn(Optional.empty());
 
         when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
         when(server.isMaster()).thenReturn(true);
-        when(server.getValue("state")).thenReturn(Option.some(serverState));
-        when(server.getValue("config")).thenReturn(Option.some(config));
+        when(server.getValue("state")).thenReturn(Optional.of(serverState));
+        when(server.getValue("config")).thenReturn(Optional.of(config));
 
         try (AutoCloseable openMocks = MockitoAnnotations.openMocks(target)) {
           dbCommand = target.getClass().getAnnotation(CommandUnderTest.class).value().getDeclaredConstructor().newInstance();
@@ -144,7 +145,7 @@ public class CommandRule implements TestRule {
 
   public CommandRule withParams(String ... params) {
     if (params != null) {
-      when(request.getParams()).thenReturn(ImmutableArray.of(params).map(SafeString::safeString));
+      when(request.getParams()).thenReturn(Stream.of(params).map(SafeString::safeString).collect(toList()));
       int i = 0;
       for (String param : params) {
         when(request.getParam(i++)).thenReturn(safeString(param));
@@ -153,9 +154,9 @@ public class CommandRule implements TestRule {
       when(request.getOptionalParam(anyInt())).thenAnswer(invocation -> {
         Integer param = (Integer) invocation.getArguments()[0];
         if (param < params.length) {
-          return Option.some(safeString(params[param]));
+          return Optional.of(safeString(params[param]));
         }
-        return Option.none();
+        return Optional.empty();
       });
     }
     return this;

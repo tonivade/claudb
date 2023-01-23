@@ -6,13 +6,12 @@ package com.github.tonivade.claudb.command.transaction;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.TxIgnore;
 import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
@@ -25,7 +24,7 @@ public class ExecCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    Option<TransactionState> transaction = getTransactionIfExists(request.getSession());
+    Optional<TransactionState> transaction = getTransactionIfExists(request.getSession());
     if (transaction.isPresent()) {
       DBServerContext server = getClauDB(request.getServerContext());
       List<RedisToken> responses = new ArrayList<>();
@@ -43,7 +42,7 @@ public class ExecCommand implements DBCommand {
     return command.execute(queuedRequest);
   }
 
-  private Option<TransactionState> getTransactionIfExists(Session session) {
+  private Optional<TransactionState> getTransactionIfExists(Session session) {
     return session.removeValue("tx");
   }
 }

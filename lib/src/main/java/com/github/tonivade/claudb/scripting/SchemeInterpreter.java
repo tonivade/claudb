@@ -4,8 +4,7 @@
  */
 package com.github.tonivade.claudb.scripting;
 
-import static com.github.tonivade.purefun.Function1.identity;
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.integer;
@@ -18,7 +17,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
@@ -58,23 +56,23 @@ class SchemeInterpreter implements Interpreter {
     return new FVector<>(keys);
   }
 
-  private RedisToken convert(Object eval) {
-    return Pattern1.<Object, RedisToken>build()
-      .when(SafeString.class)
-        .then(RedisToken::string)
-      .when(IntNum.class)
-        .then(i -> RedisToken.integer(i.ival))
-      .when(Boolean.class)
-        .then(b -> Boolean.TRUE.equals(b) ? integer(1) : nullString())
-      .when(GVector.class)
-        .then(this::toArray)
-      .when(RedisToken.class)
-        .then(identity())
-      .otherwise()
-        .then(x -> {
-          throw new IllegalArgumentException(x.getClass() + "=" + x);
-        })
-      .apply(eval);
+  private RedisToken convert(Object value) {
+    if (value instanceof SafeString) {
+      return RedisToken.string((SafeString) value);
+    }
+    if (value instanceof IntNum) {
+      return RedisToken.integer(((IntNum) value).ival);
+    }
+    if (value instanceof Boolean) {
+      return Boolean.TRUE.equals(value) ? integer(1) : nullString();
+    }
+    if (value instanceof GVector) {
+      return toArray((GVector<?>) value);
+    }
+    if (value instanceof RedisToken) {
+      return (RedisToken) value;
+    }
+    throw new IllegalArgumentException(value.getClass() + "=" + value);
   }
 
   private RedisToken toArray(GVector<?> vector) {
