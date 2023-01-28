@@ -150,6 +150,9 @@ public class CommandRule implements TestRule {
       for (String param : params) {
         when(request.getParam(i++)).thenReturn(safeString(param));
       }
+      when(request.getParamsAsStream()).thenAnswer(invocation -> {
+        return Stream.of(params).map(SafeString::safeString);
+      });
       when(request.getLength()).thenReturn(params.length);
       when(request.getOptionalParam(anyInt())).thenAnswer(invocation -> {
         Integer param = (Integer) invocation.getArguments()[0];

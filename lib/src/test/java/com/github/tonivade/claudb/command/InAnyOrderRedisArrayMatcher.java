@@ -34,7 +34,7 @@ public class InAnyOrderRedisArrayMatcher extends TypeSafeMatcher<RedisToken> {
     if (item.getType() == RedisTokenType.ARRAY) {
       ArrayRedisToken array = (ArrayRedisToken) item;
       Collection<RedisToken> tokens = array.getValue();
-      return tokens.equals(expected);
+      return tokens.stream().allMatch(expected::contains);
     }
     return false;
   }

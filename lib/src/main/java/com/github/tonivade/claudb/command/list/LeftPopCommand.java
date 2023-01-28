@@ -34,7 +34,7 @@ public class LeftPopCommand implements DBCommand {
         (oldValue, newValue) -> {
           List<SafeString> list = oldValue.getList();
           if (list.size() > 1) {
-            removed.add(list.remove(0));
+            removed.add(list.get(0));
           }
           return list(list.stream().skip(1).collect(toList()));
         });
