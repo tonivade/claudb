@@ -8,7 +8,8 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.list;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,7 +18,6 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -34,9 +34,13 @@ public class RightPopCommand implements DBCommand {
     List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
-          ImmutableList<SafeString> list = oldValue.getList();
-          list.reverse().head().stream().forEach(removed::add);
-          return list(list.reverse().tail().reverse());
+          List<SafeString> copy = new ArrayList<>(oldValue.getList());
+          Collections.reverse(copy);
+          if (copy.size() > 1) {
+            removed.add(copy.remove(0));
+          }
+          Collections.reverse(copy);
+          return list(copy);
         });
 
     if (removed.isEmpty()) {

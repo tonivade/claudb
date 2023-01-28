@@ -9,7 +9,6 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -32,7 +31,7 @@ public class HashMultiSetCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
 
-    for (int paramNumber = 1; paramNumber < request.getParams().size(); paramNumber += 2) {
+    for (int paramNumber = 1; paramNumber < request.getLength(); paramNumber += 2) {
 
       SafeString mapKey = request.getParam(paramNumber);
       SafeString mapVal = request.getParam(paramNumber + 1);
@@ -42,9 +41,9 @@ public class HashMultiSetCommand implements DBCommand {
       db.merge(safeKey(request.getParam(0)), value,
           (oldValue, newValue) -> {
             Map<SafeString, SafeString> merge = new HashMap<>();
-            merge.putAll(oldValue.getHash().toMap());
-            merge.putAll(newValue.getHash().toMap());
-            return hash(ImmutableMap.from(merge));
+            merge.putAll(oldValue.getHash());
+            merge.putAll(newValue.getHash());
+            return hash(merge);
           }
       );
 

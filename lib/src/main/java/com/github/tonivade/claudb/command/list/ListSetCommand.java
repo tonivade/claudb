@@ -17,7 +17,6 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -35,9 +34,7 @@ public class ListSetCommand implements DBCommand {
       int index = Integer.parseInt(request.getParam(1).toString());
       db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
           (oldValue, newValue) -> {
-            ImmutableList<SafeString> oldList = oldValue.getList();
-            // TODO: use Array
-            List<SafeString> array = new ArrayList<>(oldList.toList());
+            List<SafeString> array = new ArrayList<>(oldValue.getList());
             array.set(index > -1 ? index : array.size() + index, request.getParam(2));
             return list(array);
           });
