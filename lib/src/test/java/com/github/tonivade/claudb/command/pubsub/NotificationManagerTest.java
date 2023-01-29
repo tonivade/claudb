@@ -25,9 +25,11 @@ import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.event.Event;
 import com.github.tonivade.claudb.event.NotificationManager;
-import com.github.tonivade.purefun.Tuple;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableSet;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NotificationManagerTest {
@@ -56,11 +58,11 @@ public class NotificationManagerTest {
         array(string("pmessage"), string(pattern), string(event.getChannel()), string("set")));
   }
 
-  private ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> asSet(Tuple2<DatabaseKey, DatabaseValue> entry) {
-    return ImmutableSet.of(entry);
+  private Set<Map.Entry<DatabaseKey, DatabaseValue>> asSet(Map.Entry<DatabaseKey, DatabaseValue> entry) {
+    return new HashSet<>(Arrays.asList(entry));
   }
 
-  private Tuple2<DatabaseKey, DatabaseValue> entry(DatabaseKey key, DatabaseValue value) {
-    return Tuple.of(key, value);
+  private Map.Entry<DatabaseKey, DatabaseValue> entry(DatabaseKey key, DatabaseValue value) {
+    return new AbstractMap.SimpleEntry<>(key, value);
   }
 }

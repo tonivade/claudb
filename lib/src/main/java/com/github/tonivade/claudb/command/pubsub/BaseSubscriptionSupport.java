@@ -10,23 +10,34 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.HashSet;
+import java.util.Set;
 
 public interface BaseSubscriptionSupport {
 
   default void addSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
     admin.merge(safeKey(suffix + channel), set(safeString(sessionId)),
-        (oldValue, newValue) -> set(oldValue.getSet().appendAll(newValue.getSet())));
+        (oldValue, newValue) -> {
+          Set<SafeString> merge = new HashSet<>();
+          merge.addAll(oldValue.getSet());
+          merge.addAll(newValue.getSet());
+          return set(merge);
+        });
   }
 
   default void removeSubscription(String suffix, Database admin, String sessionId, SafeString channel) {
       admin.merge(safeKey(suffix + channel), set(safeString(sessionId)),
-        (oldValue, newValue) -> set(oldValue.getSet().removeAll(newValue.getSet())));
+        (oldValue, newValue) -> {
+          Set<SafeString> merge = new HashSet<>();
+          merge.addAll(oldValue.getSet());
+          merge.removeAll(newValue.getSet());
+          return set(merge);
+        });
   }
 
-  default int publish(DBServerContext server, ImmutableSet<SafeString> clients, RedisToken message) {
+  default int publish(DBServerContext server, Set<SafeString> clients, RedisToken message) {
     clients.forEach(client -> server.publish(client.toString(), message));
     return clients.size();
   }

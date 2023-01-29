@@ -4,6 +4,7 @@
  */
 package com.github.tonivade.claudb;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public class DBSessionState {
     this.db = db;
   }
 
-  public Iterable<SafeString> getSubscriptions() {
+  public Collection<SafeString> getSubscriptions() {
     return subscriptions;
   }
 
