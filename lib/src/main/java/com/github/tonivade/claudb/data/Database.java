@@ -11,16 +11,16 @@ import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static java.util.stream.Collectors.toSet;
+import com.github.tonivade.resp.protocol.SafeString;
 import java.time.Instant;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.function.BinaryOperator;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
-import com.github.tonivade.purefun.data.Sequence;
-import com.github.tonivade.resp.protocol.SafeString;
 
 public interface Database {
 
@@ -42,11 +42,11 @@ public interface Database {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_STRING).getString();
   }
 
-  default ImmutableList<SafeString> getList(SafeString key) {
+  default List<SafeString> getList(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_LIST).getList();
   }
 
-  default ImmutableSet<SafeString> getSet(SafeString key) {
+  default Set<SafeString> getSet(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_SET).getSet();
   }
 
@@ -54,7 +54,7 @@ public interface Database {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_ZSET).getSortedSet();
   }
 
-  default ImmutableMap<SafeString, SafeString> getHash(SafeString key) {
+  default Map<SafeString, SafeString> getHash(SafeString key) {
     return getOrDefault(safeKey(key), DatabaseValue.EMPTY_HASH).getHash();
   }
 
@@ -66,15 +66,15 @@ public interface Database {
     return getString(safeString(key));
   }
 
-  default ImmutableList<SafeString> getList(String key) {
+  default List<SafeString> getList(String key) {
     return getList(safeString(key));
   }
 
-  default ImmutableSet<SafeString> getSet(String key) {
+  default Set<SafeString> getSet(String key) {
     return getSet(safeString(key));
   }
 
-  default ImmutableMap<SafeString ,SafeString> getHash(String key) {
+  default Map<SafeString ,SafeString> getHash(String key) {
     return getHash(safeString(key));
   }
 
@@ -92,7 +92,7 @@ public interface Database {
     return put(safeKey(key), string(value));
   }
 
-  default DatabaseValue putList(SafeString key, ImmutableList<SafeString> value) {
+  default DatabaseValue putList(SafeString key, List<SafeString> value) {
     return put(safeKey(key), list(value));
   }
 
@@ -100,7 +100,7 @@ public interface Database {
     return put(safeKey(key), list(values));
   }
 
-  default DatabaseValue putSet(SafeString key, ImmutableSet<SafeString> value) {
+  default DatabaseValue putSet(SafeString key, Set<SafeString> value) {
     return put(safeKey(key), set(value));
   }
 
@@ -108,7 +108,7 @@ public interface Database {
     return put(safeKey(key), set(values));
   }
 
-  default DatabaseValue putHash(SafeString key, ImmutableMap<SafeString, SafeString> value) {
+  default DatabaseValue putHash(SafeString key, Map<SafeString, SafeString> value) {
     return put(safeKey(key), hash(value));
   }
 
@@ -124,7 +124,7 @@ public interface Database {
     return putString(safeString(key), value);
   }
 
-  default DatabaseValue putList(String key, ImmutableList<SafeString> value) {
+  default DatabaseValue putList(String key, List<SafeString> value) {
     return putList(safeString(key), value);
   }
 
@@ -132,7 +132,7 @@ public interface Database {
     return putList(safeString(key), values);
   }
 
-  default DatabaseValue putSet(String key, ImmutableSet<SafeString> value) {
+  default DatabaseValue putSet(String key, Set<SafeString> value) {
     return putSet(safeString(key), value);
   }
 
@@ -140,7 +140,7 @@ public interface Database {
     return putSet(safeString(key), values);
   }
 
-  default DatabaseValue putHash(String key, ImmutableMap<SafeString, SafeString> value) {
+  default DatabaseValue putHash(String key, Map<SafeString, SafeString> value) {
     return putHash(safeString(key), value);
   }
 
@@ -160,13 +160,13 @@ public interface Database {
 
   void clear();
 
-  ImmutableSet<DatabaseKey> keySet();
+  Set<DatabaseKey> keySet();
 
-  Sequence<DatabaseValue> values();
+  Collection<DatabaseValue> values();
 
-  ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> entrySet();
+  Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet();
 
-  default void putAll(ImmutableMap<? extends DatabaseKey, ? extends DatabaseValue> map) {
+  default void putAll(Map<? extends DatabaseKey, ? extends DatabaseValue> map) {
     map.forEach(this::put);
   }
 
@@ -212,14 +212,15 @@ public interface Database {
     return false;
   }
 
-  default void overrideAll(ImmutableMap<DatabaseKey, DatabaseValue> value) {
+  default void overrideAll(Map<DatabaseKey, DatabaseValue> value) {
     clear();
     putAll(value);
   }
 
-  default ImmutableSet<DatabaseKey> evictableKeys(Instant now) {
-    return entrySet()
-        .filter(entry -> entry.get2().isExpired(now))
-        .map(Tuple2::get1);
+  default Set<DatabaseKey> evictableKeys(Instant now) {
+    return entrySet().stream()
+        .filter(entry -> entry.getValue().isExpired(now))
+        .map(Map.Entry::getKey)
+        .collect(toSet());
   }
 }

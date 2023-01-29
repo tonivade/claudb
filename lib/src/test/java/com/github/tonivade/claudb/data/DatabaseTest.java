@@ -10,9 +10,9 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.Sequence;
 
 abstract class DatabaseTest {
 
@@ -33,24 +33,24 @@ abstract class DatabaseTest {
     assertThat(database.isEmpty(), is(false));
     assertThat(database.size(), is(1));
 
-    Sequence<DatabaseValue> values = database.values();
+    Collection<DatabaseValue> values = database.values();
 
     assertThat(values.size(), is(1));
     assertThat(values.contains(string("value")), is(true));
 
-    Sequence<DatabaseKey> keySet = database.keySet();
+    Collection<DatabaseKey> keySet = database.keySet();
 
     assertThat(keySet.size(), is(1));
     assertThat(keySet.contains(safeKey("a")), is(true));
 
-    Sequence<Tuple2<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
+    Collection<Map.Entry<DatabaseKey, DatabaseValue>> entrySet = database.entrySet();
 
     assertThat(entrySet.size(), is(1));
 
-    Tuple2<DatabaseKey, DatabaseValue> entry = entrySet.iterator().next();
+    Map.Entry<DatabaseKey, DatabaseValue> entry = entrySet.iterator().next();
 
-    assertThat(entry.get1(), is(safeKey("a")));
-    assertThat(entry.get2(), is(string("value")));
+    assertThat(entry.getKey(), is(safeKey("a")));
+    assertThat(entry.getValue(), is(string("value")));
   }
 
   @Test

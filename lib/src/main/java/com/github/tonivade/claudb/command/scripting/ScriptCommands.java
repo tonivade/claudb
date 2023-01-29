@@ -9,13 +9,10 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import java.util.function.Predicate;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.Matcher1;
-import com.github.tonivade.purefun.Pattern1;
-import com.github.tonivade.purefun.type.Try;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -28,16 +25,16 @@ public class ScriptCommands implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    return Pattern1.<Request, RedisToken>build()
-        .when(isCommand("load"))
-          .then(this::load)
-        .when(isCommand("exists"))
-          .then(this::exists)
-        .when(isCommand("flush"))
-          .then(this::flush)
-        .otherwise()
-          .then(this::unknownCommand)
-        .apply(request);
+    if (isCommand("load").test(request)) {
+      return load(request);
+    }
+    if (isCommand("exists").test(request)) {
+      return exists(request);
+    }
+    if (isCommand("flush").test(request)) {
+      return flush(request);
+    }
+    return unknownCommand(request);
   }
 
   private RedisToken unknownCommand(Request request) {
@@ -46,11 +43,14 @@ public class ScriptCommands implements DBCommand {
 
   private RedisToken load(Request request) {
     SafeString script = request.getParam(1);
-    return Try.of(() -> digest(script)).map(sha1 -> {
+    try {
+      String sha1 = digest(request.getParam(1));
       DBServerState server = getServerState(request.getServerContext());
       server.saveScript(safeString(sha1), script);
       return RedisToken.string(sha1);
-    }).getOrElse(RedisToken.error("ERR cannot generate sha1 sum for script: " + script));
+    } catch (NoSuchAlgorithmException e) {
+      return RedisToken.error("ERR cannot generate sha1 sum for script: " + script);
+    }
   }
 
   private RedisToken exists(Request request) {
@@ -68,7 +68,7 @@ public class ScriptCommands implements DBCommand {
     return new SafeString(digest.digest(script.getBytes())).toHexString();
   }
 
-  private Matcher1<Request> isCommand(String command) {
+  private Predicate<Request> isCommand(String command) {
     return request -> request.getParam(0).toString().toLowerCase().equals(command);
   }
 }

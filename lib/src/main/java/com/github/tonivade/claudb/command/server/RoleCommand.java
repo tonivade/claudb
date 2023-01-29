@@ -10,18 +10,19 @@ import static com.github.tonivade.resp.protocol.RedisToken.integer;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static java.lang.Integer.parseInt;
-
+import static java.util.stream.Collectors.toList;
 import com.github.tonivade.claudb.DBServerState;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @ReadOnly
 @Command("role")
@@ -35,22 +36,23 @@ public class RoleCommand implements DBCommand {
   }
 
   private RedisToken slave(Database adminDatabase) {
-    ImmutableMap<SafeString, SafeString> hash = adminDatabase.getHash(safeString("master"));
+    Map<SafeString, SafeString> hash = adminDatabase.getHash(safeString("master"));
     return array(string("slave"),
-                 string(hash.get(safeString("host")).get()),
-                 integer(hash.get(safeString("port")).map(port -> parseInt(port.toString())).get()),
-                 string(hash.get(safeString("state")).get()), integer(0));
+                 string(hash.get(safeString("host"))),
+                 integer(parseInt(hash.get(safeString("port")).toString())),
+                 string(hash.get(safeString("state"))), integer(0));
   }
 
   private RedisToken master(Database adminDatabase) {
     return array(string("master"), integer(0), array(slaves(adminDatabase)));
   }
 
-  private ImmutableList<RedisToken> slaves(Database adminDatabase) {
+  private List<RedisToken> slaves(Database adminDatabase) {
     DatabaseValue value = adminDatabase.getOrDefault(safeKey("slaves"), DatabaseValue.EMPTY_SET);
-    ImmutableList<SafeString> set = value.getSet().asList().sort(SafeString::compareTo);
+    Stream<SafeString> set = value.getSet().stream().sorted(SafeString::compareTo);
     return set.map(SafeString::toString)
         .map(slave -> slave.split(":"))
-        .map(slave -> array(string(slave[0]), string(slave[1]), string("0"))).asList();
+        .map(slave -> array(string(slave[0]), string(slave[1]), string("0")))
+        .collect(toList());
   }
 }

@@ -5,11 +5,9 @@
 package com.github.tonivade.claudb.data;
 
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
-
-import java.util.Objects;
-
-import com.github.tonivade.purefun.Equal;
 import com.github.tonivade.resp.protocol.SafeString;
+import com.github.tonivade.resp.util.Equal;
+import java.util.Objects;
 
 public class DatabaseKey implements Comparable<DatabaseKey> {
 

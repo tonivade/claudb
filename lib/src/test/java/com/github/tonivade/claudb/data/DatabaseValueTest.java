@@ -4,20 +4,13 @@
  */
 package com.github.tonivade.claudb.data;
 
-import static com.github.tonivade.claudb.data.DatabaseValue.score;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
-import static com.github.tonivade.claudb.data.DatabaseValue.zset;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.time.Instant;
-import java.util.Map;
-import java.util.NavigableSet;
-
 import org.junit.Test;
-
-import com.github.tonivade.resp.protocol.SafeString;
 
 public class DatabaseValueTest {
 
@@ -57,14 +50,5 @@ public class DatabaseValueTest {
   @Test(expected = IllegalStateException.class)
   public void getValueMismatch() {
     string("hola").getList();
-  }
-
-  @Test(expected = UnsupportedOperationException.class)
-  public void testSortedSetUnmodifiable() {
-    DatabaseValue value = zset(score(1.0, safeString("a")), score(2.0, safeString("b")), score(3.0, safeString("c")));
-
-    NavigableSet<Map.Entry<Double, SafeString>> sortedSet = value.getSortedSet();
-
-    sortedSet.add(score(1.0, safeString("d")));
   }
 }

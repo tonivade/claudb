@@ -4,9 +4,7 @@
  */
 package com.github.tonivade.claudb.scripting;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
-import static com.github.tonivade.purefun.data.Sequence.arrayOf;
-
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
@@ -14,6 +12,7 @@ import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.Arrays;
 
 public class RedisLibrary {
 
@@ -42,6 +41,6 @@ public class RedisLibrary {
   }
 
   private Request createRequest(SafeString commandName, SafeString... params) {
-    return new DefaultRequest(context, session, commandName, arrayOf(params));
+    return new DefaultRequest(context, session, commandName, Arrays.asList(params));
   }
 }

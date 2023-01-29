@@ -17,13 +17,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.ServerContext;
@@ -51,7 +51,7 @@ public class InfoCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     Map<String, Map<String, String>> sections = new LinkedHashMap<>();
-    Option<SafeString> param = request.getOptionalParam(0);
+    Optional<SafeString> param = request.getOptionalParam(0);
     if (param.isPresent()) {
       String sectionName = param.get().toString();
       sections.put(sectionName, section(sectionName, request.getServerContext()));

@@ -56,7 +56,7 @@ public class SortedSetAddCommand implements DBCommand {
   private DatabaseValue parseInput(Request request) {
     Set<Entry<Double, SafeString>> set = new SortedSet();
     SafeString score = null;
-    for (SafeString string : request.getParams().stream().skip(1).collect(toList())) {
+    for (SafeString string : request.getParamsAsStream().skip(1).collect(toList())) {
       if (score != null) {
         set.add(score(parseFloat(score.toString()), string));
         score =  null;

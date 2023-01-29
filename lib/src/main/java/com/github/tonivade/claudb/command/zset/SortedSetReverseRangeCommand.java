@@ -13,6 +13,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableSet;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.github.tonivade.claudb.command.DBCommand;
@@ -21,7 +22,6 @@ import com.github.tonivade.claudb.command.annotation.ReadOnly;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -53,7 +53,7 @@ public class SortedSetReverseRangeCommand implements DBCommand {
 
       List<Object> result = emptyList();
       if (from <= to) {
-        Option<SafeString> withScores = request.getOptionalParam(3);
+        Optional<SafeString> withScores = request.getOptionalParam(3);
         if (withScores.isPresent() && withScores.get().toString().equalsIgnoreCase(PARAM_WITHSCORES)) {
           result = set.stream().skip(from).limit((to - from) + 1l)
               .flatMap(item -> Stream.of(item.getValue(), item.getKey())).collect(toList());

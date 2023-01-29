@@ -34,7 +34,7 @@ public class SortedSetRemoveCommand implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
-    List<SafeString> items =  request.getParams().stream().skip(1).collect(toList());
+    List<SafeString> items =  request.getParamsAsStream().skip(1).collect(toList());
     List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_ZSET,
              (oldValue, newValue) -> {

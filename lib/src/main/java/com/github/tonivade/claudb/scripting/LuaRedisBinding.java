@@ -4,11 +4,11 @@
  */
 package com.github.tonivade.claudb.scripting;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.function.BiFunction;
 import org.luaj.vm2.LuaInteger;
 import org.luaj.vm2.LuaString;
 import org.luaj.vm2.LuaTable;
@@ -16,8 +16,6 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.VarArgFunction;
 
-import com.github.tonivade.purefun.Function2;
-import com.github.tonivade.purefun.Pattern1;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ArrayRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.ErrorRedisToken;
 import com.github.tonivade.resp.protocol.AbstractRedisToken.IntegerRedisToken;
@@ -48,9 +46,9 @@ public class LuaRedisBinding {
 
   private static final class ProcedureImpl extends VarArgFunction {
 
-    private final Function2<SafeString, SafeString[], RedisToken> task;
+    private final BiFunction<SafeString, SafeString[], RedisToken> task;
 
-    private ProcedureImpl(Function2<SafeString, SafeString[], RedisToken> task) {
+    private ProcedureImpl(BiFunction<SafeString, SafeString[], RedisToken> task) {
       this.task = checkNonNull(task);
     }
 
@@ -78,20 +76,22 @@ public class LuaRedisBinding {
     }
 
     private LuaValue convert(RedisToken token) {
-      return Pattern1.<RedisToken, LuaValue>build()
-          .when(StringRedisToken.class)
-            .then(this::toLuaString)
-          .when(StatusRedisToken.class)
-            .then(this::toLuaStatus)
-          .when(ArrayRedisToken.class)
-            .then(this::toLuaTable)
-          .when(IntegerRedisToken.class)
-            .then(this::toLuaNumber)
-          .when(ErrorRedisToken.class)
-            .then(this::toLuaError)
-          .when(UnknownRedisToken.class)
-            .then(this::toLuaString)
-          .apply(token);
+      if (token instanceof StringRedisToken) {
+        return toLuaString((StringRedisToken) token);
+      }
+      if (token instanceof StatusRedisToken) {
+        return toLuaStatus((StatusRedisToken) token);
+      }
+      if (token instanceof ArrayRedisToken) {
+        return toLuaTable((ArrayRedisToken) token);
+      }
+      if (token instanceof IntegerRedisToken) {
+        return toLuaNumber((IntegerRedisToken) token);
+      }
+      if (token instanceof ErrorRedisToken) {
+        return toLuaError((ErrorRedisToken) token);
+      }
+      return toLuaString((UnknownRedisToken) token);
     }
 
     private LuaValue toLuaNumber(IntegerRedisToken value) {

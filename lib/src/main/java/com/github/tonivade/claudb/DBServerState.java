@@ -17,21 +17,19 @@ import java.io.OutputStream;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
-
+import java.util.Set;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseFactory;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.claudb.persistence.RDBInputStream;
 import com.github.tonivade.claudb.persistence.RDBOutputStream;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
 
@@ -95,7 +93,7 @@ public class DBServerState {
 
     Map<Integer, Map<DatabaseKey, DatabaseValue>> load = rdb.parse();
     for (Map.Entry<Integer, Map<DatabaseKey, DatabaseValue>> entry : load.entrySet()) {
-      databases.get(entry.getKey()).overrideAll(ImmutableMap.from(entry.getValue()));
+      databases.get(entry.getKey()).overrideAll(entry.getValue());
     }
   }
 
@@ -103,37 +101,47 @@ public class DBServerState {
     DatabaseValue value = hash(entry(sha1, script));
     admin.merge(SCRIPTS_KEY, value, (oldValue, newValue) -> {
       Map<SafeString, SafeString> merge = new HashMap<>();
-      merge.putAll(oldValue.getHash().toMap());
-      merge.putAll(newValue.getHash().toMap());
-      return hash(ImmutableMap.from(merge));
+      merge.putAll(oldValue.getHash());
+      merge.putAll(newValue.getHash());
+      return hash(merge);
     });
   }
 
-  public Option<SafeString> getScript(SafeString sha1) {
+  public Optional<SafeString> getScript(SafeString sha1) {
     DatabaseValue value = admin.getOrDefault(SCRIPTS_KEY, EMPTY_HASH);
-    return value.getHash().get(sha1);
+    return Optional.ofNullable(value.getHash().get(sha1));
   }
 
   public void cleanScripts() {
     admin.remove(SCRIPTS_KEY);
   }
 
-  public ImmutableSet<SafeString> getSlaves() {
+  public Set<SafeString> getSlaves() {
     return getAdminDatabase().getSet(SLAVES);
   }
 
   public void addSlave(String id) {
     getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)),
-            (oldValue, newValue) -> set(oldValue.getSet().appendAll(newValue.getSet())));
+            (oldValue, newValue) -> {
+              Set<SafeString> merge = new HashSet<>();
+              merge.addAll(oldValue.getSet());
+              merge.addAll(newValue.getSet());
+              return set(merge);
+            });
   }
 
   public void removeSlave(String id) {
     getAdminDatabase().merge(SLAVES_KEY, set(safeString(id)),
-            (oldValue, newValue) -> set(oldValue.getSet().difference(newValue.getSet())));
+            (oldValue, newValue) -> {
+              Set<SafeString> merge = new HashSet<>();
+              merge.addAll(oldValue.getSet());
+              merge.removeAll(newValue.getSet());
+              return set(merge);
+            });
   }
 
-  public ImmutableList<RedisToken> getCommandsToReplicate() {
-    ImmutableList<RedisToken> list = ImmutableList.from(queue);
+  public List<RedisToken> getCommandsToReplicate() {
+    List<RedisToken> list = new ArrayList<>(queue);
     queue.clear();
     return list;
   }

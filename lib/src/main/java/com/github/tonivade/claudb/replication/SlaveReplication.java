@@ -10,8 +10,8 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
-import static com.github.tonivade.purefun.Precondition.checkNonEmpty;
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.util.Precondition.checkNonEmpty;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 import static java.lang.String.valueOf;
 
 import java.io.IOException;

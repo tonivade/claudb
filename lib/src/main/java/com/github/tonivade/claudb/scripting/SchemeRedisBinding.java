@@ -4,13 +4,12 @@
  */
 package com.github.tonivade.claudb.scripting;
 
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
+import static com.github.tonivade.resp.protocol.SafeString.safeString;
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.github.tonivade.purefun.Function2;
-import com.github.tonivade.purefun.Pattern1;
+import java.util.function.BiFunction;
 import com.github.tonivade.resp.protocol.SafeString;
 
 import gnu.lists.IString;
@@ -34,9 +33,9 @@ public class SchemeRedisBinding {
 
   private static final class ProcedureImpl extends ProcedureN {
 
-    private final Function2<SafeString, SafeString[], Object> task;
+    private final BiFunction<SafeString, SafeString[], Object> task;
 
-    private ProcedureImpl(Function2<SafeString, SafeString[], Object> task) {
+    private ProcedureImpl(BiFunction<SafeString, SafeString[], Object> task) {
       this.task = checkNonNull(task);
     }
 
@@ -60,14 +59,10 @@ public class SchemeRedisBinding {
     }
 
     private SafeString toSafeString(Object object) {
-      return Pattern1.<Object, SafeString>build()
-        .when(IString.class)
-          .then(s -> SafeString.safeString(s.toString()))
-        .otherwise()
-          .then(x -> {
-            throw new IllegalArgumentException(x.getClass() + "=" + x);
-          })
-        .apply(object);
+      if (object instanceof IString) {
+        return safeString(object.toString());
+      }
+      throw new IllegalArgumentException(object.getClass() + "=" + object);
     }
   }
 }

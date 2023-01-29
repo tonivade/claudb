@@ -19,12 +19,12 @@ import org.mockito.Mockito;
 import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
-import com.github.tonivade.purefun.data.ImmutableArray;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.command.DefaultRequest;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.protocol.RedisToken;
+import java.util.Collections;
+import java.util.Optional;
 
 @CommandUnderTest(ExecCommand.class)
 public class ExecCommandTest {
@@ -59,17 +59,17 @@ public class ExecCommandTest {
     TransactionState transaction = createTransaction();
 
     when(rule.getSession().getValue("tx"))
-      .thenReturn(Option.some(transaction))
-      .thenReturn(Option.none());
+      .thenReturn(Optional.of(transaction))
+      .thenReturn(Optional.empty());
     when(rule.getSession().removeValue("tx"))
-      .thenReturn(Option.some(transaction));
+      .thenReturn(Optional.of(transaction));
   }
 
   private TransactionState createTransaction() {
     TransactionState transaction = new TransactionState();
-    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), ImmutableArray.empty()));
-    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), ImmutableArray.empty()));
-    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), ImmutableArray.empty()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), Collections.emptyList()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), Collections.emptyList()));
+    transaction.enqueue(new DefaultRequest(null, null, safeString("ping"), Collections.emptyList()));
     return transaction;
   }
 

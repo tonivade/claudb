@@ -8,11 +8,11 @@ import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.TxIgnore;
 import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.type.Option;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
+import java.util.Optional;
 
 @Command("discard")
 @TxIgnore
@@ -27,7 +27,7 @@ public class DiscardCommand implements DBCommand {
     return RedisToken.responseOk();
   }
 
-  private Option<TransactionState> removeTransactionIfExists(Session session) {
+  private Optional<TransactionState> removeTransactionIfExists(Session session) {
     return session.removeValue(TX_KEY);
   }
 }

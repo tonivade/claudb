@@ -4,33 +4,28 @@
  */
 package com.github.tonivade.claudb.data;
 
+import static com.github.tonivade.claudb.data.DatabaseValue.entry;
 import static com.github.tonivade.claudb.data.DatabaseValue.hash;
 import static com.github.tonivade.claudb.data.DatabaseValue.list;
 import static com.github.tonivade.claudb.data.DatabaseValue.set;
 import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.claudb.data.DatabaseValue.zset;
-import static com.github.tonivade.purefun.Precondition.checkNonNull;
-
+import static com.github.tonivade.resp.util.Precondition.checkNonNull;
+import com.github.tonivade.claudb.persistence.ByteUtils;
+import com.github.tonivade.resp.protocol.SafeString;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-
+import java.util.Set;
 import org.h2.mvstore.MVMap;
 import org.h2.mvstore.WriteBuffer;
 import org.h2.mvstore.type.BasicDataType;
-
-import com.github.tonivade.claudb.persistence.ByteUtils;
-import com.github.tonivade.purefun.Tuple;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
-import com.github.tonivade.purefun.data.Sequence;
-import com.github.tonivade.resp.protocol.SafeString;
 
 public class MVDatabase implements Database {
 
@@ -78,18 +73,18 @@ public class MVDatabase implements Database {
   }
 
   @Override
-  public ImmutableSet<DatabaseKey> keySet() {
-    return ImmutableSet.from(map.keySet());
+  public Set<DatabaseKey> keySet() {
+    return map.keySet();
   }
 
   @Override
-  public Sequence<DatabaseValue> values() {
-    return ImmutableList.from(map.values());
+  public Collection<DatabaseValue> values() {
+    return map.values();
   }
 
   @Override
-  public ImmutableSet<Tuple2<DatabaseKey, DatabaseValue>> entrySet() {
-    return ImmutableSet.from(map.entrySet()).map(Tuple::from);
+  public Set<Map.Entry<DatabaseKey, DatabaseValue>> entrySet() {
+    return map.entrySet();
   }
 
   static final class DatabaseBuilder extends MVMap.Builder<DatabaseKey, DatabaseValue> {
@@ -143,22 +138,22 @@ public class MVDatabase implements Database {
           SafeString string = value.getString();
           return typeSize() + stringSize(string) + ttlSize(value.getExpiredAt());
         case HASH:
-          ImmutableMap<SafeString, SafeString> hash = value.getHash();
+          Map<SafeString, SafeString> hash = value.getHash();
           int hashSize = typeSize() + lengthSize(hash.size());
-          for (Tuple2<SafeString, SafeString> entry : hash.entries()) {
-            hashSize += stringSize(entry.get1());
-            hashSize += stringSize(entry.get2());
+          for (Map.Entry<SafeString, SafeString> entry : hash.entrySet()) {
+            hashSize += stringSize(entry.getKey());
+            hashSize += stringSize(entry.getValue());
           }
           return hashSize + ttlSize(value.getExpiredAt());
         case LIST:
-          ImmutableList<SafeString> list = value.getList();
+          List<SafeString> list = value.getList();
           int listSize = typeSize() + lengthSize(list.size());
           for (SafeString safeString : list) {
             listSize += stringSize(safeString);
           }
           return listSize + ttlSize(value.getExpiredAt());
         case SET:
-          ImmutableSet<SafeString> set = value.getSet();
+          Set<SafeString> set = value.getSet();
           int setSize = typeSize() + lengthSize(set.size());
           for (SafeString safeString : set) {
             setSize += stringSize(safeString);
@@ -184,22 +179,22 @@ public class MVDatabase implements Database {
           writeString(buff, value.getString());
           break;
         case HASH:
-          ImmutableMap<SafeString, SafeString> hash = value.getHash();
+          Map<SafeString, SafeString> hash = value.getHash();
           writeLength(buff, hash.size());
-          for (Tuple2<SafeString, SafeString> entry : hash.entries()) {
-            writeString(buff, entry.get1());
-            writeString(buff, entry.get2());
+          for (Map.Entry<SafeString, SafeString> entry : hash.entrySet()) {
+            writeString(buff, entry.getKey());
+            writeString(buff, entry.getValue());
           }
           break;
         case LIST:
-          ImmutableList<SafeString> list = value.getList();
+          List<SafeString> list = value.getList();
           writeLength(buff, list.size());
           for (SafeString safeString : list) {
             writeString(buff, safeString);
           }
           break;
         case SET:
-          ImmutableSet<SafeString> set = value.getSet();
+          Set<SafeString> set = value.getSet();
           writeLength(buff, set.size());
           for (SafeString safeString : set) {
             writeString(buff, safeString);
@@ -229,9 +224,9 @@ public class MVDatabase implements Database {
           return withExpireAt(buff, string(safeString));
         case HASH:
           int length = readLength(buff);
-          List<Tuple2<SafeString, SafeString>> entries = new ArrayList<>(length);
+          List<Map.Entry<SafeString, SafeString>> entries = new ArrayList<>(length);
           for (int i = 0; i < length; i++) {
-            entries.add(Tuple.of(readString(buff), readString(buff)));
+            entries.add(entry(readString(buff), readString(buff)));
           }
           return withExpireAt(buff, hash(entries));
         case LIST:
@@ -243,7 +238,7 @@ public class MVDatabase implements Database {
           return withExpireAt(buff, list(list));
         case SET:
           int setLength = readLength(buff);
-          List<SafeString> set = new ArrayList<>(setLength);
+          Set<SafeString> set = new HashSet<>(setLength);
           for (int i = 0; i < setLength; i++) {
             set.add(readString(buff));
           }

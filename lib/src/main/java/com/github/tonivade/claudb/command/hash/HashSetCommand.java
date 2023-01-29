@@ -17,7 +17,6 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableMap;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -36,12 +35,12 @@ public class HashSetCommand implements DBCommand {
     DatabaseValue resultValue = db.merge(safeKey(request.getParam(0)), value,
         (oldValue, newValue) -> {
           Map<SafeString, SafeString> merge = new HashMap<>();
-          merge.putAll(oldValue.getHash().toMap());
-          merge.putAll(newValue.getHash().toMap());
-          return hash(ImmutableMap.from(merge));
+          merge.putAll(oldValue.getHash());
+          merge.putAll(newValue.getHash());
+          return hash(merge);
         });
 
-    ImmutableMap<SafeString, SafeString> resultMap = resultValue.getHash();
+    Map<SafeString, SafeString> resultMap = resultValue.getHash();
 
     return integer(resultMap.get(request.getParam(1)) == null);
   }

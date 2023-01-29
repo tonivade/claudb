@@ -11,12 +11,13 @@ import com.github.tonivade.claudb.DBServerContext;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseKey;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.Tuple;
-import com.github.tonivade.purefun.Tuple2;
-import com.github.tonivade.purefun.data.ImmutableMap;
-import com.github.tonivade.purefun.data.ImmutableSet;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
+import java.util.AbstractMap;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public interface SubscriptionSupport extends BaseSubscriptionSupport {
 
@@ -31,30 +32,31 @@ public interface SubscriptionSupport extends BaseSubscriptionSupport {
     removeSubscription(SUBSCRIPTION_PREFIX, admin, sessionId, channel);
   }
 
-  default ImmutableSet<SafeString> getSubscription(Database admin, String channel) {
-    return getSubscriptions(admin).getOrDefault(channel, ImmutableSet::empty);
+  default Set<SafeString> getSubscription(Database admin, String channel) {
+    return getSubscriptions(admin).getOrDefault(channel, Collections.emptySet());
   }
 
-  default ImmutableMap<String, ImmutableSet<SafeString>> getSubscriptions(Database admin) {
-    return ImmutableMap.from(admin.entrySet()
+  default Map<String, Set<SafeString>> getSubscriptions(Database admin) {
+    return admin.entrySet().stream()
         .filter(SubscriptionSupport::isSubscription)
-        .map(SubscriptionSupport::toEntry));
+        .map(SubscriptionSupport::toEntry)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   default int publish(DBServerContext server, String channel, SafeString message) {
     return publish(server, getSubscription(server.getAdminDatabase(), channel), toMessage(channel, message));
   }
 
-  static Tuple2<String, ImmutableSet<SafeString>> toEntry(Tuple2<DatabaseKey, DatabaseValue> entry) {
-    return Tuple.of(toChannel(entry.get1()), entry.get2().getSet());
+  static Map.Entry<String, Set<SafeString>> toEntry(Map.Entry<DatabaseKey, DatabaseValue> entry) {
+    return new AbstractMap.SimpleEntry<>(toChannel(entry.getKey()), entry.getValue().getSet());
   }
 
   static String toChannel(DatabaseKey key) {
     return key.getValue().substring(SUBSCRIPTION_PREFIX.length());
   }
 
-  static boolean isSubscription(Tuple2<DatabaseKey, DatabaseValue> entry) {
-    return entry.get1().getValue().toString().startsWith(SUBSCRIPTION_PREFIX);
+  static boolean isSubscription(Map.Entry<DatabaseKey, DatabaseValue> entry) {
+    return entry.getKey().getValue().toString().startsWith(SUBSCRIPTION_PREFIX);
   }
 
   static RedisToken toMessage(String channel, SafeString message) {

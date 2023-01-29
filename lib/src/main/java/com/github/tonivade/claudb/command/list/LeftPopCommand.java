@@ -8,16 +8,14 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.claudb.data.DatabaseValue.list;
 import static com.github.tonivade.resp.protocol.RedisToken.nullString;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
-
+import static java.util.stream.Collectors.toList;
 import java.util.LinkedList;
 import java.util.List;
-
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
-import com.github.tonivade.purefun.data.ImmutableList;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -34,9 +32,11 @@ public class LeftPopCommand implements DBCommand {
     List<SafeString> removed = new LinkedList<>();
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
-          ImmutableList<SafeString> list = oldValue.getList();
-          list.head().stream().forEach(removed::add);
-          return list(list.tail());
+          List<SafeString> list = oldValue.getList();
+          if (list.size() > 1) {
+            removed.add(list.get(0));
+          }
+          return list(list.stream().skip(1).collect(toList()));
         });
 
     if (removed.isEmpty()) {

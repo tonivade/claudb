@@ -19,7 +19,7 @@ import org.junit.Test;
 
 import com.github.tonivade.claudb.command.CommandRule;
 import com.github.tonivade.claudb.command.CommandUnderTest;
-import com.github.tonivade.purefun.type.Option;
+import java.util.Optional;
 
 @CommandUnderTest(ScriptCommands.class)
 public class ScriptCommandsTest {
@@ -35,7 +35,7 @@ public class ScriptCommandsTest {
         .execute()
         .assertThat(string(sha1sum));
 
-    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Option.some(safeString("return nil"))));
+    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Optional.of(safeString("return nil"))));
   }
 
   @Test
@@ -53,7 +53,7 @@ public class ScriptCommandsTest {
         .execute()
         .assertThat(responseOk());
 
-    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Option.none()));
+    assertThat(rule.getServerState().getScript(safeString(sha1sum)), equalTo(Optional.empty()));
   }
 
   @Test

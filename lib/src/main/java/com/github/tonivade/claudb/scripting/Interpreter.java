@@ -24,7 +24,7 @@ public interface Interpreter {
   }
 
   static Interpreter build(Request request) {
-    Engine engine = request.getServerContext().<DBConfig>getValue(CONFIG).map(DBConfig::getEngine).getOrElse(Engine.NULL);
+    Engine engine = request.getServerContext().<DBConfig>getValue(CONFIG).map(DBConfig::getEngine).orElse(Engine.NULL);
 
     if (engine == Engine.SCHEME) {
       return SchemeInterpreter.buildFor(request);

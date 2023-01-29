@@ -4,15 +4,14 @@
  */
 package com.github.tonivade.claudb;
 
+import com.github.tonivade.claudb.data.Database;
+import com.github.tonivade.resp.command.ServerContext;
+import com.github.tonivade.resp.protocol.RedisToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.time.Instant;
-
-import com.github.tonivade.claudb.data.Database;
-import com.github.tonivade.purefun.data.ImmutableList;
-import com.github.tonivade.resp.command.ServerContext;
-import com.github.tonivade.resp.protocol.RedisToken;
+import java.util.List;
 
 public interface DBServerContext extends ServerContext {
 
@@ -26,6 +25,6 @@ public interface DBServerContext extends ServerContext {
   Database getDatabase(int i);
   Database getAdminDatabase();
   void publish(String sourceKey, RedisToken message);
-  ImmutableList<RedisToken> getCommandsToReplicate();
+  List<RedisToken> getCommandsToReplicate();
   void clean(Instant now);
 }
