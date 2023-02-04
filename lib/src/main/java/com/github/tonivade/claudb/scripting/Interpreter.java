@@ -26,8 +26,8 @@ public interface Interpreter {
   static Interpreter build(Request request) {
     Engine engine = request.getServerContext().<DBConfig>getValue(CONFIG).map(DBConfig::getEngine).orElse(Engine.NULL);
 
-    if (engine == Engine.SCHEME) {
-      return SchemeInterpreter.buildFor(request);
+    if (engine == Engine.JAVASCRIPT) {
+      return NashornInterpreter.buildFor(request);
     }
     if (engine == Engine.LUAJ) {
       return LuaInterpreter.buildFor(request);

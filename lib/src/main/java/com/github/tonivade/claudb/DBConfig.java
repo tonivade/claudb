@@ -12,7 +12,7 @@ public class DBConfig {
   public static final String DEFAULT_FILENAME = "./claudb.data";
 
   public enum Engine {
-    LUAJ, SCHEME, NULL
+    LUAJ, JAVASCRIPT, NULL
   }
 
   private int numDatabases = DEFAULT_DATABASES;

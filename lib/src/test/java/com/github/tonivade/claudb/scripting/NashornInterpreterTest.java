@@ -24,21 +24,21 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SchemeInterpreterTest {
+public class NashornInterpreterTest {
 
   @Mock
   private RedisLibrary redis;
 
-  private SchemeInterpreter interpreter;
+  private NashornInterpreter interpreter;
 
   @Before
   public void setUp() {
-    interpreter = new SchemeInterpreter(new SchemeRedisBinding(redis));
+    interpreter = new NashornInterpreter(new NashornRedisBinding(redis));
   }
 
   @Test
   public void keys() {
-    RedisToken token = interpreter.execute(safeString("(vector-ref KEYS 0)"),
+    RedisToken token = interpreter.execute(safeString("KEYS[0]"),
                                            asList(safeString("key1")),
                                            emptyList());
 
@@ -47,7 +47,7 @@ public class SchemeInterpreterTest {
 
   @Test
   public void argv() {
-    RedisToken token = interpreter.execute(safeString("(vector-ref ARGV 0)"),
+    RedisToken token = interpreter.execute(safeString("ARGV[0]"),
                                            asList(safeString("key1")),
                                            asList(safeString("value1")));
 
@@ -56,7 +56,7 @@ public class SchemeInterpreterTest {
 
   @Test
   public void keysAndArgv() {
-    RedisToken token = interpreter.execute(safeString("(vector (vector-ref KEYS 0) (vector-ref ARGV 0))"),
+    RedisToken token = interpreter.execute(safeString("[KEYS[0], ARGV[0]]"),
                                            asList(safeString("key1")),
                                            asList(safeString("value1")));
 
@@ -74,7 +74,7 @@ public class SchemeInterpreterTest {
 
   @Test
   public void boolTrue() {
-    RedisToken token = interpreter.execute(safeString("#true"),
+    RedisToken token = interpreter.execute(safeString("true"),
                                            emptyList(),
                                            emptyList());
 
@@ -83,7 +83,7 @@ public class SchemeInterpreterTest {
 
   @Test
   public void boolFalse() {
-    RedisToken token = interpreter.execute(safeString("#false"),
+    RedisToken token = interpreter.execute(safeString("false"),
                                            emptyList(),
                                            emptyList());
 
@@ -94,7 +94,7 @@ public class SchemeInterpreterTest {
   public void ping() {
     when(redis.call(safeString("ping"))).thenReturn(status("PONG"));
 
-    RedisToken token = interpreter.execute(safeString("(call-redis \"ping\")"),
+    RedisToken token = interpreter.execute(safeString("redis.call(\"ping\")"),
                                            emptyList(),
                                            emptyList());
 
@@ -105,7 +105,7 @@ public class SchemeInterpreterTest {
   public void echo() {
     when(redis.call(safeString("echo"), safeString("hello"))).thenReturn(string("hello"));
 
-    RedisToken token = interpreter.execute(safeString("(call-redis \"echo\" \"hello\")"),
+    RedisToken token = interpreter.execute(safeString("redis.call(\"echo\", \"hello\")"),
                                            emptyList(),
                                            emptyList());
 
@@ -116,7 +116,7 @@ public class SchemeInterpreterTest {
   public void pcall() {
     when(redis.pcall(safeString("echo"), safeString("hello"))).thenReturn(error("message"));
 
-    RedisToken token = interpreter.execute(safeString("(pcall-redis \"echo\" \"hello\")"),
+    RedisToken token = interpreter.execute(safeString("redis.pcall(\"echo\", \"hello\")"),
                                            emptyList(),
                                            emptyList());
 

@@ -12,13 +12,13 @@ import org.junit.Test;
 import redis.clients.jedis.Jedis;
 
 public class TestJunit4Rule {
-  
+
   @Rule
   public ClauDBRule rule = ClauDBRule.randomPort();
-  
+
   @Test
   public void testRule() {
-    try (Jedis jedis = new Jedis(rule.getHost(), rule.getPort(), 1000 * 60)) {
+    try (Jedis jedis = new Jedis(rule.getHost(), rule.getPort(), 1000 * 5)) {
       assertEquals("PONG", jedis.ping());
     }
   }

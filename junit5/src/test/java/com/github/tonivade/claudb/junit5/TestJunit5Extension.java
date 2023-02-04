@@ -15,12 +15,12 @@ import redis.clients.jedis.Jedis;
 
 @ClauDBTest
 class TestJunit5Extension {
-  
+
   static RespServer server = ClauDB.builder().randomPort().build();
-  
+
   @Test
   void testExtension() {
-    try (Jedis jedis = new Jedis("localhost", server.getPort(), 1000 * 60)) {
+    try (Jedis jedis = new Jedis("localhost", server.getPort(), 1000 * 5)) {
       assertEquals("PONG", jedis.ping());
     }
   }
