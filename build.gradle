@@ -45,6 +45,9 @@ allprojects {
   ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
   java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(8)
+    }
     withJavadocJar()
     withSourcesJar()
   }
@@ -76,7 +79,7 @@ allprojects {
     reports {
       xml.required = true
       html.required = true
-      xml.destination file("${buildDir}/reports/jacoco/report.xml")
+      xml.outputLocation = file("${buildDir}/reports/jacoco/report.xml")
     }
   } 
 }
