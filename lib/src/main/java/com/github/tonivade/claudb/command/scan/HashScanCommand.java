@@ -40,6 +40,6 @@ public class HashScanCommand implements DBCommand {
     if (result.isEmpty()) {
       return array(string("0"), array());
     }
-    return array(string(String.valueOf(cursor + result.size())), array(result));
+    return array(string(String.valueOf(cursor + (result.size() / 2))), array(result));
   }
 }
