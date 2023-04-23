@@ -105,7 +105,23 @@ public class HashScanCommandTest {
 
     assertThat(cursor.getValue(), equalTo(safeString("2")));
     // unordered
-    assertThat(result.getValue(), hasSize(2));
+    assertThat(result.getValue(), hasSize(4));
+  }
+
+  @Test
+  public void missingMatchPattern() {
+    rule
+      .withParams("h", "0", "match")
+      .execute()
+      .assertThat(RedisToken.error("ERR syntax error"));
+  }
+
+  @Test
+  public void missingCountValue() {
+    rule
+      .withParams("h", "0", "count")
+      .execute()
+      .assertThat(RedisToken.error("ERR syntax error"));
   }
 
   @Test

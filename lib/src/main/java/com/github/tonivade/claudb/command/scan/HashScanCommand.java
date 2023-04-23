@@ -6,6 +6,7 @@ package com.github.tonivade.claudb.command.scan;
 
 import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
+import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
 
@@ -29,7 +30,7 @@ import com.github.tonivade.resp.protocol.SafeString;
 @ParamLength(2)
 @ParamType(DataType.HASH)
 public class HashScanCommand implements DBCommand {
-  
+
   private final ScanParams params = new ScanParams(2);
 
   @Override
@@ -38,17 +39,21 @@ public class HashScanCommand implements DBCommand {
     int cursor = Integer.parseInt(request.getParam(1).toString());
     Map<SafeString, SafeString> value = db.getOrDefault(safeKey(key), DatabaseValue.EMPTY_HASH).getHash();
 
-    GlobPattern pattern = params.parsePattern(request);
-    int count = params.parseCount(request);
+    try {
+      GlobPattern pattern = params.parsePattern(request);
+      int count = params.parseCount(request);
 
-    List<RedisToken> result = value.entrySet().stream()
-      .filter(entry -> pattern == null || pattern.match(entry.getKey().toString()))
-      .skip(cursor).limit(count)
-      .flatMap(entry -> Stream.of(string(entry.getKey()), string(entry.getValue())))
-      .collect(toList());
-    if (result.isEmpty()) {
-      return array(string("0"), array());
+      List<RedisToken> result = value.entrySet().stream()
+        .filter(entry -> pattern == null || pattern.match(entry.getKey().toString()))
+        .skip(cursor).limit(count)
+        .flatMap(entry -> Stream.of(string(entry.getKey()), string(entry.getValue())))
+        .collect(toList());
+      if (result.isEmpty()) {
+        return array(string("0"), array());
+      }
+      return array(string(String.valueOf(cursor + (result.size() / 2))), array(result));
+    } catch (IllegalArgumentException e) {
+      return error("ERR syntax error");
     }
-    return array(string(String.valueOf(cursor + (result.size() / 2))), array(result));
   }
 }
