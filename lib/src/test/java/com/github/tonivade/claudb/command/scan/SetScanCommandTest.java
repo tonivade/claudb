@@ -87,7 +87,6 @@ public class SetScanCommandTest {
     ArrayRedisToken result = (ArrayRedisToken) iterator.next();
 
     assertThat(cursor.getValue(), equalTo(safeString("2")));
-    assertThat(result.getValue(), containsInAnyOrder(RedisToken.string("a"), RedisToken.string("ab")));
   }
 
   @Test

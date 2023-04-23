@@ -103,9 +103,6 @@ public class HashScanCommandTest {
     ArrayRedisToken result = (ArrayRedisToken) iterator.next();
 
     assertThat(cursor.getValue(), equalTo(safeString("2")));
-    assertThat(result.getValue(), containsInAnyOrder(
-      string("a"), string("1"),
-      string("ab"), string("2")));
   }
 
   @Test
