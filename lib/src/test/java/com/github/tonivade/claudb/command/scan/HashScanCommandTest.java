@@ -29,7 +29,7 @@ public class HashScanCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void test() {
+  public void withoutPattern() {
     RedisToken response = rule
       .withData("h", hash(
         entry(safeString("a"), safeString("1")),
@@ -52,6 +52,31 @@ public class HashScanCommandTest {
       string("a"), string("1"),
       string("b"), string("2"),
       string("c"), string("3")));
+  }
+
+  @Test
+  public void withPattern() {
+    RedisToken response = rule
+      .withData("h", hash(
+        entry(safeString("a"), safeString("1")),
+        entry(safeString("ab"), safeString("2")),
+        entry(safeString("c"), safeString("3"))))
+      .withParams("h", "0", "a*")
+      .execute()
+      .getResponse();
+
+    assertThat(response.getType(), equalTo(RedisTokenType.ARRAY));
+
+    ArrayRedisToken array = (ArrayRedisToken) response;
+
+    Iterator<RedisToken> iterator = array.getValue().iterator();
+    StringRedisToken cursor = (StringRedisToken) iterator.next();
+    ArrayRedisToken result = (ArrayRedisToken) iterator.next();
+
+    assertThat(cursor.getValue(), equalTo(safeString("2")));
+    assertThat(result.getValue(), containsInAnyOrder(
+      string("a"), string("1"),
+      string("ab"), string("2")));
   }
 
   @Test

@@ -9,6 +9,7 @@ import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.data.Database;
+import com.github.tonivade.claudb.glob.GlobPattern;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -22,7 +23,11 @@ public class ScanCommand implements DBCommand {
   @Override
   public RedisToken execute(Database db, Request request) {
     int cursor = Integer.parseInt(request.getParam(0).toString());
+
+    GlobPattern pattern = request.getOptionalParam(1).map(Object::toString).map(GlobPattern::new)
+      .orElse(null);
     List<RedisToken> result = db.entrySet().stream()
+      .filter(entry -> pattern == null || pattern.match(entry.getKey().toString()))
       .skip(cursor).limit(10)
       .map(entry -> entry.getKey().getValue())
       .map(RedisToken::string)

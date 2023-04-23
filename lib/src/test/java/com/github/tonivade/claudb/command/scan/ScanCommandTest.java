@@ -28,7 +28,7 @@ public class ScanCommandTest {
   public final CommandRule rule = new CommandRule(this);
 
   @Test
-  public void test() {
+  public void withoutPattern() {
     RedisToken response = rule
       .withData("a", string("a"))
       .withData("b", string("b"))
@@ -47,6 +47,28 @@ public class ScanCommandTest {
 
     assertThat(cursor.getValue(), equalTo(safeString("3")));
     assertThat(result.getValue(), containsInAnyOrder(RedisToken.string("a"), RedisToken.string("b"), RedisToken.string("s")));
+  }
+
+  @Test
+  public void withPattern() {
+    RedisToken response = rule
+      .withData("a", string("a"))
+      .withData("ab", string("b"))
+      .withData("s", set(safeString("1"), safeString("2"), safeString("3")))
+      .withParams("0", "a*")
+      .execute()
+      .getResponse();
+
+    assertThat(response.getType(), equalTo(RedisTokenType.ARRAY));
+
+    ArrayRedisToken array = (ArrayRedisToken) response;
+
+    Iterator<RedisToken> iterator = array.getValue().iterator();
+    StringRedisToken cursor = (StringRedisToken) iterator.next();
+    ArrayRedisToken result = (ArrayRedisToken) iterator.next();
+
+    assertThat(cursor.getValue(), equalTo(safeString("2")));
+    assertThat(result.getValue(), containsInAnyOrder(RedisToken.string("a"), RedisToken.string("ab")));
   }
 
   @Test
