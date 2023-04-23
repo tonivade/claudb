@@ -4,8 +4,7 @@
  */
 package com.github.tonivade.claudb.command.scan;
 
-import static com.github.tonivade.claudb.data.DatabaseValue.entry;
-import static com.github.tonivade.claudb.data.DatabaseValue.hash;
+import static com.github.tonivade.claudb.data.DatabaseValue.score;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
@@ -26,8 +25,8 @@ import com.github.tonivade.resp.protocol.AbstractRedisToken.StringRedisToken;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.RedisTokenType;
 
-@CommandUnderTest(HashScanCommand.class)
-public class HashScanCommandTest {
+@CommandUnderTest(SortedSetScanCommand.class)
+public class SortedSetScanCommandTest {
 
   @Rule
   public final CommandRule rule = new CommandRule(this);
@@ -35,11 +34,11 @@ public class HashScanCommandTest {
   @Test
   public void withoutPattern() {
     RedisToken response = rule
-      .withData("h", hash(
-        entry(safeString("a"), safeString("1")),
-        entry(safeString("b"), safeString("2")),
-        entry(safeString("c"), safeString("3"))))
-      .withParams("h", "0")
+      .withData("z", DatabaseValue.zset(
+        score(1, safeString("a")),
+        score(2, safeString("ab")),
+        score(3, safeString("c"))))
+      .withParams("z", "0")
       .execute()
       .getResponse();
 
@@ -53,19 +52,19 @@ public class HashScanCommandTest {
 
     assertThat(cursor.getValue(), equalTo(safeString("3")));
     assertThat(result.getValue(), containsInAnyOrder(
-      string("a"), string("1"),
-      string("b"), string("2"),
-      string("c"), string("3")));
+      string("1.0"), string("a"),
+      string("2.0"), string("ab"),
+      string("3.0"), string("c")));
   }
 
   @Test
   public void withPattern() {
     RedisToken response = rule
-      .withData("h", hash(
-        entry(safeString("a"), safeString("1")),
-        entry(safeString("ab"), safeString("2")),
-        entry(safeString("c"), safeString("3"))))
-      .withParams("h", "0", "match", "a*")
+      .withData("z", DatabaseValue.zset(
+        score(1, safeString("a")),
+        score(2, safeString("ab")),
+        score(3, safeString("c"))))
+      .withParams("z", "0", "match", "a*")
       .execute()
       .getResponse();
 
@@ -79,18 +78,18 @@ public class HashScanCommandTest {
 
     assertThat(cursor.getValue(), equalTo(safeString("2")));
     assertThat(result.getValue(), containsInAnyOrder(
-      string("a"), string("1"),
-      string("ab"), string("2")));
+      string("1.0"), string("a"),
+      string("2.0"), string("ab")));
   }
 
   @Test
   public void withCount() {
     RedisToken response = rule
-      .withData("h", hash(
-        entry(safeString("a"), safeString("1")),
-        entry(safeString("ab"), safeString("2")),
-        entry(safeString("c"), safeString("3"))))
-      .withParams("h", "0", "count", "2")
+      .withData("z", DatabaseValue.zset(
+        score(1, safeString("a")),
+        score(2, safeString("ab")),
+        score(3, safeString("c"))))
+      .withParams("z", "0", "count", "2")
       .execute()
       .getResponse();
 
@@ -104,15 +103,15 @@ public class HashScanCommandTest {
 
     assertThat(cursor.getValue(), equalTo(safeString("2")));
     assertThat(result.getValue(), containsInAnyOrder(
-      string("a"), string("1"),
-      string("ab"), string("2")));
+      string("1.0"), string("a"),
+      string("2.0"), string("ab")));
   }
 
   @Test
   public void empty() {
     rule
-      .withData("h", DatabaseValue.EMPTY_HASH)
-      .withParams("h", "0")
+      .withData("z", DatabaseValue.EMPTY_ZSET)
+      .withParams("z", "0")
       .execute()
       .assertThat(array(string("0"), array()));
   }
@@ -120,8 +119,9 @@ public class HashScanCommandTest {
   @Test
   public void notExists() {
     rule
-      .withParams("h", "0")
+      .withParams("z", "0")
       .execute()
       .assertThat(array(string("0"), array()));
   }
+
 }

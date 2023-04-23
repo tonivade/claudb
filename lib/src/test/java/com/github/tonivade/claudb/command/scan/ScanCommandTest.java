@@ -103,5 +103,4 @@ public class ScanCommandTest {
       .execute()
       .assertThat(array(RedisToken.string("0"), array()));
   }
-
 }

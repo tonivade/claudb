@@ -47,6 +47,8 @@ import com.github.tonivade.claudb.command.pubsub.SubscribeCommand;
 import com.github.tonivade.claudb.command.pubsub.UnsubscribeCommand;
 import com.github.tonivade.claudb.command.scan.HashScanCommand;
 import com.github.tonivade.claudb.command.scan.ScanCommand;
+import com.github.tonivade.claudb.command.scan.SetScanCommand;
+import com.github.tonivade.claudb.command.scan.SortedSetScanCommand;
 import com.github.tonivade.claudb.command.scripting.EvalCommand;
 import com.github.tonivade.claudb.command.scripting.EvalShaCommand;
 import com.github.tonivade.claudb.command.scripting.ScriptCommands;
@@ -197,6 +199,8 @@ public class DBCommandSuite extends CommandSuite {
     // scan
     addCommand(ScanCommand::new);
     addCommand(HashScanCommand::new);
+    addCommand(SetScanCommand::new);
+    addCommand(SortedSetScanCommand::new);
   }
 
   public boolean isReadOnly(String command) {
