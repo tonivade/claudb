@@ -93,6 +93,22 @@ public class SetScanCommandTest {
   }
 
   @Test
+  public void missingMatchPattern() {
+    rule
+      .withParams("s", "0", "match")
+      .execute()
+      .assertThat(RedisToken.error("ERR syntax error"));
+  }
+
+  @Test
+  public void missingCountValue() {
+    rule
+      .withParams("s", "0", "count")
+      .execute()
+      .assertThat(RedisToken.error("ERR syntax error"));
+  }
+
+  @Test
   public void empty() {
     rule
       .withData("s", DatabaseValue.EMPTY_SET)

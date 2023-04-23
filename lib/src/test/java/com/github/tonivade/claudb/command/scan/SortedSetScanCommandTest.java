@@ -108,6 +108,22 @@ public class SortedSetScanCommandTest {
   }
 
   @Test
+  public void missingMatchPattern() {
+    rule
+      .withParams("z", "0", "match")
+      .execute()
+      .assertThat(RedisToken.error("ERR syntax error"));
+  }
+
+  @Test
+  public void missingCountValue() {
+    rule
+      .withParams("z", "0", "count")
+      .execute()
+      .assertThat(RedisToken.error("ERR syntax error"));
+  }
+
+  @Test
   public void empty() {
     rule
       .withData("z", DatabaseValue.EMPTY_ZSET)
