@@ -8,6 +8,11 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.resp.protocol.RedisToken.array;
 import static com.github.tonivade.resp.protocol.RedisToken.string;
 import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import com.github.tonivade.claudb.command.DBCommand;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
@@ -19,14 +24,13 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.protocol.RedisToken;
 import com.github.tonivade.resp.protocol.SafeString;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 @Command("hscan")
 @ParamLength(2)
 @ParamType(DataType.HASH)
 public class HashScanCommand implements DBCommand {
+  
+  private final ScanParams params = new ScanParams(2);
 
   @Override
   public RedisToken execute(Database db, Request request) {
@@ -34,12 +38,12 @@ public class HashScanCommand implements DBCommand {
     int cursor = Integer.parseInt(request.getParam(1).toString());
     Map<SafeString, SafeString> value = db.getOrDefault(safeKey(key), DatabaseValue.EMPTY_HASH).getHash();
 
-    GlobPattern pattern = request.getOptionalParam(2).map(Object::toString).map(GlobPattern::new)
-      .orElse(null);
+    GlobPattern pattern = params.parsePattern(request);
+    int count = params.parseCount(request);
 
     List<RedisToken> result = value.entrySet().stream()
       .filter(entry -> pattern == null || pattern.match(entry.getKey().toString()))
-      .skip(cursor).limit(10)
+      .skip(cursor).limit(count)
       .flatMap(entry -> Stream.of(string(entry.getKey()), string(entry.getValue())))
       .collect(toList());
     if (result.isEmpty()) {
