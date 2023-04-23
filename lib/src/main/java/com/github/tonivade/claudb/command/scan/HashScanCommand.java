@@ -13,6 +13,7 @@ import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
+import com.github.tonivade.claudb.glob.GlobPattern;
 import com.github.tonivade.resp.annotation.Command;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
@@ -33,7 +34,11 @@ public class HashScanCommand implements DBCommand {
     int cursor = Integer.parseInt(request.getParam(1).toString());
     Map<SafeString, SafeString> value = db.getOrDefault(safeKey(key), DatabaseValue.EMPTY_HASH).getHash();
 
+    GlobPattern pattern = request.getOptionalParam(2).map(Object::toString).map(GlobPattern::new)
+      .orElse(null);
+
     List<RedisToken> result = value.entrySet().stream()
+      .filter(entry -> pattern == null || pattern.match(entry.getKey().toString()))
       .skip(cursor).limit(10)
       .flatMap(entry -> Stream.of(string(entry.getKey()), string(entry.getValue())))
       .collect(toList());
