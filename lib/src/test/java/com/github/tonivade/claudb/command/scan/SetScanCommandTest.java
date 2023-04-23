@@ -10,6 +10,7 @@ import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.util.Iterator;
 
@@ -87,6 +88,8 @@ public class SetScanCommandTest {
     ArrayRedisToken result = (ArrayRedisToken) iterator.next();
 
     assertThat(cursor.getValue(), equalTo(safeString("2")));
+    // unordered
+    assertThat(result.getValue(), hasSize(2));
   }
 
   @Test
