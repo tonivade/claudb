@@ -307,7 +307,7 @@ Some features are not available like lua runtime and offheap memory.
 
 ## Continuous Integration
 
-[![Build Status](https://travis-ci.org/tonivade/claudb.svg?branch=master)](https://travis-ci.org/tonivade/claudb) 
+[![Java CI with Gradle](https://github.com/tonivade/claudb/actions/workflows/gradle.yml/badge.svg)](https://github.com/tonivade/claudb/actions/workflows/gradle.yml)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
