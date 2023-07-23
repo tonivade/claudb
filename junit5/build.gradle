@@ -4,4 +4,5 @@ dependencies {
   api libs.junitJupiter
   api libs.junitRunner
   testImplementation libs.jedis
+  testRuntimeOnly libs.logbackClassic
 }
