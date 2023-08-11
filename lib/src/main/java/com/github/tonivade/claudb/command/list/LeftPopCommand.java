@@ -33,7 +33,7 @@ public class LeftPopCommand implements DBCommand {
     db.merge(safeKey(request.getParam(0)), DatabaseValue.EMPTY_LIST,
         (oldValue, newValue) -> {
           List<SafeString> list = oldValue.getList();
-          if (list.size() > 1) {
+          if (!list.isEmpty()) {
             removed.add(list.get(0));
           }
           return list(list.stream().skip(1).collect(toList()));

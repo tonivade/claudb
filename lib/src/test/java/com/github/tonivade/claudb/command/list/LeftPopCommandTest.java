@@ -28,7 +28,13 @@ public class LeftPopCommandTest {
         .execute()
         .assertValue("key", isList("b", "c"))
         .assertThat(string("a"));
-    
+
+    rule.withData("key", list("a"))
+        .withParams("key")
+        .execute()
+        .assertValue("key", isList())
+        .assertThat(string("a"));
+
     rule.withData("key", list())
         .withParams("key")
         .execute()

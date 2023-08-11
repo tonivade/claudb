@@ -116,6 +116,18 @@ class ClauDBServerTest {
     });
   }
 
+  @Test
+  public void testPushPull() {
+    execute(jedis -> {
+      long push = jedis.rpush("key", "val1", "val2");
+      String pop1 = jedis.rpop("key");
+      String pop2 = jedis.rpop("key");
+      assertThat(push, is(2l));
+      assertThat(pop1, equalTo("val2"));
+      assertThat(pop2, equalTo("val1"));
+    });
+  }
+
   private void execute(Consumer<Jedis> action) {
     try (Jedis jedis = createClientConnection()) {
       action.accept(jedis);
