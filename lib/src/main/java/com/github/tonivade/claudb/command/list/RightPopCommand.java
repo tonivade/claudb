@@ -36,7 +36,7 @@ public class RightPopCommand implements DBCommand {
         (oldValue, newValue) -> {
           List<SafeString> copy = new ArrayList<>(oldValue.getList());
           Collections.reverse(copy);
-          if (copy.size() > 1) {
+          if (!copy.isEmpty()) {
             removed.add(copy.remove(0));
           }
           Collections.reverse(copy);

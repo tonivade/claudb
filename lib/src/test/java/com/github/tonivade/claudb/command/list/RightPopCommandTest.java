@@ -29,6 +29,12 @@ public class RightPopCommandTest {
         .assertValue("key", isList("a", "b"))
         .assertThat(string("c"));
 
+    rule.withData("key", list("a"))
+        .withParams("key")
+        .execute()
+        .assertValue("key", isList())
+        .assertThat(string("a"));
+
     rule.withData("key", list())
         .withParams("key")
         .execute()
