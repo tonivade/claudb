@@ -9,7 +9,7 @@ junitVersion = "4.13.2"
 junitEngineVersion = "5.10.0"
 junitPlatformVersion = "1.10.0"
 hamcrestVersion = "2.2"
-mockitoVersion = "4.11.0"
+mockitoVersion = "5.5.0"
 jmhVersion = "1.37"
 
 [libraries]
