@@ -26,7 +26,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - name: Codacy Coverage Reporter
-      uses: codacy/codacy-coverage-reporter-action@0.2.0
+      uses: codacy/codacy-coverage-reporter-action@v1.3.0
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
         coverage-reports: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
