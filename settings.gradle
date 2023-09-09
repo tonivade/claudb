@@ -5,27 +5,3 @@ rootProject.name = "claudb-parent"
 include "lib", "app", "junit4", "junit5"
 
 rootProject.children.each { it.name = "claudb-" + it.name }
-
-dependencyResolutionManagement {
-  versionCatalogs {
-    libs {
-      library('joptSimple', "net.sf.jopt-simple:jopt-simple:$joptVersion")
-      library('logbackClassic', "ch.qos.logback:logback-classic:$logbackVersion")
-      library('jedis', "redis.clients:jedis:$jedisVersion")
-      library('hamcrest', "org.hamcrest:hamcrest-library:$hamcrestVersion")
-      library('respServer', "com.github.tonivade:resp-server:$respServerVersion")
-      library('luaj', "org.luaj:luaj-jse:$luajVersion")
-      library('h2', "com.h2database:h2-mvstore:$h2Version")
-
-      library('junitJupiter', "org.junit.jupiter:junit-jupiter-engine:$junitEngineVersion")
-      library('junitParams', "org.junit.jupiter:junit-jupiter-params:$junitEngineVersion")
-      library('junitVintage', "org.junit.vintage:junit-vintage-engine:$junitEngineVersion")
-      library('junitRunner', "org.junit.platform:junit-platform-runner:$junitPlatformVersion")
-      library('junit', "junit:junit:$junitVersion")
-      library('mockitoCore', "org.mockito:mockito-core:$mockitoVersion")
-
-      library('jmhCore', "org.openjdk.jmh:jmh-core:$jmhVersion")
-      library('jmhGenerator', "org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
-    }
-  }
-}

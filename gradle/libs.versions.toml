@@ -1,0 +1,30 @@
+[versions]
+joptVersion = "5.0.4"
+logbackVersion = "1.3.11"
+jedisVersion = "3.10.0"
+luajVersion = "3.0.1"
+respServerVersion = "0.24.0-SNAPSHOT"
+h2Version = "2.2.222"
+junitVersion = "4.13.2"
+junitEngineVersion = "5.10.0"
+junitPlatformVersion = "1.10.0"
+hamcrestVersion = "2.2"
+mockitoVersion = "4.11.0"
+jmhVersion = "1.37"
+
+[libraries]
+joptSimple = { group = "net.sf.jopt-simple", name = "jopt-simple", version.ref = "joptVersion" }
+logbackClassic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logbackVersion" }
+jedis = { group = "redis.clients", name = "jedis", version.ref = "jedisVersion" }
+hamcrest = { group = "org.hamcrest", name = "hamcrest-library", version.ref = "hamcrestVersion" }
+respServer = { group = "com.github.tonivade", name = "resp-server", version.ref = "respServerVersion" }
+luaj = { group = "org.luaj", name = "luaj-jse", version.ref = "luajVersion" }
+h2 = { group = "com.h2database", name = "h2-mvstore", version.ref = "h2Version" }
+junitJupiter = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitEngineVersion" }
+junitParams = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitEngineVersion" }
+junitVintage = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junitEngineVersion" }
+junitRunner = { group = "org.junit.platform", name = "junit-platform-runner", version.ref = "junitPlatformVersion" }
+junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
+mockitoCore = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoVersion" }
+jmhCore = { group = "org.openjdk.jmh", name = "jmh-core", version.ref = "jmhVersion" }
+jmhGenerator = { group = "org.openjdk.jmh", name = "jmh-generator-annprocess", version.ref = "jmhVersion" }
