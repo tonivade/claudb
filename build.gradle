@@ -41,7 +41,7 @@ allprojects {
   apply plugin: 'signing'
 
   group = 'com.github.tonivade'
-  
+
   ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
   java {
@@ -55,9 +55,6 @@ allprojects {
   jacoco {
     toolVersion = "0.8.9"
   }
-
-  sourceCompatibility = '1.8'
-  targetCompatibility = '1.8'
 
   repositories {
     mavenLocal() 
@@ -88,7 +85,7 @@ subprojects {
   publishing {
     publications {
       mavenJava(MavenPublication) {
-      
+
         if (project.name == 'claudb-lib') {
           artifactId = 'claudb'
         } else if (project.name == 'claudb-app') {
@@ -97,9 +94,9 @@ subprojects {
             extension = 'jar'
           }
         }
-        
+
         from components.java
-        
+
         pom {
           name = 'ClauDB'
           description = 'ClauDB is a REDIS implementation in Java'
@@ -135,7 +132,7 @@ subprojects {
   signing {
     sign publishing.publications.mavenJava
   }
-  
+
   tasks.withType(Sign) {
     onlyIf { isReleaseVersion }
   }
@@ -144,14 +141,14 @@ subprojects {
 nexusPublishing {
   repositories {
     sonatype {
-      
+
       stagingProfileId = '19a96b937cdb5'
-      
+
       username = project.findProperty('nexusUsername')  
       password = project.findProperty('nexusPassword')
     }
   }
-  
+
   clientTimeout = Duration.ofSeconds(300)
   connectTimeout = Duration.ofSeconds(60)
 
