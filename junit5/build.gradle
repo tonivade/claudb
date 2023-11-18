@@ -1,4 +1,10 @@
 
+jar {
+  manifest {
+    attributes('Automatic-Module-Name': 'com.github.tonivade.claudb.junit5')
+  }
+}
+
 dependencies {
   api projects.claudbLib
   api libs.junitJupiter

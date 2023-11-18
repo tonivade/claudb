@@ -9,6 +9,12 @@ jmh {
   warmupIterations = 1
 }
 
+jar {
+  manifest {
+    attributes('Automatic-Module-Name': 'com.github.tonivade.claudb')
+  }
+}
+
 dependencies {
   api libs.respServer
   api libs.luaj

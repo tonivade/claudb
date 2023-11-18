@@ -3,6 +3,12 @@ plugins {
   id 'org.mikeneck.graalvm-native-image' version '1.4.1'
 }
 
+jar {
+  manifest {
+    attributes('Automatic-Module-Name': 'com.github.tonivade.claudb.app')
+  }
+}
+
 dependencies {
   api projects.claudbLib
   api libs.joptSimple
