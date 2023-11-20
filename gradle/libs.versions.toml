@@ -11,7 +11,7 @@ junitPlatformVersion = "1.10.1"
 hamcrestVersion = "2.2"
 mockitoVersion = "4.11.0"
 jmhVersion = "1.37"
-versionsVersion = "0.49.0"
+versionsVersion = "0.50.0"
 nexusVersion = "1.3.0"
 
 [libraries]
