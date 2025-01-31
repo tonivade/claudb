@@ -7,8 +7,9 @@ jar {
 
 dependencies {
   api projects.claudbLib
+  implementation platform(libs.junitBom)
   api libs.junitJupiter
-  api libs.junitRunner
   testImplementation libs.jedis
+  testRuntimeOnly libs.junitLauncher
   testRuntimeOnly libs.logbackClassic
 }

@@ -23,10 +23,12 @@ dependencies {
   testImplementation projects.claudbJunit4
   testImplementation projects.claudbJunit5
   testImplementation libs.jedis
+  testImplementation platform(libs.junitBom)
   testImplementation libs.junit
   testImplementation libs.junitJupiter
   testImplementation libs.junitParams
   testImplementation libs.junitVintage
+  testRuntimeOnly libs.junitLauncher
   testImplementation libs.mockitoCore
   testImplementation libs.hamcrest
   jmh libs.jmhCore

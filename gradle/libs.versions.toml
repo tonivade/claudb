@@ -6,8 +6,7 @@ luajVersion = "3.0.1"
 respServerVersion = "0.25.0-SNAPSHOT"
 h2Version = "2.2.224"
 junitVersion = "4.13.2"
-junitEngineVersion = "5.11.4"
-junitPlatformVersion = "1.11.4"
+junitBomVersion = "5.11.4"
 hamcrestVersion = "3.0"
 mockitoVersion = "4.11.0"
 jmhVersion = "1.37"
@@ -22,10 +21,11 @@ hamcrest = { group = "org.hamcrest", name = "hamcrest-library", version.ref = "h
 respServer = { group = "com.github.tonivade", name = "resp-server", version.ref = "respServerVersion" }
 luaj = { group = "org.luaj", name = "luaj-jse", version.ref = "luajVersion" }
 h2 = { group = "com.h2database", name = "h2-mvstore", version.ref = "h2Version" }
-junitJupiter = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitEngineVersion" }
-junitParams = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junitEngineVersion" }
-junitVintage = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junitEngineVersion" }
-junitRunner = { group = "org.junit.platform", name = "junit-platform-runner", version.ref = "junitPlatformVersion" }
+junitBom = { group = "org.junit", name = "junit-bom", version.ref = "junitBomVersion" }
+junitJupiter = { module = "org.junit.jupiter:junit-jupiter-engine"}
+junitVintage = { module = "org.junit.vintage:junit-vintage-engine"}
+junitParams = { module = "org.junit.jupiter:junit-jupiter-params"}
+junitLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 junit = { group = "junit", name = "junit", version.ref = "junitVersion" }
 mockitoCore = { group = "org.mockito", name = "mockito-core", version.ref = "mockitoVersion" }
 jmhCore = { group = "org.openjdk.jmh", name = "jmh-core", version.ref = "jmhVersion" }

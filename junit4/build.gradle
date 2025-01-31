@@ -9,6 +9,8 @@ dependencies {
   api projects.claudbLib
   api libs.junit
   testImplementation libs.jedis
+  testImplementation platform(libs.junitBom)
   testImplementation libs.junitVintage
+  testRuntimeOnly libs.junitLauncher
   testRuntimeOnly libs.logbackClassic
 }
