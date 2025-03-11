@@ -9,22 +9,19 @@ plugins {
 }
 
 dependencies {
-  jacocoAggregation projects.claudbApp
-  jacocoAggregation projects.claudbJunit4
-  jacocoAggregation projects.claudbJunit5
-
-  testReportAggregation projects.claudbApp
-  testReportAggregation projects.claudbJunit4
-  testReportAggregation projects.claudbJunit5
+  subprojects.forEach {
+    jacocoAggregation it
+    testReportAggregation it
+  }
 }
 
 reporting {
   reports {
     testCodeCoverageReport(JacocoCoverageReport) {
-      testType = TestSuiteType.UNIT_TEST
+      testSuiteName = "test"
     }
     testAggregateTestReport(AggregateTestReport) {
-      testType = TestSuiteType.UNIT_TEST
+      testSuiteName = "test"
     }
   }
 }
