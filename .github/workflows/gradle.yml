@@ -28,3 +28,4 @@ jobs:
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
         coverage-reports: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
+      if: github.repository == 'tonivade/claudb'
