@@ -1,7 +1,7 @@
 [versions]
 joptVersion = "5.0.4"
 logbackVersion = "1.3.16"
-jedisVersion = "3.10.0"
+jedisVersion = "7.1.0"
 luajVersion = "3.0.1"
 respServerVersion = "0.25.0"
 h2Version = "2.2.224"
