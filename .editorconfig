@@ -1,0 +1,16 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+[*.bat]
+end_of_line = crlf
+
+[*.java]
+trim_trailing_whitespace = true
+max_line_length = 120
+
