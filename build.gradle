@@ -43,14 +43,14 @@ allprojects {
 
   java {
     toolchain {
-      languageVersion = JavaLanguageVersion.of(8)
+      languageVersion = JavaLanguageVersion.of(11)
     }
     withJavadocJar()
     withSourcesJar()
   }
 
   jacoco {
-    toolVersion = "0.8.9"
+    toolVersion = "0.8.13"
   }
 
   repositories {
