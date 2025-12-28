@@ -40,7 +40,6 @@ class ClauDBServerTest {
       assertThat(jedis.del("a"), equalTo(1L));
       assertThat(jedis.get("a"), nullValue());
       assertThat(jedis.eval("return 1"), equalTo(1L));
-      assertThat(jedis.quit(), equalTo("OK"));
     });
   }
 
@@ -77,7 +76,7 @@ class ClauDBServerTest {
       assertThat(result.next(), equalTo(1L));
       assertThat(result.next(), nullValue());
 
-      jedis.quit();
+      jedis.disconnect();
     });
   }
 
@@ -131,6 +130,7 @@ class ClauDBServerTest {
   private void execute(Consumer<Jedis> action) {
     try (Jedis jedis = createClientConnection()) {
       action.accept(jedis);
+      jedis.disconnect();
     }
   }
 
