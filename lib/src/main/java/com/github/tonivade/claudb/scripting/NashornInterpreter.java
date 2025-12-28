@@ -72,7 +72,6 @@ class NashornInterpreter implements Interpreter {
       .collect(collectingAndThen(toList(), RedisToken::array));
   }
 
-
   private static RedisLibrary createLibrary(Request request) {
     return new RedisLibrary(request.getServerContext(), request.getSession());
   }
