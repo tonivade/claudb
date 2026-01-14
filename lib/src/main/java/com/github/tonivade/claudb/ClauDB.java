@@ -94,7 +94,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   @Override
   public List<RedisToken> getCommandsToReplicate() {
-    return executeOn(Observable.<List<RedisToken>>create(observable -> {
+    return enqueue(Observable.<List<RedisToken>>create(observable -> {
       observable.onNext(getState().getCommandsToReplicate());
       observable.onComplete();
     })).blockingFirst();
@@ -120,7 +120,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   @Override
   public void exportRDB(OutputStream output) {
-    executeOn(Observable.create(observable -> {
+    enqueue(Observable.create(observable -> {
       getState().exportRDB(output);
       observable.onComplete();
     })).blockingSubscribe();
@@ -128,7 +128,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   @Override
   public void importRDB(InputStream input) {
-    executeOn(Observable.create(observable -> {
+    enqueue(Observable.create(observable -> {
       getState().importRDB(input);
       observable.onComplete();
     })).blockingSubscribe();
@@ -146,7 +146,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   @Override
   public void clean(Instant now) {
-    executeOn(Observable.create(observable -> {
+    enqueue(Observable.create(observable -> {
       getState().evictExpired(now);
       observable.onComplete();
     })).blockingSubscribe();
@@ -164,9 +164,8 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
         LOGGER.error("error executing command: " + request, e);
         return error("error executing command: " + request);
       }
-    } else {
-      return error("READONLY You can't write against a read only slave");
     }
+    return error("READONLY You can't write against a read only slave");
   }
 
   private boolean isReadOnly(String command) {
