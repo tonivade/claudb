@@ -78,10 +78,15 @@ public class DBCommandWrapper implements RespCommand {
       enqueueRequest(request);
       return status("QUEUED");
     }
-    if (command instanceof DBCommand) {
-      return executeDBCommand(db, request);
-    } else if (command instanceof RespCommand) {
-      return executeCommand(request);
+
+    try {
+      if (command instanceof DBCommand) {
+        return executeDBCommand(db, request);
+      } else if (command instanceof RespCommand) {
+        return executeCommand(request);
+      }
+    } catch (CommandException e) {
+      return error("ERR " + e.getMessage());
     }
     return error("invalid command type: " + command.getClass());
   }
