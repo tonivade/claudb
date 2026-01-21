@@ -99,7 +99,6 @@ public class CommandRule implements TestRule {
         when(session.removeValue("tx")).thenReturn(Optional.empty());
 
         when(server.getAdminDatabase()).thenReturn(serverState.getAdminDatabase());
-        when(server.isMaster()).thenReturn(true);
         when(server.getValue("state")).thenReturn(Optional.of(serverState));
         when(server.getValue("config")).thenReturn(Optional.of(config));
 

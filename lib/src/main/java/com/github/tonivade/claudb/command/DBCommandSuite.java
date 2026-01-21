@@ -53,8 +53,6 @@ import com.github.tonivade.claudb.command.server.FlushDBCommand;
 import com.github.tonivade.claudb.command.server.InfoCommand;
 import com.github.tonivade.claudb.command.server.RoleCommand;
 import com.github.tonivade.claudb.command.server.SelectCommand;
-import com.github.tonivade.claudb.command.server.SlaveOfCommand;
-import com.github.tonivade.claudb.command.server.SyncCommand;
 import com.github.tonivade.claudb.command.set.SetAddCommand;
 import com.github.tonivade.claudb.command.set.SetCardinalityCommand;
 import com.github.tonivade.claudb.command.set.SetDifferenceCommand;
@@ -96,8 +94,6 @@ public class DBCommandSuite extends CommandSuite {
     super(new DBCommandWrapperFactory());
     // connection
     addCommand(SelectCommand::new);
-    addCommand(SyncCommand::new);
-    addCommand(SlaveOfCommand::new);
 
     // server
     addCommand(FlushDBCommand::new);
