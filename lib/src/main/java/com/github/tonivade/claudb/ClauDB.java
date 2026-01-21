@@ -112,21 +112,14 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
 
   @Override
   protected RedisToken executeCommand(RespCommand command, Request request) {
-    if (!isReadOnly(request.getCommand())) {
-      try {
-        RedisToken response = command.execute(request);
-        notification(request);
-        return response;
-      } catch (RuntimeException e) {
-        LOGGER.error("error executing command: " + request, e);
-        return error("error executing command: " + request);
-      }
+    try {
+      RedisToken response = command.execute(request);
+      notification(request);
+      return response;
+    } catch (RuntimeException e) {
+      LOGGER.error("error executing command: " + request, e);
+      return error("error executing command: " + request);
     }
-    return error("READONLY You can't write against a read only slave");
-  }
-
-  private boolean isReadOnly(String command) {
-    return false && !isReadOnlyCommand(command);
   }
 
   private void notification(Request request) {
