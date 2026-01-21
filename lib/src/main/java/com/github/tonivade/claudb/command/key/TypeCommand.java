@@ -27,8 +27,7 @@ public class TypeCommand implements DBCommand {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
     if (value != null) {
       return status(value.getType().text());
-    } else {
-      return status(DataType.NONE.text());
     }
+    return status(DataType.NONE.text());
   }
 }

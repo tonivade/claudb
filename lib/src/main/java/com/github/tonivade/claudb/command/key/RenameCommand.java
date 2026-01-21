@@ -23,8 +23,7 @@ public class RenameCommand implements DBCommand {
   public RedisToken execute(Database db, Request request) {
     if (db.rename(safeKey(request.getParam(0)), safeKey(request.getParam(1)))) {
       return responseOk();
-    } else {
-      return error("ERR no such key");
     }
+    return error("ERR no such key");
   }
 }

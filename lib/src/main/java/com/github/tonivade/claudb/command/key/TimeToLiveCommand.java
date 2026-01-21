@@ -22,9 +22,8 @@ public abstract class TimeToLiveCommand implements DBCommand {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
     if (value != null) {
       return keyExists(value);
-    } else {
-      return notExists();
     }
+    return notExists();
   }
 
   protected abstract int timeToLive(DatabaseValue value, Instant now);
@@ -32,18 +31,16 @@ public abstract class TimeToLiveCommand implements DBCommand {
   private RedisToken keyExists(DatabaseValue value) {
     if (value.getExpiredAt() != null) {
       return hasExpiredAt(value);
-    } else {
-      return integer(-1);
     }
+    return integer(-1);
   }
 
   private RedisToken hasExpiredAt(DatabaseValue value) {
     Instant now = Instant.now();
     if (!value.isExpired(now)) {
       return integer(timeToLive(value, now));
-    } else {
-      return notExists();
     }
+    return notExists();
   }
 
   private RedisToken notExists() {

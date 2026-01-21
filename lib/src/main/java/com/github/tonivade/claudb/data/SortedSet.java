@@ -40,7 +40,6 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
     return scores.isEmpty();
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public boolean contains(Object o) {
     if (o instanceof Entry) {
@@ -75,7 +74,6 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
     return false;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public boolean remove(Object o) {
     if (o instanceof Entry) {
@@ -283,11 +281,11 @@ public class SortedSet implements NavigableSet<Entry<Double, SafeString>>, Seria
     }
     return o1.getValue().compareTo(o2.getValue());
   }
-  
+
   private void writeObject(ObjectOutputStream out) throws IOException {
     out.writeObject(items);
   }
-  
+
   @SuppressWarnings("unchecked")
   private void readObject(ObjectInputStream input) throws IOException, ClassNotFoundException {
     Map<SafeString, Double> entries = (Map<SafeString, Double>) input.readObject();

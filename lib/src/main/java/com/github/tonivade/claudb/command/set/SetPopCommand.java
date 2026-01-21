@@ -42,9 +42,8 @@ public class SetPopCommand implements DBCommand {
         });
     if (removed.isEmpty()) {
       return nullString();
-    } else {
-      return string(removed.get(0));
     }
+    return string(removed.get(0));
   }
 
   private SafeString getRandomItem(Set<SafeString> array) {

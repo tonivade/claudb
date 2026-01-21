@@ -41,9 +41,8 @@ public class SetRandomMemberCommand implements DBCommand {
         });
     if (random.isEmpty()) {
       return nullString();
-    } else {
-      return string(random.get(0));
     }
+    return string(random.get(0));
   }
 
   private int random(List<?> merge) {
