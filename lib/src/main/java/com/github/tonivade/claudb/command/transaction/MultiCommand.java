@@ -27,9 +27,8 @@ public class MultiCommand implements DBCommand {
     if (!isTxActive(request.getSession())) {
       createTransaction(request.getSession());
       return responseOk();
-    } else {
-      return error("ERR MULTI calls can not be nested");
     }
+    return error("ERR MULTI calls can not be nested");
   }
 
   private void createTransaction(Session session) {

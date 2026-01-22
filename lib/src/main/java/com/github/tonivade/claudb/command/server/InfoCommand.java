@@ -124,12 +124,8 @@ public class InfoCommand implements DBCommand {
   }
 
   private Map<String, String> replication(ServerContext ctx) {
-    return map(entry("role", getServerState(ctx).isMaster() ? "master" : "slave"),
-        entry("connected_slaves", slaves(ctx)));
-  }
-
-  private String slaves(ServerContext ctx) {
-    return valueOf(getAdminDatabase(ctx).getSet(safeString("slaves")).size());
+    return map(entry("role", "master"),
+        entry("connected_slaves", "0"));
   }
 
   private Map<String, String> clients(ServerContext ctx) {

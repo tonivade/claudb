@@ -30,8 +30,7 @@ public class HashGetAllCommand implements DBCommand {
     DatabaseValue value = db.get(safeKey(request.getParam(0)));
     if (value != null) {
       return convert(value);
-    } else {
-      return array();
     }
+    return array();
   }
 }

@@ -8,7 +8,6 @@ import static com.github.tonivade.claudb.DBConfig.DEFAULT_FILENAME;
 import com.github.tonivade.claudb.DBConfig.Engine;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.stream.Stream;
 
@@ -37,7 +36,7 @@ public class Server {
     OptionSpec<Engine> interpreter = parser.accepts("I", "enable interpreter (experimental)")
         .withOptionalArg()
         .ofType(Engine.class)
-        .withValuesConvertedBy(new EnumConverter<Engine>(Engine.class) {})
+        .withValuesConvertedBy(new EnumConverter<>(Engine.class) {})
         .defaultsTo(Engine.NULL);
     OptionSpec<String> host = parser.accepts("h", "define listen host")
         .withRequiredArg()
@@ -63,7 +62,7 @@ public class Server {
     } else {
       String optionHost = options.valueOf(host);
       int optionPort = options.valueOf(port);
-      DBConfig.Builder config = parseConfig(options, persist, offHeap, notifications, interpreter);
+      var config = parseConfig(options, persist, offHeap, notifications, interpreter);
 
       readBanner().forEach(System.out::println);
 
@@ -76,12 +75,12 @@ public class Server {
   }
 
   private static Stream<String> readBanner() {
-    InputStream banner = Server.class.getResourceAsStream("/banner.txt");
+    var banner = Server.class.getResourceAsStream("/banner.txt");
     return new BufferedReader(new InputStreamReader(banner)).lines();
   }
 
   private static DBConfig.Builder parseConfig(OptionSet options, OptionSpec<String> persist, OptionSpec<Void> offHeap, OptionSpec<Void> notifications, OptionSpec<Engine> interpreter) {
-    DBConfig.Builder builder = DBConfig.builder();
+    var builder = DBConfig.builder();
     if (options.has(persist)) {
       builder.withPersistence(options.valueOf(persist));
     }

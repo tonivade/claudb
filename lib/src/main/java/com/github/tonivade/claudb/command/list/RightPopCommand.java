@@ -45,8 +45,7 @@ public class RightPopCommand implements DBCommand {
 
     if (removed.isEmpty()) {
       return nullString();
-    } else {
-      return string(removed.remove(0));
     }
+    return string(removed.remove(0));
   }
 }

@@ -32,9 +32,8 @@ public class ExecCommand implements DBCommand {
         responses.add(executeCommand(server, queuedRequest));
       }
       return RedisToken.array(responses);
-    } else {
-      return RedisToken.error("ERR EXEC without MULTI");
     }
+    return RedisToken.error("ERR EXEC without MULTI");
   }
 
   private RedisToken executeCommand(DBServerContext server, Request queuedRequest) {
