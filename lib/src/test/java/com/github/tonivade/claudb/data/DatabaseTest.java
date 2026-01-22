@@ -9,7 +9,6 @@ import static com.github.tonivade.claudb.data.DatabaseValue.string;
 import static com.github.tonivade.resp.protocol.SafeString.safeString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ abstract class DatabaseTest {
   }
 
   @Test
-  void testDatabase() throws IOException {
+  void testDatabase() {
     database.put(safeKey("a"), string("value"));
 
     assertThat(database.get(safeKey("a")), is(string("value")));
