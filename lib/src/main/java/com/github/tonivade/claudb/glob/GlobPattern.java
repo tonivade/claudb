@@ -9,15 +9,23 @@ import static java.util.regex.Pattern.compile;
 import java.util.regex.Pattern;
 
 public class GlobPattern {
-  
+  private final String rawPattern;
   private final Pattern pattern;
-  
+
   public GlobPattern(String pattern) {
+    this.rawPattern = pattern;
     this.pattern = compile(convertGlobToRegEx(pattern));
   }
-  
+
   public boolean match(String value) {
     return pattern.matcher(value).matches();
+  }
+
+  /**
+   * @return the original string pattern used to create this {@link GlobPattern} instance.
+   */
+  public String pattern() {
+    return rawPattern;
   }
 
   /*

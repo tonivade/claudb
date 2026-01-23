@@ -11,8 +11,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.github.tonivade.resp.command.RespCommand;
+import com.github.tonivade.resp.protocol.AbstractRedisToken.ErrorRedisToken;
+import com.github.tonivade.resp.protocol.RedisTokenType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,6 +117,32 @@ public class CommandWrapperTest {
     RedisToken response = wrapper.execute(request);
 
     assertThat(response, equalTo(error("WRONGTYPE Operation against a key holding the wrong kind of value")));
+  }
+
+  @Test
+  public void testDbCommandThrows() {
+    String msg = "test exception message";
+    DBCommand command = mock(DBCommand.class);
+    when(command.execute(any(), any())).thenThrow(new CommandException(msg));
+
+    DBCommandWrapper wrapper = new DBCommandWrapper(command);
+    ErrorRedisToken result = (ErrorRedisToken) wrapper.execute(request);
+
+    assertThat(RedisTokenType.ERROR, equalTo(result.getType()));
+    assertThat("ERR " + msg, equalTo(result.getValue()));
+  }
+
+  @Test
+  public void testRespCommandThrows() {
+    String msg = "test exception message";
+    RespCommand command = mock(RespCommand.class);
+    when(command.execute(any())).thenThrow(new CommandException(msg));
+
+    DBCommandWrapper wrapper = new DBCommandWrapper(command);
+    ErrorRedisToken result = (ErrorRedisToken) wrapper.execute(request);
+
+    assertThat(RedisTokenType.ERROR, equalTo(result.getType()));
+    assertThat("ERR " + msg, equalTo(result.getValue()));
   }
 
   @Command("test")
