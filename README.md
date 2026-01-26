@@ -197,7 +197,7 @@ Another important change, now ClauDB has been splited in several subprojects:
   - claudb-junit4: implements a Junit4 compatible @Rule to use in junit4 based tests. [Example](https://github.com/tonivade/claudb/blob/master/junit4/src/test/java/com/github/tonivade/claudb/junit4/TestJunit4Rule.java)
   - claudb-junit5: implements a Junit5 compatible extension to use in junit5 based tests. [Example](https://github.com/tonivade/claudb/blob/master/junit5/src/test/java/com/github/tonivade/claudb/junit5/TestJunit5Extension.java)
 
-## Changes in 3.0 version
+## Changes in 3.0 version (not published yet)
 
 Master/Slave replication has been dropped since is a very complex functionality and nobody was using it
 
