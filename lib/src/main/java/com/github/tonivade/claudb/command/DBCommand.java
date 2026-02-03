@@ -12,12 +12,19 @@ import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.claudb.data.DatabaseValue;
 import com.github.tonivade.resp.command.Request;
+import com.github.tonivade.resp.command.RespCommand;
 import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 
 @FunctionalInterface
-public interface DBCommand {
+public interface DBCommand extends RespCommand {
+
+  @Override
+  default RedisToken execute(Request request) {
+    return execute(getCurrentDB(request), request);
+  }
+
   RedisToken execute(Database db, Request request);
 
   default DBServerContext getClauDB(ServerContext server) {
@@ -50,5 +57,11 @@ public interface DBCommand {
 
   default RedisToken convert(Collection<?> list) {
     return DBResponse.convertArray(list);
+  }
+
+  private Database getCurrentDB(Request request) {
+    DBServerState serverState = getServerState(request.getServerContext());
+    DBSessionState sessionState = getSessionState(request.getSession());
+    return serverState.getDatabase(sessionState.getCurrentDB());
   }
 }
