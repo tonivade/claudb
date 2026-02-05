@@ -4,12 +4,16 @@
  */
 package com.github.tonivade.claudb.command;
 
+import com.github.tonivade.resp.command.CommandWrapper;
 import com.github.tonivade.resp.command.CommandWrapperFactory;
 import com.github.tonivade.resp.command.RespCommand;
 
 public class DBCommandWrapperFactory implements CommandWrapperFactory {
   @Override
-  public RespCommand wrap(Object command) {
-    return new DBCommandWrapper(command);
+  public RespCommand wrap(RespCommand command) {
+    if (command instanceof DBCommand) {
+      return new DBCommandWrapper((DBCommand) command);
+    }
+    return new CommandWrapper(command);
   }
 }
