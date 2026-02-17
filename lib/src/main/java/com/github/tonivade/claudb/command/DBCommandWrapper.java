@@ -8,8 +8,6 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 
-import com.github.tonivade.claudb.DBServerState;
-import com.github.tonivade.claudb.DBSessionState;
 import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.PubSubAllowed;
@@ -19,13 +17,11 @@ import com.github.tonivade.claudb.data.DataType;
 import com.github.tonivade.claudb.data.Database;
 import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
-import com.github.tonivade.resp.command.RespCommand;
-import com.github.tonivade.resp.command.ServerContext;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
 import java.util.Optional;
 
-public class DBCommandWrapper implements RespCommand {
+public class DBCommandWrapper implements DBCommand {
 
   private int params;
 
@@ -35,9 +31,9 @@ public class DBCommandWrapper implements RespCommand {
   private final boolean txIgnore;
   private final boolean readOnly;
 
-  private final Object command;
+  private final DBCommand command;
 
-  public DBCommandWrapper(Object command) {
+  public DBCommandWrapper(DBCommand command) {
     this.command = command;
     ParamLength length = command.getClass().getAnnotation(ParamLength.class);
     if (length != null) {
@@ -65,9 +61,8 @@ public class DBCommandWrapper implements RespCommand {
   }
 
   @Override
-  public RedisToken execute(Request request) {
+  public RedisToken execute(Database db, Request request) {
     // FIXME: ugly piece of code, please refactor
-    Database db = getCurrentDB(request);
     if (request.getLength() < params) {
       return error("ERR wrong number of arguments for '" + request.getCommand() + "' command");
     } else if (dataType != null && !db.isType(safeKey(request.getParam(0)), dataType)) {
@@ -78,20 +73,7 @@ public class DBCommandWrapper implements RespCommand {
       enqueueRequest(request);
       return status("QUEUED");
     }
-    if (command instanceof DBCommand) {
-      return executeDBCommand(db, request);
-    } else if (command instanceof RespCommand) {
-      return executeCommand(request);
-    }
-    return error("invalid command type: " + command.getClass());
-  }
-
-  private RedisToken executeCommand(Request request) {
-    return ((RespCommand) command).execute(request);
-  }
-
-  private RedisToken executeDBCommand(Database db, Request request) {
-    return ((DBCommand) command).execute(db, request);
+    return command.execute(db, request);
   }
 
   private void enqueueRequest(Request request) {
@@ -104,28 +86,6 @@ public class DBCommandWrapper implements RespCommand {
 
   private Optional<TransactionState> getTransactionState(Session session) {
     return session.getValue("tx");
-  }
-
-  private Database getCurrentDB(Request request) {
-    DBServerState serverState = getServerState(request.getServerContext());
-    DBSessionState sessionState = getSessionState(request.getSession());
-    return serverState.getDatabase(sessionState.getCurrentDB());
-  }
-
-  private DBServerState getServerState(ServerContext server) {
-    return serverState(server).orElseThrow(() -> new IllegalStateException("missing server state"));
-  }
-
-  private DBSessionState getSessionState(Session session) {
-    return sessionState(session).orElseThrow(() -> new IllegalStateException("missing session state"));
-  }
-
-  private Optional<DBServerState> serverState(ServerContext server) {
-    return server.getValue("state");
-  }
-
-  private Optional<DBSessionState> sessionState(Session session) {
-    return session.getValue("state");
   }
 
   private boolean isSubscribed(Request request) {
