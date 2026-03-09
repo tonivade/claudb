@@ -26,6 +26,7 @@ import com.github.tonivade.claudb.command.hash.HashValuesCommand;
 import com.github.tonivade.claudb.command.key.DeleteCommand;
 import com.github.tonivade.claudb.command.key.ExistsCommand;
 import com.github.tonivade.claudb.command.key.ExpireCommand;
+import com.github.tonivade.claudb.command.key.PExpireCommand;
 import com.github.tonivade.claudb.command.key.KeysCommand;
 import com.github.tonivade.claudb.command.key.PersistCommand;
 import com.github.tonivade.claudb.command.key.RenameCommand;
@@ -130,6 +131,7 @@ public class DBCommandSuite extends CommandSuite {
     addCommand(RenameCommand::new);
     addCommand(KeysCommand::new);
     addCommand(ExpireCommand::new);
+    addCommand(PExpireCommand::new);
     addCommand(PersistCommand::new);
     addCommand(TimeToLiveMillisCommand::new);
     addCommand(TimeToLiveSecondsCommand::new);

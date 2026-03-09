@@ -57,7 +57,7 @@ allprojects {
     mavenLocal() 
     mavenCentral()
     maven {
-      url = 'https://oss.sonatype.org/content/repositories/snapshots'
+      url = 'https://central.sonatype.com/repository/maven-snapshots/'
     }
   }
 
@@ -129,10 +129,8 @@ subprojects {
   signing {
     def signingKey = project.findProperty("signingKey")
     def signingPassword = project.findProperty("signingPassword")
-    if (signingKey != null && signingPassword != null) {
-      useInMemoryPgpKeys(file(signingKey).text, signingPassword)
-      sign publishing.publications.mavenJava
-    }
+    useInMemoryPgpKeys(signingKey, signingPassword)
+    sign publishing.publications.mavenJava
   }
 
   tasks.withType(Sign) {
@@ -143,11 +141,8 @@ subprojects {
 nexusPublishing {
   repositories {
     sonatype {
-
-      stagingProfileId = '19a96b937cdb5'
-
-      username = project.findProperty('nexusUsername')  
-      password = project.findProperty('nexusPassword')
+      nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+      snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
     }
   }
 
