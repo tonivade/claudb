@@ -131,6 +131,10 @@ public class DatabaseValue {
     return new DatabaseValue(this.type, this.value, toInstant(toMillis(ttlSeconds)));
   }
 
+  public DatabaseValue expiredAtMillis(long ttlMillis) {
+    return new DatabaseValue(this.type, this.value, toInstant(ttlMillis));
+  }
+
   public DatabaseValue noExpire() {
     return new DatabaseValue(this.type, this.value);
   }
