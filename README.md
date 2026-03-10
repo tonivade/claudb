@@ -49,6 +49,7 @@ Clau is :key: in Valencià, a language spoken in eastern Spain, and ClauDB is a 
 - PERSIST
 - TTL
 - PTTL
+- PEXPIRE
 
 </details>
 
