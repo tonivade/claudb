@@ -8,6 +8,11 @@ import static com.github.tonivade.claudb.data.DatabaseKey.safeKey;
 import static com.github.tonivade.resp.protocol.RedisToken.error;
 import static com.github.tonivade.resp.protocol.RedisToken.status;
 
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.tonivade.claudb.TransactionState;
 import com.github.tonivade.claudb.command.annotation.ParamType;
 import com.github.tonivade.claudb.command.annotation.PubSubAllowed;
@@ -19,9 +24,10 @@ import com.github.tonivade.resp.annotation.ParamLength;
 import com.github.tonivade.resp.command.Request;
 import com.github.tonivade.resp.command.Session;
 import com.github.tonivade.resp.protocol.RedisToken;
-import java.util.Optional;
 
 public class DBCommandWrapper implements DBCommand {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DBCommandWrapper.class);
 
   private int params;
 
@@ -62,6 +68,7 @@ public class DBCommandWrapper implements DBCommand {
 
   @Override
   public RedisToken execute(Database db, Request request) {
+    LOGGER.debug("Executing command: {}", request.getCommand());
     // FIXME: ugly piece of code, please refactor
     if (request.getLength() < params) {
       return error("ERR wrong number of arguments for '" + request.getCommand() + "' command");

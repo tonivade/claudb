@@ -106,6 +106,7 @@ public final class ClauDB extends RespServerContext implements DBServerContext {
   public void clean(Instant now) {
     enqueue(Observable.create(observable -> {
       getState().evictExpired(now);
+      LOGGER.debug("database cleaned");
       observable.onComplete();
     })).blockingSubscribe();
   }
