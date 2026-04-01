@@ -1,6 +1,5 @@
 plugins {
-  id 'de.undercouch.download' version '5.7.0'
-  id 'org.mikeneck.graalvm-native-image' version '1.4.1'
+  id 'com.gradleup.shadow' version '9.4.1'
 }
 
 jar {
@@ -23,46 +22,12 @@ processResources {
   }
 }
 
-task fatJar(type: Jar, dependsOn: compileJava) {
-  manifest { 
-    attributes "Main-Class": "com.github.tonivade.claudb.Server"
+shadowJar {
+  manifest {
+    attributes('Main-Class': 'com.github.tonivade.claudb.Server')
   }
-  archiveClassifier = "all"
-  duplicatesStrategy = "warn"
-  from { 
-    configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } 
-  }
-  with jar
 }
 
 tasks.named('jar') {
-  dependsOn tasks.named('fatJar', Jar)
-}
-
-task downloadGraalvm(type: Download) {
-  src "https://github.com/graalvm/graalvm-ce-dev-builds/releases/download/23.0.0-dev-20221103_2324/graalvm-ce-java11-linux-amd64-dev.tar.gz"
-  dest new java.io.File(buildDir, "graalvm.tar.gz")
-  onlyIfModified true
-}
-
-task extractGraalvm(dependsOn: downloadGraalvm, type: Exec) {
-  workingDir "$buildDir"
-  commandLine 'tar', 'zxvf', 'graalvm.tar.gz'
-}
-
-nativeImage {
-  graalVmHome = "${buildDir}/graalvm-ce-java11-23.0.0-dev"
-  mainClass = "com.github.tonivade.claudb.Server"
-  executableName = "claudb"
-  arguments(
-          '--verbose',
-          '--report-unsupported-elements-at-runtime',
-          '--initialize-at-build-time',
-          '--no-fallback',
-          '--allow-incomplete-classpath',
-          '--initialize-at-run-time=com.oracle.truffle.js.scriptengine.GraalJSEngineFactory',
-          '-H:IncludeResources=banner.txt',
-          '-H:IncludeResources=logback.xml',
-          '-H:IncludeResourceBundles=joptsimple.HelpFormatterMessages'
-  )
+  dependsOn tasks.named('shadowJar', Jar)
 }
