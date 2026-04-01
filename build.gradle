@@ -111,7 +111,7 @@ subprojects {
             developer {
               id = 'tonivade'
               name = 'Antonio Muñoz'
-              email = 'antoniogmc@gmail.com'
+              email = 'me@tonivade.es'
             }
           }
         }
