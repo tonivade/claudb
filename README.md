@@ -259,10 +259,6 @@ You can start a new server listening in default port 7081.
     $ wget https://repo1.maven.org/maven2/com/github/tonivade/claudb-app/3.0/claudb-app-3.0-all.jar
     $ java -jar claudb-3.0-all.jar
 
-or using [jgo](https://github.com/scijava/jgo) utility
-
-    $ jgo com.github.tonivade:claudb-app:3.0:com.github.tonivade.claudb.Server
-    
 Parameters:
 
     Option                  Description
@@ -294,20 +290,8 @@ Or embed in your source code
     server.start(); 
 ```
 
-## Native Image
-
-Now is possible to generate a native image thanks to graalvm. You can generate one with this command:
-
-```shell
-$ ./gradlew clean nativeImage
-```
-
-Some features are not available like lua runtime and offheap memory.
-
 ## TODO
 
-- Partitioning?
-- Clustering?
 - Geo Commands
 
 ## Continuous Integration
@@ -315,7 +299,7 @@ Some features are not available like lua runtime and offheap memory.
 [![Java CI with Gradle](https://github.com/tonivade/claudb/actions/workflows/gradle.yml/badge.svg)](https://github.com/tonivade/claudb/actions/workflows/gradle.yml)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.tonivade/claudb)
+[![Sonatype Central](https://maven-badges.sml.io/sonatype-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.sml.io/sonatype-central/com.github.tonivade/claudb)
 [![Join the chat at https://gitter.im/tonivade/claudb](https://badges.gitter.im/tonivade/claudb.svg)](https://gitter.im/tonivade/claudb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Stargazers over time
