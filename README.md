@@ -198,9 +198,9 @@ Another important change, now ClauDB has been splited in several subprojects:
   - claudb-junit4: implements a Junit4 compatible @Rule to use in junit4 based tests. [Example](https://github.com/tonivade/claudb/blob/master/junit4/src/test/java/com/github/tonivade/claudb/junit4/TestJunit4Rule.java)
   - claudb-junit5: implements a Junit5 compatible extension to use in junit5 based tests. [Example](https://github.com/tonivade/claudb/blob/master/junit5/src/test/java/com/github/tonivade/claudb/junit5/TestJunit5Extension.java)
 
-## Changes in 3.0 version (not published yet)
+## Changes in 3.0 version
 
-Master/Slave replication has been dropped since is a very complex functionality and nobody was using it
+Master/Slave replication has been dropped since is a very complex functionality and AFAIK nobody was using it.
 
 Drop of Java 8 support. Minimal version will be Java 11.
 
@@ -280,12 +280,12 @@ Also you can use inside your project using Maven
     <dependency>
         <groupId>com.github.tonivade</groupId>
         <artifactId>claudb</artifactId>
-        <version>2.5</version>
+        <version>3.0</version>
     </dependency>
     
 Or gradle
 
-    compile 'com.github.tonivade:claudb:2.5'
+    compile 'com.github.tonivade:claudb:3.0'
 
 Or embed in your source code
 
