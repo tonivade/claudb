@@ -39,8 +39,6 @@ allprojects {
 
   group = 'com.github.tonivade'
 
-  ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-
   java {
     toolchain {
       languageVersion = JavaLanguageVersion.of(11)
@@ -121,15 +119,16 @@ subprojects {
     }
   }
 
-  signing {
-    def signingKey = project.findProperty("signingKey")
-    def signingPassword = project.findProperty("signingPassword")
-    useInMemoryPgpKeys(signingKey, signingPassword)
-    sign publishing.publications.mavenJava
-  }
+  def isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-  tasks.withType(Sign) {
-    onlyIf { isReleaseVersion }
+  signing {
+    def signingKey = providers.gradleProperty("signingKey")
+    def signingPassword = providers.gradleProperty("signingPassword")
+    useInMemoryPgpKeys(signingKey.orNull, signingPassword.orNull)
+    
+    if (isReleaseVersion) {
+      sign publishing.publications.mavenJava
+    }
   }
 }
 
