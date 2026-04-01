@@ -300,7 +300,6 @@ Or embed in your source code
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=tonivade/claudb&amp;utm_campaign=Badge_Grade)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/63af79474b40420da97b36d02972f302)](https://www.codacy.com/app/tonivade/claudb?utm_source=github.com&utm_medium=referral&utm_content=tonivade/claudb&utm_campaign=Badge_Coverage)
 [![Sonatype Central](https://maven-badges.sml.io/sonatype-central/com.github.tonivade/claudb/badge.svg)](https://maven-badges.sml.io/sonatype-central/com.github.tonivade/claudb)
-[![Join the chat at https://gitter.im/tonivade/claudb](https://badges.gitter.im/tonivade/claudb.svg)](https://gitter.im/tonivade/claudb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Stargazers over time
 
