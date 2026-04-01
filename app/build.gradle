@@ -15,9 +15,13 @@ dependencies {
 }
 
 processResources {
+  def versionProvider = providers.provider { project.version.toString() }
+
+  inputs.property("version", versionProvider)
+
   filesMatching('**/banner.txt') {
-    filter {
-      it.replace('@version@', version)
+    filter { line ->
+      line.replace('@version@', versionProvider.get())
     }
   }
 }
