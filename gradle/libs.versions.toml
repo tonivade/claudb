@@ -10,7 +10,7 @@ junitBomVersion = "5.14.2"
 hamcrestVersion = "3.0"
 mockitoVersion = "5.21.0"
 jmhVersion = "1.37"
-versionsVersion = "0.57.0"
+versionsVersion = "0.58.0"
 nexusVersion = "2.0.0"
 
 [libraries]
